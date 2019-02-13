@@ -16,7 +16,10 @@ Rails.application.routes.draw do
   #API main root
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
-      get 'api/v1/session/signin', to: 'session#signin', via: [:get, :options]
+      match 'session/signin', to: 'session#signin', via: [:post, :options]
+      match 'session/signup', to: 'session#signup', via: [:post, :options]
+      match 'session/get_balance/:phone/:password', to: 'session#get_balance', via: [:get, :options]
+      match 'session/transaction', to: 'api#payment', via: [:post, :options]
     end
   end
 end

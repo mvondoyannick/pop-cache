@@ -13,11 +13,19 @@ class Pay
         $amount = amount
     end
 
+    #pour permettre l'envoi via OM
     def self.send(body)
         #https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3
         q = HTTParty.post('https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3', headers: HEADERS, body: body)
         return q.as_json
     end
+
+    #pour permettre l'envoi via MTN MOMO
+    def self.send_momo(body)
+      #https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3
+      q = HTTParty.post('https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3', headers: HEADERS, body: body)
+      return q.as_json
+  end
 
     def self.pay_orange
       body_data = {
@@ -34,7 +42,7 @@ class Pay
           "amount": $amount       #utiliser le montant globale disponible a cet effet
       }.to_json
 
-      send(body_data)
+      send_momo(body_data)
     end
 
     #permet d'effectuer la verification du telephone

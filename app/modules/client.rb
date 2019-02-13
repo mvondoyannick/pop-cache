@@ -1,0 +1,302 @@
+class Client
+  $signature = "POP-CASH"
+  $limit_amount = 100000
+  $limit_day_transaction = 100
+  $devise = "F CFA"
+  require 'securerandom'
+  #require 'activerecord'
+
+    def initialize(from, to, amount, pwd)
+      $from = from
+      $to = to 
+      $amount = amount 
+      $pwd = pwd
+    end
+
+    def self.create_user(name, second_name, phone, cni, password)
+      @name = name
+      @second_name = second_name
+      @phone = phone
+      @cni = cni
+      @email = "#{@name}_#{phone}@pop-cash.cm"
+      @password = password
+
+      #creation du compte de l'utilisateur
+      customer = Customer.new(
+        name: @name,
+        second_name: @second_name,
+        phone: @phone,
+        cni: @cni,
+        email: @email,
+        password: @password
+      )
+
+      if customer.save
+        Sms.new(@phone, "Mr/Mme #{@name} #{@second_name} votre compte a ete cree avec succes. Bienvenue sur #{$signature}")
+        Sms::send
+        create_user_account(customer.id, customer.phone)
+        return "Creation du profil personnel succes"
+      else
+        Sms.new(@phone, "Impossible de creer Votre profil personnel, merci de vous rappocher d\'un service Express Union. #{$signature}")
+        Sms::send
+        puts customer.errors.messages
+        return "Echec de creation du profil personnel. code erreurs : #{customer.errors.messages}"
+      end
+    end
+
+    #creation du compte utilisateur
+    def self.create_user_account(id, phone)
+      @id = id
+      @phone = phone
+      customer_account = Account.new(
+        amount: 0,
+        customer_id: @id
+      )
+      
+      if customer_account.save
+        Sms.new(@phone, "Votre porte monnaie virtuel vient d\'etre cree, il dispose d\'une somme de 0 (zero) #{$devise}. #{$signature}")
+        Sms::send
+        return "creation porte-monnaie succes"
+      else
+        Sms.new(@phone, "Impossible de creer Votre porte-monnaie virtuel, merci de vous rappocher d\'un service Express Union. #{$signature}")
+        Sms::send
+        return "Creation porte-monnaie failed"
+      end
+    end
+
+    #permet de crediter le compte utilisateur en se basant sur son numero de telephone et sur le montant
+    def self.credit_account(phone, amount)
+      @phone = phone
+      @amount = amount
+
+      #on rechercher le user pour avoir sont ID
+      customer = Customer.where(phone: @phone).first
+      if customer
+          customer_account = Account.where(customer_id: customer.id).first
+          customer_account.amount = customer_account.amount + @amount
+          if customer_account.save
+            hash = SecureRandom.hex(13)
+            Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, vous venez d\'etre crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
+            Sms::send
+            return "Le compte a ete credite d\'un montant de #{@amount}'."
+          else
+            Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, impossible de crediter votre compte. Echec de la Transaction #{hash}. #{$signature}")
+            Sms::send
+            return "impossible de crediter le compte. code erreurs : #{customer_account.errors}"
+          end
+      end
+  end
+
+    #authenticationof user
+    def self.auth_user(phone, password)
+      @phone = phone
+      @password = password
+
+      customer = Customer.where(phone: @phone).first
+      if customer
+        if customer.valid_password?(@password)
+          return customer.as_json(only: [:id, :phone, :name, :second_name]), status: :created
+        else
+          return false
+        end
+      else
+        return false
+      end
+    end
+
+    def self.get_balance(phone, password)
+      @phone = phone
+      @password = password
+
+      #on recherche le client
+      query = Customer.where(phone: phone).first
+      if query.valid_password?(@password)
+        account = Account.where(customer_id: query.id).first
+        Sms.new(@phone, "Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
+        Sms::send
+        return "Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
+      else
+        return "Mot de passe invalide. #{signature}"
+      end
+    end
+
+
+    #permet de mettre a jour le montant des comptes
+    def self.update_account_client(id, amount)
+        @id = id
+        @amount = amount
+
+        response = Account.find(@id)
+        if response
+          response.amount = response.amount - @amount
+          if response.save
+            return true
+          else
+            return "failed"
+          end
+        else
+          return false
+        end
+    end
+
+
+    #permet de mettre a jour le montant des comptes marchand
+    def self.update_account_marchand(id, amount)
+        @id = id
+        @amount = amount
+
+        response = Account.find(@id)
+        if response
+          response.amount = response.amount + @amount
+          if response.save
+            return true
+          else
+            return "failed"
+          end
+        else
+          return false
+        end
+    end
+
+
+    #recherche les informations sur l'emeteur de la requete de paiement
+    def self.find_client(id)
+      @sender_id = id
+      query = Customer.find(id)
+      return query
+    end
+
+    #recherche les informations sur le receveur
+    def self.find_marchand(id)
+      @receiver_id = id
+      query = Customer.find(id)
+      if query
+        return query
+      else
+        return false
+      end
+    end
+
+    #pour debiter de l'argent dans le compte du client
+    def debit_client(id, amount, signature)
+      @id = id
+      @amount = amount
+      @signature = signature
+
+      response = find_client(id)
+      if response
+
+      end
+    end
+
+
+    #retirer l'argent phyisique dans un point de retrait 
+    def self.retrait(phone, password, amount)
+      @phone = phone
+      @password = password
+      @amount = amount.to_i
+
+      #se trouve dans la table retrait_await
+    end
+
+
+    #pour crediter le compte du marchand
+    def credit_marchand(id, amount, signature)
+
+    end
+
+    def self.pay(from, to, amount, pwd)
+      @from = from
+      @to = to
+      @amount = amount  #montant de la transation
+      @client_password = pwd
+
+      puts "#{@from} -- #{@to} -- #{@amount} -- #{@client_password}"
+
+      marchand = Customer.where(phone: @to).first                         #personne qui recoit
+      puts marchand
+      marchand_account = Account.where(customer_id: marchand.id).first    #le montant de la personne qui recoit
+      client = Customer.where(phone: @from).first                         #la personne qui envoi
+      client_account = Account.where(customer_id: client.id).first        # le montant de la personne qui envoi
+
+      if client.valid_password?(@client_password)
+        puts "le client a le bon mot de passe"
+        if client_account.amount.to_i >= @amount
+          puts "le client a suffisament d'argent dans son compte"
+          hash = SecureRandom.hex(3)
+          client_account.amount = client_account.amount.to_i - @amount
+          if client_account.save
+            marchand_account.amount = marchand_account.amount + @amount
+            if marchand_account.save
+              Sms.new(@to, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
+              Sms::send
+              #--------------------------------------------------
+              Sms.new(@from, "Mr/Mme #{client.name} #{client.second_name}, #{@amount} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
+              Sms::send
+              #----------------------------------------------------
+              puts "Paiement effectué de #{@amount}"
+              return "Paiement effectue"
+            else
+              puts "Marchand non credite de #{@amount}"
+              return "Marchand non credite de #{@amount}"
+            end
+          else
+            puts "Client non debite du montant #{@amount}"
+            return "Client non debite"
+          end
+        else
+          puts "Montant de la transaction insuffisant"
+          return "Montant de la transaction insuffisant"
+        end
+      else
+        puts "Invalid password aythentication"
+        return "mot de passe invalide"
+      end
+    end
+
+    def self.transfert(from, to, amount, password)
+      @from = from
+      @to = to
+      @amount = amount
+      @client_password = password
+      if (@from == @to)
+        Sms.new(@from, "Expediteur et Receveur ne peuvent etre identique, merci de changer. #{$signature}")
+        Sms::send
+        return "#{@from} et #{@to} ne peuvent etre indentique. #{$signature}"
+      else
+        #on commernce par rechercher si le receveur appartient au reseaux
+        marchand = Customer.where(phone: @to).first                           #personne qui recoit
+        marchand_account = Account.where(customer_id: marchand.id).first      #le montant de la personne qui recoit
+        client = Customer.where(phone: @from).first                           #la personne qui envoi
+        client_account = Account.where(customer_id: client.id)                # le montant de la personne qui envoi
+        #on authentifie le client a l'aide de son telephone et de son password
+        if client.valid_password?(@client_password)
+          if (client_account.amount >= @amount)
+            hash = SecureRandom.hex(13).upcase
+            marchand_account.amount = marchand_account.amount + @amount
+            if marchand_account.save
+              client_account.amount = client_account.amount - @amount
+              if client_account.save
+                Sms.new(@to, "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
+                Sms::send
+                #----------------------------------
+                Sms.new(@from, "Mr/Mme #{client.name} #{client.second_name}, #{@amount} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
+                Sms::send
+                return "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. ID Transaction : #{hash}. #{$signature}"
+              else
+                return "Echec du paiement du montant #{@amount} F CFA. Echec de la transaction ID Transaction : #{hash}. #{$signature}"
+              end
+            else
+              return "une erreur est survenue durant le traitement"
+            end
+            else
+              Sms.new(@from, "Montant du compte insuffisant. #{$signature}")
+              return "Impossible d'effectuer le transfert, le montant est insuffisant"
+          end
+        else
+          Sms.new(@from, "Transaction annulee, mot de passe invalide. #{$signature}")
+          Sms::send
+        end
+      end
+    end
+end
