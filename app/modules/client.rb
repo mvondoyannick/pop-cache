@@ -3,6 +3,9 @@ class Client
   $limit_amount = 100000
   $limit_day_transaction = 100
   $devise = "F CFA"
+  $status = {
+    false: :false
+  }
   require 'securerandom'
   #require 'activerecord'
 
@@ -18,7 +21,7 @@ class Client
       @second_name = second_name
       @phone = phone
       @cni = cni
-      @email = "#{@name}_#{phone}@pop-cash.cm"
+      @email = "#{SecureRandom.hex(3)}@pop-cash.cm"
       @password = password
 
       #creation du compte de l'utilisateur
@@ -35,7 +38,7 @@ class Client
         Sms.new(@phone, "Mr/Mme #{@name} #{@second_name} votre compte a ete cree avec succes. Bienvenue sur #{$signature}")
         Sms::send
         create_user_account(customer.id, customer.phone)
-        return "Creation du profil personnel succes"
+        return true
       else
         Sms.new(@phone, "Impossible de creer Votre profil personnel, merci de vous rappocher d\'un service Express Union. #{$signature}")
         Sms::send
@@ -206,12 +209,12 @@ class Client
     end
 
     def self.pay(from, to, amount, pwd)
-      @from = from
-      @to = to
-      @amount = amount  #montant de la transation
+      @from = from.to_i
+      @to = to.to_i
+      @amount = amount.to_i  #montant de la transation
       @client_password = pwd
 
-      puts "#{@from} -- #{@to} -- #{@amount} -- #{@client_password}"
+      puts "Client : #{@from} -- marchand : #{@to} -- Amount : #{@amount} -- pwd : #{@client_password}"
 
       marchand = Customer.where(phone: @to).first                         #personne qui recoit
       puts marchand
@@ -219,38 +222,53 @@ class Client
       client = Customer.where(phone: @from).first                         #la personne qui envoi
       client_account = Account.where(customer_id: client.id).first        # le montant de la personne qui envoi
 
-      if client.valid_password?(@client_password)
-        puts "le client a le bon mot de passe"
-        if client_account.amount.to_i >= @amount
-          puts "le client a suffisament d'argent dans son compte"
-          hash = SecureRandom.hex(3)
-          client_account.amount = client_account.amount.to_i - @amount
-          if client_account.save
-            marchand_account.amount = marchand_account.amount + @amount
-            if marchand_account.save
-              Sms.new(@to, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
-              Sms::send
-              #--------------------------------------------------
-              Sms.new(@from, "Mr/Mme #{client.name} #{client.second_name}, #{@amount} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
-              Sms::send
-              #----------------------------------------------------
-              puts "Paiement effectué de #{@amount}"
-              return "Paiement effectue"
+      if @from == @to
+        Sms.new(@from, "Les numeros sont identiques, merci de les changer. Transaction annulee. #{$signature}")
+        Sms::send
+        puts "Numero indentique"
+        return false
+      else
+        if client.valid_password?(@client_password)
+          puts "le client a le bon mot de passe"
+          if client_account.amount.to_i >= @amount.to_i
+            puts "le client a suffisament d'argent dans son compte"
+            hash = SecureRandom.hex(3)
+            client_account.amount = client_account.amount.to_i - @amount
+            if client_account.save
+              marchand_account.amount = marchand_account.amount + @amount
+              if marchand_account.save
+                Sms.new(@to, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
+                Sms::send
+                #--------------------------------------------------
+                Sms.new(@from, "Mr/Mme #{client.name} #{client.second_name}, #{@amount} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
+                Sms::send
+                #----------------------------------------------------
+                puts "Paiement effectué de #{@amount}"
+                return true
+              else
+                puts "Marchand non credite de #{@amount}"
+                Sms.new(@to, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
+                Sms::send
+                return false
+              end
             else
-              puts "Marchand non credite de #{@amount}"
-              return "Marchand non credite de #{@amount}"
+              puts "Client non debite du montant #{@amount}"
+              Sms.new(@form, "Impossible d\'acceder a votre compte. Transaction annulee. #{$signature}")
+              Sms::send
+              return false
             end
           else
-            puts "Client non debite du montant #{@amount}"
-            return "Client non debite"
+            puts "Montant de la transaction insuffisant"
+            Sms.new(@form, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
+            Sms::send
+            return false
           end
         else
-          puts "Montant de la transaction insuffisant"
-          return "Montant de la transaction insuffisant"
+          puts "Invalid password aythentication"
+          Sms.new(@form, "Mot de passe invalide. Transaction annulee. #{$signature}")
+          Sms::send
+          return false
         end
-      else
-        puts "Invalid password aythentication"
-        return "mot de passe invalide"
       end
     end
 

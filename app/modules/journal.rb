@@ -11,7 +11,7 @@ class Journal
         @client_name    = Customer.where(phone: @client_phone).first.name
         @marchand_name  = Customer.where(phone: @marchand_phone).first.name
 
-        puts request.remote_ip
+        #puts request.remote_ip
 
         #creation du journale de transaction
         journal = Transaction.new(

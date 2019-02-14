@@ -1,2 +1,22 @@
-<h1>Home#public</h1>
-<p>Find me in app/views/home/public.html.erb</p>
+<div class="container">
+  <table class="hover">
+    <thead>
+      <tr>
+        <th width="300">Date</th>
+        <th>Client</th>
+        <th>Marchand</th>
+        <th width="150">Montant</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @transaction.each do |t|%>
+      <tr>
+        <td><%= t.date%></td>
+        <td width="300"><%= t.client_phone%> [<%= t.client_name%>]</td>
+        <td width="300"><%= t.marchand_phone%> [<%= t.marchand_name%>]</td>
+        <td><%= t.amount%></td>
+      </tr>
+    <% end%>
+    </tbody>
+  </table>
+  </div>

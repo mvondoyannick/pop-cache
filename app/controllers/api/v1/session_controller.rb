@@ -10,7 +10,7 @@ class Api::V1::SessionController < ApplicationController
         email = "me@me.com"
         query = Client::create_user(params[:nom], params[:prenom], params[:phone], params[:cni], params[:password])
         render json: {
-            message: :in_progress,
+            #message: :in_progress,
             status: query
         }
 

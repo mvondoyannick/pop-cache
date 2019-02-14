@@ -3,6 +3,7 @@ class HomeController < ApplicationController
   end
 
   def public
+    @transaction = Transaction.all
   end
 
   def private
