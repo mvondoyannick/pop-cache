@@ -48,7 +48,13 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  <<: *default
-  database: pop-cash_production
-  username: pop-cash
-  password: <%= ENV['POP-CASH_DATABASE_PASSWORD'] %>
+  #<<: *default
+  adapter: mysql2
+  encoding: utf8
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: restoafr_mvondoyannick
+  password: Blackberry10
+  host: 192.95.32.36
+  database: restoafr_popcash
+  #username: pop-cash
+  #password: <%= ENV['POP-CASH_DATABASE_PASSWORD'] %>
