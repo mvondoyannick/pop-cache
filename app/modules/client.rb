@@ -118,9 +118,9 @@ class Client
         account = Account.where(customer_id: query.id).first
         Sms.new(@phone, "Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
         Sms::send
-        return "Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
+        return true,"Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
       else
-        return "Mot de passe invalide. #{signature}"
+        return false,  "Mot de passe invalide. #{signature}"
       end
     end
 
@@ -194,7 +194,46 @@ class Client
     end
 
 
-    def self.validate_retrait
+
+    #validation du retrait par l'utilisateur/customer
+    def self.validate_retrait(phone, pwd)
+      @phone  = phone
+      @pwd    = pwd
+
+      customer = Customer.where(phone: @phone).first
+      if customer && customer.valid_password?(@pwd)
+        #on mets a jour les informations sur await sur customer
+        await = Await.where(customer_id: customer.id).first
+        if customer.update(await: nil)
+          if await.destroy
+            Sms.new(@phone, "Vous venez de retirer #{await.amount} #{$devise} de votre compte. #{$signature}")
+            Sms::send
+            puts "Retrait effectué"
+            return true, "Retrait de #{await.amount} #{$devise} effectué sur le compte #{@phone}. #{$signature}"
+          else
+            puts "Impossible de retirer de l argent dans ce compte"
+            return false, "retrait argent impossible. merci de contacter le service client au 007"
+          end
+        else
+          puts "Impossible de mettre a jour les informations utilisateur"
+          return false, "Impossible de communiquer avec l IA d AGIS"
+        end
+      else
+        puts "Mot de passe invalide"
+        return false, "Invalid password"
+      end
+    end
+
+    #permet de verifier qu'il ya un retrait en cours pour un numero de telephone/customer
+    def self.check_retrait(phone)
+      @phone = phone
+      customer = Customer.where(phone: phone).first
+      await = Await.where(customer_id: customer.id, id: customer.await).first
+      if await
+        return true, await.as_json(only: [:amount, :created_at])
+      else
+        return false, "Aucun retrait en cours pour ce compte (#{@phone})"
+      end
     end
 
     def self.get_balance_retrait(phone, amount_retrait)
@@ -232,8 +271,11 @@ class Client
             customer_id: customer.id
           )
           if await.save
+            #mise a jour du montant du customer
+            customer_amount = Account.where(customer_id: customer.id).first.amount - @amount
+
             #on mets a jour la table customer sur await
-            if customer.update(await: await.id)
+            if customer.update(await: await.id, amount: customer_amount)
               #---------------send sms to customer--------------
               Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. #{$signature}")
               Sms::send

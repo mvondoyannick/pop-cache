@@ -23,6 +23,8 @@ Rails.application.routes.draw do
       match 'session/qrcode', to: 'api#qrcode', via: [:post, :options]
       match 'session/history/:phone', to: 'api#user_history', via: [:get, :options] 
       match 'session/balance/:phone/:password', to: 'session#solde', via: [:get, :options]
+      match 'session/check_retrait/:phone', to: 'session#check_retrait', via: [:get, :options]
+      match 'session/validate_retrait', to: 'session#validate_retrait', via: [:post, :options]
     end
   end
 end
