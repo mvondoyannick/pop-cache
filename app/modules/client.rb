@@ -6,6 +6,7 @@ class Client
   $status = {
     false: :false
   }
+
   require 'securerandom'
   #require 'activerecord'
 
@@ -193,13 +194,69 @@ class Client
     end
 
 
-    #retirer l'argent phyisique dans un point de retrait 
-    def self.retrait(phone, password, amount)
-      @phone = phone
-      @password = password
-      @amount = amount.to_i
+    def self.validate_retrait
+    end
 
-      #se trouve dans la table retrait_await
+    def self.get_balance_retrait(phone, amount_retrait)
+      @phone = phone
+      @amount = amount_retrait
+      customer = Customer.where(phone: @phone).first
+      customer_amount = Account.where(customer_id: customer.id).first.amount
+      if customer
+        if customer_amount.to_i > @amount.to_i 
+          puts "Il a de l argent"
+          return true
+        else
+          Sms.new(@phone, "Le montant de votre compte est insuffisant. #{$signature}")
+          Sms::send
+          puts "Pas assez d argent dans le compte #{@phone}"
+          return false
+        end
+      else
+        return false, "Impossbile de verifier cet utilisateur"
+      end
+    end
+
+
+    #permet d'initialiser une procedure de retrait du coté de l'agent EU 
+    def self.init_retrait(phone, amount)
+      @phone = phone
+      @amount = amount.to_i
+      #se trouve dans la table retrait_await, on ajout un marqueur au client
+      customer = Customer.where(phone: @phone).first
+      if get_balance_retrait(@phone, @amount) == true
+        if customer.await.nil?
+          #on creet un nouvel await
+          await = Await.new(
+            amount: @amount,
+            customer_id: customer.id
+          )
+          if await.save
+            #on mets a jour la table customer sur await
+            if customer.update(await: await.id)
+              #---------------send sms to customer--------------
+              Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. #{$signature}")
+              Sms::send
+              puts "user await updated"
+              return true, "processus initialise avec succes pour le numero #{@phone}"
+            else
+              puts "user await canceled"
+              return false, "Impossible d\'initialiser le processus de retrait. Error : #{customer.errors.messages}'"
+            end
+            puts "created new await"
+            return true, "nouveau await cree"
+          else
+            puts "error creating await"
+            return false, "Impossible de creer await"
+          end
+        else
+          #le client n'est pas disponible sur la plateforme
+          return false, "Utilisateur inconnu ou disposant deja "
+        end
+      else
+        return false, "Ce compte ne dispose pas assez d argent"
+      end
+        
     end
 
 
@@ -226,7 +283,7 @@ class Client
         Sms.new(@from, "Les numeros sont identiques, merci de les changer. Transaction annulee. #{$signature}")
         Sms::send
         puts "Numero indentique"
-        return false
+        return false, " Les numéros de transaction sont identique", $signature
       else
         if client.valid_password?(@client_password)
           puts "le client a le bon mot de passe"
@@ -244,7 +301,7 @@ class Client
                 Sms::send
                 #----------------------------------------------------
                 puts "Paiement effectué de #{@amount}"
-                return true
+                return true, "Paiement effectué avec succes"
               else
                 puts "Marchand non credite de #{@amount}"
                 Sms.new(@to, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")

@@ -40,6 +40,22 @@ class Api::V1::SessionController < ApplicationController
     def descroy
     end
 
+    #obtention du solde du compte client
+    def solde
+        phone = params[:phone]
+        pwd = params[:password]
+
+        balance = Client::get_balance(phone, pwd)
+        if balance
+            render json: balance
+        else
+            render json: {
+                message: "compte vide"
+            }
+        end
+        
+    end
+
     def transaction
         from = params[:payeur]
         to = params[:receveur]

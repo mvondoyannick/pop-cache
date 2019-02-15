@@ -85,6 +85,7 @@ GEM
     erubi (1.8.0)
     execjs (2.7.0)
     ffi (1.10.0-x64-mingw32)
+    geocoder (1.5.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     httparty (0.16.4)
@@ -96,6 +97,7 @@ GEM
     jbuilder (2.8.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
+    jwt (2.1.0)
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -217,8 +219,10 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   devise
   duktape
+  geocoder
   httparty
   jbuilder (~> 2.5)
+  jwt
   mysql2 (>= 0.4.4, < 0.6.0)
   puma (~> 3.11)
   rails (~> 5.2.2)

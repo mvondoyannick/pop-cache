@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_13_175156) do
+ActiveRecord::Schema.define(version: 2019_02_15_161921) do
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "amount"
@@ -18,6 +18,14 @@ ActiveRecord::Schema.define(version: 2019_02_13_175156) do
     t.datetime "updated_at", null: false
     t.bigint "customer_id"
     t.index ["customer_id"], name: "index_accounts_on_customer_id"
+  end
+
+  create_table "awaits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "amount"
+    t.bigint "customer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_awaits_on_customer_id"
   end
 
   create_table "customers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -32,6 +40,7 @@ ActiveRecord::Schema.define(version: 2019_02_13_175156) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email"
+    t.string "await"
     t.index ["reset_password_token"], name: "index_customers_on_reset_password_token", unique: true
   end
 
@@ -58,4 +67,5 @@ ActiveRecord::Schema.define(version: 2019_02_13_175156) do
   end
 
   add_foreign_key "accounts", "customers"
+  add_foreign_key "awaits", "customers"
 end
