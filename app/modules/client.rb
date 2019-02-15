@@ -272,10 +272,11 @@ class Client
           )
           if await.save
             #mise a jour du montant du customer
-            customer_amount = Account.where(customer_id: customer.id).first.amount - @amount
-
+            account = Account.where(customer_id: customer.id).first
+            customer_amount = account.amount - @amount
+            
             #on mets a jour la table customer sur await
-            if customer.update(await: await.id, amount: customer_amount)
+            if customer.update(await: await.id) && account.update(amount: customer_amount)
               #---------------send sms to customer--------------
               Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. #{$signature}")
               Sms::send
