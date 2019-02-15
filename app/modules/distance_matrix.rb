@@ -8,7 +8,7 @@ class DistanceMatrix
 
         #calcul de la distance
         distance = Geocoder::Calculations.distance_between([@lat1,@lon1], [@lat2,@lon2], units: :km)*1000
-        if distance < 100
+        if distance < 1000
             puts distance
             return true, distance
         else
