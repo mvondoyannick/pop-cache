@@ -205,6 +205,8 @@ class Client
       customer = Customer.where(phone: @phone).first
       account = Account.where(customer_id: customer.id).first
       a = account.amount.to_i - @amount.to_i
+      puts a
+      puts "Compte client : #{account.amount}"
       if account.update(customer_id: customer.id, amount: a )
         return true
       end
@@ -224,7 +226,7 @@ class Client
         if customer.update(await: nil)
           #on debit le compte le client
           debit_client = debit_user_account(@phone, await.amount)
-          if await.destroy && debit_client
+          if debit_client && await.destroy
             Sms.new(@phone, "Vous venez de retirer #{await.amount} #{$devise} de votre compte. #{$signature}")
             Sms::send
             puts "Retrait effectué"
