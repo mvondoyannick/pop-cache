@@ -351,17 +351,17 @@ class Client
       else
         if client.valid_password?(@client_password)
           puts "le client a le bon mot de passe"
-          if client_account.amount.to_i >= Parametre::agis_percentage #@amount.to_i
+          if client_account.amount.to_i >= Parametre::agis_percentage(@amount) #@amount.to_i
             puts "le client a suffisament d'argent dans son compte"
             hash = SecureRandom.hex(3)
-            client_account.amount = client_account.amount.to_i - Parametre::agis_percentage #@amount
+            client_account.amount = client_account.amount.to_i - Parametre::agis_percentage(@amount) #@amount
             if client_account.save
-              marchand_account.amount = marchand_account.amount + Parametre::agis_percentage #@amount
+              marchand_account.amount = marchand_account.amount + Parametre::agis_percentage(@amount) #@amount
               if marchand_account.save
                 Sms.new(@to, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
                 Sms::send
                 #--------------------------------------------------
-                Sms.new(@from, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::agis_percentage} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
+                Sms.new(@from, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::agis_percentage(@amount)} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
                 Sms::send
                 #----------------------------------------------------
                 puts "Paiement effectué de #{@amount}"
