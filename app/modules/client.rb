@@ -107,7 +107,7 @@ class Client
         end
       else
         puts "Utilsateur inconnu"
-        raise customer, "Errors"
+        #raise customer, "Errors"
         return false
       end
     end
