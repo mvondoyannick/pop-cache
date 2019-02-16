@@ -39,34 +39,26 @@ class Api::V1::ApiController < ApplicationController
         #customer_lon = current[6]
 
         #on verifie la distance matrix entre les deux utilisateurs
-        distance = true #DistanceMatrix::get_distance(marchand_lat, marchand_lon, customer_lat, customer_lon)
-        if distance[0] == true
-            if customer && marchand
-                render json: {
-                    client_name: customer.name,
-                    client_second_name: customer.second_name,
-                    client_phone: customer.phone,
-                    marchand_name: marchand.name,
-                    marchand_second_name: marchand.second_name,
-                    marchand_phone: marchand.phone,
-                    amount: current[1].to_i,
-                    devise: "F CFA",
-                    country: :Cameroun,
-                    #adresse_marchand: DistanceMatrix::geocoder_search(marchand_lat, marchand_lon),
-                    #adresse_client: DistanceMatrix::geocoder_search(customer_lat, customer_lon),
-                }
-            else
-                render json: {
-                    message: :errors,
-                    description: "Des erreurs sont survenues",
-                    code_erreurs: customer.errors.messages || marchand.errors.messages
-                }
-            end
+        #distance = DistanceMatrix::get_distance(marchand_lat, marchand_lon, customer_lat, customer_lon)
+        if customer && marchand
+            render json: {
+                client_name: customer.name,
+                client_second_name: customer.second_name,
+                client_phone: customer.phone,
+                marchand_name: marchand.name,
+                marchand_second_name: marchand.second_name,
+                marchand_phone: marchand.phone,
+                amount: current[1].to_i,
+                devise: "F CFA",
+                country: :Cameroun,
+                #adresse_marchand: DistanceMatrix::geocoder_search(marchand_lat, marchand_lon),
+                #adresse_client: DistanceMatrix::geocoder_search(customer_lat, customer_lon),
+            }
         else
             render json: {
-                code: 000 #distance[0],
-                #message: distance[1],
-                #distance: distance[2].abs
+                message: :errors,
+                description: "Des erreurs sont survenues",
+                code_erreurs: customer.errors.messages || marchand.errors.messages
             }
         end
         
