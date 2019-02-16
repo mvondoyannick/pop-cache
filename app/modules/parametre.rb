@@ -1,6 +1,6 @@
 class Parametre
     require 'jwt'
-    $percentage = 1.5
+    $percentage = 2
     $hmac_secret = "my$ecretK3y"
 
     #retourne le montant majoré du client
@@ -9,7 +9,7 @@ class Parametre
         tmp = (@amount*$percentage)/100
         converted = @amount + tmp
         puts converted
-        return converted
+        return converted.to_i
     end
 
     #permet de decoder une chaine precedement code avec JWT
