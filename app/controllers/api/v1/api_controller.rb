@@ -33,13 +33,13 @@ class Api::V1::ApiController < ApplicationController
         customer = Customer.where(phone: current[0]).first
         marchand = Customer.where(phone: current[2]).first
         #gestion des coordonnées
-        #marchand_lat = current[3]
-        #marchand_lon = current[4]
-        #customer_lat = current[5]
-        #customer_lon = current[6]
+        marchand_lat = current[3]
+        marchand_lon = current[4]
+        customer_lat = current[5]
+        customer_lon = current[6]
 
         #on verifie la distance matrix entre les deux utilisateurs
-        distance = true #DistanceMatrix::get_distance(marchand_lat, marchand_lon, customer_lat, customer_lon)
+        distance = DistanceMatrix::get_distance(marchand_lat, marchand_lon, customer_lat, customer_lon)
         if distance[0] == true
             if customer && marchand
                 render json: {
@@ -52,8 +52,8 @@ class Api::V1::ApiController < ApplicationController
                     amount: current[1].to_i,
                     devise: "F CFA",
                     country: :Cameroun,
-                    #adresse_marchand: DistanceMatrix::geocoder_search(marchand_lat, marchand_lon),
-                    #adresse_client: DistanceMatrix::geocoder_search(customer_lat, customer_lon),
+                    adresse_marchand: DistanceMatrix::geocoder_search(marchand_lat, marchand_lon),
+                    adresse_client: DistanceMatrix::geocoder_search(customer_lat, customer_lon),
                 }
             else
                 render json: {
