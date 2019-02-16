@@ -99,11 +99,15 @@ class Client
       customer = Customer.where(phone: @phone).first
       if customer
         if customer.valid_password?(@password)
+          puts "Utilsateur #{customer.name} connecté", customer.as_json(only: [:id, :phone, :name, :second_name])
           return customer.as_json(only: [:id, :phone, :name, :second_name]), status: :created
         else
+          puts "Impossible de connecter utilsateur #{customer.name}"
           return false
         end
       else
+        puts "Utilsateur inconnu"
+        raise customer, "Errors"
         return false
       end
     end
@@ -120,7 +124,7 @@ class Client
         Sms::send
         return true,"Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
       else
-        return false,  "Mot de passe invalide. #{signature}"
+        return false,  "Mot de passe invalide. #{$signature}"
       end
     end
 
