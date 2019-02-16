@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       match 'session/signup', to: 'session#signup', via: [:post, :options]
       match 'session/get_balance/:phone/:password', to: 'session#get_balance', via: [:get, :options]
       match 'session/transaction', to: 'api#payment', via: [:post, :options]
-      match 'session/qrcode', to: 'api#qrcode', via: [:get,:post, :options]
+      match 'session/qrcode/:data', to: 'api#qrcode', via: [:get, :options]
       match 'session/history/:phone', to: 'api#user_history', via: [:get, :options] 
       match 'session/balance/:phone/:password', to: 'session#solde', via: [:get, :options]
       match 'session/check_retrait/:phone', to: 'session#check_retrait', via: [:get, :options]
