@@ -348,7 +348,7 @@ class Client
                 Sms::send
                 #----------------------------------------------------
                 puts "Paiement effectué de #{@amount}"
-                return true, "Paiement effectué avec succes"
+                return true#, "Paiement effectué avec succes"
               else
                 puts "Marchand non credite de #{@amount}"
                 Sms.new(@to, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
