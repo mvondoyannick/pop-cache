@@ -53,7 +53,7 @@ class Client
       @id = id
       @phone = phone
       customer_account = Account.new(
-        amount: 0,
+        amount: 5000,
         customer_id: @id
       )
       
@@ -197,6 +197,19 @@ class Client
       end
     end
 
+    #debiter le compte utilisateur durant un retrait
+    def self.debit_user_account(phone, amount)
+      @phone = phone
+      @amount = amount
+
+      customer = Customer.where(phone: @phone).first
+      account = Account.where(customer_id: customer.id).first
+      a = account.amount.to_i - @amount.to_i
+      if account.update(customer_id: customer.id, amount: a )
+        return true
+      end
+    end
+
 
 
     #validation du retrait par l'utilisateur/customer
@@ -209,7 +222,9 @@ class Client
         #on mets a jour les informations sur await sur customer
         await = Await.where(customer_id: customer.id).first
         if customer.update(await: nil)
-          if await.destroy
+          #on debit le compte le client
+          debit_client = debit_user_account(@phone, await.amount)
+          if await.destroy && debit_client
             Sms.new(@phone, "Vous venez de retirer #{await.amount} #{$devise} de votre compte. #{$signature}")
             Sms::send
             puts "Retrait effectué"
