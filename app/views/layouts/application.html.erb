@@ -13,12 +13,21 @@
   </head>
 
   <body>
-    <ul class="menu align-right">
-      <li><a href="#">Accueil</a></li>
-      <li><%= link_to 'Retrait argent', root_path %></li>
-      <li><%= link_to 'Creation compte', home_private_path %></li>
-      <li><a href="#">Se déconnecter</a></li>
-    </ul>
+    <div class="top-bar">
+<div class="top-bar-left">
+<ul class="menu">
+<li class="menu-text">Opérateur Pop Cash</li>
+</ul>
+</div>
+<div class="top-bar-right">
+<ul class="menu">
+  <li><a href="#">Accueil</a></li>
+  <li><%= link_to 'Retrait argent', root_path %></li>
+  <li><%= link_to 'Creation compte', home_private_path %></li>
+  <li><a href="#">Se déconnecter</a></li>
+</ul>
+</div>
+</div>
     <div class="container">
       <%= yield %>
     </div>
