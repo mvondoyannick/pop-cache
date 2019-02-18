@@ -13,6 +13,14 @@
   </head>
 
   <body>
-    <%= yield %>
+    <ul class="menu align-right">
+      <li><a href="#">Accueil</a></li>
+      <li><%= link_to 'Retrait argent', root_path %></li>
+      <li><%= link_to 'Creation compte', home_private_path %></li>
+      <li><a href="#">Se déconnecter</a></li>
+    </ul>
+    <div class="container">
+      <%= yield %>
+    </div>
   </body>
 </html>

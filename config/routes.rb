@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   get 'home/signup'
   #main route
   root 'home#index'
+  get 'home/retrait'
+  get 'home/create'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   #API main root

@@ -58,7 +58,7 @@ class Client
       )
       
       if customer_account.save
-        Sms.new(@phone, "Votre porte monnaie virtuel vient d\'etre cree, il dispose d\'une somme de 0 (zero) #{$devise}. #{$signature}")
+        Sms.new(@phone, "Votre porte monnaie virtuel vient d\'etre cree, il dispose d\'une somme de 5000 #{$devise}. #{$signature}")
         Sms::send
         return "creation porte-monnaie succes"
       else
