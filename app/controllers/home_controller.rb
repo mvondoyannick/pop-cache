@@ -5,10 +5,11 @@ class HomeController < ApplicationController
 
   def retrait
     puts params[:phone]
-    Client::init_retrait(params[:phone], params[:amount])
+    query = Client::init_retrait(params[:phone], params[:amount])
     render json: {
       message: 'succes',
-      description: 'retrait initialisé'
+      description: 'retrait initialisé',
+      code: query
     }
   end
 
