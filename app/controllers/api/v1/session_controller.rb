@@ -60,15 +60,15 @@ class Api::V1::SessionController < ApplicationController
         phone = params[:phone]
         request = Client::check_retrait(phone)
         if request && request[0] == true
-            render json: {
-                status: true,
-                message: request[1]
-            }
+          render json: {
+            status: true,
+            message: request[1]
+          }
         else
-            render json: {
-                status: false,
-                message: request[1]
-            }
+          render json: {
+            status: false,
+            message: request[1]
+          }
         end
     end
 
@@ -79,14 +79,14 @@ class Api::V1::SessionController < ApplicationController
         request = Client::validate_retrait(phone, password)
         if request && request[0] == true
             render json: {
-                code: request[0],
-                message: request[1]
+              code: request[0],
+              message: request[1]
             }
         else
-            render json: {
-                code: request[0],
-                message: request[1]
-            }
+          render json: {
+            code: request[0],
+            message: request[1]
+          }
         end
     end
 

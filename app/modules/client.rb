@@ -79,7 +79,7 @@ class Client
           customer_account = Account.where(customer_id: customer.id).first
           customer_account.amount = customer_account.amount + @amount
           if customer_account.save
-            hash = SecureRandom.hex(13)
+            hash = SecureRandom.hex(13).upcase
             Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, vous venez d\'etre crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
             Sms::send
             return "Le compte a ete credite d\'un montant de #{@amount}'."
@@ -353,7 +353,7 @@ class Client
           puts "le client a le bon mot de passe"
           if client_account.amount.to_i >= Parametre::agis_percentage(@amount) #@amount.to_i
             puts "le client a suffisament d'argent dans son compte"
-            hash = SecureRandom.hex(3)
+            hash = SecureRandom.hex(13).upcase
             client_account.amount = client_account.amount.to_i - Parametre::agis_percentage(@amount) #@amount
             if client_account.save
               marchand_account.amount = marchand_account.amount + Parametre::agis_percentage(@amount) #@amount
