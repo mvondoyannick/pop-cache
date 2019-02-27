@@ -26,40 +26,45 @@ class Api::V1::ApiController < ApplicationController
 
 
     def qrcode
-			data = params[:data]
+			data = Parametre::Crypto::decode(params[:data])
 			puts data
 			current = data.split('@')
-			puts current
-			customer = Customer.where(phone: current[0]).first
-			marchand = Customer.where(phone: current[2]).first
+      customer = Customer.where(phone: current[0]).first
+      puts '============================================='
+      #puts Parametre::Crypto::decode(current[1]).split('@')
+      currated_marchant = Parametre::Crypto::decode(current[1]).split('@')
+      puts '============================================='
+      marchand = Customer.where(phone: currated_marchant[1]).first
 			#gestion des coordonnées
-			#marchand_lat = current[3]
-			#marchand_lon = current[4]
-			#customer_lat = current[5]
-			#customer_lon = current[6]
+			marchand_lat = currated_marchant[2]
+			marchand_lon = currated_marchant[3]
+			customer_lat = current[2]
+      customer_lon = current[3]
 
 			#on verifie la distance matrix entre les deux utilisateurs
-			#distance = DistanceMatrix::get_distance(marchand_lat, marchand_lon, customer_lat, customer_lon)
-			if customer && marchand
+			distance = DistanceMatrix::DistanceMatrix::get_distance(marchand_lat, marchand_lon, customer_lat, customer_lon)
+			if customer.blank? || marchand.blank? || distance[0] == false
 				render json: {
-					client_name: customer.name,
+					message: :errors,
+          description: "Erreur : #{distance[1]}",
+          distance: distance[1]
+					#code_erreurs: customer.errors.messages || marchand.errors.messages
+				}
+      else
+        render json: {
+					client_name: customer.name || 'fylo',
 					client_second_name: customer.second_name,
 					client_phone: customer.phone,
 					marchand_name: marchand.name,
 					marchand_second_name: marchand.second_name,
 					marchand_phone: marchand.phone,
-					amount: current[1].to_i,
+					amount: currated_marchant[0].to_i,
 					devise: "F CFA",
 					country: :Cameroun,
-					#adresse_marchand: DistanceMatrix::geocoder_search(marchand_lat, marchand_lon),
-					#adresse_client: DistanceMatrix::geocoder_search(customer_lat, customer_lon),
+					adresse_marchand: DistanceMatrix::DistanceMatrix::geocoder_search(marchand_lat, marchand_lon),
+          adresse_client: DistanceMatrix::DistanceMatrix::geocoder_search(customer_lat, customer_lon),
+          distance_status: distance[0]
 					}
-			else
-				render json: {
-					message: :errors,
-					description: "Des erreurs sont survenues",
-					code_erreurs: customer.errors.messages || marchand.errors.messages
-				}
 			end
         
     end
@@ -77,15 +82,15 @@ class Api::V1::ApiController < ApplicationController
 			if !from.nil? && !pwd.nil?
 					#--------------------------------------------------
 					#creation du journale de transaction
-					Journal::create_logs_transaction(from, to, amount)
+					#Logs::Journal::create_logs_transaction(from, to, amount)
 
 					transaction = Client::pay(from, to, amount, pwd)
 					puts transaction
 					render json: transaction
 			else
 					render json: {
-							message: "failed",
-							description: "Aucuns parametres recu"
+            message: "failed",
+            description: "Aucuns parametres recu"
 					}
 			end
     end

@@ -53,6 +53,19 @@ module Parametre
       end
   end
 
+  class Crypto
+    require 'base64'
+
+    def self.decode(chaine)
+      @chaine = chaine
+      result = Base64.decode64(chaine)
+      return result
+    end
+
+    def self.encode(chaine)
+    end
+  end
+
   class Bank
 
     def self.new

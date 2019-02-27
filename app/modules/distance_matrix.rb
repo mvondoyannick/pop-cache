@@ -1,4 +1,5 @@
-class DistanceMatrix
+module DistanceMatrix
+  class DistanceMatrix
 
     def self.get_distance(lat1, long1, lat2, long2)
         @lat1 = lat1
@@ -8,12 +9,12 @@ class DistanceMatrix
 
         #calcul de la distance
         distance = Geocoder::Calculations.distance_between([@lat1,@lon1], [@lat2,@lon2], units: :km)*1000
-        if distance < 1000
-            puts distance
+        if distance < 5
+            puts "Distance reelle : #{distance}"
             return true, distance
         else
-            puts distance
-            return false, "Trop éloigner", distance
+            puts "Distance reelle : #{distance}"
+            return false, "Vous etes trop eloigné de votre vendeur!", distance
         end
     end
 
@@ -32,4 +33,6 @@ class DistanceMatrix
         return results.first.address
     end
     
+  end  
 end
+

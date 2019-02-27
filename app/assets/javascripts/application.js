@@ -9,13 +9,7 @@
 //
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
-//
-//= require adminlte
-//= require bootstrap
-//= require chartjs
-//= jquery/dist/jquery.min.js
-//= what-input/dist/what-input.min.js
-//= foundation-sites/dist/js/foundation.min.js
+//=require bootstrap
 //= require rails-ujs
 //= require activestorage
 //= require turbolinks

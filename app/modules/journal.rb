@@ -1,4 +1,4 @@
-module logs
+module Logs
 
   #quelques informations publiques
   $time = Time.now

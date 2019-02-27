@@ -13,6 +13,8 @@ gem 'puma', '~> 3.11'
 gem 'sass-rails', '~> 5.0'
 #simple_form rails
 gem 'simple_form'
+#country select
+gem 'country_select'
 #installing devise
 gem 'devise'
 #installing httparty
@@ -33,7 +35,6 @@ gem 'coffee-rails', '~> 4.2'
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
-
 #admin LTE
 source 'https://rails-assets.org' do
   #gem 'rails-assets-bootstrap'
