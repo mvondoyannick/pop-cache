@@ -1,5 +1,6 @@
 GEM
   remote: https://rubygems.org/
+  remote: https://rails-assets.org/
   specs:
     actioncable (5.2.2)
       actionpack (= 5.2.2)
@@ -145,6 +146,11 @@ GEM
       bundler (>= 1.3.0)
       railties (= 5.2.2)
       sprockets-rails (>= 2.0.0)
+    rails-assets-adminlte (2.3.11)
+    rails-assets-angular (1.7.5)
+    rails-assets-bootstrap (4.1.3)
+    rails-assets-chartjs (2.7.3)
+    rails-assets-leaflet (1.3.4)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -233,6 +239,11 @@ DEPENDENCIES
   mysql2 (>= 0.4.4, < 0.6.0)
   puma (~> 3.11)
   rails (~> 5.2.2)
+  rails-assets-adminlte!
+  rails-assets-angular!
+  rails-assets-bootstrap!
+  rails-assets-chartjs!
+  rails-assets-leaflet!
   sass-rails (~> 5.0)
   selenium-webdriver
   simple_form

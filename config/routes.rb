@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :agents
   #devise_for :customers
   get 'verify/query'
   get 'verify/verify'
@@ -13,6 +14,8 @@ Rails.application.routes.draw do
   root 'home#index'
   get 'home/retrait'
   get 'home/create'
+  get 'home/compte'
+  get 'home/account/particulier', to: 'home#particulier'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   #API main root

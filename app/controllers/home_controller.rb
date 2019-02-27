@@ -1,16 +1,18 @@
 class HomeController < ApplicationController
+  before_action :authenticate_agent!, only: [:retrait, :index]
+  layout 'lte/application'
   def index
   
   end
 
   def retrait
-    puts params[:phone]
-    query = Client::init_retrait(params[:phone], params[:amount])
-    render json: {
-      message: 'succes',
-      description: 'retrait initialisé',
-      code: query
-    }
+    # puts params[:phone]
+    # query = Client::init_retrait(params[:phone], params[:amount])
+    # render json: {
+    #   message: 'succes',
+    #   description: 'retrait initialisé',
+    #   code: query
+    # }
   end
 
   def public
@@ -18,6 +20,15 @@ class HomeController < ApplicationController
   end
 
   def private
+  end
+
+  "compte pour le particulier"
+  def particulier
+    @particulier = Customer.order(created_at: :desc)
+  end
+
+  def compte
+
   end
 
   def create
