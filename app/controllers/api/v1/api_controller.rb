@@ -63,7 +63,8 @@ class Api::V1::ApiController < ApplicationController
 					country: :Cameroun,
 					adresse_marchand: DistanceMatrix::DistanceMatrix::geocoder_search(marchand_lat, marchand_lon),
           adresse_client: DistanceMatrix::DistanceMatrix::geocoder_search(customer_lat, customer_lon),
-          distance_status: distance[0]
+          distance_status: distance[0],
+          date: Time.now
 					}
 			end
         

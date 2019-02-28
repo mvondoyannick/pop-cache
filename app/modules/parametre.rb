@@ -83,6 +83,9 @@ module Parametre
     end
   end
 
+  #permet l'authentification a deux niveau a la creation du compte
+  #pour s'assurer que le client
+
 
   #retourne les transaction USSD de la transaction
   class USSD

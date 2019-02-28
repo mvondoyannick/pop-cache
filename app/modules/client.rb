@@ -77,7 +77,7 @@ class Client
       customer = Customer.where(phone: @phone).first
       if customer
           customer_account = Account.where(customer_id: customer.id).first
-          customer_account.amount = customer_account.amount + @amount
+          customer_account.amount = customer_account.amount.to_i + @amount.to_i
           if customer_account.save
             hash = SecureRandom.hex(13).upcase
             Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, vous venez d\'etre crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")

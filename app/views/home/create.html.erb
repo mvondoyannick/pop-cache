@@ -1,18 +1,22 @@
-<div class="h1">Procedure de retrait</div>
+<div class="h1">Creer un compte client</div>
 <br>
 <div class="row">
   <div class="col-6">
-    <%= form_tag(home_retrait_path, method: :post) do %>
+    <%= form_tag(home_credit_path, method: :post) do %>
       <div class="form-group">
         <label for="exampleFormControlInput1">Numéro de téléphone</label>
         <%= telephone_field_tag :phone, nil, class: 'form-control', placeholder: '6xx-xxx-xxx', require: true %>
       </div>
       <div class="form-group">
-        <label for="exampleFormControlSelect1">Montant du retrait</label>
-        <%= number_field_tag :amount, nil, class: 'form-control', placeholder: '2500', require: true %>
+        <label for="exampleFormControlSelect1">Nom</label>
+        <%= text_field_tag :name, nil, class: 'form-control', placeholder: '2500', require: true %>
       </div>
       <div class="form-group">
-        <label for="exampleFormControlSelect1">Date de retrait</label>
+        <label for="exampleFormControlSelect1">Prénom</label>
+        <%= text_field_tag :second_name, nil, class: 'form-control', placeholder: '2500', require: true %>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlSelect1">Date de creation</label>
         <%= text_field_tag :date, nil, class: 'form-control', placeholder: '2500', readonly: true, value: Time.now %>
       </div>
       <div class="form-group">
@@ -28,7 +32,7 @@
     <form>
       <div class="form-group">
         <label for="exampleFormControlInput1">Status</label>
-        <%= text_field_tag :date, nil, class: 'form-control', readonly: true, value:  @response %>
+        <%= text_field_tag :date, nil, class: 'form-control', readonly: true %>
       </div>
       <div class="form-group">
         <label for="exampleFormControlSelect1">Example select</label>

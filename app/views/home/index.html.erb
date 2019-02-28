@@ -1,54 +1,100 @@
-<<<<<<< HEAD
-<div class="jumbotron">
-  <h1 class="display-4">Bonjour Mr <%= current_agent.name %></h1>
-  <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-  <hr class="my-4">
-  <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-</div>
-=======
-<h1>Retrait d'argent</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+      <br>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <%= image_tag('marionnette.jpeg', class: 'card-img-top', alt: 'card image cap') %>
+            <div class="card-body">
+              <h5 class="card-title">Crediter compte utilisateur</h5>
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                <%=  link_to 'Demarrer', home_credit_path, class: 'btn btn-sm btn-outline-secondary'%>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                </div>
+                <small class="text-muted"><%= current_agent.email %></small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <%= image_tag('phonr.jpg', class: 'card-img-top', alt: 'card image cap') %>
+            <div class="card-body">
+              <h5 class="card-title">Retrait compte utilisateur</h5>
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <%= link_to 'Démarrer', home_retrait_path, class: 'btn btn-sm btn-outline-secondary' %>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                </div>
+                <small class="text-muted">9 mins</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <%= image_tag('marionnette.jpeg', class: 'card-img-top', alt: 'card image cap') %>
+            <div class="card-body">
+              <h5 class="card-title">Utilisateurs et comptes</h5>
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                </div>
+                <small class="text-muted">9 mins</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <%= image_tag('marionnette.jpeg', class: 'card-img-top', alt: 'card image cap') %>
+            <div class="card-body">
+              <h5 class="card-title">Creer un compte utilisateur</h5>
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <%= link_to 'Démarrer', home_create_path, class: 'btn btn-sm btn-outline-secondary' %>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                </div>
+                <small class="text-muted">9 mins</small>
+              </div>
+            </div>
+          </div>
+        </div>
 
->>>>>>> 555859967755fde0b5f7a18e76767395a41bbce1
-<div class="row">
-  <div class="col-3">
-    <div class="card" style="width: 15rem;">
-      <%= image_tag('marionnette.jpeg', class: 'card-img-top', alt: 'card image cap') %>
-      <div class="card-body">
-        <h5 class="card-title">Particuliers</h5>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <%= link_to 'Acceder', home_account_particulier_path, class: 'btn btn-primary' %>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <%= image_tag('marionnette.jpeg', class: 'card-img-top', alt: 'card image cap') %>
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                </div>
+                <small class="text-muted">9 mins</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <%= image_tag('marionnette.jpeg', class: 'card-img-top', alt: 'card image cap') %>
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                </div>
+                <small class="text-muted">9 mins</small>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   </div>
-  <div class="col-3">
-    <div class="card" style="width: 15rem;">
-      <%= image_tag('apple.jpg', class: 'card-img-top', alt: 'card image cap') %>
-      <div class="card-body">
-        <h5 class="card-title">Entreprise</h5>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-      </div>
-    </div>
-  </div>
-  <div class="col-3">
-    <div class="card" style="width: 15rem;">
-      <%= image_tag('phonr.jpg', class: 'card-img-top', alt: 'card image cap') %>
-      <div class="card-body">
-        <h5 class="card-title">Ecommerce</h5>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-      </div>
-    </div>
-  </div>
-  <div class="col-3">
-    <div class="card" style="width: 15rem;">
-      <%= image_tag('phonr.jpg', class: 'card-img-top', alt: 'card image cap') %>
-      <div class="card-body">
-        <h5 class="card-title">Ecommerce</h5>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-      </div>
-    </div>
-  </div>
-</div>

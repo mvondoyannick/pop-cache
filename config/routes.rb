@@ -12,8 +12,9 @@ Rails.application.routes.draw do
   get 'home/signup'
   #main route
   root 'home#index'
-  get 'home/retrait'
-  get 'home/create'
+  match 'home/retrait', to: 'home#retrait', via: [:get, :post]
+  match 'home/create', to: 'home#create', via: [:get, :post]
+  match 'home/credit', to: 'home#credit', via: [:get, :post]
   get 'home/compte'
   get 'home/account/particulier', to: 'home#particulier'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
