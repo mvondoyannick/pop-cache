@@ -141,7 +141,7 @@ module Parametre
         #on verifie que le code auth_key est encore valide dans le temps
         if @auth == customer.two_fa && Time.now <= customer.perime_two_fa
           #on supprimer les information et on les set a authenticate
-          if customer.update(two_fa: 'authenticate', perime_two_fa: Date.now)
+          if customer.update(two_fa: 'authenticate', perime_two_fa: 'ok')
             Sms.new(@phone, "Mr #{customer.name.upcase}, Votre compte a ete authentifie. Vous pouvez desormais vous connecter.")
             Sms::send
             puts "auth"
