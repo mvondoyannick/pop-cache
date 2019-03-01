@@ -43,7 +43,7 @@ module Entreprise
       end
 
       #envoyer le message uniquement si c'est une entreprise
-      def seld.send(pin)
+      def self.send(pin)
       end
     end
     
