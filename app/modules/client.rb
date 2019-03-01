@@ -17,13 +17,14 @@ class Client
       $pwd = pwd
     end
 
+
     def self.create_user(name, second_name, phone, cni, password)
       @name = name
       @second_name = second_name
       @phone = phone
       @cni = cni
       @email = "#{SecureRandom.hex(3)}@pop-cash.cm"
-      @password = password
+      @password = password #"PC_#{SecureRandom.hex(4).upcase}"
 
       #creation du compte de l'utilisateur
       customer = Customer.new(
@@ -36,7 +37,7 @@ class Client
       )
 
       if customer.save
-        Sms.new(@phone, "Mr/Mme #{@name} #{@second_name} votre compte a ete cree avec succes. Bienvenue sur #{$signature}")
+        Sms.new(@phone, "Mr/Mme #{@name} #{@second_name} votre compte a ete cree avec succes .Bienvenue sur #{$signature}")
         Sms::send
         create_user_account(customer.id, customer.phone)
         return true
@@ -118,13 +119,21 @@ class Client
 
       #on recherche le client
       query = Customer.where(phone: phone).first
-      if query.valid_password?(@password)
-        account = Account.where(customer_id: query.id).first
-        Sms.new(@phone, "Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
-        Sms::send
-        return true,"Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
+      if query.blank?
+        return false, "Utilisateur inconnu."
       else
-        return false,  "Mot de passe invalide. #{$signature}"
+        if query.valid_password?(@password)
+          account = Account.where(customer_id: query.id).first
+          if account.blank?
+            return false, "Aucun compte utilisateur correcpondant ou compte vide"
+          else
+            Sms.new(@phone, "Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
+            Sms::send
+            return true,"Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
+          end
+        else
+          return false,  "Mot de passe invalide. #{$signature}"
+        end
       end
     end
 

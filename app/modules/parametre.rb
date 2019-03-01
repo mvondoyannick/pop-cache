@@ -1,4 +1,7 @@
-module Parametre  
+module Parametre 
+  
+  $key = "Bl@ckberry18"
+
   class Parametre
       require 'jwt'
       $percentage = 2
@@ -64,6 +67,16 @@ module Parametre
 
     def self.encode(chaine)
     end
+
+    def self.cryptoSSL(data)
+      @data = data
+      digest = OpenSSL::Digest.new('sha1')
+
+      hmac = OpenSSL::HMAC.hexdigest(digest, $key, @data)
+      #=> "de7c9b85b8b78aa6bc8a7a36f70a90701c9db4d9"
+
+      return hmac
+    end
   end
 
   class Bank
@@ -83,8 +96,49 @@ module Parametre
     end
   end
 
-  #permet l'authentification a deux niveau a la creation du compte
-  #pour s'assurer que le client
+  class Authentication
+    #permet l'authentification a deux niveau a la creation du compte
+    #pour s'assurer que le client
+    def self.auth_two_factor(phone, context)
+      @phone = phone.to_i
+      @context = context
+
+      #on cherche ce nouvel utilisateur
+      auth = Customer.where(phone: phone).first
+
+      #on inscrit le nouveau mot de passe dans son compte
+      if auth.blank?
+        return false
+      else
+        data = SecureRandom.hex(4).upcase
+        #auth.two_fa = Crypto::cryptoSSL(data)
+        if auth.update(two_fa: Crypto::cryptoSSL(data))
+          Sms.new(@phone, "Code Pop Cash : #{data}")
+          Sms::send
+
+          #on retourne les informations
+          return true, "Identification a deux facteurs envoyé"
+        else
+          Sms.new(@phone, "Impossible de terminer votre inscription .")
+          Sms::send
+
+          #on retourne les informations
+          return false, "Echec Identification a deux facteurs, errors: #{auth.errors.messages}"
+        end 
+      end
+    end
+
+    #permet de valider un code 2fa
+    def self.validate_2fa(phone, auth_key)
+      @phone = phone
+      @auth = auth_key
+      #on cherche le client responsable de cette demande
+      customer = where(phone: phone, two_fa: Parametre::Crypto::cryptoSSL(@auth)).first
+      #if 
+    end
+  end
+
+  
 
 
   #retourne les transaction USSD de la transaction

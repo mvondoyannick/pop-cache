@@ -9,11 +9,11 @@
       </div>
       <div class="form-group">
         <label for="exampleFormControlSelect1">Nom</label>
-        <%= text_field_tag :name, nil, class: 'form-control', placeholder: '2500', require: true %>
+        <%= text_field_tag :name, nil, class: 'form-control', placeholder: 'Nom client', require: true %>
       </div>
       <div class="form-group">
         <label for="exampleFormControlSelect1">Prénom</label>
-        <%= text_field_tag :second_name, nil, class: 'form-control', placeholder: '2500', require: true %>
+        <%= text_field_tag :second_name, nil, class: 'form-control', placeholder: 'Prenom client', require: true %>
       </div>
       <div class="form-group">
         <label for="exampleFormControlSelect1">Date de creation</label>
@@ -31,8 +31,20 @@
   <div class="col-6">
     <form>
       <div class="form-group">
-        <label for="exampleFormControlInput1">Status</label>
-        <%= text_field_tag :date, nil, class: 'form-control', readonly: true %>
+        <label for="exampleFormControlInput1">N° CNI</label>
+        <%= text_field_tag :cni, nil, class: 'form-control', placeholder: 'Numéro Carte national Identitée' %>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlInput1">Image CNI</label>
+        <%= file_field_tag :picture_cni, class: 'form-control' %>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlInput1">Formulaire client</label>
+        <%= file_field_tag :formulaire, class: 'form-control' %>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlInput1">Photo Client</label>
+        <%= file_field_tag :avatar, class: 'form-control' %>
       </div>
       <div class="form-group">
         <label for="exampleFormControlSelect1">Example select</label>

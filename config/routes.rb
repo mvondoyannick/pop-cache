@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :partners
   devise_for :agents
   #devise_for :customers
   get 'verify/query'
