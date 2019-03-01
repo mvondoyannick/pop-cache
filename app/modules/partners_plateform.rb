@@ -31,7 +31,7 @@ module PartnersPlateform
     def self.debit(phone, amount, credential)
     end
 
-    def self.create(name, second_name, cni,)
+    def self.create(name, second_name, cni)
     end
 
     def self.processFinalize(cni)
