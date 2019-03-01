@@ -18,13 +18,6 @@ class Api::V1::ApiController < ApplicationController
         end
     end
 
-
-    #permet de verifier si le payeur dispose d'argent dans son compte
-    def have_money
-        
-    end
-
-
     def qrcode
 			data = Parametre::Crypto::decode(params[:data])
 			puts data

@@ -1,17 +1,12 @@
 class Api::V1::SessionController < ApplicationController
     skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait]
-    #pour la connexion de l'utilisateur
-    def create
-
-    end
 
     #creation de compte utilisateur
     def signup
         email = "me@me.com"
-        query = Client::create_user(params[:nom], params[:prenom], params[:phone], params[:cni], params[:password])
+        query = Client::create_user(params[:nom], params[:prenom], params[:phone], params[:password])
         render json: {
-            #message: :in_progress,
-            status: query
+          status: query
         }
 
         #processus de creation des comptes utilisateurs
@@ -34,10 +29,6 @@ class Api::V1::SessionController < ApplicationController
         #query the user
         signin = Client::auth_user(phone, password)
         render json: signin
-    end
-
-    #pour la deconnexion de l'utilisateur
-    def descroy
     end
 
     #obtention du solde du compte client
@@ -89,6 +80,26 @@ class Api::V1::SessionController < ApplicationController
           }
         end
     end
+
+    #validation de 2FA
+    def signup_authentication
+      phone = params[:phone]
+      code  = params[:code]
+
+      authenticate = Parametre::Authentication::validate_2fa(phone, code)
+      if authenticate == true
+        render json: {
+          status: :success,
+          message: "Authentifié"
+        }
+      else
+        render json: {
+          status: :failed,
+          message: "Echec authentification"
+        }
+      end
+    end
+  
 
 
     def transaction

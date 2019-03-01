@@ -18,11 +18,11 @@ class Client
     end
 
 
-    def self.create_user(name, second_name, phone, cni, password)
+    def self.create_user(name, second_name, phone, password)
       @name = name
       @second_name = second_name
       @phone = phone
-      @cni = cni
+      #@cni = cni
       @email = "#{SecureRandom.hex(3)}@pop-cash.cm"
       @password = password #"PC_#{SecureRandom.hex(4).upcase}"
 
@@ -31,7 +31,6 @@ class Client
         name: @name,
         second_name: @second_name,
         phone: @phone,
-        cni: @cni,
         email: @email,
         password: @password
       )
@@ -40,7 +39,14 @@ class Client
         Sms.new(@phone, "Mr/Mme #{@name} #{@second_name} votre compte a ete cree avec succes .Bienvenue sur #{$signature}")
         Sms::send
         create_user_account(customer.id, customer.phone)
-        return true
+
+        #generation de 2Fa
+        auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
+        if auth[0] == true
+          return true, @phone
+        else
+          return auth[1]
+        end
       else
         Sms.new(@phone, "Impossible de creer Votre profil personnel, merci de vous rappocher d\'un service Express Union. #{$signature}")
         Sms::send
@@ -69,6 +75,7 @@ class Client
       end
     end
 
+
     #permet de crediter le compte utilisateur en se basant sur son numero de telephone et sur le montant
     def self.credit_account(phone, amount)
       @phone = phone
@@ -76,19 +83,25 @@ class Client
 
       #on rechercher le user pour avoir sont ID
       customer = Customer.where(phone: @phone).first
-      if customer
+      if customer.blank?
+        return false, "Aucune utilisateur ne correspond."
+      else
           customer_account = Account.where(customer_id: customer.id).first
-          customer_account.amount = customer_account.amount.to_i + @amount.to_i
-          if customer_account.save
-            hash = SecureRandom.hex(13).upcase
-            Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, vous venez d\'etre crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
-            Sms::send
-            return "Le compte a ete credite d\'un montant de #{@amount}'."
+          if customer_account.blank?
+            return false, "Auccun compte correspondant trouve."
           else
-            Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, impossible de crediter votre compte. Echec de la Transaction #{hash}. #{$signature}")
-            Sms::send
-            return "impossible de crediter le compte. code erreurs : #{customer_account.errors}"
-          end
+            customer_account.amount = customer_account.amount.to_i + @amount.to_i
+            if customer_account.save
+              hash = SecureRandom.hex(13).upcase
+              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, vous venez d\'etre crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
+              Sms::send
+              return "Le compte a ete credite d\'un montant de #{@amount}'."
+            else
+              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, impossible de crediter votre compte. Echec de la Transaction #{hash}. #{$signature}")
+              Sms::send
+              return "impossible de crediter le compte. code erreurs : #{customer_account.errors}"
+            end
+          end  
       end
   end
 
@@ -98,7 +111,7 @@ class Client
       @password = password
 
       customer = Customer.where(phone: @phone).first
-      if customer
+      if !customer.blank?
         if customer.valid_password?(@password)
           puts "Utilsateur #{customer.name} connecté", customer.as_json(only: [:id, :phone, :name, :second_name])
           return customer.as_json(only: [:id, :phone, :name, :second_name]), status: :created
@@ -144,7 +157,7 @@ class Client
         @amount = amount
 
         response = Account.find(@id)
-        if response
+        if !response.blank?
           response.amount = response.amount - @amount
           if response.save
             return true
@@ -163,7 +176,7 @@ class Client
         @amount = amount
 
         response = Account.find(@id)
-        if response
+        if !response.blank?
           response.amount = response.amount + @amount
           if response.save
             return true
@@ -180,17 +193,21 @@ class Client
     def self.find_client(id)
       @sender_id = id
       query = Customer.find(id)
-      return query
+      if query.blank?
+        return false, "Utilisateur inconnu"
+      else
+        return true, query
+      end
     end
 
     #recherche les informations sur le receveur
     def self.find_marchand(id)
       @receiver_id = id
       query = Customer.find(id)
-      if query
-        return query
+      if query.blank?
+        return false, "Utilisateur inconnu"
       else
-        return false
+        return true, query
       end
     end
 

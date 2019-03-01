@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_01_152757) do
+ActiveRecord::Schema.define(version: 2019_03_01_182355) do
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "amount"
@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 2019_03_01_152757) do
     t.string "email"
     t.string "await"
     t.string "two_fa"
+    t.string "perime_two_fa"
     t.index ["reset_password_token"], name: "index_customers_on_reset_password_token", unique: true
   end
 
