@@ -1,5 +1,5 @@
 class Api::V1::SessionController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait]
+    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication]
 
     #creation de compte utilisateur
     def signup
@@ -87,7 +87,7 @@ class Api::V1::SessionController < ApplicationController
       code  = params[:code]
 
       authenticate = Parametre::Authentication::validate_2fa(phone, code)
-      if authenticate == true
+      if authenticate[0] == true
         render json: {
           status: :success,
           message: "Authentifié"

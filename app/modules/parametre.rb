@@ -112,7 +112,7 @@ module Parametre
       else
         data = SecureRandom.hex(4).upcase
         #auth.two_fa = Crypto::cryptoSSL(data)
-        if auth.update(two_fa: Crypto::cryptoSSL(data), perime_two_fa: 1.hour.from_now)
+        if auth.update(two_fa: data, perime_two_fa: 1.hour.from_now)
           Sms.new(@phone, "Code Pop Cash : #{data}")
           Sms::send
 
@@ -133,22 +133,27 @@ module Parametre
       @phone = phone
       @auth = auth_key
       #on cherche le client responsable de cette demande
-      customer = where(phone: phone, two_fa: Parametre::Crypto::cryptoSSL(@auth)).first
+      customer = Customer.where(phone: phone, two_fa: @auth).first
       if customer.blank?
         return false, "Aucun code pour ce numero"
       else
+        puts customer.two_fa
         #on verifie que le code auth_key est encore valide dans le temps
-        if Crypto::cryptoSSL(@auth) == customer.two_fa && Time.now <= customer.perime_two_fa
+        if @auth == customer.two_fa && Time.now <= customer.perime_two_fa
           #on supprimer les information et on les set a authenticate
-          if customer.update(two_fa: 'authenticate', perime_two_fa: authenticate)
-            Sms.new(@phone, "Mr #{customer.name.upcase}, Votre compte a été authentifie. Vous pouvez desormais vous connecter.")
+          if customer.update(two_fa: 'authenticate', perime_two_fa: Date.now)
+            Sms.new(@phone, "Mr #{customer.name.upcase}, Votre compte a ete authentifie. Vous pouvez desormais vous connecter.")
             Sms::send
-            return true, "Authenticated"
+            puts "auth"
+            return true, "Authenticated & updated"
           else
-            return false, "Authenticated failed"
+            puts "Failed auth"
+            return false, "update failed"
           end
+          return true, "Authenticated"
         else
-          return false, "Impossible de verifier les informations"
+          puts "verification impossible"
+          return false, "Authentification Impossible : Date ou code incorrect"
         end
       end
     end

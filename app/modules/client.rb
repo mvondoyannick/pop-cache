@@ -112,7 +112,7 @@ class Client
 
       customer = Customer.where(phone: @phone).first
       if !customer.blank?
-        if customer.valid_password?(@password)
+        if customer.valid_password?(@password) && customer.two_fa == "authenticate"
           puts "Utilsateur #{customer.name} connecté", customer.as_json(only: [:id, :phone, :name, :second_name])
           return customer.as_json(only: [:id, :phone, :name, :second_name]), status: :created
         else
