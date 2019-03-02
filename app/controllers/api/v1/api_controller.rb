@@ -76,7 +76,7 @@ class Api::V1::ApiController < ApplicationController
 			if !from.nil? && !pwd.nil?
 					#--------------------------------------------------
 					#creation du journale de transaction
-					#Logs::Journal::create_logs_transaction(from, to, amount)
+					#Logs::Journal::create_logs_transaction(from, to, amount, )
 
 					transaction = Client::pay(from, to, amount, pwd)
 					puts transaction

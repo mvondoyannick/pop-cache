@@ -28,7 +28,7 @@ class Client
 
       #creation du compte de l'utilisateur
       customer = Customer.new(
-        name: @name,
+        name: @name.upcase,
         second_name: @second_name,
         phone: @phone,
         email: @email,
@@ -36,8 +36,8 @@ class Client
       )
 
       if customer.save
-        Sms.new(@phone, "Mr/Mme #{@name} #{@second_name} votre compte a ete cree avec succes .Bienvenue sur #{$signature}")
-        Sms::send
+        #Sms.new(@phone, "Mr/Mme #{@name} #{@second_name} votre compte a ete cree avec succes .Bienvenue sur #{$signature}")
+        #Sms::send
         create_user_account(customer.id, customer.phone)
 
         #generation de 2Fa
@@ -65,7 +65,7 @@ class Client
       )
       
       if customer_account.save
-        Sms.new(@phone, "Votre porte monnaie virtuel vient d\'etre cree, il dispose d\'une somme de 5000 #{$devise}. #{$signature}")
+        Sms.new(@phone, "#{@phone} Bienvenue chez POP CASH, votre porte monnaie virtuel vient d\'etre cree, il dispose d\'une somme de 5000 #{$devise}. #{$signature}")
         Sms::send
         return "creation porte-monnaie succes"
       else
@@ -358,7 +358,7 @@ class Client
     def self.pay(from, to, amount, pwd)
       @from = from.to_i
       @to = to.to_i
-      @amount = amount.to_i  #montant de la transation
+      @amount = amount.to_f  #montant de la transation
       @client_password = pwd
 
       puts "Client : #{@from} -- marchand : #{@to} -- Amount : #{@amount} -- pwd : #{@client_password}"
@@ -377,12 +377,12 @@ class Client
       else
         if client.valid_password?(@client_password)
           puts "le client a le bon mot de passe"
-          if client_account.amount.to_i >= Parametre::Parametre::agis_percentage(@amount) #@amount.to_i
+          if client_account.amount.to_f >= Parametre::Parametre::agis_percentage(@amount) #@amount.to_i
             puts "le client a suffisament d'argent dans son compte"
             hash = SecureRandom.hex(13).upcase
-            client_account.amount = client_account.amount.to_i - Parametre::Parametre::agis_percentage(@amount) #@amount
+            client_account.amount = client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
             if client_account.save
-              marchand_account.amount = marchand_account.amount + Parametre::Parametre::agis_percentage(@amount) #@amount
+              marchand_account.amount = marchand_account.amount + @amount #@amount
               if marchand_account.save
                 Sms.new(@to, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
                 Sms::send
@@ -441,7 +441,15 @@ class Client
             marchand_account.amount = marchand_account.amount + @amount
             if marchand_account.save
               client_account.amount = client_account.amount - @amount
+
+              #on inscrit dans l'historique du marchand
+              Journal::Journal::create_logs_transaction(@from, @to, @amount, "credit")
               if client_account.save
+
+                #on inscrit le journal du client concernant sa transaction
+                Journal::Journal::create_logs_transaction(@to, @from, @amount, "debit")
+
+                #Envoi des SMS de confirmations de la transaction
                 Sms.new(@to, "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
                 Sms::send
                 #----------------------------------

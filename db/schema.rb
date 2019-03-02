@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_01_182355) do
+ActiveRecord::Schema.define(version: 2019_03_02_145834) do
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "amount"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 2019_03_01_182355) do
   end
 
   create_table "customers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -75,10 +76,10 @@ ActiveRecord::Schema.define(version: 2019_03_01_182355) do
     t.string "cni"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "email"
     t.string "await"
     t.string "two_fa"
     t.string "perime_two_fa"
+    t.index ["email"], name: "index_customers_on_email", unique: true
     t.index ["reset_password_token"], name: "index_customers_on_reset_password_token", unique: true
   end
 
@@ -113,6 +114,7 @@ ActiveRecord::Schema.define(version: 2019_03_01_182355) do
     t.string "amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "context"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

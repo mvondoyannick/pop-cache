@@ -13,7 +13,7 @@ module Parametre
           tmp = (@amount*$percentage)/100
           converted = @amount + tmp
           puts converted
-          return converted.to_i
+          return converted.to_f
       end
 
       
@@ -110,7 +110,7 @@ module Parametre
       if auth.blank?
         return false, "Aucun utilisateur trouve"
       else
-        data = SecureRandom.hex(4).upcase
+        data = SecureRandom.hex(2).upcase
         #auth.two_fa = Crypto::cryptoSSL(data)
         if auth.update(two_fa: data, perime_two_fa: 1.hour.from_now)
           Sms.new(@phone, "Code Pop Cash : #{data}")

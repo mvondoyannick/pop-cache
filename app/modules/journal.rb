@@ -1,4 +1,4 @@
-module Logs
+module Journal
 
   #quelques informations publiques
   $time = Time.now
@@ -16,11 +16,12 @@ module Logs
         @lon = lon
       end
   
-      def self.create_logs_transaction(client_phone, marchand_phone, amount)
+      def self.create_logs_transaction(client_phone, marchand_phone, amount, context)
           @client_phone   = client_phone
           @marchand_phone = marchand_phone
           @amount         = amount
           @date           = Time.now
+          @context        = context #le context represente le cadre dans lequel c'est deroulé l'action
           @client_name    = Customer.where(phone: @client_phone).first.name
           @marchand_name  = Customer.where(phone: @marchand_phone).first.name
   
@@ -33,7 +34,8 @@ module Logs
               client_name: @client_name,
               marchand_phone: @marchand_phone,
               marchand_name: @marchand_name,
-              amount: @amount
+              amount: @amount,
+              context: @context
           )
           if journal.save
               puts "New entry created"

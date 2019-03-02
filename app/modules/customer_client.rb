@@ -11,10 +11,14 @@ module CustomerClient
 
   class Client
     def self.get_customer(phone)
-      @phone = phone
+      @phone = phone.to_i
 
       query = Customer.where(phone: @phone).first
-      return query
+      if query.blank?
+        return false, "#{@phone} n'est pas client de la plateforme"
+      else
+        return true, query
+      end
     end
 
     #retourner toutes les questions au client mobile

@@ -20,6 +20,22 @@ class Api::V1::SessionController < ApplicationController
         render json: balance
     end
 
+    def e
+      phone = params[:phone]
+      query = History::History::encaisser(phone)
+      render json: {
+          message: query
+      }
+    end
+
+    def p
+      phone = params[:phone]
+      query = History::History::payment(phone)
+      render json: {
+          message: query
+      }
+    end
+
     
 
     def signin

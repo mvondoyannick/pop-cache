@@ -33,6 +33,8 @@ Rails.application.routes.draw do
       match 'session/check_retrait/:phone', to: 'session#check_retrait', via: [:get, :options]
       match 'session/validate_retrait', to: 'session#validate_retrait', via: [:post, :options]
       match 'session/validate/authentication', to: 'session#signup_authentication', via: [:post, :options]
+      match 'session/history/h/encaisser', to: 'session#e', via: [:post, :options]
+      match 'session/history/h/payment', to: 'session#p', via: [:post, :options]
     end
   end
 end
