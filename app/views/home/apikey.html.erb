@@ -1,0 +1,8 @@
+<h1>Request an API key for ecommerce</h1>
+<br>
+<%= @user %>
+<%= form_tag home_apikey_request_path, method: :post do %>
+  <%= text_field_tag :name, nil, placeholder: 'Name' %> <br> <br>
+  <%= text_field_tag :paramphrase, nil, placeholder: 'paramphrase' %> <br> <br>
+  <%= submit_tag 'Generer' %>
+<% end %>

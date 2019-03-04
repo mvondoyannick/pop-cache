@@ -29,6 +29,29 @@ class HomeController < ApplicationController
     @transaction = Transaction.all
   end
 
+
+  def apikey
+    @user = current_agent.phone
+  end
+
+  def apikey_request
+    name = params[:name]
+    paraphrase = params[:paramphrase]
+
+    #generation de la solution
+    @user = current_agent.phone
+
+    key = Parametre::Crypto::cryptoSSL(paraphrase)
+
+    #on met a jour dans la base de données
+    current_user = Customer.where(phone: @user)
+    if current_user.update(apikey: key)
+      @status = "Succes"
+    else
+      @status = "failed : "+current_user.errors.messages
+    end
+  end
+
   def private
   end
 

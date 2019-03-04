@@ -1,5 +1,7 @@
 class Api::V1::ApiController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:payment, :qrcode]
+    skip_before_action :verify_authenticity_token, only: [:payment, :qrcode, :test]
+
+		#require 'rqrcode'
 
     #permet verifier un utilisateur
     def verif_user
@@ -17,6 +19,16 @@ class Api::V1::ApiController < ApplicationController
             }
         end
     end
+
+    def test
+      #ApplicationController.renderer.defaults
+			code  = params[:code]
+			render json: {
+					status: 200,
+					content: code,
+					qr_string: Parametre::Crypto::cryptoSSL(code)
+			}
+		end
 
     def qrcode
 			data = Parametre::Crypto::decode(params[:data])

@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   get 'home/public'
   get 'home/private'
   get 'home/login'
+  get 'home/apikey'
+  post 'home/apikey_request'
   get 'home/signup'
   #main route
   root 'home#index'
@@ -35,6 +37,7 @@ Rails.application.routes.draw do
       match 'session/validate/authentication', to: 'session#signup_authentication', via: [:post, :options]
       match 'session/history/h/encaisser', to: 'session#e', via: [:post, :options]
       match 'session/history/h/payment', to: 'session#p', via: [:post, :options]
+      match 'test/:code(/:amount)', to: 'api#test', via: [:get, :options]
     end
   end
 end

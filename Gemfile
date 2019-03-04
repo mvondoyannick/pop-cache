@@ -23,6 +23,8 @@ gem 'httparty'
 gem 'geocoder'
 #json web token
 gem 'jwt'
+#gestion du qrcode
+gem 'rqrcode'
 #installing faraday http gem
 gem 'faraday'
 # Use Uglifier as compressor for JavaScript assets
