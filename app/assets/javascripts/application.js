@@ -16,4 +16,5 @@
 //= require turbolinks
 //= require_tree .
 
+/* directive de chargement du wiget*/
 $.widget.bridge('uibutton', $.ui.button)
