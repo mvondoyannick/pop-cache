@@ -9,8 +9,6 @@
 //
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
-//= require jquery/dist/jquery.min.js
-//= require bootstrap/dist/js/bootstrap.bundle.min.js
 //= require rails-ujs
 //= require activestorage
 //= require turbolinks
@@ -18,3 +16,8 @@
 
 /* directive de chargement du wiget*/
 $.widget.bridge('uibutton', $.ui.button)
+
+/*
+require jquery/dist/jquery.min.js
+require bootstrap/dist/js/bootstrap.bundle.min.js
+*/
