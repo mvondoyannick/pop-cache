@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   devise_for :partners
-  devise_for :agents
+  devise_for :agents, controllers: {
+    sessions: 'agents/sessions'
+  }
   #devise_for :customers
   get 'verify/query'
   get 'verify/verify'

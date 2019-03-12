@@ -8,7 +8,7 @@ module PartnersPlateform
     end
 
     def self.partnerAuthenticate
-      partner = Partner.where(phone: $phone, rib! $rib).first
+      partner = Partner.where(phone: $phone, rib: $rib).first
       if partner.valid_password?($password)
         puts 'loged in'
       else

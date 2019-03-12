@@ -3,4 +3,8 @@ class Agent < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+  
+  def complete_name
+    self.name+' '+self.prenom
+  end
 end
