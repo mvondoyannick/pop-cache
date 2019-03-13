@@ -9,7 +9,7 @@ module DistanceMatrix
 
         #calcul de la distance
         distance = Geocoder::Calculations.distance_between([@lat1,@lon1], [@lat2,@lon2], units: :km)*1000
-        if distance < 25
+        if distance < 25000 #desactivation temporaire de la geolocalisation
             puts "Distance reelle : #{distance}"
             return true, distance
         else
