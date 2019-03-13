@@ -105,7 +105,7 @@ class Api::V1::ApiController < ApplicationController
     #historique de l'utilisateur
     def user_history
         phone = params[:phone]
-        render json: History::get_user_history(phone)
+        render json: History::History::get_user_history(phone)
     end
     
 end
