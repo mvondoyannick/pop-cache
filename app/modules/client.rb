@@ -325,7 +325,7 @@ class Client
             #on mets a jour la table customer sur await
             if customer.update(await: await.id) && account.update(amount: customer_amount)
               #---------------send sms to customer--------------
-              Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. #{$signature}")
+              Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. Bien vouloir cliquer sur retrait sur votre telephone. #{$signature}")
               Sms::send
               puts "user await updated"
               return true, "processus initialise avec succes pour le numero #{@phone}"
