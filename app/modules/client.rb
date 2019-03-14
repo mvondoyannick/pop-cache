@@ -283,6 +283,11 @@ class Client
       end
     end
 
+    #permet de verifier si le client dispse suffisament d'argent dans son compte EU 
+    # @method name  Get Balance before retrait
+    # @name         Client::get_balance_retrait
+    # @params       phone amount 
+    # @output       boolean [true/false]
     def self.get_balance_retrait(phone, amount_retrait)
       @phone = phone
       @amount = amount_retrait
@@ -304,7 +309,11 @@ class Client
     end
 
 
-    #permet d'initialiser une procedure de retrait du coté de l'agent EU 
+    # permet d'initialiser une procedure de retrait du coté de l'agent EU 
+    # @method name  Get Balance before retrait
+    # @name         Client::init_retrait
+    # @params       phone amount 
+    # @output       boolean [true/false]
     def self.init_retrait(phone, amount)
       @phone = phone
       @amount = amount.to_i
@@ -355,6 +364,11 @@ class Client
 
     end
 
+    # permet de payer  
+    # @method name  Pay
+    # @name         Client::pay
+    # @params       emeteur, destinataire, montant, password 
+    # @output       boolean [true/false]
     def self.pay(from, to, amount, pwd)
       @from = from.to_i
       @to = to.to_i
