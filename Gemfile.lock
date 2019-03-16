@@ -169,7 +169,15 @@ GEM
     rails-assets-angular (1.7.5)
     rails-assets-bootstrap (4.1.3)
     rails-assets-chartjs (2.7.3)
+    rails-assets-datatables.net (3.2.2)
+      rails-assets-jquery (>= 1.7)
+    rails-assets-datatables.net-bs4 (3.2.2)
+      rails-assets-datatables.net (>= 1.10.13)
+      rails-assets-jquery (>= 1.7)
+    rails-assets-fontawesome (5.5.0)
+    rails-assets-jquery (3.3.1)
     rails-assets-leaflet (1.3.4)
+    rails-assets-sbadmin (1.0.2)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -271,7 +279,10 @@ DEPENDENCIES
   rails-assets-angular!
   rails-assets-bootstrap!
   rails-assets-chartjs!
+  rails-assets-datatables.net-bs4!
+  rails-assets-fontawesome!
   rails-assets-leaflet!
+  rails-assets-sbadmin!
   rqrcode
   sass-rails (~> 5.0)
   selenium-webdriver

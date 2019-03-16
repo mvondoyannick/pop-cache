@@ -23,7 +23,7 @@ class Client
       @second_name = second_name
       @phone = phone
       #@cni = cni
-      @email = "#{SecureRandom.hex(3)}@pop-cash.cm"
+      @email = "#{@phone.to_i}@pop-cash.cm"
       @password = password #"PC_#{SecureRandom.hex(4).upcase}"
 
       #creation du compte de l'utilisateur

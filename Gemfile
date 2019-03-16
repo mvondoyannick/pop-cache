@@ -45,6 +45,9 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-adminlte', source: 'https://rails-assets.org'
   gem 'rails-assets-bootstrap', source: 'https://rails-assets.org'
   gem 'rails-assets-chartjs', source: 'https://rails-assets.org'
+  gem 'rails-assets-sbadmin', source: 'https://rails-assets.org'
+  gem 'rails-assets-fontawesome', source: 'https://rails-assets.org'
+  gem 'rails-assets-datatables.net-bs4', source: 'https://rails-assets.org'
 end
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'

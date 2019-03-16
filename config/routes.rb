@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :services
   devise_for :partners
   devise_for :agents, controllers: {
     sessions: 'agents/sessions'
