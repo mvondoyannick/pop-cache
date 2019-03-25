@@ -2,6 +2,11 @@ module Parametre
   
   $key = "Bl@ckberry18"
 
+  def self.tested(data)
+      result = data.to_s
+      return result
+  end
+
   class Parametre
       require 'jwt'
       $percentage = 2

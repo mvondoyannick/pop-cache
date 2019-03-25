@@ -8,6 +8,7 @@
       <th>Name</th>
       <th>Description</th>
       <th>APIKey</th>
+      <th>Categorie</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -18,9 +19,10 @@
         <td><%= service.name %></td>
         <td><%= service.description %></td>
         <td><%= service.key %></td>
+        <td><%= service.cat.name %></td>
         <td><%= link_to 'Show', service %></td>
-        <td><%= link_to 'Edit', edit_service_path(service) %></td>
-        <td><%= link_to 'Destroy', service, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-danger btn-sm' %></td>
+        <td><%= link_to 'Details', edit_service_path(service) %></td>
+        <td><%= link_to 'Destroy', service, method: :delete, data: { confirm: 'Etes vous sure?' }, class: 'btn btn-outline-danger btn-sm' %></td>
       </tr>
     <% end %>
   </tbody>

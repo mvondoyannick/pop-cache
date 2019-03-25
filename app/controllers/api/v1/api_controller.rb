@@ -33,44 +33,55 @@ class Api::V1::ApiController < ApplicationController
     def qrcode
 			data = Parametre::Crypto::decode(params[:data])
 			puts data
-			current = data.split('@')
-      customer = Customer.where(phone: current[0]).first
-      puts '============================================='
-      #puts Parametre::Crypto::decode(current[1]).split('@')
-      currated_marchant = Parametre::Crypto::decode(current[1]).split('@')
-      puts '============================================='
-      marchand = Customer.where(phone: currated_marchant[1]).first
-			#gestion des coordonnées
-			marchand_lat = currated_marchant[2]
-			marchand_lon = currated_marchant[3]
-			customer_lat = current[2]
-      customer_lon = current[3]
+			divide = data.split('#')
+			#la premiere chaine correspond au payeur
+			payeur = divide[0].split('@')
+			payeur_phone = payeur[0]
+			payeur_lat = payeur[1]
+			payeur_long = payeur[2]
+			puts "Le payeur : #{payeur}"
+			# la seconde chaine correspond au QR code
+			vendeur = divide[1].split('@')
+			vendeur_phone = vendeur[0]
+			vendeur_montant = vendeur[1]
+			vendeur_lat = vendeur[2]
+			vendeur_long = vendeur[3]
+			context = vendeur[4]
+			time = vendeur[5]
 
-			#on verifie la distance matrix entre les deux utilisateurs
-			distance = DistanceMatrix::DistanceMatrix::get_distance(marchand_lat, marchand_lon, customer_lat, customer_lon)
-			if customer.blank? || marchand.blank? || distance[0] == false
-				render json: {
-					message: :errors,
-          description: "Erreur : #{distance[1]}",
-          distance: distance[1]
-					#code_erreurs: customer.errors.messages || marchand.errors.messages
-				}
-      else
-        render json: {
-					client_name: customer.name || 'fylo',
-					client_second_name: customer.second_name,
-					client_phone: customer.phone,
-					marchand_name: marchand.name,
-					marchand_second_name: marchand.second_name,
-					marchand_phone: marchand.phone,
-					amount: currated_marchant[0].to_i,
-					devise: "F CFA",
-					country: :Cameroun,
-					adresse_marchand: DistanceMatrix::DistanceMatrix::geocoder_search(marchand_lat, marchand_lon),
-          adresse_client: DistanceMatrix::DistanceMatrix::geocoder_search(customer_lat, customer_lon),
-          distance_status: distance[0],
-          date: Time.now
+			#on veirfie le contexte qui peut etre soit phone ou plateforme
+			if context == 'phone'
+				puts "QR code from mobile "
+
+				customer = Customer.where(phone: payeur_phone.to_i).first
+				marchand = Customer.where(phone: vendeur_phone.to_i).first
+
+				distance = DistanceMatrix::DistanceMatrix::get_distance(vendeur_lat, vendeur_long, payeur_lat, payeur_long)
+				if customer.blank? || marchand.blank? || distance[0] == false
+					render json: {
+							message: :errors,
+							description: "Erreur : #{distance[1]}",
+							distance: distance[1]
 					}
+				else
+					render json: {
+							client_name: customer.name || 'fylo',
+							client_second_name: customer.second_name,
+							client_phone: customer.phone,
+							marchand_name: marchand.name,
+							marchand_second_name: marchand.second_name,
+							marchand_phone: marchand.phone,
+							amount: vendeur_montant,
+							devise: "F CFA",
+							country: :Cameroun,
+							adresse_marchand: DistanceMatrix::DistanceMatrix::geocoder_search(vendeur_lat, vendeur_long),
+							adresse_client: DistanceMatrix::DistanceMatrix::geocoder_search(payeur_lat, payeur_long),
+							distance_status: distance[0],
+							date: Time.now
+					}
+				end
+			else
+				puts "QR code from plateforme"
 			end
         
     end

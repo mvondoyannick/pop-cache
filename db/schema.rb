@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_14_203633) do
+ActiveRecord::Schema.define(version: 2019_03_25_143352) do
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "amount"
@@ -52,8 +52,12 @@ ActiveRecord::Schema.define(version: 2019_03_14_203633) do
     t.string "name"
     t.string "prenom"
     t.string "phone"
+    t.bigint "role_id"
+    t.string "raison"
+    t.string "password"
     t.index ["email"], name: "index_agents_on_email", unique: true
     t.index ["reset_password_token"], name: "index_agents_on_reset_password_token", unique: true
+    t.index ["role_id"], name: "index_agents_on_role_id"
   end
 
   create_table "awaits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -62,6 +66,20 @@ ActiveRecord::Schema.define(version: 2019_03_14_203633) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_awaits_on_customer_id"
+  end
+
+  create_table "categorie_services", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "detail"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "cats", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "detail"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "customers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -80,8 +98,10 @@ ActiveRecord::Schema.define(version: 2019_03_14_203633) do
     t.string "two_fa"
     t.string "perime_two_fa"
     t.string "apikey"
+    t.bigint "type_id"
     t.index ["email"], name: "index_customers_on_email", unique: true
     t.index ["reset_password_token"], name: "index_customers_on_reset_password_token", unique: true
+    t.index ["type_id"], name: "index_customers_on_type_id"
   end
 
   create_table "partners", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -106,12 +126,24 @@ ActiveRecord::Schema.define(version: 2019_03_14_203633) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "roles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "slug"
+  end
+
   create_table "services", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "key"
+    t.bigint "categorie_id"
+    t.bigint "cat_id"
+    t.index ["cat_id"], name: "index_services_on_cat_id"
+    t.index ["categorie_id"], name: "index_services_on_categorie_id"
   end
 
   create_table "transactions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -124,6 +156,13 @@ ActiveRecord::Schema.define(version: 2019_03_14_203633) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "context"
+  end
+
+  create_table "types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -139,5 +178,8 @@ ActiveRecord::Schema.define(version: 2019_03_14_203633) do
 
   add_foreign_key "accounts", "customers"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "agents", "roles"
   add_foreign_key "awaits", "customers"
+  add_foreign_key "customers", "types"
+  add_foreign_key "services", "cats"
 end

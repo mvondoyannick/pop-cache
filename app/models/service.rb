@@ -1,4 +1,5 @@
 class Service < ApplicationRecord
+  belongs_to :cat
   before_save :generate_key
   validates :name, presence: true
 

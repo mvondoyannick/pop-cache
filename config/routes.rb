@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  resources :roles
+  get 'agentcrtl/index'
+  get 'agentcrtl/new'
+  get 'agentcrtl/edit'
+  get 'agentcrtl/delete'
+  resources :cats
+  resources :categories
+  resources :categorie_services
+  resources :types
   resources :services
   devise_for :partners
   devise_for :agents, controllers: {
@@ -23,6 +32,8 @@ Rails.application.routes.draw do
   match 'home/credit', to: 'home#credit', via: [:get, :post]
   get 'home/compte'
   get 'home/account/particulier', to: 'home#particulier'
+  #concernant les agent
+  resources :agents
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   #API main root
@@ -41,6 +52,9 @@ Rails.application.routes.draw do
       match 'session/history/h/encaisser', to: 'session#e', via: [:post, :options]
       match 'session/history/h/payment', to: 'session#p', via: [:post, :options]
       match 'test/:code(/:amount)', to: 'api#test', via: [:get, :options]
+      match 'session/service', to: 'session#service', via: [:post, :options]
+      match 'session/categories', to: 'session#serviceCategorie', via: [:get, :options]
+      match 'session/categorie/:id', to: 'session#detailCategorie', via: [:post, :options]
     end
   end
 end

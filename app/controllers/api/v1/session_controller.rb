@@ -1,5 +1,5 @@
 class Api::V1::SessionController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication]
+    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service]
 
     #creation de compte utilisateur
     def signup
@@ -20,12 +20,41 @@ class Api::V1::SessionController < ApplicationController
         render json: balance
     end
 
-    def e
+    def e #retourn l'historique sur la base du telephone
       phone = params[:phone]
       query = History::History::encaisser(phone)
       render json: {
           message: query
       }
+    end
+
+
+    #retourne toutes les categories
+    def serviceCategorie
+      categorie = Cat.order(name: :asc)
+      render json: {
+          categories: categorie
+      }
+    end
+
+    #retourne les details d'une categorie
+    def detailCategorie
+      id = params[:id]
+      detailCat = Cat.where(cat_id: id, name: :asc)
+      render json: {
+          cat_detail: detailCat
+      }
+    end
+
+    #permet de lister l'ensemble des services dans une categorie
+    def service
+
+      id = params[:id]
+      services = Service.where(cat_id: id)
+      render json: {
+          services: services
+      }
+
     end
 
     def p

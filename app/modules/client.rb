@@ -32,7 +32,8 @@ class Client
         second_name: @second_name,
         phone: @phone,
         email: @email,
-        password: @password
+        password: @password,
+        type_id: 1
       )
 
       if customer.save

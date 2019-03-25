@@ -1,8 +1,12 @@
 class HomeController < ApplicationController
   before_action :authenticate_agent!, only: [:retrait, :index]
-  layout 'render/yield'
+  #layout 'render/yield'
+
+  #multiple layout
+  layout :choose_layout
+
   def index
-  
+    render layout: 'login'
   end
 
   def retrait
@@ -87,5 +91,16 @@ class HomeController < ApplicationController
   end
 
   def signup
+  end
+
+  protected
+  def choose_layout
+    if current_agent.role.slug == "admin" #ceci est le slug de l'administrateur
+      'render/yiel'
+    elsif current_agent.role.slug == "buca-voyage"
+      'render/partenaires'
+    else
+      'render/nil'
+    end
   end
 end

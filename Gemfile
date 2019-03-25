@@ -25,6 +25,10 @@ gem 'geocoder'
 gem 'jwt'
 #gestion du qrcode
 gem 'rqrcode'
+#AES for encrypt decrypt
+gem 'aes'
+#gestion des email
+gem 'mail_form'
 #installing faraday http gem
 gem 'faraday'
 # Use Uglifier as compressor for JavaScript assets

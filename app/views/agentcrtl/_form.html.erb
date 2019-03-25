@@ -1,0 +1,20 @@
+<%= simple_form_for(@agent) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <%= f.input :prenom %>
+    <%= f.input :phone, as: :tel %>
+    <%= f.input :raison %>
+    <%= f.input :password, as: :password %>
+    <%= f.input :confirm_password %>
+    <%= f.input :email, as: :email %>
+    <%= f.association :role %>
+  </div>
+  <p>
+    <div class="form-inputs">
+      <%= f.submit 'Creer', class: 'btn btn-sm btn-outline-primary' %>
+    </div>
+  </p>
+<% end %>
