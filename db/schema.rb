@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_25_143352) do
+ActiveRecord::Schema.define(version: 2019_03_25_180605) do
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "amount"
@@ -120,6 +120,19 @@ ActiveRecord::Schema.define(version: 2019_03_25_143352) do
     t.index ["reset_password_token"], name: "index_partners_on_reset_password_token", unique: true
   end
 
+  create_table "qrmodels", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "context"
+    t.string "montant"
+    t.string "lat"
+    t.string "lon"
+    t.string "depart"
+    t.string "arrive"
+    t.bigint "service_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_id"], name: "index_qrmodels_on_service_id"
+  end
+
   create_table "questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "content"
     t.datetime "created_at", null: false
@@ -181,5 +194,6 @@ ActiveRecord::Schema.define(version: 2019_03_25_143352) do
   add_foreign_key "agents", "roles"
   add_foreign_key "awaits", "customers"
   add_foreign_key "customers", "types"
+  add_foreign_key "qrmodels", "services"
   add_foreign_key "services", "cats"
 end

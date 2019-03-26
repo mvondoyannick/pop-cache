@@ -106,7 +106,7 @@ class Client
       end
   end
 
-    #authenticationof user
+    #authentication of user who have account on the plateforme
     def self.auth_user(phone, password)
       @phone = phone
       @password = password
@@ -118,7 +118,7 @@ class Client
           return customer.as_json(only: [:id, :phone, :name, :second_name]), status: :created
         else
           puts "Impossible de connecter utilsateur #{customer.name}"
-          return false
+          return false, "Impossible de vous identifierUtilisateur/Mot de passe inconnu"
         end
       else
         puts "Utilsateur inconnu"

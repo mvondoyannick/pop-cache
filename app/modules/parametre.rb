@@ -63,6 +63,23 @@ module Parametre
 
   class Crypto
     require 'base64'
+    require 'aes'
+
+    #implementation du cryptage via AES
+    def self.aesEncode(chaine)
+      @chaine = chaine.to_s
+      secret = "cb20a3730d9e3f067ed91a6e458da82d"
+      result = AES.encrypt(chaine, secret)
+      return result
+    end
+
+    #implementation du decryptage via AES
+    def self.aesDecode(chaineCryptee)
+      @chaineCryptee = chaineCryptee
+      secret = "cb20a3730d9e3f067ed91a6e458da82d"
+      result = AES.decrypt(@chaineCryptee.to_s, secret)
+      return result
+    end
 
     def self.decode(chaine)
       @chaine = chaine

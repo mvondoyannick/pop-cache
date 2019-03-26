@@ -17,6 +17,8 @@ gem 'simple_form'
 gem 'country_select'
 #installing devise
 gem 'devise'
+#installation de la maps leaflet rails
+gem 'leaflet-rails'
 #installing httparty
 gem 'httparty'
 #install geocoder
@@ -25,6 +27,10 @@ gem 'geocoder'
 gem 'jwt'
 #gestion du qrcode
 gem 'rqrcode'
+#gestion du QRcode au format png
+gem 'rqrcode_png'
+#using dragonfly
+gem 'dragonfly', '~> 1.2.0'
 #AES for encrypt decrypt
 gem 'aes'
 #gestion des email
@@ -42,17 +48,17 @@ gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 #admin LTE
-source 'https://rails-assets.org' do
-  #gem 'rails-assets-bootstrap'
-  gem 'rails-assets-angular'
-  gem 'rails-assets-leaflet'
-  gem 'rails-assets-adminlte', source: 'https://rails-assets.org'
-  gem 'rails-assets-bootstrap', source: 'https://rails-assets.org'
-  gem 'rails-assets-chartjs', source: 'https://rails-assets.org'
-  gem 'rails-assets-sbadmin', source: 'https://rails-assets.org'
-  gem 'rails-assets-fontawesome', source: 'https://rails-assets.org'
-  gem 'rails-assets-datatables.net-bs4', source: 'https://rails-assets.org'
-end
+# source 'https://rails-assets.org' do
+#   #gem 'rails-assets-bootstrap'
+#   gem 'rails-assets-angular'
+#   gem 'rails-assets-leaflet'
+#   gem 'rails-assets-adminlte', source: 'https://rails-assets.org'
+#   gem 'rails-assets-bootstrap', source: 'https://rails-assets.org'
+#   gem 'rails-assets-chartjs', source: 'https://rails-assets.org'
+#   gem 'rails-assets-sbadmin', source: 'https://rails-assets.org'
+#   gem 'rails-assets-fontawesome', source: 'https://rails-assets.org'
+#   gem 'rails-assets-datatables.net-bs4', source: 'https://rails-assets.org'
+# end
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password

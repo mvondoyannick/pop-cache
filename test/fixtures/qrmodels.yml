@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  context: MyString
+  montant: MyString
+  lat: MyString
+  lon: MyString
+  depart: MyString
+  arrive: MyString
+  service: one
+
+two:
+  context: MyString
+  montant: MyString
+  lat: MyString
+  lon: MyString
+  depart: MyString
+  arrive: MyString
+  service: two

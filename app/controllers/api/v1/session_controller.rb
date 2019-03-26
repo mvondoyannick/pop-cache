@@ -67,6 +67,7 @@ class Api::V1::SessionController < ApplicationController
 
     
 
+    #authentification d'un client mobile
     def signin
         phone = params[:phone]
         password = params[:password]

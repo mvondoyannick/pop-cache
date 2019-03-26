@@ -22,6 +22,7 @@
         <td><%= service.cat.name %></td>
         <td><%= link_to 'Show', service %></td>
         <td><%= link_to 'Details', edit_service_path(service) %></td>
+        <td><%= link_to 'Generer QR Code', agentcrtl_new_qrcode_path(service: service.id), class: 'btn btn-sm btn-outline-primary' %></td>
         <td><%= link_to 'Destroy', service, method: :delete, data: { confirm: 'Etes vous sure?' }, class: 'btn btn-outline-danger btn-sm' %></td>
       </tr>
     <% end %>

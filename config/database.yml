@@ -54,7 +54,8 @@ production:
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: restoafr_mvondoyannick
   password: Bl@ckberry18
-  host: 192.95.32.36
+  host:
+
   database: restoafr_popcash
   #username: pop-cash
   #password: <%= ENV['POP-CASH_DATABASE_PASSWORD'] %>

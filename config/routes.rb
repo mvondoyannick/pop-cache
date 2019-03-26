@@ -4,11 +4,13 @@ Rails.application.routes.draw do
   get 'agentcrtl/new'
   get 'agentcrtl/edit'
   get 'agentcrtl/delete'
+  get 'agentcrtl/new_qrcode'
   resources :cats
   resources :categories
   resources :categorie_services
   resources :types
   resources :services
+
   devise_for :partners
   devise_for :agents, controllers: {
     sessions: 'agents/sessions'
