@@ -8,7 +8,6 @@ class Client
   }
 
   require 'securerandom'
-  #require 'activerecord'
 
     def initialize(from, to, amount, pwd)
       $from = from
@@ -37,8 +36,7 @@ class Client
       )
 
       if customer.save
-        #Sms.new(@phone, "Mr/Mme #{@name} #{@second_name} votre compte a ete cree avec succes .Bienvenue sur #{$signature}")
-        #Sms::send
+        Rails::logger::info {"Creation de de l'utiliateur #{@phone} avec succes."}
         create_user_account(customer.id, customer.phone)
 
         #generation de 2Fa
@@ -58,6 +56,7 @@ class Client
 
     #creation du compte utilisateur
     def self.create_user_account(id, phone)
+      Rails::logger::info "Demarrage de la creation du compte utilisateur ..."
       @id = id
       @phone = phone
       customer_account = Account.new(
@@ -66,6 +65,7 @@ class Client
       )
       
       if customer_account.save
+        Rails::logger::info "Utilisateur #{@phone} crée a #{Time.now}"
         Sms.new(@phone, "#{@phone} Bienvenue chez POP CASH, votre porte monnaie virtuel vient d\'etre cree, il dispose d\'une somme de 5000 #{$devise}. #{$signature}")
         Sms::send
         return "creation porte-monnaie succes"
@@ -318,9 +318,10 @@ class Client
     def self.init_retrait(phone, amount)
       @phone = phone
       @amount = amount.to_i
+      Rails::logger::info "Demarrage initialisation retrait pour #{@phone} ..."
       #se trouve dans la table retrait_await, on ajout un marqueur au client
       customer = Customer.where(phone: @phone).first
-      if get_balance_retrait(@phone, @amount) == true
+      if get_balance_retrait(@phone, @amount) == true #il a suffisament d'argent
         if customer.await.nil?
           #on creet un nouvel await
           await = Await.new(
@@ -343,18 +344,21 @@ class Client
               puts "user await canceled"
               return false, "Impossible d\'initialiser le processus de retrait. Error : #{customer.errors.messages}'"
             end
-            puts "created new await"
+            Rails::logger::info "Retrait initialisé pour le client #{@phone} on #{Time.now}."
+            #puts "created new await"
             return true, "nouveau await cree"
           else
-            puts "error creating await"
-            return false, "Impossible de creer await"
+            Rails::logger::error "Impossible d'initialiser le retrait vers #{@phone} on #{Time.now}."
+            return false, "Impossible d'initialiser le retrait. Procedure annulée."
           end
         else
           #le client n'est pas disponible sur la plateforme
-          return false, "Utilisateur inconnu ou disposant deja "
+          Rails::logger::error "Impossible d'initialiser le retrait vers #{@phone}, Client inexistant."
+          return false, "Impossible d'initialiser le retrait, Utilisateur inconnu ou disposant deja "
         end
       else
-        return false, "Ce compte ne dispose pas assez d argent"
+        Rails::logger::error "Impossible d'initialiser le retrait vers #{@phone} on #{Time.now}. Montant dans le compte client est insuffisant"
+        return false, "Processus de annulé, Ce compte ne dispose pas assez d argent"
       end
         
     end
