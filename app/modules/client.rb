@@ -106,24 +106,60 @@ class Client
       end
   end
 
+
+  #permet de verifier le token de l'utilisateur
+  # @method     Verifier le token d'un utilisateur
+  # @name       Client::userTokenAuthenticate
+  # @params     token
+  # @output     boolean [true/false]
+  def self.userTokenAuthenticate(token)
+    @token = token
+    Rails::logger::info "Starting user token verification"
+
+    #on recherche le gar en question en decodant la chaine
+    query = JWT.decode token, Rails,application.secrets.secret_key_base
+    puts query
+  end
+
     #authentication of user who have account on the plateforme
+    # @method     Authentifier un utilisateur
+    # @name       Client::auth_user
+    # @params     phone, password
+    # @output     boolean [true/false]
     def self.auth_user(phone, password)
       @phone = phone
       @password = password
 
+      Rails::logger::info "Authenticating user #{@phone} call ..."
+
       customer = Customer.where(phone: @phone).first
       if !customer.blank?
         if customer.valid_password?(@password) && customer.two_fa == "authenticate"
-          puts "Utilsateur #{customer.name} connecté", customer.as_json(only: [:id, :phone, :name, :second_name])
-          return customer.as_json(only: [:id, :phone, :name, :second_name]), status: :created
+
+          #on genere l'empreint/token de cet utilisateur sur la base de ses informations personnelles
+          payload = {
+            phone: customer.phone,
+            expire: 14.days.from_now
+          }.to_s
+
+          authFinger = JWT.encode payload, Rails.application.secrets.secret_key_base #Parametre::Crypto::aesEncode(payload)
+
+          # on envoi cette information dans la table de l'utilisateur courant
+
+          if customer.update(tokenauthentication: authFinger)
+            Rails::logger::info "Taken mise a jour!"
+            Rails::logger::info "Authentication success for #{phone}."
+            return customer.as_json(only: [:name, :second_name, :tokenauthentication]), status: :created
+          else
+            Rails::logger::error "Impossible de mettre à jour le Token de l'utilisateur"
+          end          
         else
-          puts "Impossible de connecter utilsateur #{customer.name}"
-          return false, "Impossible de vous identifierUtilisateur/Mot de passe inconnu"
+          Rails::logger::error "Authenticating user failed, bad password. end request!"
+          return false, "Impossible de vous identifier/Utilisateur/Mot de passe inconnu"
         end
       else
-        puts "Utilsateur inconnu"
-        #raise customer, "Errors"
-        return false
+        Rails::logger::error "Authenticating user failled, unknow user. end request!"
+        return false, "Utilisateur inconnu", status: :unauthorized
       end
     end
 
@@ -134,6 +170,7 @@ class Client
       #on recherche le client
       query = Customer.where(phone: phone).first
       if query.blank?
+        Rails::logger::error "Authenticating user failed, unknow user. end request!"
         return false, "Utilisateur inconnu."
       else
         if query.valid_password?(@password)
@@ -206,8 +243,10 @@ class Client
       @receiver_id = id
       query = Customer.find(id)
       if query.blank?
+        Rails::logger::error "Impossible de terminer cette requete, utilisateur inconnu"
         return false, "Utilisateur inconnu"
       else
+        Rails::logger::info "Utilisateur identifié"
         return true, query
       end
     end
@@ -230,12 +269,19 @@ class Client
       @amount = amount
 
       customer = Customer.where(phone: @phone).first
-      account = Account.where(customer_id: customer.id).first
-      a = account.amount.to_i - @amount.to_i
-      puts a
-      puts "Compte client : #{account.amount}"
-      if account.update(customer_id: customer.id, amount: a )
-        return true
+      if !customer.blank?
+        account = Account.where(customer_id: customer.id).first
+        if !account.blank?
+          a = account.amount.to_i - @amount.to_i
+          Rails::logger::info "Information compte client #{@phone} à #{Time.now} est de #{account.amount} F CFA."
+          if account.update(customer_id: customer.id, amount: a )
+            Rails::logger::info ""
+            return true
+          else
+            Rails::logger::info "Impossible de mettre a jour les informations client"
+            return false
+          end
+        end
       end
     end
 
@@ -256,23 +302,102 @@ class Client
           if debit_client && await.destroy
             Sms.new(@phone, "Vous venez de retirer #{await.amount} #{$devise} de votre compte. #{$signature}")
             Sms::send
-            puts "Retrait effectué"
+            #puts "Retrait effectué"
+            Rails::logger::info "Retrait du montant #{await.amount} du compte effectué avec succes"
             return true, "Retrait de #{await.amount} #{$devise} effectué sur le compte #{@phone}. #{$signature}"
           else
-            puts "Impossible de retirer de l argent dans ce compte"
+            #puts "Impossible de retirer de l argent dans ce compte"
+            Rails::logger::error "Impossible d'effectuer le Retrait du montant #{await.amount} du compte #{@phone}. Transaction annulée"
             return false, "retrait argent impossible. merci de contacter le service client au 007"
           end
         else
-          puts "Impossible de mettre a jour les informations utilisateur"
+          #puts "Impossible de mettre a jour les informations utilisateur"
+          Rails::logger::error "Impossible d'effectuer le retrait du montant #{await.amount} du compte #{@phone}. serveur indisponible"
           return false, "Impossible de communiquer avec l IA d AGIS"
         end
       else
-        puts "Mot de passe invalide"
-        return false, "Invalid password"
+        #puts "Mot de passe invalide"
+        Rails::logger::error "Mot de passe invalide pour ce compte. transaction annulée"
+        return false, "Mot de passe invalide"
+      end
+    end
+
+    #pemet de verifier qu'un await est perimé ou pas
+    # @ùethod     name Verifier sur une procedure de retrait est encore valide
+    # @name       Client::is_await_valide
+    # @params     phone
+    # @output     boolean [true/false]
+    def self.is_await_valid?(phone)
+      @phone = phone
+      Rails::logger::info "Starting await verification ..."
+      customer = Customer.where(phone: phone).first
+      if customer.blank?
+        Rails::logger::error "Utilisateur #{@phone} est inconnu du systeme"
+        return false, "Utilisateur inconnu"
+      else
+        await = Await.where(customer_id: customer.id).last
+        if await.blank?
+          Rails::logger::error "Aucun retrait en attente pour l'Utilisateur #{@phone}"
+          return false, "Aucun retrait en attente pour l'Utilisateur #{@phone}"
+        else
+          #on comparate les dates
+          if await.end >= Time.now && await.used == false
+            Rails::logger::info "Transacttion #{await.hashawait} est en cours et valide."
+            return true, "Transaction #{await.hashawait} valide"
+          else
+            Rails::logger::error "Transaction #{await.hashawait} n'est plus valide. supression..."
+            if await.destroy
+              Rails::logger::info "Transaction #{await.hashawait} qualifiée de perimée a été supprimée."
+              return true, "Transaction #{await.hashawait} qualifiée de perimée a été supprimée."
+            else
+              Rails::logger::fatal "Transaction #{await.hashawait} qualifiée de perimée n'a pas pu etre supprimer. Impossible de supprimer la transaction. Contact du service de maintenance."
+              contact = ContactForm.new(name: "MVONDO", email: "yaf.mvondo@agis-as.com", message: "FATAL : Transaction #{await.hashawait} qualifiée de perimée n'a pas pu etre supprimer. Intervention urgente.")
+              contact.deliver
+              return false, "Transaction #{await.hashawait} ne peut etre supprimer, demarrage de l'envoi du courriel au service de maintenance ..."
+            end
+          end
+        end
+      end
+    end
+
+
+    #permet d'annuler un retrait d'argent dans le compte client
+    # @method   name Cancel current retrait by user
+    # @name     Client::cancelRetrait
+    # @params   phone, password, awaitHash
+    # @output   boolean [true/false]
+    def self.cancelRetrait(phone, pwd, hashawait)
+      @phone = phone
+      @pwd = pwd
+      @hash = hashawait
+      Rails::logger::info "Starting cancel retrait validation ..."
+      customer = Customer.where(phone: @phone).first
+      if !customer.blank? && customer.valid_password?(@pwd)
+        Rails::logger::info "Utilisateur authentifié @ #{Time.now}"
+        await = Await.where(customer_id: customer.id, hashawait: @hash)
+        if await.blank?
+          Rails::logger::warn "Aucune transaction existante pour #{@hash}"
+          return false, "Aucune transaction existante pour #{@hash}"
+        else
+          Rails::logger::info "Suppression de la transaction #{@hash} en cours ..."
+          if await.destroy
+            Rails::logger::info "Suppression de la transaction #{@hash} terminées. annulation validée et terminée!"
+            return true, "Transaction annulée!"
+          else
+            Rails::logger::error "La suppression de la transaction #{@hash}  a echouée. notification du service de maintenance"
+            contact = ContactForm.new(name: "MVONDO", email: "yaf.mvondo@agis-as.com", message: "FATAL : Impossible de supprimer la transaction #{await.hashawait} durant un processus d'annulation du client #{customer.phone}. Une erreur est survenue!")
+            contact.deliver
+            return false, "Impossible de supprimer la transaction, contact du service de maintenance!"
+          end
+        end
       end
     end
 
     #permet de verifier qu'il ya un retrait en cours pour un numero de telephone/customer
+    # @method   Check retrait | verifier le retrait
+    # @name     Client::check_retrait
+    # @params   phone
+    # @output   boolean [true/false]
     def self.check_retrait(phone)
       @phone = phone
       customer = Customer.where(phone: phone).first
@@ -291,21 +416,29 @@ class Client
     # @output       boolean [true/false]
     def self.get_balance_retrait(phone, amount_retrait)
       @phone = phone
-      @amount = amount_retrait
-      customer = Customer.where(phone: @phone).first
-      customer_amount = Account.where(customer_id: customer.id).first.amount
-      if customer
-        if customer_amount.to_i > @amount.to_i 
-          puts "Il a de l argent"
-          return true
-        else
-          Sms.new(@phone, "Le montant de votre compte est insuffisant. #{$signature}")
-          Sms::send
-          puts "Pas assez d argent dans le compte #{@phone}"
-          return false
-        end
+      @amount = amount_retrait.to_i
+      Rails::logger::info "Starting get balance for account #{@phone}, amount of #{@amount}"
+      #on ne peut pas retirer moins de 500 F CFA XAF
+      if @amount < 500
+        Rails::logger::warn "Tentative de retrait d'un montant inferieur a 500F, Transaction annulée"
+        return false
       else
-        return false, "Impossbile de verifier cet utilisateur"
+        customer = Customer.where(phone: @phone).first
+        if customer.blank?
+          Rails::logger::error "Utilisation inconnu, Transaction annulée."
+          return false
+        else
+          customer_amount = Account.where(customer_id: customer.id).first.amount
+          if customer_amount.to_i > @amount.to_i 
+            Rails::logger::info "Montant superieur/egale dans le compte #{@phone}. Transaction possible."
+            return true
+          else
+            Sms.new(@phone, "Le montant de votre compte est insuffisant. #{$signature}")
+            Sms::send
+            Rails::logger::warn "Montant inferieur dans le compte #{@phone}. Impossible de poursuivre la transaction."
+            return false
+          end
+        end
       end
     end
 
@@ -338,10 +471,12 @@ class Client
               #---------------send sms to customer--------------
               Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. Bien vouloir cliquer sur retrait sur votre telephone. #{$signature}")
               Sms::send
-              puts "user await updated"
-              return true, "processus initialise avec succes pour le numero #{@phone}"
+              Rails::logger::info "Processus initialisé avec succes pour le numéro #{@phone}. Delais de #{5.minutes.from_now}"
+              #puts "user await updated"
+              return true, "Processus initialisé avec succes pour le numero #{@phone}"
             else
-              puts "user await canceled"
+              #puts "user await canceled"
+              Rails::logger::error "Processus de retrait du montant #{@phone}, d'un montant de #{@amount} a ete annulé."
               return false, "Impossible d\'initialiser le processus de retrait. Error : #{customer.errors.messages}'"
             end
             Rails::logger::info "Retrait initialisé pour le client #{@phone} on #{Time.now}."

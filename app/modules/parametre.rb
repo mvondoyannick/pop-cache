@@ -10,7 +10,7 @@ module Parametre
   class Parametre
       require 'jwt'
       $percentage = 2
-      $hmac_secret = "my$ecretK3y"
+      $hmac_secret = Rails.application.secrets.secret_key_base
 
       #retourne le montant majoré du client
       def self.agis_percentage(amount)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_25_180605) do
+ActiveRecord::Schema.define(version: 2019_03_29_165339) do
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "amount"
@@ -65,6 +65,9 @@ ActiveRecord::Schema.define(version: 2019_03_25_180605) do
     t.bigint "customer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "end"
+    t.boolean "used"
+    t.string "hashawait"
     t.index ["customer_id"], name: "index_awaits_on_customer_id"
   end
 
@@ -99,6 +102,7 @@ ActiveRecord::Schema.define(version: 2019_03_25_180605) do
     t.string "perime_two_fa"
     t.string "apikey"
     t.bigint "type_id"
+    t.string "tokenauthentication"
     t.index ["email"], name: "index_customers_on_email", unique: true
     t.index ["reset_password_token"], name: "index_customers_on_reset_password_token", unique: true
     t.index ["type_id"], name: "index_customers_on_type_id"
