@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../app/modules/one_signal.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../app/views/agentcrtl/new_qrcode.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/pop-cash.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/pop-cash.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/../Gemfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Gemfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../Gemfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/controllers/agentcrtl_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/../app/controllers/agentcrtl_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/controllers/api/v1/api_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/../app/controllers/api/v1/api_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/controllers/api/v1/session_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/../app/controllers/api/v1/session_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/../app/modules/client.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/modules/parametre.rb" beforeDir="false" afterPath="$PROJECT_DIR$/../app/modules/parametre.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/views/agentcrtl/index.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/../app/views/agentcrtl/index.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/views/services/index.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/../app/views/services/index.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../config/database.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../config/database.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/../config/routes.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/../db/schema.rb" afterDir="false" />
-    </list>
+    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/.bundle/" />
     <ignored path="$PROJECT_DIR$/components/" />
     <ignored path="$PROJECT_DIR$/log/" />
@@ -400,18 +383,17 @@
       <workItem from="1552989637466" duration="18288000" />
       <workItem from="1553504206835" duration="786000" />
       <workItem from="1553506515537" duration="26227000" />
-      <workItem from="1553595649692" duration="18639000" />
+      <workItem from="1553595649692" duration="18793000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="124687000" />
+    <option name="totallyTimeSpent" value="124841000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15618336" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15618336" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -424,7 +406,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32936078" />
-      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.34777898" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.34777898" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
