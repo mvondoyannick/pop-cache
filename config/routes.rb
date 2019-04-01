@@ -41,14 +41,15 @@ Rails.application.routes.draw do
   #API main root
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
-      match 'session/signin', to: 'session#signin', via: [:post, :options]
+      match 'session/signin', to: 'session#signin', via: [:post, :options, :get]
       match 'session/signup', to: 'session#signup', via: [:post, :options]
       match 'session/get_balance/:phone/:password', to: 'session#get_balance', via: [:get, :options]
       match 'session/transaction', to: 'api#payment', via: [:post, :options]
       match 'session/qrcode/:data', to: 'api#qrcode', via: [:get, :options]
       match 'session/history/:phone', to: 'api#user_history', via: [:get, :options] 
       match 'session/balance/:phone/:password', to: 'session#solde', via: [:get, :options]
-      match 'session/check_retrait/:phone', to: 'session#check_retrait', via: [:get, :options]
+      match 'session/check_retrait', to: 'session#check_retrait', via: [:post, :options]
+      match 'session/cancel_retrait', to: 'session#cancel_retrait', via: [:post, :options]
       match 'session/validate_retrait', to: 'session#validate_retrait', via: [:post, :options]
       match 'session/validate/authentication', to: 'session#signup_authentication', via: [:post, :options]
       match 'session/history/h/encaisser', to: 'session#e', via: [:post, :options]

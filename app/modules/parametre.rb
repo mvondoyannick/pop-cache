@@ -23,18 +23,21 @@ module Parametre
 
       
       def self.encode_jwt(chaine)
+        Rails::logger::info "Starting encode string as payload ..."
         @chaine = chaine
-        token = JWT.encode @chaine, $hmac_secret, 'HS256'
-        return true, token
+        token = JWT.encode @chaine, nil, 'none'
+        return token
       end
 
 
       #permet de decoder une chaine precedement code avec JWT
       ##utilisation de l'algorythme cryptographique HMAC
       def self.decode_jwt(chaine)
+        Rails::logger::info "Starting decoding string as payload ..."
         @chaine = chaine
-        token = JWT.decode @chaine, $hmac_secret, true, {algorithm: 'HS256'}
-        return true, token[0]
+        token = JWT.decode @chaine, nil, false
+        #HashWithIndifferentAccess.new token
+        return token
       end
 
 
@@ -68,26 +71,29 @@ module Parametre
     #implementation du cryptage via AES
     def self.aesEncode(chaine)
       @chaine = chaine.to_s
-      secret = "cb20a3730d9e3f067ed91a6e458da82d"
-      result = AES.encrypt(chaine, secret)
+      secret = Rails.application.secrets.secret_key_base
+      result = AES.encrypt(@chaine, secret)
       return result
     end
 
     #implementation du decryptage via AES
     def self.aesDecode(chaineCryptee)
       @chaineCryptee = chaineCryptee
-      secret = "cb20a3730d9e3f067ed91a6e458da82d"
-      result = AES.decrypt(@chaineCryptee.to_s, secret)
+      secret = Rails.application.secrets.secret_key_base
+      result = AES.decrypt(@chaineCryptee, secret)
       return result
     end
 
     def self.decode(chaine)
       @chaine = chaine
-      result = Base64.decode64(chaine)
+      result = Base64.decode64(@chaine).to_i
       return result
     end
 
     def self.encode(chaine)
+      @chaine = chaine
+      result = Base64.encode64(@chaine)
+      return result
     end
 
     def self.cryptoSSL(data)

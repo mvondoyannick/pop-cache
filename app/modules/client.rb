@@ -138,18 +138,18 @@ class Client
 
           #on genere l'empreint/token de cet utilisateur sur la base de ses informations personnelles
           payload = {
-            phone: customer.phone,
+            id: customer.id,
             expire: 14.days.from_now
-          }.to_s
+          }
 
-          authFinger = JWT.encode payload, Rails.application.secrets.secret_key_base #Parametre::Crypto::aesEncode(payload)
+          authFinger = customer.id.to_s
 
           # on envoi cette information dans la table de l'utilisateur courant
 
           if customer.update(tokenauthentication: authFinger)
-            Rails::logger::info "Taken mise a jour!"
+            Rails::logger::info "Token updated!"
             Rails::logger::info "Authentication success for #{phone}."
-            return customer.as_json(only: [:name, :second_name, :tokenauthentication]), status: :created
+            return customer.as_json(only: [:name, :second_name, :tokenauthentication, :apikey]), status: :created
           else
             Rails::logger::error "Impossible de mettre à jour le Token de l'utilisateur"
           end          
@@ -374,15 +374,23 @@ class Client
       customer = Customer.where(phone: @phone).first
       if !customer.blank? && customer.valid_password?(@pwd)
         Rails::logger::info "Utilisateur authentifié @ #{Time.now}"
-        await = Await.where(customer_id: customer.id, hashawait: @hash)
+        await = Await.where(customer_id: customer.id, hashawait: @hash).first
         if await.blank?
-          Rails::logger::warn "Aucune transaction existante pour #{@hash}"
-          return false, "Aucune transaction existante pour #{@hash}"
+          Rails::logger::warn "Aucune transaction existante pour la transaction #{@hash}"
+          return false, "Aucune transaction existante pour la transaction #{@hash}"
         else
           Rails::logger::info "Suppression de la transaction #{@hash} en cours ..."
           if await.destroy
-            Rails::logger::info "Suppression de la transaction #{@hash} terminées. annulation validée et terminée!"
-            return true, "Transaction annulée!"
+            Rails::logger::info "Suppression du marqueur de retrait sur le customer"
+            if customer.update(await: nil)
+              Rails::logger::info "Suppression de la transaction #{@hash} terminées. annulation validée et terminée!"
+              return true, "Transaction annulée!"
+            else
+              Rails::logger::error "Impossible de supprimer le marqueur de retrait de l'utillisateur"
+              contact = ContactForm.new(name: "MVONDO", email: "yaf.mvondo@agis-as.com", message: "FATAL : Impossible de supprimer le marqueur de retrait  de la transaction #{await.hashawait} durant un processus d'annulation du client #{customer.phone}. Une erreur est survenue!")
+              contact.deliver
+              return false, "Impossible de supprimer le marqueur, une erreur est survenue"
+            end
           else
             Rails::logger::error "La suppression de la transaction #{@hash}  a echouée. notification du service de maintenance"
             contact = ContactForm.new(name: "MVONDO", email: "yaf.mvondo@agis-as.com", message: "FATAL : Impossible de supprimer la transaction #{await.hashawait} durant un processus d'annulation du client #{customer.phone}. Une erreur est survenue!")
@@ -401,11 +409,18 @@ class Client
     def self.check_retrait(phone)
       @phone = phone
       customer = Customer.where(phone: phone).first
-      await = Await.where(customer_id: customer.id, id: customer.await).first
-      if await
-        return true, await.as_json(only: [:amount, :created_at])
+      if customer.blank?
+        Rails::logger::info "Utilisateur inconnu"
+        return false, "Utilisateur inconnu"
       else
-        return false, "Aucun retrait en cours pour ce compte (#{@phone})"
+        await = Await.where(customer_id: customer.id, id: customer.await).first
+        if await.blank?
+          Rails::logger::info "Aucun retrait trouvé pour ce compte"
+          return false, "Aucun retrait sur votre compte  pour le moment"
+        else
+          Rails::logger::info "Existance d'un retrait pour ce compte"
+          return true, await.as_json(only: :amount)
+        end
       end
     end
 

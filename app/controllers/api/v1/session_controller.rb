@@ -1,5 +1,6 @@
 class Api::V1::SessionController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service]
+    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait]
+    before_action :verify_token
 
     #creation de compte utilisateur
     def signup
@@ -72,6 +73,8 @@ class Api::V1::SessionController < ApplicationController
         phone = params[:phone]
         password = params[:password]
 
+        puts "Data are #{phone} and #{password}"
+
         #query the user
         signin = Client::auth_user(phone, password)
         render json: signin
@@ -94,19 +97,22 @@ class Api::V1::SessionController < ApplicationController
 
     #verification du retrait
     def check_retrait
-        phone = params[:phone]
-        request = Client::check_retrait(phone)
-        if request && request[0] == true
+        #phone = params
+        header = request.headers['HTTP_X_API_POP_KEY']
+        begin
           render json: {
-            status: true,
-            message: request[1]
+            status: Client::check_retrait(Customer.find(header).phone)
           }
-        else
+        rescue => exception
           render json: {
-            status: false,
-            message: request[1]
+            result: exception
           }
         end
+    end
+
+    #permet d'annuler le retrait en cours
+    def cancel_retrait
+
     end
 
     def validate_retrait
@@ -162,6 +168,12 @@ class Api::V1::SessionController < ApplicationController
 
     def account_params
         params.require(:customer).permit(:name, :second_name, :cni, :phone)
+    end
+
+    private
+
+    def verify_token 
+      puts "verification du token ... "
     end
 
 end
