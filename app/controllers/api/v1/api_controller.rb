@@ -33,8 +33,6 @@ class Api::V1::ApiController < ApplicationController
     def qrcode
 			#data = Parametre::Crypto::decode(params[:data])
 			data = Base64.decode64(params[:data]).split("#")
-			puts Parametre::Crypto::aesEncode("U2FsdGVkX19bI2tJa6dbsiTlTLE9uh+rPcQ7pX4hi2ZpHX5JvPlJMqUwVUIVU1JduiQwec5EDAwVKirnSdb1WCjpzpjn7S0/1lJYR6uNeuSEQMnzsAGjfZUIfTtLvn35")
-			puts "donnees contenues : #{data}"
 			render json: {
 					data: data
 			}
