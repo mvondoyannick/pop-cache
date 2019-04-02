@@ -4,12 +4,10 @@ class Api::V1::SessionController < ApplicationController
     #creation de compte utilisateur
     def signup
       puts params[:name]
-        query = Client::create_user(params[:name], params[:second_name], params[:phone], params[:password])
-        render json: {
-          status: query
-        }
-
-        #processus de creation des comptes utilisateurs
+      query = Client::create_user(params[:nom], params[:second_name], params[:phone], params[:password])
+      render json: {
+        status: query
+      }
     end
 
 
