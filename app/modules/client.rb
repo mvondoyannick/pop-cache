@@ -16,18 +16,19 @@ class Client
       $pwd = pwd
     end
 
-
     def self.create_user(name, second_name, phone, password)
       @name = name
       @second_name = second_name
       @phone = phone
       #@cni = cni
       @email = "#{@phone.to_i}@pop-cash.cm"
-      @password = password #"PC_#{SecureRandom.hex(4).upcase}"
+      @password = password
+
+      Rails::logger::info {"Données recu dans l'environnement #{@name} | #{@second_name} | #{@phone} | #{@password} avec succes."}
 
       #creation du compte de l'utilisateur
       customer = Customer.new(
-        name: @name.upcase,
+        name: @name,
         second_name: @second_name,
         phone: @phone,
         email: @email,
@@ -37,20 +38,22 @@ class Client
 
       if customer.save
         Rails::logger::info {"Creation de de l'utiliateur #{@phone} avec succes."}
-        create_user_account(customer.id, customer.phone)
-
-        #generation de 2Fa
-        auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
-        if auth[0] == true
-          return true, @phone
+        account = create_user_account(customer.id, customer.phone)
+        if account[0] == true
+          #generation de 2Fa
+          auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
+          if auth[0] == true
+            return true, @phone
+          else
+            return auth[1]
+          end
         else
-          return auth[1]
+          Rails::logger::info "Impossible de creer le compte du client #{@phone}"
+          return false, "Impossible de creer le compte client"
         end
       else
-        Sms.new(@phone, "Impossible de creer Votre profil personnel, merci de vous rappocher d\'un service Express Union. #{$signature}")
-        Sms::send
-        puts customer.errors.messages
-        return "Echec de creation du profil personnel. code erreurs : #{customer.errors.messages}"
+        Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
+        return false, "Echec de creation du profil personnel. code erreurs : #{customer.errors.full_messages}"
       end
     end
 
@@ -68,11 +71,11 @@ class Client
         Rails::logger::info "Utilisateur #{@phone} crée a #{Time.now}"
         Sms.new(@phone, "#{@phone} Bienvenue chez POP CASH, votre porte monnaie virtuel vient d\'etre cree, il dispose d\'une somme de 5000 #{$devise}. #{$signature}")
         Sms::send
-        return "creation porte-monnaie succes"
+        return true,"creation porte-monnaie succes"
       else
         Sms.new(@phone, "Impossible de creer Votre porte-monnaie virtuel, merci de vous rappocher d\'un service Express Union. #{$signature}")
         Sms::send
-        return "Creation porte-monnaie failed"
+        return false, "Creation porte-monnaie failed"
       end
     end
 
@@ -134,28 +137,33 @@ class Client
 
       customer = Customer.where(phone: @phone).first
       if !customer.blank?
-        if customer.valid_password?(@password) && customer.two_fa == "authenticate"
+        if customer.valid_password?(@password)
+          if customer.two_fa == "authenticate"
+            #on genere l'empreint/token de cet utilisateur sur la base de ses informations personnelles
+            payload = {
+              id: customer.id,
+              expire: 14.days.from_now
+            }
 
-          #on genere l'empreint/token de cet utilisateur sur la base de ses informations personnelles
-          payload = {
-            id: customer.id,
-            expire: 14.days.from_now
-          }
+            authFinger = customer.id.to_s
 
-          authFinger = customer.id.to_s
+            # on envoi cette information dans la table de l'utilisateur courant
 
-          # on envoi cette information dans la table de l'utilisateur courant
+            if customer.update(tokenauthentication: authFinger)
+              Rails::logger::info "Token updated!"
+              Rails::logger::info "Authentication success for #{phone}."
+              return customer.as_json(only: [:name, :second_name, :tokenauthentication, :apikey]), status: :created
+            else
+              Rails::logger::error "Impossible de mettre à jour le Token de l'utilisateur"
+            end 
 
-          if customer.update(tokenauthentication: authFinger)
-            Rails::logger::info "Token updated!"
-            Rails::logger::info "Authentication success for #{phone}."
-            return customer.as_json(only: [:name, :second_name, :tokenauthentication, :apikey]), status: :created
           else
-            Rails::logger::error "Impossible de mettre à jour le Token de l'utilisateur"
-          end          
+            Rails::logger::info "Utilisateur non authentier"
+            return false, "Utilisateur non authentifié sur POP CASH"
+          end         
         else
           Rails::logger::error "Authenticating user failed, bad password. end request!"
-          return false, "Impossible de vous identifier/Utilisateur/Mot de passe inconnu"
+          return false, "Impossible de vous identifier : Utilisateur/Mot de passe inconnu ou utilisateur non authentifé"
         end
       else
         Rails::logger::error "Authenticating user failled, unknow user. end request!"
@@ -532,10 +540,10 @@ class Client
 
       puts "Client : #{@from} -- marchand : #{@to} -- Amount : #{@amount} -- pwd : #{@client_password}"
 
-      marchand = Customer.where(phone: @to).first                         #personne qui recoit
+      marchand = Customer.find(@to)                         #personne qui recoit
       puts marchand
       marchand_account = Account.where(customer_id: marchand.id).first    #le montant de la personne qui recoit
-      client = Customer.where(phone: @from).first                         #la personne qui envoi
+      client = Customer.find(@from)                         #la personne qui envoi
       client_account = Account.where(customer_id: client.id).first        # le montant de la personne qui envoi
 
       if @from == @to
@@ -553,35 +561,35 @@ class Client
             if client_account.save
               marchand_account.amount = marchand_account.amount + @amount #@amount
               if marchand_account.save
-                Sms.new(@to, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
+                Sms.new(marchand.phone, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
                 Sms::send
                 #--------------------------------------------------
-                Sms.new(@from, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::Parametre::agis_percentage(@amount)} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
+                Sms.new(client.phone, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::Parametre::agis_percentage(@amount)} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
                 Sms::send
                 #----------------------------------------------------
                 puts "Paiement effectué de #{@amount}"
                 return true#, "Paiement effectué avec succes"
               else
                 puts "Marchand non credite de #{@amount}"
-                Sms.new(@to, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
+                Sms.new(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
                 Sms::send
                 return false
               end
             else
               puts "Client non debite du montant #{@amount}"
-              Sms.new(@form, "Impossible d\'acceder a votre compte. Transaction annulee. #{$signature}")
+              Sms.new(client.phone, "Impossible d\'acceder a votre compte. Transaction annulee. #{$signature}")
               Sms::send
               return false
             end
           else
             puts "Le solde de votre compte est de : #{marchand_account.amount}. Paiment impossible"
-            Sms.new(@form, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
+            Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
             Sms::send
             return false
           end
         else
           puts "Invalid password aythentication"
-          Sms.new(@form, "Mot de passe invalide. Transaction annulee. #{$signature}")
+          Sms.new(client.phone, "Mot de passe invalide. Transaction annulee. #{$signature}")
           Sms::send
           return false
         end

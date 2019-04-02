@@ -33,9 +33,43 @@ class Api::V1::ApiController < ApplicationController
     def qrcode
 			#data = Parametre::Crypto::decode(params[:data])
 			data = Base64.decode64(params[:data]).split("#")
-			render json: {
-					data: data
-			}
+
+			#recheche du payeur
+			payeur_global = data[0]
+
+			#information du marchand
+			marchand_global = data[1]
+
+			#extraction des informations du payeur
+			ex_payeur = payeur_global.split("@")
+
+			#recherche du payeur
+			query_p = Customer.find(ex_payeur[0])
+			if query_p.blank?
+				puts "Impossible de trouver cet utilisateur"
+				render json: {
+					message: "Impossible de trouver cet utilisateur"
+				}
+			else
+				puts  "informations du marchand"
+				ex_marchand = marchand_global.split("@")
+				q = Customer.find(ex_marchand[0])
+				if q.blank?
+					puts "Impossible de trouver cet utilisateur"
+					render json: {
+						message: "Impossible de trouver cet utilisateur, Unknow user"
+					}
+				else
+					render json:{
+						message: true,
+						context: ex_marchand[4],
+						name: q.name,
+						second_name: q.second_name,
+						amount: ex_marchand[1],
+						marchand_id: q.id 
+					}
+				end
+			end
 			# divide = data.split('#')
 			# #la premiere chaine correspond au payeur
 			# payeur = divide[0].split('@')

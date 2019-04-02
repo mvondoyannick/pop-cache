@@ -1,11 +1,9 @@
 class Api::V1::SessionController < ApplicationController
     skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait]
-    before_action :verify_token
 
     #creation de compte utilisateur
     def signup
-        email = "me@me.com"
-        query = Client::create_user(params[:nom], params[:prenom], params[:phone], params[:password])
+        query = Client::create_user(params[:name], params[:second_name], params[:phone], params[:password])
         render json: {
           status: query
         }
@@ -168,12 +166,6 @@ class Api::V1::SessionController < ApplicationController
 
     def account_params
         params.require(:customer).permit(:name, :second_name, :cni, :phone)
-    end
-
-    private
-
-    def verify_token 
-      puts "verification du token ... "
     end
 
 end
