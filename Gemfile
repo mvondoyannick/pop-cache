@@ -37,6 +37,8 @@ gem 'aes'
 gem 'mail_form'
 #installing faraday http gem
 gem 'faraday'
+#genere le qrcode comme je veux https://github.com/yunanhelmy/qrcodeable
+gem 'qrcodeable'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
