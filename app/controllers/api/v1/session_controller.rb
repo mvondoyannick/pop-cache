@@ -3,8 +3,7 @@ class Api::V1::SessionController < ApplicationController
 
     #creation de compte utilisateur
     def signup
-      puts params[:name]
-      query = Client::create_user(params[:nom], params[:second_name], params[:phone], params[:password])
+      query = Client::create_user(params[:nom], params[:second_name], params[:phone], params[:cni], params[:password])
       render json: {
         status: query
       }
@@ -94,11 +93,10 @@ class Api::V1::SessionController < ApplicationController
 
     #verification du retrait
     def check_retrait
-        #phone = params
         header = request.headers['HTTP_X_API_POP_KEY']
         begin
           render json: {
-            status: Client::check_retrait(Customer.find(header).phone)
+            status: Client::check_retrait_refactoring(header) #Client::check_retrait(Customer.find(header).phone)
           }
         rescue => exception
           render json: {
@@ -113,10 +111,12 @@ class Api::V1::SessionController < ApplicationController
     end
 
     def validate_retrait
-        phone = params[:phone]
-        password = params[:password]
-        puts params
-        request = Client::validate_retrait(phone, password)
+        password = Base64.decode64(params[:password])
+        puts "Mot de passe : #{password}"
+        #header = request.headers['HTTP_X_API_POP_KEY']
+        token = params[:token]
+
+        request = Client::validate_retrait(token, password)
         if request && request[0] == true
             render json: {
               code: request[0],

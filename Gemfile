@@ -17,6 +17,8 @@ gem 'simple_form'
 gem 'country_select'
 #installing devise
 gem 'devise'
+#devise authentication gem from https://github.com/gonzalo-bulnes/simple_token_authentication
+gem 'simple_token_authentication', '~> 1.0'
 #installation de la maps leaflet rails
 gem 'leaflet-rails'
 #installing httparty

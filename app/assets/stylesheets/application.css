@@ -9,6 +9,9 @@
  * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
+ *= require startbootstrap-sb-admin-2/css/sb-admin-2.css
+ *= require datatables.net-bs4/css/dataTables.bootstrap4.css
+ *= require font-awesome/css/font-awesome.css
  *= require_tree .
  *= require_self
  */

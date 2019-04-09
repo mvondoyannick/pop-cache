@@ -1,4 +1,5 @@
 class Customer < ApplicationRecord
+  acts_as_token_authenticatable
   before_save :generate_apikey
   before_save :set_hand
   after_save :generate_qr
@@ -20,8 +21,8 @@ class Customer < ApplicationRecord
   validates :phone, uniqueness: {message: "%{value} a deja ete utilisé" }, length: { is: 9, message: "Le numéro doit avoir 9 chiffres" }
   #validates :cni, presence: {message: "%{value} a deja ete utilisé" } #, length: {in: 12..20}
   validates :name, presence: true #length: { in: 3..50 }#, format: { with: /\A[a-zA-Z]+\z/, message: "only allows letters" }
-  validates :phone, presence: {message: "Ne peut etre vide"} #length: { is: 8, message: "Le numéro doit avoir 9 chiffres" }
-  #validates :password, presence: true
+  validates :cni, presence: true, uniqueness: {message: "%{value} a deja ete utilisé"}
+  validates :email, presence: true, uniqueness: {message: "%{value} a deja ete utilisé."}
 
   private
   def generate_apikey

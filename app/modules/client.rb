@@ -16,15 +16,15 @@ class Client
       $pwd = pwd
     end
 
-    def self.create_user(name, second_name, phone, password)
+    def self.create_user(name, second_name, phone, cni, password)
       @name = name
       @second_name = second_name
       @phone = phone
-      #@cni = cni
+      @cni = cni
       @email = "#{@phone.to_i}@pop-cash.cm"
       @password = password
 
-      Rails::logger::info {"Données recu dans l'environnement #{@name} | #{@second_name} | #{@phone} | #{@password} avec succes."}
+      Rails::logger::info {"Données recu dans l'environnement #{@name} | #{@second_name} | #{@phone} | #{@password} | #{@cni} avec succes."}
 
       #creation du compte de l'utilisateur
       customer = Customer.new(
@@ -33,7 +33,8 @@ class Client
         phone: @phone,
         email: @email,
         password: @password,
-        type_id: 1
+        type_id: 1,
+        cni: @cni
       )
 
       if customer.save
@@ -97,7 +98,7 @@ class Client
             customer_account.amount = customer_account.amount.to_i + @amount.to_i
             if customer_account.save
               hash = SecureRandom.hex(13).upcase
-              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, vous venez d\'etre crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
+              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte a ete cree et vous avez ete crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
               Sms::send
               return "Le compte a ete credite d\'un montant de #{@amount}'."
             else
@@ -152,7 +153,7 @@ class Client
             if customer.update(tokenauthentication: authFinger)
               Rails::logger::info "Token updated!"
               Rails::logger::info "Authentication success for #{phone}."
-              return customer.as_json(only: [:name, :second_name, :tokenauthentication, :apikey]), status: :created
+              return customer.as_json(only: [:name, :second_name, :tokenauthentication, :authentication_token, :apikey]), status: :created
             else
               Rails::logger::error "Impossible de mettre à jour le Token de l'utilisateur"
             end 
@@ -294,33 +295,43 @@ class Client
     end
 
 
+    #pour les tests
+    def self.err
+      begin
+        c = Customer.find(250)
+      rescue => e #ActiveRecord::RecordNotFound
+        Rails::logger::info "Impossible de trouver le gar" 
+      end
+    end
+
+
 
     #validation du retrait par l'utilisateur/customer
-    def self.validate_retrait(phone, pwd)
-      @phone  = phone
+    def self.validate_retrait(token, pwd)
+      @token  = token
       @pwd    = pwd
 
-      customer = Customer.where(phone: @phone).first
+      customer = Customer.find_by_authentication_token(@token)
       if customer && customer.valid_password?(@pwd)
         #on mets a jour les informations sur await sur customer
         await = Await.where(customer_id: customer.id).first
         if customer.update(await: nil)
           #on debit le compte le client
-          debit_client = debit_user_account(@phone, await.amount)
+          debit_client = debit_user_account(customer.phone.to_s, await.amount)
           if debit_client && await.destroy
-            Sms.new(@phone, "Vous venez de retirer #{await.amount} #{$devise} de votre compte. #{$signature}")
+            Sms.new(customer.phone.to_s, "Vous venez de retirer #{await.amount} #{$devise} de votre compte. #{$signature}")
             Sms::send
             #puts "Retrait effectué"
             Rails::logger::info "Retrait du montant #{await.amount} du compte effectué avec succes"
-            return true, "Retrait de #{await.amount} #{$devise} effectué sur le compte #{@phone}. #{$signature}"
+            return true, "Retrait de #{await.amount} #{$devise} effectué sur le compte #{customer.phone.to_s}. #{$signature}"
           else
             #puts "Impossible de retirer de l argent dans ce compte"
-            Rails::logger::error "Impossible d'effectuer le Retrait du montant #{await.amount} du compte #{@phone}. Transaction annulée"
+            Rails::logger::error "Impossible d'effectuer le Retrait du montant #{await.amount} du compte #{customer.phone.to_s}. Transaction annulée"
             return false, "retrait argent impossible. merci de contacter le service client au 007"
           end
         else
           #puts "Impossible de mettre a jour les informations utilisateur"
-          Rails::logger::error "Impossible d'effectuer le retrait du montant #{await.amount} du compte #{@phone}. serveur indisponible"
+          Rails::logger::error "Impossible d'effectuer le retrait du montant #{await.amount} du compte #{customer.phone.to_s}. serveur indisponible"
           return false, "Impossible de communiquer avec l IA d AGIS"
         end
       else
@@ -432,6 +443,43 @@ class Client
       end
     end
 
+
+    def self.check_retrait_refactoring(token)
+      @token = token
+      customer = Customer.where(authentication_token: @token).first
+      if customer.blank?
+        Rails::logger::info "Utilisateur inconnu"
+        return false, "Utilisateur inconnu"
+      else
+        #on recherche le compte await du customer
+        intent_retrait = Await.find_by_customer_id(customer.id)
+        if intent_retrait.blank?
+          Rails::logger::info "Aucun retrait pour cet utilisateur"
+          return false, "Aucun retrait pour ce compte."
+        else
+          Rails::logger::info "Intent retrait trouvé"
+          return true, intent_retrait.as_json(only: :amount)
+        end
+      end
+    end
+
+    #verifie le header du customer et returne true ou false en fonction des circonstance
+    # @method name  Check Header for customer
+    # @name         Client::checkHeader
+    # @params       header 
+    # @output       boolean [true/false]
+    def self.checkHeader(header)
+      @header = header
+      header_customer = Customer.find_by_authentication_token(@header)
+      if header_customer.blank?
+        Rails::logger::info "Impossible d'authentifier le client"
+        return false, "unauthenticable"
+      else
+        Rails::logger::info "Client authentifier"
+        return true, header_customer.as_json(only: [:phone, :authentication_token])
+      end
+    end
+
     #permet de verifier si le client dispse suffisament d'argent dans son compte EU 
     # @method name  Get Balance before retrait
     # @name         Client::get_balance_retrait
@@ -519,12 +567,6 @@ class Client
         return false, "Processus de annulé, Ce compte ne dispose pas assez d argent"
       end
         
-    end
-
-
-    #pour crediter le compte du marchand
-    def credit_marchand(id, amount, signature)
-
     end
 
     # permet de payer  
