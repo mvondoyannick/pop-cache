@@ -17,6 +17,8 @@ gem 'simple_form'
 gem 'country_select'
 #installing devise
 gem 'devise'
+#adding rack-core from https://github.com/cyu/rack-cors
+#gem 'rack-cors'
 #devise authentication gem from https://github.com/gonzalo-bulnes/simple_token_authentication
 gem 'simple_token_authentication', '~> 1.0'
 #installation de la maps leaflet rails

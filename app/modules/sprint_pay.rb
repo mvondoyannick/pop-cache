@@ -91,7 +91,7 @@ module SprintPay
 
       def self.payment_orange
         body_data = {
-            "phone": $phone, #utiliser la variable globale disponible a cet effet
+            "phone": $phone,        #utiliser la variable globale disponible a cet effet
             "amount": $amount       #utiliser le montant globale disponible a cet effet
         }.to_json
 

@@ -30,7 +30,7 @@ class Api::V1::ApiController < ApplicationController
 			}
 		end
 
-    def qrcode
+		def qrcode
 			#data = Parametre::Crypto::decode(params[:data])
 			data = Base64.decode64(params[:data]).split("#")
 
@@ -43,8 +43,7 @@ class Api::V1::ApiController < ApplicationController
 			#extraction des informations du payeur
 			ex_payeur = payeur_global.split("@")
 
-			#recherche du payeur
-			query_p = Customer.find(ex_payeur[0])
+			query_p = Customer.find_by_authentication_token(ex_payeur[0])
 			if query_p.blank?
 				puts "Impossible de trouver cet utilisateur"
 				render json: {
@@ -133,20 +132,10 @@ class Api::V1::ApiController < ApplicationController
 			amount = params[:montant]
 			pwd = params[:password]
 
-			if !from.nil? && !pwd.nil?
-					#--------------------------------------------------
-					#creation du journale de transaction
-					#Logs::Journal::create_logs_transaction(from, to, amount, )
-
-					transaction = Client::pay(from, to, amount, pwd)
-					puts transaction
-					render json: transaction
-			else
-					render json: {
-            message: "failed",
-            description: "Aucuns parametres recu"
-					}
-			end
+			transaction = Client::pay(from, to, amount, pwd)
+			render json: {
+				message: transaction
+			}
     end
 
 

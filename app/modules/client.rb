@@ -580,8 +580,6 @@ class Client
       @amount = amount.to_f  #montant de la transation
       @client_password = pwd
 
-      puts "Client : #{@from} -- marchand : #{@to} -- Amount : #{@amount} -- pwd : #{@client_password}"
-
       marchand = Customer.find(@to)                         #personne qui recoit
       puts marchand
       marchand_account = Account.where(customer_id: marchand.id).first    #le montant de la personne qui recoit
