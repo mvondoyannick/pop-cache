@@ -1,6 +1,6 @@
 class Client
   $signature = "POP-CASH"
-  $limit_amount = 100000
+  $limit_amount = 150000
   $limit_day_transaction = 100
   $devise = "F CFA"
   $status = {
@@ -607,28 +607,28 @@ class Client
                 Sms.new(client.phone, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::Parametre::agis_percentage(@amount)} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
                 Sms::send
                 #----------------------------------------------------
-                puts "Paiement effectué de #{@amount}"
-                return true#, "Paiement effectué avec succes"
+                Rails::logger::info "Paiement effectué de #{@amount}"
+                return true, "Paiement effectué avec succes"
               else
-                puts "Marchand non credite de #{@amount}"
+                Rails::logger::info "Marchand non credite de #{@amount}"
                 Sms.new(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
                 Sms::send
                 return false
               end
             else
-              puts "Client non debite du montant #{@amount}"
+              Rails::logger::info "Client non debite du montant #{@amount}"
               Sms.new(client.phone, "Impossible d\'acceder a votre compte. Transaction annulee. #{$signature}")
               Sms::send
               return false
             end
           else
-            puts "Le solde de votre compte est de : #{marchand_account.amount}. Paiment impossible"
+            Rails::logger::info "Le solde de votre compte est de : #{marchand_account.amount}. Paiment impossible"
             Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
             Sms::send
             return false
           end
         else
-          puts "Invalid password aythentication"
+          Rails::logger::info "Invalid password aythentication"
           Sms.new(client.phone, "Mot de passe invalide. Transaction annulee. #{$signature}")
           Sms::send
           return false

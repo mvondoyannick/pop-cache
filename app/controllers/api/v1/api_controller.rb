@@ -65,7 +65,9 @@ class Api::V1::ApiController < ApplicationController
 						name: q.name,
 						second_name: q.second_name,
 						amount: ex_marchand[1],
-						marchand_id: q.id 
+						marchand_id: q.id,
+						date: Time.now.strftime("%d-%m-%Y à %H:%M:%S"),
+						expire: 5.minutes.from_now#.strftime("%T")
 					}
 				end
 			end
@@ -127,7 +129,12 @@ class Api::V1::ApiController < ApplicationController
     # @details
     def payment
 			#on decompose mes donnees recu depuis le client
-			from = params[:payeur]
+			token = params[:token]
+
+			#recherche du payeur
+			customer = Customer.find_by_authentication_token(token)
+			#from = params[:payeur]
+			from = customer.id
 			to = params[:receveur]
 			amount = params[:montant]
 			pwd = params[:password]
@@ -135,6 +142,10 @@ class Api::V1::ApiController < ApplicationController
 			transaction = Client::pay(from, to, amount, pwd)
 			render json: {
 				message: transaction
+			}
+		rescue => e #ActiveRecord::RecordNotFound
+			render json: {
+				message: "Aucune enregistrement trouve : #{e}"
 			}
     end
 
