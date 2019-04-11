@@ -48,15 +48,15 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  #<<: *default
-  adapter: mysql2
-  encoding: utf8
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: restoafr_mvondoyannick
-  password: Bl@ckberry18
-  host: 167.114.17.32
+  <<: *default
+  #adapter: mysql2
+  #encoding: utf8
+  #pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  #username: restoafr_mvondoyannick
+  #password: Bl@ckberry18
+  #host: 167.114.17.32
 #  url: <%= ENV['DATABASE_URL'] %>
 
-  database: restoafr_popcash
+  database: pop-cash_development #restoafr_popcash
   #username: pop-cash
   #password: <%= ENV['POP-CASH_DATABASE_PASSWORD'] %>

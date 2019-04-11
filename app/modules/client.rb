@@ -98,7 +98,8 @@ class Client
             customer_account.amount = customer_account.amount.to_i + @amount.to_i
             if customer_account.save
               hash = SecureRandom.hex(13).upcase
-              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte a ete cree et vous avez ete crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
+              #Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte a ete cree et vous avez ete crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
+              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
               Sms::send
               return "Le compte a ete credite d\'un montant de #{@amount}'."
             else
@@ -300,7 +301,7 @@ class Client
       begin
         c = Customer.find(250)
       rescue => e #ActiveRecord::RecordNotFound
-        Rails::logger::info "Impossible de trouver le gar" 
+        Rails::logger::info "Impossible de trouver l'utilisateur : #{e}" 
       end
     end
 

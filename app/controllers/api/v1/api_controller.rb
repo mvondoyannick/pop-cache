@@ -25,8 +25,7 @@ class Api::V1::ApiController < ApplicationController
 			code  = params[:code]
 			render json: {
 					status: 200,
-					content: code,
-					qr_string: Parametre::Crypto::cryptoSSL(code)
+					content: " test environement for mobile"
 			}
 		end
 
@@ -52,11 +51,10 @@ class Api::V1::ApiController < ApplicationController
 			else
 				puts  "informations du marchand"
 				ex_marchand = marchand_global.split("@")
-				q = Customer.find(ex_marchand[0])
+				q = Customer.find_by_authentication_token(ex_marchand[0])
 				if q.blank?
-					puts "Impossible de trouver cet utilisateur"
 					render json: {
-						message: "Impossible de trouver cet utilisateur, Unknow user"
+						message: "Impossible de trouver cet utilisateur!"
 					}
 				else
 					render json:{

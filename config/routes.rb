@@ -1,7 +1,18 @@
 Rails.application.routes.draw do
   resources :roles
   get 'agentcrtl/index'
+  get 'agentcrtl/customer'                                                        #affiche tous les customer
+  get "agentcrtl/activity/:customer_id", to: "agentcrtl#customer_activity"        #retourne toutes les activités d'un customer
+  get "agentcrtl/qrcode/:customer_id", to: "agentcrtl#create_qrcode"              #permet de creer le QRcode pour un customer defini
   get 'agentcrtl/new'
+  get 'agentcrtl/new_customer'
+  post 'agentcrtl/intent_new_customer'
+  get 'agentcrtl/credit_customer'
+  post 'agentcrtl/intent_credit_customer'
+  get 'agentcrtl/debit_customer_account'
+  post 'agentcrtl/intent_debit_customer'
+  get 'agentcrtl/create_qrcode'                                                   #permet de generer un qrcode
+  get 'agentcrtl/create_qrcode/:customer_token', to: 'agentcrtl#intend_qrcode'
   get 'agentcrtl/edit'
   get 'agentcrtl/delete'
   get 'agentcrtl/new_qrcode'
@@ -58,6 +69,7 @@ Rails.application.routes.draw do
       match 'session/service', to: 'session#service', via: [:post, :options]
       match 'session/categories', to: 'session#serviceCategorie', via: [:get, :options]
       match 'session/categorie/:id', to: 'session#detailCategorie', via: [:post, :options]
+      match 'test', to: 'api#test', via: [:get, :options]
     end
   end
 end

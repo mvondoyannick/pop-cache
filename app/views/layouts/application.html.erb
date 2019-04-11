@@ -23,9 +23,11 @@
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
         <div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-laugh-wink"></i>
+          <%# <i class="fas fa-laugh-wink"></i> %>
+          
         </div>
-        <div class="sidebar-brand-text mx-3">POP CASH</div>
+        <%# <div class="sidebar-brand-text mx-3">POP CASH</div> %>
+        <%= image_tag("product_logo.png", size: "200x50") %>
       </a>
 
       <!-- Divider -->
@@ -35,7 +37,7 @@
       <li class="nav-item active">
         <a class="nav-link" href="index.html">
           <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>Dashboard</span></a>
+          <span>Administration</span></a>
       </li>
 
       <!-- Divider -->
@@ -72,6 +74,8 @@
             <h6 class="collapse-header">Custom Utilities:</h6>
             <%= link_to 'Types de clients', types_path, class: "collapse-item" %>
             <%= link_to 'Liste de client', agentcrtl_index_path, class: "collapse-item" %>
+            <%= link_to 'Créditer compte client', agentcrtl_index_path, class: "collapse-item" %>
+            <%= link_to "Retrait d'argent", agentcrtl_index_path, class: "collapse-item" %>
           </div>
         </div>
       </li>
@@ -104,12 +108,100 @@
         </div>
       </li>
 
+      <!-- Nav Item - Tous les utilisateurs -->
+      <li class="nav-item">
+        <%= link_to agentcrtl_customer_path, class: 'nav-link' do %>
+          <i class="fas fa-fw fa-users"></i>
+          <span>Tous les utilisateurs</span>
+        <% end %>
+      </li>
+
+      <!-- Nav Item - Journal des transactions -->
+      <li class="nav-item">
+        <%= link_to '#', class: 'nav-link' do %>
+          <i class="fas fa-fw fa-receipt"></i>
+          <span>Journal des transactions</span>
+        <% end %>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <!-- Heading -->
+      <div class="sidebar-heading">
+        Gestion des Clients
+      </div>
+
+       <!-- Nav Item - Crediter compte client -->
+      <li class="nav-item">
+        <%= link_to agentcrtl_new_customer_path, class: 'nav-link' do %>
+          <i class="fas fa-fw fa-plus"></i>
+          <span>Ajouter un client</span>
+        <% end %>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <!-- Heading -->
+      <div class="sidebar-heading">
+        Gestion des comptes
+      </div>
+
+      <!-- Nav Item - Crediter compte client -->
+      <li class="nav-item">
+        <%= link_to agentcrtl_credit_customer_path, class: 'nav-link' do %>
+          <i class="fas fa-fw fa-plus"></i>
+          <span>Crediter compte client</span>
+        <% end %>
+      </li>
+
+      <!-- Nav Item - Decaisser compte client agentcrtl/customer -->
+      <li class="nav-item">
+        <%= link_to agentcrtl_debit_customer_account_path, class: 'nav-link' do %>
+          <i class="fas fa-fw fa-user-minus"></i>
+          <span>Debiter compte client</span>
+        <% end %>
+      </li>
+
+      <!-- Nav Item - Généerer un QRcode -->
+      <li class="nav-item">
+        <%= link_to agentcrtl_create_qrcode_path, class: 'nav-link' do %>
+          <i class="fas fa-fw fa-qrcode"></i>
+          <span>Generer QR code</span>
+        <% end %>
+      </li>
+
+      <!-- Nav Item - Decaisser compte client agentcrtl/customer -->
+      <li class="nav-item">
+        <%= link_to '#', class: 'nav-link' do %>
+          <i class="fas fa-fw fa-users-cog"></i>
+          <span>Configuration Client</span>
+        <% end %>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <!-- Heading -->
+      <div class="sidebar-heading">
+        Statistiques et analyses
+      </div>
+
       <!-- Nav Item - Charts -->
       <li class="nav-item">
         <a class="nav-link" href="charts.html">
           <i class="fas fa-fw fa-chart-area"></i>
           <span>Charts</span></a>
       </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <!-- Heading -->
+      <div class="sidebar-heading">
+        Utilisateur - Partenaires
+      </div>
 
       <!-- Nav Item - Tables -->
       <li class="nav-item">

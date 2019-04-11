@@ -1,5 +1,7 @@
 class Customer < ApplicationRecord
-  acts_as_token_authenticatable
+  acts_as_token_authenticatable     #pour generer le authentication_token
+  belongs_to :type
+
   before_save :generate_apikey
   before_save :set_hand
   after_save :generate_qr
@@ -27,7 +29,7 @@ class Customer < ApplicationRecord
   private
   def generate_apikey
     self.apikey = Base64.encode64({
-      id: self.id,
+      id: self.authentication_token,
       montant: nil,
       long: nil,
       lat: nil,
@@ -39,7 +41,8 @@ class Customer < ApplicationRecord
 
   #generate hand from email
   def set_hand
-    self.hand = "#{self.id}@null@null@null@plateform@null"
+    hand = "#{self.authentication_token}@null@null@null@plateform@null"
+    self.hand = Base64.encode64(hand).delete("\n")
     #Base64.encode64(self.email).delete("\n")
   end
 

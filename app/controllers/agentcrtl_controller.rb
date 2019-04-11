@@ -87,6 +87,150 @@ class AgentcrtlController < ApplicationController
   def delete
   end
 
+  #permet de generer le QRcode
+  def create_qrcode
+
+  end
+
+  #permet de generer le qrcode et de recuperer le chemin
+  def intend_qrcode
+    data = params[:customer_token]
+    customer = Customer.find_by_authentication_token(data)
+
+    #on imprime le qrcode
+    customer.print_qrcode
+
+    #on recupere le chemin du qrcode
+    @path = customer.qrcode_path
+    rescue => e
+      render json:{
+        message: "Impossible de trouver cet utilisateur : #{e}"
+      }
+  end
+
+  #permet de retourner le journal des activités d'un customer
+  def customer_activity
+    data = params[:customer_id]
+    customer = Customer.find_by_authentication_token(data)
+  rescue => e
+    render json: {
+      message: "Une erreur est survenue. Utilisateur inconnu"
+    }
+  end
+
+  #affiche les customer sur la plateforme
+  def customer
+    @customer = Customer.order(name: :asc)
+  end
+
+  #ajout de nouveau client sur la plateforme
+  def new_customer
+  end
+
+  #intention de creation d'un nouveau customer
+  def intent_new_customer
+    name                    = params[:name]
+    second_name             = params[:second_name]
+    cni                     = params[:cni]
+    cni_file                = params[:cni_file]
+    phone                   = params[:phone]
+    phone_confirm           = params[:phone_confirm]
+    amount                  = params[:amount]
+    password_operateur      = params[:password] 
+
+    #procedure de verification
+    if current_agent.valid_password?(password_operateur)
+      if phone != phone_confirm
+        render json: {
+          message: "numero de telephone differents"
+        }
+      else
+        #enregistrement
+      end
+    else
+      render json: {
+        message: "Impossible de d'authentifier l'operateur de saisie"
+      }
+    end
+  end
+
+  #crediter un compte client
+  def credit_customer
+    #@customer = Customer.order(name: :asc)
+  end
+
+  #intention de credit du compte client
+  def intent_credit_customer
+    phone         = params[:phone]
+    phone_confirm = params[:phone_confirm]
+    amount        = params[:amount]
+    password      = params[:password] 
+
+    #procedure de verification
+    if current_agent.valid_password?(password)
+      if phone != phone_confirm
+        render json: {
+          message: "numero de telephone differents"
+        }
+      else
+        #recherche du client sur la plateforme
+        customer = Customer.find_by_phone(phone)
+        if customer.blank?
+          render json: {
+            message: "Erreur ! #{phone} est inconnu de notre plateforme"
+          }
+        else
+          query = Client::credit_account(phone, amount)
+          render json: {
+            message: query
+          }
+        end
+      end
+    else
+      render json: {
+        message: "Impossible de d'authentifier l'operateur de saisie"
+      }
+    end
+  end
+
+  #debiter un compte client
+  def debit_customer_account
+  end
+
+  #intention de retirer le credit dans le compte client
+  def intent_debit_customer
+    phone         = params[:phone]
+    phone_confirm = params[:phone_confirm]
+    amount        = params[:amount]
+    password      = params[:password] 
+
+    #procedure de verification
+    if current_agent.valid_password?(password)
+      if phone != phone_confirm
+        render json: {
+          message: "numero de telephone differents"
+        }
+      else
+        #recherche du client sur la plateforme
+        customer = Customer.find_by_phone(phone)
+        if customer.blank?
+          render json: {
+            message: "Erreur ! #{phone} est inconnu de notre plateforme"
+          }
+        else
+          query = Client::init_retrait(phone, amount)
+          render json: {
+            message: query
+          }
+        end
+      end
+    else
+      render json: {
+        message: "Impossible de d'authentifier l'operateur de saisie"
+      }
+    end
+  end
+
 
   private
   def qrcode_params
