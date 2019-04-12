@@ -54,9 +54,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       match 'session/signin', to: 'session#signin', via: [:post, :options, :get]
       match 'session/signup', to: 'session#signup', via: [:post, :options]
-      match 'session/get_balance/:phone/:password', to: 'session#get_balance', via: [:get, :options]
+      match 'session/get_balance/:customer/:password', to: 'session#getSoldeCustomer', via: [:get, :options]
       match 'session/transaction/:token/:receveur/:montant/:password', to: 'api#payment', via: [:get, :options]
-      match 'session/qrcode/:data', to: 'api#qrcode', via: [:get, :options]
+      match 'session/qrcode/:data', to: 'api#qrcode', via: [:options, :get]
       match 'session/history/:phone', to: 'api#user_history', via: [:get, :options] 
       match 'session/balance/:phone/:password', to: 'session#solde', via: [:get, :options]
       match 'session/check_retrait', to: 'session#check_retrait', via: [:post, :options]

@@ -17,7 +17,7 @@
             <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 100px;">Status</th>
             <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Start date: activate to sort column ascending" style="width: 182px;">Montant</th>
             <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending" style="width: 166px;">Type</th>
-            <th rowspan="1" colspan="1" style="width: 100px;">Action</th>
+            <th rowspan="1" colspan="1" style="width: 150px;">Action</th>
           </tr>
         </thead>
         <tfoot>
@@ -28,7 +28,7 @@
             <th rowspan="1" colspan="1">Statut</th>
             <th rowspan="1" colspan="1">Montant</th>
             <th rowspan="1" colspan="1">Type</th>
-            <th rowspan="1" colspan="2">Action</th>
+            <th rowspan="1" colspan="1">Action</th>
           </tr>
         </tfoot>
         <tbody> 
@@ -39,9 +39,9 @@
             <td><%= customer.phone %></td>
             <td>
               <% if customer.two_fa != "authenticate" %>
-                Non Authentifié
+                <p title="Utilisateur non authentifié">Non Authentifié</p>
                 <% else %>
-                <%= customer.two_fa %>
+                <p title="Utilisateur authentifié"><%= customer.two_fa %></p>
               <% end %>
             </td>
             <td><%= Account.find_by_customer_id(customer.id).amount %></td>
@@ -60,12 +60,7 @@
             <% else %>
               <td>
                 <%= link_to nil, class: 'btn btn-sm btn-outline-danger', title: "Generer le QRcode" do %>
-                <i class="fas fa-qrcode"></i>
-                <% end %>
-              </td>
-              <td>
-                <%= link_to "/agentcrtl/activity/#{customer.authentication_token}", class: 'btn btn-sm btn-outline-danger', title: "Journal d'activités" do %>
-                  <i class="fas fa-receipt"></i>
+                <i class="fas fa-qrcode"></i>&nbsp;Contacter
                 <% end %>
               </td>
             <% end %>

@@ -10,7 +10,7 @@
               <div class="text-center">
                 <h1 class="h4 text-gray-900 mb-4">Retrait d'argent du compte client</h1>
               </div>
-              <%= form_tag({action: "intent_debit_customer", method: :post}, {class: "user"}) do %>
+              <%= form_tag({action: "intent_debit_customer", method: :post, remote: true}, {class: "user"}) do %>
                 <div class="form-group">
                   <input type="text" class="form-control form-control-user" id="exampleFirstName" value="<%= current_agent.complete_name %>" disabled style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHklEQVQ4EaVTO26DQBD1ohQWaS2lg9JybZ+AK7hNwx2oIoVf4UPQ0Lj1FdKktevIpel8AKNUkDcWMxpgSaIEaTVv3sx7uztiTdu2s/98DywOw3Dued4Who/M2aIx5lZV1aEsy0+qiwHELyi+Ytl0PQ69SxAxkWIA4RMRTdNsKE59juMcuZd6xIAFeZ6fGCdJ8kY4y7KAuTRNGd7jyEBXsdOPE3a0QGPsniOnnYMO67LgSQN9T41F2QGrQRRFCwyzoIF2qyBuKKbcOgPXdVeY9rMWgNsjf9ccYesJhk3f5dYT1HX9gR0LLQR30TnjkUEcx2uIuS4RnI+aj6sJR0AM8AaumPaM/rRehyWhXqbFAA9kh3/8/NvHxAYGAsZ/il8IalkCLBfNVAAAAABJRU5ErkJggg==&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%;">
                 </div>
@@ -21,10 +21,13 @@
                   <%= telephone_field_tag :phone_confirm, nil, class: 'form-control form-control-user', placeholder: 'Confirmer Numéro de téléphone' %>
                 </div>
                 <div class="form-group">
-                  <%= number_field_tag :amount, nil, class: 'form-control form-control-user', placeholder: 'Montant à debiter du compte' %>
+                  <%= number_field_tag :amount, nil, min: 500, max: 250000, class: 'form-control form-control-user', placeholder: 'Montant à debiter du compte', require: true %>
                 </div>
                 <div class="form-group">
                   <%= password_field_tag :password, nil, class: 'form-control form-control-user', placeholder: 'Mot de passe opérateur' %>
+                </div>
+                <div class="form-group">
+                  <%= number_field_tag :amount, nil, min: 500, max: 250000, class: 'form-control form-control-user', placeholder: 'Montant à debiter du compte', require: true, disabled: true %>
                 </div>
                 <%= submit_tag "Executer le retrait", class: 'btn btn-primary btn-user btn-block' %>
               <% end %>

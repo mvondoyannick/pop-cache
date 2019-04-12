@@ -16,13 +16,14 @@ class Client
       $pwd = pwd
     end
 
-    def self.create_user(name, second_name, phone, cni, password)
+    def self.create_user(name, second_name, phone, cni, password, sexe)
       @name = name
       @second_name = second_name
       @phone = phone
       @cni = cni
       @email = "#{@phone.to_i}@pop-cash.cm"
       @password = password
+      @sexe = sexe
 
       Rails::logger::info {"Données recu dans l'environnement #{@name} | #{@second_name} | #{@phone} | #{@password} | #{@cni} avec succes."}
 
@@ -34,7 +35,8 @@ class Client
         email: @email,
         password: @password,
         type_id: 1,
-        cni: @cni
+        cni: @cni,
+        sexe: @sexe
       )
 
       if customer.save
@@ -173,12 +175,14 @@ class Client
       end
     end
 
-    def self.get_balance(phone, password)
-      @phone = phone
+    def self.get_balance(tel, password)
+      @phone = tel
       @password = password
 
+      Rails::logger::info "#{@phone}++#{@password}"
+
       #on recherche le client
-      query = Customer.where(phone: phone).first
+      query = Customer.find_by_phone(@phone)
       if query.blank?
         Rails::logger::error "Authenticating user failed, unknow user. end request!"
         return false, "Utilisateur inconnu."
@@ -311,7 +315,6 @@ class Client
     def self.validate_retrait(token, pwd)
       @token  = token
       @pwd    = pwd
-
       customer = Customer.find_by_authentication_token(@token)
       if customer && customer.valid_password?(@pwd)
         #on mets a jour les informations sur await sur customer
@@ -578,25 +581,25 @@ class Client
     def self.pay(from, to, amount, pwd)
       @from = from.to_i
       @to = to.to_i
-      @amount = amount.to_f  #montant de la transation
+      @amount = amount.to_f                                               #montant de la transation
       @client_password = pwd
 
-      marchand = Customer.find(@to)                         #personne qui recoit
+      marchand = Customer.find(@to)                                       #personne qui recoit
       puts marchand
       marchand_account = Account.where(customer_id: marchand.id).first    #le montant de la personne qui recoit
-      client = Customer.find(@from)                         #la personne qui envoi
+      client = Customer.find(@from)                                       #la personne qui envoi
       client_account = Account.where(customer_id: client.id).first        # le montant de la personne qui envoi
 
       if @from == @to
-        Sms.new(@from, "Les numeros sont identiques, merci de les changer. Transaction annulee. #{$signature}")
+        Sms.new(@from, "Vous ne pouvez pas vous payer a vous meme!. Transaction annulee. #{$signature}")
         Sms::send
-        puts "Numero indentique"
-        return false, " Les numéros de transaction sont identique", $signature
+        Rails::logger::info "Numéro indentique, transaction annuler!"
+        return false, " Vous ne pouvez pas vous payer à vous même!"
       else
         if client.valid_password?(@client_password)
-          puts "le client a le bon mot de passe"
+          Rails::logger::info "Client identifié avec succes!"
           if client_account.amount.to_f >= Parametre::Parametre::agis_percentage(@amount) #@amount.to_i
-            puts "le client a suffisament d'argent dans son compte"
+            Rails::logger::info "Le montant est suffisant dans le compte du client, transaction possible!"
             hash = SecureRandom.hex(13).upcase
             client_account.amount = client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
             if client_account.save
@@ -609,7 +612,7 @@ class Client
                 Sms::send
                 #----------------------------------------------------
                 Rails::logger::info "Paiement effectué de #{@amount}"
-                return true, "Paiement effectué avec succes"
+                return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes"
               else
                 Rails::logger::info "Marchand non credite de #{@amount}"
                 Sms.new(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")

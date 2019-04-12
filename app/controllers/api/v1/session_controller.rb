@@ -3,7 +3,7 @@ class Api::V1::SessionController < ApplicationController
 
     #creation de compte utilisateur
     def signup
-      query = Client::create_user(params[:nom], params[:second_name], params[:phone], params[:cni], params[:password])
+      query = Client::create_user(params[:nom], params[:second_name], params[:phone], params[:cni], params[:password], params[:sexe])
       render json: {
         status: query
       }
@@ -78,17 +78,39 @@ class Api::V1::SessionController < ApplicationController
 
     #obtention du solde du compte client
     def solde
-        phone = params[:phone]
-        pwd = params[:password]
+      @token = params[:customer]
+      @pwd = params[:password]
 
-        balance = Client::get_balance(phone, pwd)
+      puts "=============#{@token}"
+
+      #recherche du phone
+      @customer = Customer.find_by_authentification_token(@token).phone
+      if customer.blank?
+        render json: {
+          message: "Utilisateur inconnu sur la plateforme"
+        }
+      else
+        @balance = Client::get_balance(@customer, @pwd)
         if balance
-            render json: balance
+            render json: {
+              message: @balance
+            }
         else
             render json: {
                 message: "compte vide"
             }
         end
+      end
+    end
+
+    def getSoldeCustomer
+      @phone = params[:customer]
+      @pwd = params[:password]
+
+      render json: {
+        message: Client::get_balance(Customer.find_by_authentication_token(@phone).phone, @pwd)
+      }
+
     end
 
     #verification du retrait
