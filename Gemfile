@@ -19,6 +19,8 @@ gem 'country_select'
 gem 'devise'
 #adding rack-core from https://github.com/cyu/rack-cors
 gem 'rack-cors'
+#rails security scanner https://brakemanscanner.org/docs/quickstart/
+gem "brakeman"
 #devise authentication gem from https://github.com/gonzalo-bulnes/simple_token_authentication
 gem 'simple_token_authentication', '~> 1.0'
 #installation de la maps leaflet rails

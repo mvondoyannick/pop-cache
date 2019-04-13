@@ -141,10 +141,6 @@ class Api::V1::ApiController < ApplicationController
 			render json: {
 				message: transaction
 			}
-		rescue => e #ActiveRecord::RecordNotFound
-			render json: {
-				message: "Aucune enregistrement trouve : #{e}"
-			}
     end
 
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_12_200945) do
+ActiveRecord::Schema.define(version: 2019_04_13_162737) do
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "amount"
@@ -81,6 +81,15 @@ ActiveRecord::Schema.define(version: 2019_04_12_200945) do
   create_table "cats", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.string "detail"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "commissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "code"
+    t.string "amount_brut"
+    t.string "amount_commission"
+    t.string "commission"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -169,14 +178,14 @@ ActiveRecord::Schema.define(version: 2019_04_12_200945) do
 
   create_table "transactions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "date"
-    t.string "client_phone"
-    t.string "client_name"
-    t.string "marchand_phone"
-    t.string "marchand_name"
     t.string "amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "context"
+    t.string "marchand"
+    t.string "customer"
+    t.string "flag"
+    t.string "code"
   end
 
   create_table "types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

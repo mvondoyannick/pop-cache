@@ -21,6 +21,25 @@ module Parametre
           return converted.to_f
       end
 
+      #permet d'enregistrer les commissions pour une transaction
+      def self.commission(code, amount, total, commission)
+        #debut de l'enregistrement
+        query = Commission.new(
+          code: code,
+          amount_brut: amount,
+          amount_commission: total,
+          commission: commission
+        )
+
+        if query.save
+          return true
+        else
+          return false, query.errors.full_messages
+        end
+
+
+      end
+
       
       def self.encode_jwt(chaine)
         Rails::logger::info "Starting encode string as payload ..."

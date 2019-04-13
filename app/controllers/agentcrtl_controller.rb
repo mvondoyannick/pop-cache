@@ -137,15 +137,28 @@ class AgentcrtlController < ApplicationController
     phone_confirm           = params[:phone_confirm]
     amount                  = params[:amount]
     password_operateur      = params[:password] 
+    sexe                    = params[:sexe]
 
     #procedure de verification
     if current_agent.valid_password?(password_operateur)
       if phone != phone_confirm
         render json: {
-          message: "numero de telephone differents"
+          message:    "numero de telephone differents"
         }
       else
         #enregistrement
+        query = Client::create_user(name, second_name, phone, cni, password, "Not Set")
+        if query.save
+          render json: {
+            status:     :succes,
+            messsage:   "Enregistré avec succès"
+          }
+        else
+          rendes json: {
+            status:     :failed,
+            message:    "Echec d'enregistrement : #{query.errors.full_message}"
+          }
+        end
       end
     else
       render json: {

@@ -1,8 +1,12 @@
 module History    
   class History
-      def initialize
-          
-      end
+    def initialize(marchand, customer, amount, context, flag)
+      @marchand = marchand
+      @customer = customer
+      @amount = amount
+      @context = context
+      @flag = flag
+    end
 
       def self.get_user_history(phone)
           @phone = phone
@@ -12,13 +16,45 @@ module History
           end
       end
 
-
-      #permet de faire l'historique des depots dans une agence
-      def self.depot
+      #permet de recherche un utilisateur
+      def self.check(customer)
+        @customer = customer
+        query = Customer.find_by_phone(@customer)
+        if query.blank?
+          Rails::logger::info "Utilisateurs inconnus #{@customer}"
+          return false
+        else
+          Rails::logger::info "Utilisateurs present sur la plateforme"
+          return true
+        end
       end
 
-      #permet de faire l'historique des retrait sans une agence
-      def self.retrait
+      #permet de creer l'historique des transactions
+      def self.history(marchand, customer, amount, context, flag, code_transaction)
+        hash = Transaction.new(
+          date: Time.now,
+          marchand: Customer.where(phone: marchand).first.phone,
+          customer: Customer.where(phone: customer).first.phone,
+          amount: amount,
+          context: context,
+          flag: flag,
+          code: code_transaction
+        )
+
+        #on verifie l'existance des utilisateurs
+        if check(@marchand) == true && check(@customer) == true
+          if hash.save
+            Rails::logger::info "Information journalisée"
+            return true
+          else
+            Rails::logger::info "Impossible de journaliser l'information"
+            return false, "Impossible de generer l'historique. Erreur => #{hash.errors.full_messages}"
+          end
+        else
+          #on envoi un mail pour signaler une erreur
+          Sms.new(691451189, "Faille dans la base de donnees :: Customer etranger sur la plateforme")
+          Sms::send
+        end
       end
 
       #permet de faire l'historique des payments entre clients

@@ -288,8 +288,9 @@ class Client
         if !account.blank?
           a = account.amount.to_i - @amount.to_i
           Rails::logger::info "Information compte client #{@phone} à #{Time.now} est de #{account.amount} F CFA."
-          if account.update(customer_id: customer.id, amount: a )
-            Rails::logger::info ""
+          Rails::logger::info "Information compte client #{@phone} à avec le fameux A est de #{account.amount} F CFA."
+          if account.update(customer_id: customer.id, amount: account.amount )
+            Rails::logger::info "Compte debité avec succes"
             return true
           else
             Rails::logger::info "Impossible de mettre a jour les informations client"
@@ -315,6 +316,8 @@ class Client
     def self.validate_retrait(token, pwd)
       @token  = token
       @pwd    = pwd
+      hash = "PR-#{SecureRandom.hex(13).upcase}"                    #ID de la transaction
+
       customer = Customer.find_by_authentication_token(@token)
       if customer && customer.valid_password?(@pwd)
         #on mets a jour les informations sur await sur customer
@@ -323,11 +326,11 @@ class Client
           #on debit le compte le client
           debit_client = debit_user_account(customer.phone.to_s, await.amount)
           if debit_client && await.destroy
-            Sms.new(customer.phone.to_s, "Vous venez de retirer #{await.amount} #{$devise} de votre compte. #{$signature}")
+            Sms.new(customer.phone.to_s, "Vous venez de retirer #{await.amount} #{$devise} de votre compte. Votre solde est maintenant de #{Account.where(customer_id: customer.id).first.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
             Sms::send
             #puts "Retrait effectué"
             Rails::logger::info "Retrait du montant #{await.amount} du compte effectué avec succes"
-            return true, "Retrait de #{await.amount} #{$devise} effectué sur le compte #{customer.phone.to_s}. #{$signature}"
+            return true, "Retrait de #{await.amount} #{$devise} effectué sur le compte #{customer.phone.to_s}. Votre solde est maintenant de #{Account.where(customer_id: customer.id).first.amount} F CFA. ID Transaction : #{hash} #{$signature}"
           else
             #puts "Impossible de retirer de l argent dans ce compte"
             Rails::logger::error "Impossible d'effectuer le Retrait du montant #{await.amount} du compte #{customer.phone.to_s}. Transaction annulée"
@@ -585,7 +588,6 @@ class Client
       @client_password = pwd
 
       marchand = Customer.find(@to)                                       #personne qui recoit
-      puts marchand
       marchand_account = Account.where(customer_id: marchand.id).first    #le montant de la personne qui recoit
       client = Customer.find(@from)                                       #la personne qui envoi
       client_account = Account.where(customer_id: client.id).first        # le montant de la personne qui envoi
@@ -600,7 +602,7 @@ class Client
           Rails::logger::info "Client identifié avec succes!"
           if client_account.amount.to_f >= Parametre::Parametre::agis_percentage(@amount) #@amount.to_i
             Rails::logger::info "Le montant est suffisant dans le compte du client, transaction possible!"
-            hash = SecureRandom.hex(13).upcase
+            hash = "PP_#{SecureRandom.hex(13).upcase}"
             client_account.amount = client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
             if client_account.save
               marchand_account.amount = marchand_account.amount + @amount #@amount
@@ -611,8 +613,31 @@ class Client
                 Sms.new(client.phone, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::Parametre::agis_percentage(@amount)} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
                 Sms::send
                 #----------------------------------------------------
-                Rails::logger::info "Paiement effectué de #{@amount}"
-                return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes"
+                Rails::logger::info "Paiement effectué de #{@amount} entre #{@from} et #{@to}."
+
+                #journalisation de l'historique
+
+                #History::History.new(marchand.authentication_token, client.authentication_token, @amount, "phone", "paiement")
+                #History::History::history(@from, @to, @amount, "phone", "paiement", hash)
+                transaction = Transaction.new(
+                  marchand: @to,
+                  customer: @from,
+                  code: hash,
+                  flag: "pay",
+                  context: "none",
+                  date: Time.now,
+                  amount: @amount
+                )
+
+                if transaction.save
+                  Rails::logger::info "Transaction enregistrée avec succes"
+                end
+
+                #fin de journalisation
+
+                #enregistrement des commissions
+                Parametre::Parametre::commission(hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
+                return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \n Frais de commission : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount} F CFA. \n\n Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA."
               else
                 Rails::logger::info "Marchand non credite de #{@amount}"
                 Sms.new(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
@@ -629,7 +654,7 @@ class Client
             Rails::logger::info "Le solde de votre compte est de : #{marchand_account.amount}. Paiment impossible"
             Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
             Sms::send
-            return false
+            return false, "Le solde de votre compte est insuffisant."
           end
         else
           Rails::logger::info "Invalid password aythentication"
