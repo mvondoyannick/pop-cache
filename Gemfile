@@ -21,6 +21,8 @@ gem 'devise'
 gem 'rack-cors'
 #rails security scanner https://brakemanscanner.org/docs/quickstart/
 gem "brakeman"
+#generation des fakes datas
+gem 'faker'
 #devise authentication gem from https://github.com/gonzalo-bulnes/simple_token_authentication
 gem 'simple_token_authentication', '~> 1.0'
 #installation de la maps leaflet rails

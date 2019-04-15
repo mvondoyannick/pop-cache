@@ -14,12 +14,41 @@ module Parametre
 
       #retourne le montant majoré du client
       def self.agis_percentage(amount)
-          @amount = amount
-          tmp = (@amount*$percentage)/100
-          converted = @amount + tmp
+          @amount = amount.to_f
+          tmp = @amount.to_f * 0.02
+          converted = @amount.to_f + tmp.to_f
           puts converted
           return converted.to_f
       end
+
+      #calcule de la commission
+      def self.setCommission(montant_vente)
+        @vente = montant_vente.to_f
+        return (@vente * 0.22)
+      end
+
+      #calcul du montant a retirer
+      def self.setMontantARetirer(montant_vente)
+        @vente = montant_vente.to_f
+        return @vente + setCommission(@vente)
+      end
+
+      #obention du solde
+      def self.soldeFinale(solde_initial, montant_a_retirer, montant_vente)
+        @solde_initial = solde_initial
+        @montan
+        return @solde_initial
+
+      end
+
+      #formule a verifier
+      def self.soldeTest(solde_initial, montant_vente)
+        @solde = solde_initial.to_f
+        @vente = montant_vente.to_f
+        solde = @solde - (@vente * 1.02)
+        return solde
+      end
+
 
       #permet d'enregistrer les commissions pour une transaction
       def self.commission(code, amount, total, commission)

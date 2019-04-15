@@ -107,6 +107,8 @@ GEM
     duktape (2.0.1.0)
     erubi (1.8.0)
     execjs (2.7.0)
+    faker (1.9.3)
+      i18n (>= 0.7)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     ffi (1.10.0)
@@ -280,6 +282,7 @@ DEPENDENCIES
   devise
   dragonfly (~> 1.2.0)
   duktape
+  faker
   faraday
   geocoder
   httparty

@@ -69,7 +69,7 @@ Rails.application.routes.draw do
       match 'session/service', to: 'session#service', via: [:post, :options]
       match 'session/categories', to: 'session#serviceCategorie', via: [:get, :options]
       match 'session/categorie/:id', to: 'session#detailCategorie', via: [:post, :options]
-      match 'test', to: 'api#test', via: [:get, :options]
+      match 'test/:phone', to: 'api#test', via: [:get, :options]
     end
   end
 end

@@ -16,21 +16,21 @@ class Client
       $pwd = pwd
     end
 
-    def self.create_user(name, second_name, phone, cni, password, sexe)
+    def self.create_user(name, prenom, phone, cni, password, sexe)
       @name = name
-      @second_name = second_name
+      @prenom = prenom
       @phone = phone
       @cni = cni
       @email = "#{@phone.to_i}@pop-cash.cm"
       @password = password
       @sexe = sexe
 
-      Rails::logger::info {"Données recu dans l'environnement #{@name} | #{@second_name} | #{@phone} | #{@password} | #{@cni} avec succes."}
+      Rails::logger::info {"Données recu dans l'environnement #{@name} | #{@prenom} | #{@phone} | #{@password} | #{@cni} avec succes."}
 
       #creation du compte de l'utilisateur
       customer = Customer.new(
         name: @name,
-        second_name: @second_name,
+        second_name: @prenom,
         phone: @phone,
         email: @email,
         password: @password,
@@ -603,9 +603,9 @@ class Client
           if client_account.amount.to_f >= Parametre::Parametre::agis_percentage(@amount) #@amount.to_i
             Rails::logger::info "Le montant est suffisant dans le compte du client, transaction possible!"
             hash = "PP_#{SecureRandom.hex(13).upcase}"
-            client_account.amount = client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
+            client_account.amount = Parametre::Parametre::soldeTest(client_account.amount, amount) #client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
             if client_account.save
-              marchand_account.amount = marchand_account.amount + @amount #@amount
+              marchand_account.amount += @amount 
               if marchand_account.save
                 Sms.new(marchand.phone, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
                 Sms::send
