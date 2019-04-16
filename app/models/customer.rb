@@ -11,9 +11,9 @@ class Customer < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   #active storage
-  has_one_attached :picture_cni
-  has_one_attached :formulaire
-  has_one_attached :avatar
+  #has_one_attached :cni
+  #has_one_attached :formulaire
+  #has_one_attached :photo
 
 
   qrcodeable print_path: "app/assets/images/qrcode", identifier: :hand

@@ -600,61 +600,80 @@ class Client
       else
         if client.valid_password?(@client_password)
           Rails::logger::info "Client identifié avec succes!"
-          if client_account.amount.to_f >= Parametre::Parametre::agis_percentage(@amount) #@amount.to_i
-            Rails::logger::info "Le montant est suffisant dans le compte du client, transaction possible!"
-            hash = "PP_#{SecureRandom.hex(13).upcase}"
-            client_account.amount = Parametre::Parametre::soldeTest(client_account.amount, amount) #client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
-            if client_account.save
-              marchand_account.amount += @amount 
-              if marchand_account.save
-                Sms.new(marchand.phone, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
-                Sms::send
-                #--------------------------------------------------
-                Sms.new(client.phone, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::Parametre::agis_percentage(@amount)} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
-                Sms::send
-                #----------------------------------------------------
-                Rails::logger::info "Paiement effectué de #{@amount} entre #{@from} et #{@to}."
 
-                #journalisation de l'historique
-
-                #History::History.new(marchand.authentication_token, client.authentication_token, @amount, "phone", "paiement")
-                #History::History::history(@from, @to, @amount, "phone", "paiement", hash)
-                transaction = Transaction.new(
-                  marchand: @to,
-                  customer: @from,
+          #contrainte si le montant depasse 150 000 F CFA XAF
+          if @amount > $limit_amount
+            Rails::logger::info "Limite de transaction de 150 000 F depassée"
+            return false, "Vous ne pouvez pas faire une transaction au dela de 150 000 F."
+          else
+            if client_account.amount.to_f >=  Parametre::Parametre::agis_percentage(@amount) #@amount.to_i
+              Rails::logger::info "Le montant est suffisant dans le compte du client, transaction possible!"
+              hash = "PP_#{SecureRandom.hex(13).upcase}"
+              client_account.amount = Parametre::Parametre::soldeTest(client_account.amount, amount) #client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
+              if client_account.save
+                Rails::logger::info "Solde tm : #{client_account.amount.to_f}"
+                marchand_account.amount += @amount 
+                marchant = Transaction.new(
+                  customer: @to,
                   code: hash,
-                  flag: "pay",
+                  flag: "credit",
                   context: "none",
                   date: Time.now,
-                  amount: @amount
+                  amount: Parametre::Parametre::agis_percentage(@amount)
                 )
-
-                if transaction.save
-                  Rails::logger::info "Transaction enregistrée avec succes"
+  
+                #on enregistre
+                marchant.save
+  
+                if marchand_account.save
+                  Sms.new(marchand.phone, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
+                  Sms::send
+                  #--------------------------------------------------
+                  Sms.new(client.phone, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::Parametre::agis_percentage(@amount)} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
+                  Sms::send
+                  #----------------------------------------------------
+                  Rails::logger::info "Paiement effectué de #{@amount} entre #{@from} et #{@to}."
+  
+                  #journalisation de l'historique
+  
+                  #History::History.new(marchand.authentication_token, client.authentication_token, @amount, "phone", "paiement")
+                  #History::History::history(@from, @to, @amount, "phone", "paiement", hash)
+                  transaction = Transaction.new(
+                    customer: @from,
+                    code: hash,
+                    flag: "debit",
+                    context: "none",
+                    date: Time.now,
+                    amount: @amount
+                  )
+  
+                  if transaction.save
+                    Rails::logger::info "Transaction enregistrée avec succes"
+                  end
+  
+                  #fin de journalisation
+  
+                  #enregistrement des commissions
+                  Parametre::Parametre::commission(hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
+                  return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \n Frais de commission : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount} F CFA. \n\n Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA."
+                else
+                  Rails::logger::info "Marchand non credite de #{@amount}"
+                  Sms.new(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
+                  Sms::send
+                  return false
                 end
-
-                #fin de journalisation
-
-                #enregistrement des commissions
-                Parametre::Parametre::commission(hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
-                return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \n Frais de commission : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount} F CFA. \n\n Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA."
               else
-                Rails::logger::info "Marchand non credite de #{@amount}"
-                Sms.new(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
+                Rails::logger::info "Client non debite du montant #{@amount}"
+                Sms.new(client.phone, "Impossible d\'acceder a votre compte. Transaction annulee. #{$signature}")
                 Sms::send
                 return false
               end
             else
-              Rails::logger::info "Client non debite du montant #{@amount}"
-              Sms.new(client.phone, "Impossible d\'acceder a votre compte. Transaction annulee. #{$signature}")
+              Rails::logger::info "Le solde de votre compte est de : #{marchand_account.amount}. Paiment impossible"
+              Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
               Sms::send
-              return false
+              return false, "Le solde de votre compte est insuffisant."
             end
-          else
-            Rails::logger::info "Le solde de votre compte est de : #{marchand_account.amount}. Paiment impossible"
-            Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
-            Sms::send
-            return false, "Le solde de votre compte est insuffisant."
           end
         else
           Rails::logger::info "Invalid password aythentication"

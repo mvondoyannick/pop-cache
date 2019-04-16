@@ -63,13 +63,20 @@ Rails.application.routes.draw do
       match 'session/cancel_retrait', to: 'session#cancel_retrait', via: [:post, :options]
       match 'session/validate_retrait/:token/:password', to: 'session#validate_retrait', via: [:get, :options]
       match 'session/validate/authentication', to: 'session#signup_authentication', via: [:post, :options]
-      match 'session/history/h/encaisser', to: 'session#e', via: [:post, :options]
-      match 'session/history/h/payment', to: 'session#p', via: [:post, :options]
+      match 'session/history', to: 'session#histo', via: [:post, :options]
+      #match 'session/history/h/payment', to: 'session#p', via: [:post, :options]
       match 'test/:code(/:amount)', to: 'api#test', via: [:get, :options]
       match 'session/service', to: 'session#service', via: [:post, :options]
       match 'session/categories', to: 'session#serviceCategorie', via: [:get, :options]
       match 'session/categorie/:id', to: 'session#detailCategorie', via: [:post, :options]
       match 'test/:phone', to: 'api#test', via: [:get, :options]
+
+      #gestion des agents
+
+      match 'agents/sigin/:phone/:password', to: 'agent#signin', via: [:get, :options]
+      match 'search/code/:code', to: 'agent#searchQrcodeByCode', via: [:get, :options]
+      match 'search/scan/:data', to: 'agent#searchQrCodeByScan', via: [:get, :options]
+      match 'update/:token/:phone/:cni/:name/:second_name/:sexe/:authenticated', to: 'agent#update', via: [:get, :options]
     end
   end
 end

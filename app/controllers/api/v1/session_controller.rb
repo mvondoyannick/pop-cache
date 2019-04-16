@@ -1,5 +1,5 @@
 class Api::V1::SessionController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait]
+    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo]
 
     #creation de compte utilisateur
     def signup
@@ -17,11 +17,12 @@ class Api::V1::SessionController < ApplicationController
         render json: balance
     end
 
-    def e #retourn l'historique sur la base du telephone
-      phone = params[:phone]
-      query = History::History::encaisser(phone)
+    def histo #retourn l'historique sur la base du telephone
+      #on recupere le header/token de l'utilisateur
+      #header = request.headers['HTTP_X_API_POP_KEY']
+      customer = Customer.find_by_authentication_token(request.headers['HTTP_X_API_POP_KEY']).id
       render json: {
-          message: query
+        message: Transaction.where(customer: customer).order(created_at: :desc).as_json(only: [:date, :amount, :flag])
       }
     end
 
@@ -68,8 +69,6 @@ class Api::V1::SessionController < ApplicationController
     def signin
         phone = params[:phone]
         password = params[:password]
-
-        puts "Data are #{phone} and #{password}"
 
         #query the user
         signin = Client::auth_user(phone, password)

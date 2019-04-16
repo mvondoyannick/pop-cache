@@ -5,5 +5,5 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-Client::create_user('Test1', 'lorem', '699999991', 2514635874, 123456, 'Masulin') 
-Client::create_user('Test2', 'lorem ipsum', '699999992', 2514635873, 123456, 'Feminin' )
+Client::create_user(Faker::Name.name, Faker::FunnyName.two_word_name, '699599993', 2514635874, 123456, 'Masulin') 
+Client::create_user(Faker::Name.name, Faker::FunnyName.two_word_name, '699990994', 2514665873, 123456, 'Feminin' )

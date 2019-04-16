@@ -16,9 +16,8 @@ module Parametre
       def self.agis_percentage(amount)
           @amount = amount.to_f
           tmp = @amount.to_f * 0.02
-          converted = @amount.to_f + tmp.to_f
-          puts converted
-          return converted.to_f
+          converted = @amount + tmp
+          return converted
       end
 
       #calcule de la commission
