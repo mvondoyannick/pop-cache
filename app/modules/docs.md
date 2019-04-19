@@ -107,6 +107,7 @@ Permet d'authentifier un client enregistré sur la plateforme
 ```ruby
     Client::get_balence(phone, pwd)
     return :message_status
+    phone:integer, pwd:string
 ```
 
 ## 4. Obtenir le montant avant chaque retrait du compte client (Module)
@@ -116,6 +117,16 @@ Permet d'authentifier un client enregistré sur la plateforme
     return :boolean
 ```
 
+## 5. Permet d'initialiser la procedure de retrait d'argent du compte client (Module)
+
+```ruby
+    Client::init_retrait(phone, amount)
+    return :boolean, :message_status
+```
+
+# GESTION DES FRAUDES
+La gestion des fraudes est appliquée sur differents aspects, notamment:
+- 
 ## 5. Permet d'initialiser la procedure de retrait d'argent du compte client (Module)
 
 ```ruby

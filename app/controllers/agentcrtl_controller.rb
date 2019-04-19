@@ -172,6 +172,11 @@ class AgentcrtlController < ApplicationController
     #@customer = Customer.order(name: :asc)
   end
 
+  #pour le journal d'activité de la plateforme
+  def journal
+    @journal = Transaction.order(created_at: :desc)
+  end
+
   #intention de credit du compte client
   def intent_credit_customer
     phone         = params[:phone]

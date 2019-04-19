@@ -43,12 +43,14 @@ class Api::V1::ApiController < ApplicationController
 
 			query_p = Customer.find_by_authentication_token(ex_payeur[0])
 			if query_p.blank?
-				puts "Impossible de trouver cet utilisateur"
+				Rails::logger::info "Impossible de trouver ce customer"
 				render json: {
-					message: "Impossible de trouver cet utilisateur"
+					status: 	404,
+					flag: 		:customer_not_found,
+					message: 	"Impossible de trouver cet utilisateur"
 				}
 			else
-				puts  "informations du marchand"
+				Rails::logger::info "Recherche des informations sur le marchand"
 				ex_marchand = marchand_global.split("@")
 				q = Customer.find_by_authentication_token(ex_marchand[0])
 				if q.blank?

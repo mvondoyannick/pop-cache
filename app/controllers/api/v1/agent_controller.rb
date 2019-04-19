@@ -13,6 +13,65 @@ class Api::V1::AgentController < ApplicationController
     end
   end
 
+
+  #permet de lier un compte a un qrcode
+  def link
+    token = params[:token].split(" \" ")
+    qrcode = params[:qrcode]
+
+    #insertion des information dans la base de données badge
+    badge = Badge.new(
+      customer_id: Customer.find_by_authentication_token(token).authentication_token,
+      activate:   true,
+      qrcode:     qrcode
+    )
+
+    # on enregistre
+    if badge.save
+      render json: {
+        status:   200,
+        message:  "Liaision etablie"
+      }
+    else
+      render json: {
+        status:   404,
+        message:  badge.errors.full_messages
+      }
+    end
+  end
+
+  #search customer by phone
+  def searchCustomerByPhone
+    phone = params[:phone]
+    customer = Customer.find_by_phone(phone)
+
+    if customer.blank?
+      render json: {
+        status:   :false,
+        flag:     :unknow,
+        message:  "Utilisateur Inconnu"
+      }
+    else
+      #render json: customer
+      #on recherche le badge
+      badge = Badge.find_by_customer_id(customer.id)
+      if badge.blank?
+        render json: {
+          status:   :true,
+          flag:     :no_badge,
+          message:  "Aucun badge rataché a cet utilisateur",
+          data:     customer.as_json(only: [:name, :second_name, :phone, :authentication_token, :sexe, :phone, :cni])
+        }
+      else
+        render json: {
+          status: :false,
+          flag:   :have_badge,
+          message: "Utilisateur deja lié à un badge, ajout impossible."
+        }
+      end
+    end
+  end
+
   #search qrcode code
   def searchQrcodeByCode
     code = params[:code]
@@ -57,7 +116,7 @@ class Api::V1::AgentController < ApplicationController
     query = Customer.find_by_authentication_token(token)
     if query.blank?
       render json: {
-        message: "Badge innconnu"
+        message: "Badge inconnu"
       }
     else
       render json: query

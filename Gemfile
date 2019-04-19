@@ -15,6 +15,8 @@ gem 'sass-rails', '~> 5.0'
 gem 'simple_form'
 #country select
 gem 'country_select'
+#for cron job
+gem 'whenever', require: false
 #installing devise
 gem 'devise'
 #adding rack-core from https://github.com/cyu/rack-cors

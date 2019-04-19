@@ -1,6 +1,8 @@
 class Customer < ApplicationRecord
   acts_as_token_authenticatable     #pour generer le authentication_token
   belongs_to :type
+  has_one :badge
+  has_one :customer_datum
 
   before_save :generate_apikey
   before_save :set_hand

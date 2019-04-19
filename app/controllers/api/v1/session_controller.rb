@@ -3,7 +3,7 @@ class Api::V1::SessionController < ApplicationController
 
     #creation de compte utilisateur
     def signup
-      query = Client::create_user(params[:nom], params[:second_name], params[:phone], params[:cni], params[:password], params[:sexe])
+      query = Client::signup(params[:nom], params[:second_name], params[:phone], params[:cni], params[:password], params[:sexe], params[:question_id], params[:reponse], params[:lat], params[:lon])
       render json: {
         status: query
       }
@@ -23,6 +23,14 @@ class Api::V1::SessionController < ApplicationController
       customer = Customer.find_by_authentication_token(request.headers['HTTP_X_API_POP_KEY']).id
       render json: {
         message: Transaction.where(customer: customer).order(created_at: :desc).as_json(only: [:date, :amount, :flag])
+      }
+    end
+
+    #gestion des questions de securité
+    def question
+      question = Question.all
+      render json: {
+        message: question.as_json(only: [:id, :content])
       }
     end
 

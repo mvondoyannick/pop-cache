@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_16_172735) do
+ActiveRecord::Schema.define(version: 2019_04_19_173852) do
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -60,6 +60,16 @@ ActiveRecord::Schema.define(version: 2019_04_16_172735) do
     t.index ["role_id"], name: "index_agents_on_role_id"
   end
 
+  create_table "answers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "customer_id"
+    t.bigint "question_id"
+    t.string "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_answers_on_customer_id"
+    t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
   create_table "awaits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "amount"
     t.bigint "customer_id"
@@ -69,6 +79,16 @@ ActiveRecord::Schema.define(version: 2019_04_16_172735) do
     t.boolean "used"
     t.string "hashawait"
     t.index ["customer_id"], name: "index_awaits_on_customer_id"
+  end
+
+  create_table "badges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "customer_id"
+    t.boolean "activate"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "user"
+    t.string "qrcode"
+    t.index ["customer_id"], name: "index_badges_on_customer_id"
   end
 
   create_table "categorie_services", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -92,6 +112,21 @@ ActiveRecord::Schema.define(version: 2019_04_16_172735) do
     t.string "commission"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "customer_data", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "customer_id"
+    t.string "phone"
+    t.string "sim_phone"
+    t.string "network_operator"
+    t.string "uuid"
+    t.string "imei"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "latitude"
+    t.string "longitude"
+    t.string "customer_ip"
+    t.index ["customer_id"], name: "index_customer_data_on_customer_id"
   end
 
   create_table "customers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -208,7 +243,11 @@ ActiveRecord::Schema.define(version: 2019_04_16_172735) do
   add_foreign_key "accounts", "customers"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "agents", "roles"
+  add_foreign_key "answers", "customers"
+  add_foreign_key "answers", "questions"
   add_foreign_key "awaits", "customers"
+  add_foreign_key "badges", "customers"
+  add_foreign_key "customer_data", "customers"
   add_foreign_key "customers", "types"
   add_foreign_key "qrmodels", "services"
   add_foreign_key "services", "cats"

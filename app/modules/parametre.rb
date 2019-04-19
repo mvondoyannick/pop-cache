@@ -154,6 +154,121 @@ module Parametre
     end
   end
 
+  class ForgotPassword
+    # recuperation du mot de passe
+
+    def initialize
+    end
+
+    # creation des questions de securité
+    def self.resetPassword(phone, question, answer)
+
+    end
+
+    def self.lastCniChar(phone, lastCni)
+      #retourne les 3 derniers caracteres de la CNI
+      @phone      = phone
+      @lastCni    = lastCni
+      @customer = Customer.find_by_phone(@phone)
+      if @customer.blank?
+        Rails::logger::info "Utilisateur inconnu"
+        return false
+      else
+        @cni = @customer.cni.reverse[0..2]
+        if @cni.eql?(@lastCni)
+          return true, "matched"
+        else
+          return false, "Impoossible de vous authentifier"
+        end
+      end
+    end
+
+  end
+
+
+  class CleanAccounts
+    # permet de nettoyer les comptes inutiliser
+
+    def initialize
+    end
+
+  end
+
+  class PersonalData
+
+    def self.setPersonalData(customer, phone, phone_sim, network_operator, uuid, imei, latitude, longitude, ip)
+      @customer         = customer
+      @phone            = phone
+      @phone_sim        = phone_sim
+      @network_operator = network_operator
+      @uuid             = uuid
+      @imei             = imei
+      @latitude         = latitude
+      @longitude        = longitude
+      @ip               = ip
+
+      # on debute l'enregistrement des informations personnelles
+      personal = CustomerDatum.new(
+        customer:         @customer,
+        phone:            @phone,
+        phone_sim:        @phone_sim,
+        network_operator: @network_operator,
+        uuid:             @uuid,
+        imei:             @imei,
+        latitude:         @latitude,
+        longitude:        @longitude,
+        customer_ip:      @ip
+        )
+
+      if personal.save
+        Rails::logger::info "Information peronnelle sauvegardée"
+        return true, "Success"
+      else
+        Rails::logger::info "Impossible de sauvegarder les informations peronnelles"
+        return true, "Failed : #{personel.errors.full_messages}"
+      end
+    end
+  end
+
+  class SecurityQuestion
+
+    def initialize
+    end
+
+    #creatrion d'une question de securité
+    # @name
+    # @detail
+    # @params customer_id:interger, question_id:interger, answer:string
+    # @return 
+    def self.setSecurityQuestion(customer_id, question_id, answer)
+      @customer = customer_id
+      @question = question_id
+      @answer   = answer
+
+      #on verifie que ce customer existe
+      customer = Customer.find(customer_id)
+      if customer.blank?
+        return false, "Utilisateur inconnu"
+      else
+        #on debute l'enregistrememnt des informations
+        @answer = Answer.new(
+          customer_id:  @customer,
+          question_id:  @question,
+          content:      @answer
+        )
+
+        #on effectue l'enregistrement
+        if @answer.save
+          Rails::logger::info "Information de securité enregistrée"
+          return true, "Information de securité enregistrée"
+        else
+          Rails::logger::info "Impossible d'enregistrer les informations de securité"
+          return false, "#{@answer.errors.full_messages}"
+        end
+      end
+    end
+  end
+
   class Bank
 
     def self.new
@@ -174,21 +289,24 @@ module Parametre
   class Authentication
     #permet l'authentification a deux niveau a la creation du compte
     #pour s'assurer que le client
+    # @params   [object] phone
+    # @params   [object] context
+    # @return   [object] boolean
     def self.auth_two_factor(phone, context)
       @phone = phone.to_i
       @context = context
 
       #on cherche ce nouvel utilisateur
-      auth = Customer.where(phone: phone).first
+      auth = Customer.find_by_phone(phone)
 
       #on inscrit le nouveau mot de passe dans son compte
       if auth.blank?
         return false, "Aucun utilisateur trouve"
       else
-        data = SecureRandom.hex(2).upcase
+        @data = rand(6**6) #SecureRandom.hex(2).upcase
         #auth.two_fa = Crypto::cryptoSSL(data)
-        if auth.update(two_fa: data, perime_two_fa: 1.hour.from_now)
-          Sms.new(@phone, "Code Pop Cash : #{data}")
+        if auth.update(two_fa: @data, perime_two_fa: 1.hour.from_now)
+          Sms.new(@phone, "Votre Code authentification POPCASH : #{@data}")
           Sms::send
 
           #on retourne les informations
@@ -204,30 +322,55 @@ module Parametre
     end
 
     #permet de valider un code 2fa
+    # @params   [object] phone
+    # @params   [object] auth_key
+    # @return   [object] phone
     def self.validate_2fa(phone, auth_key)
       @phone = phone
-      @auth = auth_key
+      @auth = auth_key.to_i
       #on cherche le client responsable de cette demande
-      customer = Customer.where(phone: phone, two_fa: @auth).first
-      if customer.blank?
+      @customer = Customer.where(phone: @phone, two_fa: @auth).first
+      if @customer.blank?
+        Rails::logger::info "Utilisateur inconnu"
         return false, "Aucun code pour ce numero"
       else
-        puts customer.two_fa
+        Rails::logger::info "le code d'authentification actuel est #{@customer.two_fa}"
         #on verifie que le code auth_key est encore valide dans le temps
-        if @auth == customer.two_fa && Time.now <= customer.perime_two_fa
-          #on supprimer les information et on les set a authenticate
-          if customer.update(two_fa: 'authenticate', perime_two_fa: 'ok')
-            Sms.new(@phone, "Mr #{customer.name.upcase}, Votre compte a ete authentifie. Vous pouvez desormais vous connecter.")
-            Sms::send
-            puts "auth"
-            return true, "Authenticated & updated"
+        if  @customer.two_fa.to_i.eql?(@auth)
+          if Time.now <= @customer.perime_two_fa
+            # si le code d'authentication n'est pas encore peripé
+            #on supprimer les information et on les set a authenticate
+            if @customer.update(two_fa: 'authenticate', perime_two_fa: 'ok')
+              Sms.new(@phone, "Mr #{@customer.name.upcase}, Votre compte a ete authentifie. Vous pouvez desormais vous connecter.")
+              Sms::send
+
+              Rails::logger::info  "#{@phone} vient d'etre authentifier sur POPCASH a #{Time.now}"
+
+              # creation du compte "porte monnaie virtuel"
+
+              virtual_account = Client::create_user_account(@phone)
+              if virtual_account[0] == true
+                Rails::logger::info  "#{@phone} dispose desormais d'un compte virtuel actif sur POPCASH a #{Time.now}"
+                return true, "#{@phone} est Authenticated & dispose d'un compte virtuel actif"
+              else
+                Rails::logger::info  "Echech de creation du compte #{@phone} sur POPCASH a #{Time.now}"
+                return virtual_account[0], virtual_account[1]
+              end
+
+              # fin de la creation virtuelle
+            else
+              Rails::logger::info "Impossible d'authentifier cet utilisateur : #{@phone}"
+
+
+              return false, "unauthenticable"
+            end
           else
-            puts "Failed auth"
-            return false, "update failed"
+            Rails::logger::info "Code d'authentification perimé, merci de reprendre la procedure d'authentification."
+            return false, "Code d'authentification perimé, merci de reprendre la procedure d'authentification."
           end
-          return true, "Authenticated"
+          #return true, "Authenticated"
         else
-          puts "verification impossible"
+          Rails::logger::info "verification du code #{@auth} impossible pour le numéro #{@phone}"
           return false, "Authentification Impossible : Date ou code incorrect"
         end
       end

@@ -16,6 +16,75 @@ class Client
       $pwd = pwd
     end
 
+    # signup user, refactoring
+    def self.signup(name, second_name, phone, cni, password, sexe, question, answer, latitude, longitude)
+      @name         = name
+      @second_name  = second_name
+      @phone        = phone
+      #@sim_phone    = sim_phone
+      #@uuid         = uuid
+      #@imei         = imei
+      @cni          = cni
+      @email        = "#{@phone.to_i}@pop-cash.cm"
+      @password     = password
+      @sexe         = sexe
+      #@network_name = network_name
+      @latitude     = latitude
+      @longitude    = longitude
+      #@ip           = "0.0.0.0.0" #request.remote_ip
+      @question     = question
+      @answer       = answer
+
+      Rails::logger::info "Requete provenant de l'IP #{@ip}"
+
+      #initi customer creation
+      customer = Customer.new(
+        name:         @name,
+        second_name:  @second_name,
+        phone:        @phone,
+        email:        @email,
+        password:     @password,
+        type_id:      1,
+        cni:          @cni,
+        sexe:         @sexe
+      )
+
+      #demarrage de la procedure de creation
+      if customer.save
+        #on enregistre ses informations personnelles
+        #pData = Parametre::personalData::setPersonalData(customer.id, @phone, @phone_sim, @network_name, @uuid, @imei, @latitude, @longitude, @ip)
+        #Rails::logger::info "Sauvegarder des données personnelles : #{pData}"
+
+        # on enregistre la question de securité
+        pSecurityQuestion = Parametre::SecurityQuestion::setSecurityQuestion(customer.id, @question, @answer)
+        Rails::logger::info "Sauvegarder des données personnelles : #{pSecurityQuestion}"
+
+        @auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
+        if @auth[0] == true
+          Rails::logger::info "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
+          return true, "#{@phone}"
+        else
+          #notified admin for these errors
+
+          # end of notifications
+
+          return @auth[1], "Impossible de transmettre le SMS de confirmarion"
+        end
+
+      else
+        Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
+        return false, "Echec de creation du profil personnel. code erreurs : #{customer.errors.full_messages}"
+      end
+    end
+
+    # @detail   Permet de creer le compte d'un utilisateur
+    # @params  [object] name
+    # @params  [object] prenom
+    # @params  [object] phone
+    # @params  [object] cni
+    # @params  [object] password
+    # @params  [object] sexe
+    # @return  [object] boolean
     def self.create_user(name, prenom, phone, cni, password, sexe)
       @name = name
       @prenom = prenom
@@ -25,10 +94,8 @@ class Client
       @password = password
       @sexe = sexe
 
-      Rails::logger::info {"Données recu dans l'environnement #{@name} | #{@prenom} | #{@phone} | #{@password} | #{@cni} avec succes."}
-
       #creation du compte de l'utilisateur
-      customer = Customer.new(
+      @customer = Customer.new(
         name: @name,
         second_name: @prenom,
         phone: @phone,
@@ -39,47 +106,62 @@ class Client
         sexe: @sexe
       )
 
-      if customer.save
+      if @customer.save
         Rails::logger::info {"Creation de de l'utiliateur #{@phone} avec succes."}
-        account = create_user_account(customer.id, customer.phone)
-        if account[0] == true
-          #generation de 2Fa
-          auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
-          if auth[0] == true
-            return true, @phone
-          else
-            return auth[1]
-          end
+
+        #on envoi le code d'authentification pour verification
+        @auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
+        if @auth[0] == true
+          return true, "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
         else
-          Rails::logger::info "Impossible de creer le compte du client #{@phone}"
-          return false, "Impossible de creer le compte client"
+          #notified admin for these errors
+
+          # end of notifications
+
+          return @auth[1], "Impossible de transmettre le SMS de confirmarion"
         end
       else
-        Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
-        return false, "Echec de creation du profil personnel. code erreurs : #{customer.errors.full_messages}"
+        Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{@customer.errors.full_messages}"}
+        return false, "Echec de creation du profil personnel. code erreurs : #{@customer.errors.full_messages}"
       end
     end
 
     #creation du compte utilisateur
-    def self.create_user_account(id, phone)
+    # @name     Client::create_user_account(id:integer, phone:integer)
+    # @detail   Permet de creer un compte utilisateur sur la plateforme
+    # @params   [object] phone
+    # @return   boolean
+    def self.create_user_account(phone)
       Rails::logger::info "Demarrage de la creation du compte utilisateur ..."
-      @id = id
+      #@id = id
       @phone = phone
-      customer_account = Account.new(
-        amount: 5000,
-        customer_id: @id
-      )
-      
-      if customer_account.save
-        Rails::logger::info "Utilisateur #{@phone} crée a #{Time.now}"
-        Sms.new(@phone, "#{@phone} Bienvenue chez POP CASH, votre porte monnaie virtuel vient d\'etre cree, il dispose d\'une somme de 5000 #{$devise}. #{$signature}")
-        Sms::send
-        return true,"creation porte-monnaie succes"
+
+      #recherche du customer
+      @customer = Customer.find_by_phone(phone)
+      if @customer.blank?
+        Rails::logger::info "Utilisateur #{@phone} est inconnu"
+
+        return false, "Utilisateur inconnu"
       else
-        Sms.new(@phone, "Impossible de creer Votre porte-monnaie virtuel, merci de vous rappocher d\'un service Express Union. #{$signature}")
-        Sms::send
-        return false, "Creation porte-monnaie failed"
+        customer_account = Account.new(
+          amount: 0.0,
+          customer_id: @customer.id
+        )
+
+        if customer_account.save
+          Rails::logger::info "Utilisateur #{@phone} crée a #{Time.now}"
+
+          Sms.new(@phone, "#{@phone} Bienvenue chez POP CASH, votre porte monnaie virtuel vient d\'etre cree!")
+          Sms::send
+
+          return true,"creation porte-monnaie effectué avec succes!"
+        else
+          Sms.new(@phone, "Impossible de creer Votre porte-monnaie virtuel, merci de vous rappocher d\'un service Express Union. #{$signature}")
+          Sms::send
+          return false, "Echec de creation du porte monnaie virtuel POPCASH pour le compte #{@phone}: #{customer_account.errors.full_messages}"
+        end
       end
+      
     end
 
 
@@ -99,13 +181,13 @@ class Client
           else
             customer_account.amount = customer_account.amount.to_i + @amount.to_i
             if customer_account.save
-              hash = SecureRandom.hex(13).upcase
+              @hash = SecureRandom.hex(13).upcase
               #Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte a ete cree et vous avez ete crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
-              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
+              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{@hash}. #{$signature}")
               Sms::send
               return "Le compte a ete credite d\'un montant de #{@amount}'."
             else
-              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, impossible de crediter votre compte. Echec de la Transaction #{hash}. #{$signature}")
+              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, impossible de crediter votre compte. Echec de la Transaction #{@hash}. #{$signature}")
               Sms::send
               return "impossible de crediter le compte. code erreurs : #{customer_account.errors}"
             end
@@ -117,7 +199,7 @@ class Client
   #permet de verifier le token de l'utilisateur
   # @method     Verifier le token d'un utilisateur
   # @name       Client::userTokenAuthenticate
-  # @params     token
+  # @params     [object] token
   # @output     boolean [true/false]
   def self.userTokenAuthenticate(token)
     @token = token
@@ -133,7 +215,9 @@ class Client
     # @name       Client::auth_user
     # @params     phone, password
     # @output     boolean [true/false]
-    def self.auth_user(phone, password)
+    # @param [Object] phone
+    # @param [Object] password
+  def self.auth_user(phone, password)
       @phone = phone
       @password = password
 
@@ -143,27 +227,17 @@ class Client
       if !customer.blank?
         if customer.valid_password?(@password)
           if customer.two_fa == "authenticate"
-            #on genere l'empreint/token de cet utilisateur sur la base de ses informations personnelles
-            payload = {
-              id: customer.id,
-              expire: 14.days.from_now
-            }
 
-            authFinger = customer.id.to_s
-
-            # on envoi cette information dans la table de l'utilisateur courant
-
-            if customer.update(tokenauthentication: authFinger)
-              Rails::logger::info "Token updated!"
-              Rails::logger::info "Authentication success for #{phone}."
-              return customer.as_json(only: [:name, :second_name, :tokenauthentication, :authentication_token, :apikey]), status: :created
-            else
-              Rails::logger::error "Impossible de mettre à jour le Token de l'utilisateur"
-            end 
-
+            # on retourne les informations
+            return true, customer.as_json(only: [:name, :second_name, :authentication_token])
           else
-            Rails::logger::info "Utilisateur non authentier"
-            return false, "Utilisateur non authentifié sur POP CASH"
+            # ce compte est il bloqué, supprimer ou authentifie?
+            #Rails::logger::info "Utilisateur non authentier"
+            @account_status = isLock?(customer.authentication_token)
+
+            Rails::logger::info "Compte #{@phone} est actuellement #{customer.two_fa}"
+            return false, "Impossible d'acceder a ce compte, il est actuellement #{customer.two_fa}! merci de vous rapprocher d'une agence Expression union"
+
           end         
         else
           Rails::logger::error "Authenticating user failed, bad password. end request!"
@@ -175,7 +249,119 @@ class Client
       end
     end
 
-    def self.get_balance(tel, password)
+    # Permet d'implementer le systeme anti-fraude en comparant le phone, sim_phone, network_operator, uuid
+    # @name     isFraud
+    # @detail   Permt de determiner d'eventuel systeme de fraude
+    # @params   phone:integer, sim_phone:integer, network_operator:string, uuid:string
+    # @result   boolean true/false
+    # @return [Object]
+  def self.isFraud?(phone, sim_phone, network_operator, uuid, imei)
+      @phone            = phone
+      @sim_phone        = sim_phone
+      @network_operator = network_operator
+      @uuid             = uuid 
+      @imei             = imei
+      #test if phone and sim_phone are same
+      if @phone.eql?(@sim_phone)
+        #on recherche les information dans la base de données customerData
+        customer = Customer.find_by_phone(phone)
+        if customer.blank?
+          Rails::logger::info "Utilisateur Impossible à identifier"
+          return false, "Utilisateur inconnu"
+        else
+          #recherche dans la table customerData
+          antiFraud = customer.customer_datum
+          if antiFraud.blank?
+            Rails::logger::info "Utilisation frauduleuse detectée"
+            return false, "Faude detectée"
+          else
+            #comparaison des differentes informations recues
+            if @phone.eql?(antiFraud[:phone]) && @sim_phone.eql?(antiFraud[:sim_phone]) && @network_operator.eql?(antiFraud[:network_operator]) && @uuid.eql?(antiFraud[:uuid]) &&@imei.eql?(antiFraud[:imei])
+              Rails::logger::info "Utilisateur et terminal compatible."
+              return true, "Client et mobile authenticated"
+            else
+              Rails::logger::info "des informations divergentes ont été trouvées."
+
+              # Bloquer le compte du client
+
+              result = lockCustomerAccount(phone, "Informations divergentestrouvées")
+              if result[0] == true
+                Rails::logger::info "#{result[1]}"
+                return true, result[1]
+              else
+                Rails::logger::info "#{result[1]}"
+                return true, result[1]
+              end
+              # Fin du blocage du compte
+              #return false, "Une erreur est survenue lors de la verificationd de votre compte, bien vouloir se rapprocher d'un partenaire POP-CASH muni de vos pieces justificatives"
+            end
+          end
+        end
+      else
+        Rails::logger::info "Numero carte SIM et numero de compte ne sont pas identiques."
+        #envoi du SMS sur sim_phone
+        Sms.new(sim_phone, "La plateforme ne reconnais pas votre carte SIM!")
+        Sms::send
+        # fin d'envoi
+        return false, "Les numéro de votre carte SIM et celui de ce compte POP-CASH sont differents."
+      end
+    end
+
+
+    # permet de bloquer le compte d'un utilisateur
+    # @description
+    # @name
+    # @detail
+    # @param [Object] phone
+    # @param [Object] motif
+    # @return [Object]
+  def self.lockCustomerAccount(phone, motif)
+      @phone  = phone
+      @motif  = motif
+
+      # recherche effective du customer
+      customer = Customer.find_by_phone(phone)
+      if customer.blank?
+        Rails::logger::info "Utilisateur inconnu"
+        return false, "Utilisateur inconnu"
+      else
+        #on verifie effectivement si le compte est bloqué
+        verrou = isLock?(customer.authentication_token)     #le verrou de securité
+        if verrou[0] == true
+          #il est effectivement bloqué, on le debloque
+          unlock = customer.update(
+            two_fa: "authenticate"
+          )
+          Rails::logger::info "Utilisateur #{customer.phone} vient d'etre debloqué"
+
+          #envoi du SMS
+          Sms.new(customer.phone, "Votre compte #{customer.phone} vient d'etre debloqué.")
+          Sms::send
+
+          return true, "Compte #{customer.phone} debloqué avec succes!"
+        else
+          Rails::logger::info "Impossible de debloquer  le compte #{customer.phone}"
+          return false, verrou[1]
+        end
+      end
+    end
+
+    # permet de bloquer le compte d'un utilisateur
+    # @description
+    # @name
+    # @detail
+    # @param [Object] phone
+    # @return [Object]
+    def self.unlockCustomerAccount(phone)
+    end
+
+    # permet d'avoir le solde d'un compte
+    # @name
+    # @detail
+    # @param [Object] tel
+    # @param [Object] password
+    # @return [Object]
+  def self.get_balance(tel, password)
       @phone = tel
       @password = password
 
@@ -204,7 +390,10 @@ class Client
 
 
     #permet de mettre a jour le montant des comptes
-    def self.update_account_client(id, amount)
+    # @param [Object] id
+    # @param [Object] amount
+    # @return [Object]
+  def self.update_account_client(id, amount)
         @id = id
         @amount = amount
 
@@ -240,15 +429,48 @@ class Client
         end
     end
 
+    # Permet de verifier l'etat d'un compte Bloquer|voler|desactiver|autre
+    # @name
+    # @detail   permet de verifier si un compte est actuellement bloquer ou non
+    # params    token:string
+    def self.isLock?(token)
+      @token = token
+      customer = Customer.find_by_authentication_token(@token)
+      if customer.blank?
+        return false, "Unknow user"
+      else
+        if customer.two_fa == "authenticate"
+
+          Rails::logger::info "Utilisateur #{customer.phone} authentifié sur POPCASH"
+          return false, "authenticate", "Compte non bloqué", "Aucun motif"
+
+        elsif customer.two_fa == "lock"
+
+          Rails::logger::info "Utilisateur #{customer.phone} bloqué"
+          return true, "locked", "Compte #{customer.phone} bloqué.", "Aucun motifs"
+
+        elsif customer.two_fa == "delete"
+          # notify admin
+
+          # end notification
+          Rails::logger::info "Utilisateur #{customer.phone} supprimé sur POPCASH"
+          return true, "deleted", "Ce compte a ete supprimer"   
+        else
+          Rails::logger::info "Utilisateur #{customer.phone} rencontre des erreur, valeurs incoherentes trouvées"
+          return true, "Des erreurs ont ete identifiées sur ce compte, merci de vous rapproché d'une agence Express Union"
+        end
+      end
+    end
+
 
     #recherche les informations sur l'emeteur de la requete de paiement
     def self.find_client(id)
       @sender_id = id
-      query = Customer.find(id)
-      if query.blank?
+      customer = Customer.find(id)
+      if customer.blank?
         return false, "Utilisateur inconnu"
       else
-        return true, query
+        return true, query[:id]
       end
     end
 
@@ -261,7 +483,7 @@ class Client
         return false, "Utilisateur inconnu"
       else
         Rails::logger::info "Utilisateur identifié"
-        return true, query
+        return true, query[:id]
       end
     end
 
@@ -272,8 +494,15 @@ class Client
       @signature = signature
 
       response = find_client(id)
-      if response
-
+      if response[0] == false
+        Rails::logger::info "Utilisateur inconnu"
+        return false
+      else
+        #on recherche le compte de ce client
+        account = Account.find_by_customer_id(response[1])
+        if account.blank?
+          Rails::logger::info "Impossible de trouver le compte client"
+        end
       end
     end
 
@@ -316,36 +545,103 @@ class Client
     def self.validate_retrait(token, pwd)
       @token  = token
       @pwd    = pwd
-      hash = "PR-#{SecureRandom.hex(13).upcase}"                    #ID de la transaction
+      @hash = "PR-#{SecureRandom.hex(13).upcase}"                    #ID de la transaction
 
       customer = Customer.find_by_authentication_token(@token)
-      if customer && customer.valid_password?(@pwd)
-        #on mets a jour les informations sur await sur customer
-        await = Await.where(customer_id: customer.id).first
-        if customer.update(await: nil)
-          #on debit le compte le client
-          debit_client = debit_user_account(customer.phone.to_s, await.amount)
-          if debit_client && await.destroy
-            Sms.new(customer.phone.to_s, "Vous venez de retirer #{await.amount} #{$devise} de votre compte. Votre solde est maintenant de #{Account.where(customer_id: customer.id).first.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
-            Sms::send
-            #puts "Retrait effectué"
-            Rails::logger::info "Retrait du montant #{await.amount} du compte effectué avec succes"
-            return true, "Retrait de #{await.amount} #{$devise} effectué sur le compte #{customer.phone.to_s}. Votre solde est maintenant de #{Account.where(customer_id: customer.id).first.amount} F CFA. ID Transaction : #{hash} #{$signature}"
-          else
-            #puts "Impossible de retirer de l argent dans ce compte"
-            Rails::logger::error "Impossible d'effectuer le Retrait du montant #{await.amount} du compte #{customer.phone.to_s}. Transaction annulée"
-            return false, "retrait argent impossible. merci de contacter le service client au 007"
-          end
-        else
-          #puts "Impossible de mettre a jour les informations utilisateur"
-          Rails::logger::error "Impossible d'effectuer le retrait du montant #{await.amount} du compte #{customer.phone.to_s}. serveur indisponible"
-          return false, "Impossible de communiquer avec l IA d AGIS"
-        end
+      # refactoring
+
+      if customer.blank?
+        Rails::logger::info "Utilisateur inconnu"
+        return false, "Utilisateur inconnu"
       else
-        #puts "Mot de passe invalide"
-        Rails::logger::error "Mot de passe invalide pour ce compte. transaction annulée"
-        return false, "Mot de passe invalide"
+        if customer.valid_password?(@pwd)
+          #on recherche l'intent de retrait
+          await = Await.find_by_customer_id(customer.id)
+          if await.blank?
+            Rails::logger::info "Impossible de trouver le retrait"
+            return false, "Impossible de trouver le retrait"
+          else
+            #il existe effectivement un intent de retrait pour ce customer
+            #on verifie si ce retrait est encore valide ou perimé
+            if Time.now > await.end.to_time
+              Rails::logger::info "Intention de retrait périmé, retrait annulé!"
+
+              # On effectue le rembourssement du retrait au client
+              account = Account.find_by_customer_id(customer.id)
+              if account.blank?
+                Rails::logger::info "Impossible de trouver le compte de l'utilisateur #{customer.id}"
+                return false, "Compte inexistant"
+              else
+                #processus de retrocession
+                retro = account.amount += await.amount.to_f 
+                if account.update(amount: retro)
+                  Rails::logger::info "Montant remboursé avec succes"
+
+                  #on supprime ensuite l'intent de retrait dans Await
+                  Rails::logger::info "Suppression de l'intent de retrait"
+                  await.destroy
+
+                  #on remet a jour le flag await sur le customer
+                  Rails::logger::info "Mise a jour de user"
+                  customer.update(await: nil)
+
+                  return true, "Retrait perimé, impossible de continuer"
+                else
+                  Rails::logger::info "Impossible de mettre à jour le remboursement"
+                  return false, "Votre rembourssement a echoué, merci de vous rapprocher d'une agence Express Union"
+                end
+              end
+            else
+              #tout va bien, on procede a la validation du retrait
+
+              if customer.update(await: nil)
+                #on debit le compte le client
+                #debit_client = debit_user_account(customer.phone.to_s, await.amount)
+                #recherche du compte du client
+                account = Account.find_by_customer_id(customer.id)
+                if account.blank?
+                  Rails::logger::info "Compte inconnu"
+                  return false
+                else
+                  # on debit effectivement le compte client
+                  Rails::logger::info "Suppression de l'intent de retrait"
+
+                  #enregistrement de l'historique du retrait
+                  transaction = Transaction.new(
+                    customer: customer.id,
+                    code: @hash,
+                    flag: "retrait".upcase,
+                    context: "none",
+                    date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                    amount: await.amount
+                  )
+
+                  #on enregistre l'historique
+                  if transaction.save
+                    # on supprime l'intent
+                    await.destroy
+                    return true, "#{await.amount} F CFA ont été retiré de votre compte. \t Votre solde est de #{account.amount} F CFA. Merci"
+                  else
+                    return false, "Une erreur est survenue durant la mise à jour des informations. merci de vous rapprocher d'un point Express Union."
+                  end
+                end
+              else
+                #puts "Impossible de mettre a jour les informations utilisateur"
+                Rails::logger::error "Impossible d'effectuer le retrait du montant #{await.amount} du compte #{customer.phone.to_s}. serveur indisponible"
+                return false, "Impossible de communiquer avec l IA d AGIS"
+              end
+
+              # fin de la validation du retrait
+            end
+          end
+          #on verifie si le retrait est deka perimé
+        else
+          Rails::logger::error "Mot de passe invalide pour ce compte. transaction annulée"
+          return false, "Mot de passe invalide"
+        end
       end
+
+      # fin du refactoring
     end
 
     #pemet de verifier qu'un await est perimé ou pas
@@ -524,8 +820,9 @@ class Client
     # permet d'initialiser une procedure de retrait du coté de l'agent EU 
     # @method name  Get Balance before retrait
     # @name         Client::init_retrait
-    # @params       phone amount 
-    # @output       boolean [true/false]
+    # @params       [object] phone
+    # @param        [object] amount
+    # @return       boolean [true/false]
     def self.init_retrait(phone, amount)
       @phone = phone
       @amount = amount.to_i
@@ -579,8 +876,11 @@ class Client
     # permet de payer  
     # @method name  Pay
     # @name         Client::pay
-    # @params       emeteur, destinataire, montant, password 
-    # @output       boolean [true/false]
+    # @params       [object] emeteur
+    # @param        [object] destinataire
+    # @params       [object] montant
+    # @params       [object] password
+    # @output       [boolean] [true/false]
     def self.pay(from, to, amount, pwd)
       @from = from.to_i
       @to = to.to_i
@@ -608,17 +908,17 @@ class Client
           else
             if client_account.amount.to_f >=  Parametre::Parametre::agis_percentage(@amount) #@amount.to_i
               Rails::logger::info "Le montant est suffisant dans le compte du client, transaction possible!"
-              hash = "PP_#{SecureRandom.hex(13).upcase}"
+              @hash = "PP_#{SecureRandom.hex(13).upcase}"
               client_account.amount = Parametre::Parametre::soldeTest(client_account.amount, amount) #client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
               if client_account.save
                 Rails::logger::info "Solde tm : #{client_account.amount.to_f}"
                 marchand_account.amount += @amount 
                 marchant = Transaction.new(
                   customer: @to,
-                  code: hash,
-                  flag: "credit",
+                  code: @hash,
+                  flag: "paiement".upcase,
                   context: "none",
-                  date: Time.now,
+                  date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
                   amount: Parametre::Parametre::agis_percentage(@amount)
                 )
   
@@ -626,10 +926,10 @@ class Client
                 marchant.save
   
                 if marchand_account.save
-                  Sms.new(marchand.phone, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
+                  Sms.new(marchand.phone, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{@hash}. #{$signature}")
                   Sms::send
                   #--------------------------------------------------
-                  Sms.new(client.phone, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::Parametre::agis_percentage(@amount)} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. Merci de nous faire confiance. #{$signature}")
+                  Sms.new(client.phone, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::Parametre::agis_percentage(@amount)} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{@hash}. Merci de nous faire confiance. #{$signature}")
                   Sms::send
                   #----------------------------------------------------
                   Rails::logger::info "Paiement effectué de #{@amount} entre #{@from} et #{@to}."
@@ -640,10 +940,10 @@ class Client
                   #History::History::history(@from, @to, @amount, "phone", "paiement", hash)
                   transaction = Transaction.new(
                     customer: @from,
-                    code: hash,
-                    flag: "debit",
+                    code: @hash,
+                    flag: "paiement".upcase,
                     context: "none",
-                    date: Time.now,
+                    date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
                     amount: @amount
                   )
   
@@ -654,7 +954,7 @@ class Client
                   #fin de journalisation
   
                   #enregistrement des commissions
-                  Parametre::Parametre::commission(hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
+                  Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
                   return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \n Frais de commission : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount} F CFA. \n\n Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA."
                 else
                   Rails::logger::info "Marchand non credite de #{@amount}"
@@ -676,10 +976,10 @@ class Client
             end
           end
         else
-          Rails::logger::info "Invalid password aythentication"
+          Rails::logger::info "Invalid user password authentication"
           Sms.new(client.phone, "Mot de passe invalide. Transaction annulee. #{$signature}")
           Sms::send
-          return false
+          return false, "Mot de passe invalide."
         end
       end
     end
@@ -702,7 +1002,7 @@ class Client
         #on authentifie le client a l'aide de son telephone et de son password
         if client.valid_password?(@client_password)
           if (client_account.amount >= @amount)
-            hash = SecureRandom.hex(13).upcase
+            @hash = SecureRandom.hex(13).upcase
             marchand_account.amount = marchand_account.amount + @amount
             if marchand_account.save
               client_account.amount = client_account.amount - @amount
@@ -715,14 +1015,14 @@ class Client
                 Journal::Journal::create_logs_transaction(@to, @from, @amount, "debit")
 
                 #Envoi des SMS de confirmations de la transaction
-                Sms.new(@to, "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
+                Sms.new(@to, "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{@hash}. #{$signature}")
                 Sms::send
                 #----------------------------------
-                Sms.new(@from, "Mr/Mme #{client.name} #{client.second_name}, #{@amount} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{hash}. #{$signature}")
+                Sms.new(@from, "Mr/Mme #{client.name} #{client.second_name}, #{@amount} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{@hash}. #{$signature}")
                 Sms::send
-                return "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. ID Transaction : #{hash}. #{$signature}"
+                return "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. ID Transaction : #{@hash}. #{$signature}"
               else
-                return "Echec du paiement du montant #{@amount} F CFA. Echec de la transaction ID Transaction : #{hash}. #{$signature}"
+                return "Echec du paiement du montant #{@amount} F CFA. Echec de la transaction ID Transaction : #{@hash}. #{$signature}"
               end
             else
               return "une erreur est survenue durant le traitement"

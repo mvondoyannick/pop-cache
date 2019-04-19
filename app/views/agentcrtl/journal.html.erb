@@ -1,64 +1,45 @@
-
 <br>
 <br>
 
 <div class="card shadow mb-4">
   <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Clients plateforme</h6>
+    <h6 class="m-0 font-weight-bold text-primary">Journal des transactions</h6>
   </div>
   <div class="card-body">
     <div class="table-responsive">
       <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4"><div class="row"><div class="col-sm-12 col-md-6"><div class="dataTables_length" id="dataTable_length"><label>Show <select name="dataTable_length" aria-controls="dataTable" class="custom-select custom-select-sm form-control form-control-sm"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> entries</label></div></div><div class="col-sm-12 col-md-6"><div id="dataTable_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="dataTable"></label></div></div></div><div class="row"><div class="col-sm-12"><table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
         <thead>
           <tr role="row">
-            <th class="sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 263px;">Nom</th>
-            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" style="width: 251px;">Prenom</th>
-            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Office: activate to sort column ascending" style="width: 194px;">Téléphone</th>
-            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 100px;">Status</th>
-            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Start date: activate to sort column ascending" style="width: 182px;">Montant</th>
-            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending" style="width: 166px;">Type</th>
-            <th rowspan="1" colspan="1" style="width: 150px;">Action</th>
+            <th class="sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 100px;">Numero</th>
+            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" style="width: 251px;">Date</th>
+            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Office: activate to sort column ascending" style="width: 100px;">Montant</th>
+            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 100px;">context</th>
+            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Start date: activate to sort column ascending" style="width: 220px;">Client</th>
+            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending" style="width: 166px;">Flag</th>
+            <th rowspan="1" colspan="1" style="width: 300px;">Code Transaction</th>
           </tr>
         </thead>
         <tfoot>
           <tr>
-            <th rowspan="1" colspan="1">Nom</th>
-            <th rowspan="1" colspan="1">Prenom</th>
-            <th rowspan="1" colspan="1">Téléphone</th>
-            <th rowspan="1" colspan="1">Statut</th>
+            <th rowspan="1" colspan="1">Numero</th>
+            <th rowspan="1" colspan="1">Date</th>
             <th rowspan="1" colspan="1">Montant</th>
-            <th rowspan="1" colspan="1">Type</th>
-            <th rowspan="1" colspan="1">Action</th>
+            <th rowspan="1" colspan="1">context</th>
+            <th rowspan="1" colspan="1">Client</th>
+            <th rowspan="1" colspan="1">Flag</th>
+            <th rowspan="1" colspan="1">Code Transaction</th>
           </tr>
         </tfoot>
         <tbody> 
-        <% @customer.each do |customer| %>
+        <% Transaction.order(created_at: :desc).each do |customer| %>
           <tr role="row" class="odd">
-            <td><%= customer.name %></td>
-            <td><%= customer.second_name %></td>
-            <td><%= customer.phone %></td>
-            <td>
-              <% if customer.two_fa != "authenticate" %>
-                <p title="Utilisateur non authentifié">Non Authentifié</p>
-                <% else %>
-                <p title="Utilisateur authentifié"><%= customer.two_fa %></p>
-              <% end %>
-            </td>
-            <td><%= Account.find_by_customer_id(customer.id).amount %></td>
-            <td><%= Type.find(customer.type_id).name %></td>
-            <% if customer.two_fa != "authenticate" %>
-              <td>
-                <%= link_to nil, class: 'btn btn-sm btn-outline-danger disabled', title: "Generer le QRcode" do %>
-                <i class="fas fa-qrcode"></i>&nbsp;Contacter
-                <% end %>
-              </td>
-            <% else %>
-              <td>
-                <%= link_to nil, class: 'btn btn-sm btn-outline-danger', title: "Generer le QRcode" do %>
-                <i class="fas fa-qrcode"></i>&nbsp;Contacter
-                <% end %>
-              </td>
-            <% end %>
+            <td><%= customer.id %></td>
+            <td><%= customer.created_at %></td>
+            <td><%= customer.amount %></td>
+            <td><%= customer.context %></td>
+            <td><%= Customer.find(customer.customer).authentication_token %></td>
+            <td><%= customer.flag %></td>
+            <td><%= customer.code %></td>
           </tr>
         <% end %>                   
         </tbody>

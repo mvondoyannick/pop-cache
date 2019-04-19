@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get 'agentcrtl/edit'
   get 'agentcrtl/delete'
   get 'agentcrtl/new_qrcode'
+  get 'agentcrtl/journal'
   resources :cats
   resources :categories
   resources :categorie_services
@@ -70,6 +71,7 @@ Rails.application.routes.draw do
       match 'session/categories', to: 'session#serviceCategorie', via: [:get, :options]
       match 'session/categorie/:id', to: 'session#detailCategorie', via: [:post, :options]
       match 'test/:phone', to: 'api#test', via: [:get, :options]
+      match 'security/question/', to: 'session#question', via: [:get, :options]
 
       #gestion des agents
 
@@ -77,6 +79,8 @@ Rails.application.routes.draw do
       match 'search/code/:code', to: 'agent#searchQrcodeByCode', via: [:get, :options]
       match 'search/scan/:data', to: 'agent#searchQrCodeByScan', via: [:get, :options]
       match 'update/:token/:phone/:cni/:name/:second_name/:sexe/:authenticated', to: 'agent#update', via: [:get, :options]
+      match 'search/phone/:phone', to: 'agent#searchCustomerByPhone', via: [:get, :options]
+      match 'links/link/:token/:qrcode', to: 'agent#link', via: [:get, :options]
     end
   end
 end
