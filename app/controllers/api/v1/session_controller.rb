@@ -1,5 +1,5 @@
 class Api::V1::SessionController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo]
+    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword]
 
     #creation de compte utilisateur
     def signup
@@ -26,7 +26,9 @@ class Api::V1::SessionController < ApplicationController
       }
     end
 
-    #gestion des questions de securité
+    # gestion des questions de securité
+    # retourne toutes les question de securité  dispnible sur la plateforme
+    # 
     def question
       question = Question.all
       render json: {
@@ -188,6 +190,125 @@ class Api::V1::SessionController < ApplicationController
 
         transaction = Client::transaction(from, to, amount, password)
         render json: transaction
+    end
+
+
+    # recuperation du mot de passe perdu/oublié par le customer
+    def retrivePassword
+      question  = params[:question_id]
+      answer    = params[:reponse]
+      phone     = params[:phone]
+
+      @sms_pwd = rand(6**6)
+
+      # on recherche si ce numero de telephone est enregistré dans la plateforme
+      customer = Customer.find_by_phone(phone)
+      if customer.blank?
+        render json: {
+          status: :not_found,
+          message:  "Utilisateur inconnu"
+        }
+      else
+        answer = Answer.where(customer_id: customer.id, question_id: question, content: answer).first
+        if answer.blank?
+          Rails::logger::info "#{answer.inspect}"
+          render json: {
+            status:   :not_found,
+            message:  "Resultat non coherent pour l'utilisateur #{phone}"
+          }
+        else
+          # avant l'envoi, on bloque le compte du customer
+          lock = Parametre::SecurityQuestion::lockCustomerAccount(customer.id)
+
+          Rails::logger::info "Valeur de Lock :: #{lock.inspect}"
+
+          if lock[0] == true 
+            # on enregistre le code SMS
+            sms_code = SmsPassword.new(customer_id: customer.id, code: @sms_pwd)
+            if sms_code.save
+              # on incremente le compte status
+
+              #le compte vient d'etre bloqué
+              Sms.new(customer.phone, "SMS Validation mot de passe #{@sms_pwd}")
+              Sms::send
+              render json: {
+                status:   :found,
+                message:  "Verifier votre messagerie SMS."
+              }
+            else
+              render json: {
+                status:   :errors,
+                message:  "Une erreur est survenue"
+              }
+            end
+          else
+            render json: {
+              status:   :error_lock,
+              message:  "Impossible de verrouiller le compte"
+            }
+          end
+        end
+      end
+    end
+
+    # permet  de reset le password
+    def resetPassword
+      code                  = params[:code_sms]
+      phone                 = params[:phone]
+      password              = params[:password]
+
+      # on cherche a verifier le code
+      customer = Customer.find_by_phone(phone)
+      if customer.blank?
+        render json: {
+          status: :not_found,
+          message:  "Utilisateur inconnu"
+        }
+      else
+        # on commence par rechercher si le customer en question a demander a reinitialiser son pwd
+        checkCode = SmsPassword.where(customer_id: customer.id, code: code).first
+        if checkCode.blank?
+          render json: {
+            status:   :not_found,
+            message:  "Pas de code pour cet utilisateur"
+          }
+        else
+          # deblocage du user
+          unlock = Parametre::SecurityQuestion::unlockCustomerAccount(customer.id)
+          if unlock[0] == true
+            if customer.update(password: password)
+
+              # on supprimer les anciennes informations
+              if checkCode.destroy
+                Sms.new(customer.phone, "Votre mot de passe vient d etre mis a jour si vous n en etes pas l auteur, veillez vous rapprocher d un agence partenaire. POPCASH")
+                #render data to json
+                render json: {
+                  status:   :success,
+                  message:  "Mot de passe mis a jour"
+                }
+              else
+                #render data to json
+                render json: {
+                  status:   :failed,
+                  message:  "Impossible de mettre le mot de passe a jour",
+                  errors:   checkCode.errors.full_messages
+                }
+              end
+            else
+              render json: {
+                status:   :error,
+                message:  "Impossible de mettre le mot de passe jour"
+              }
+            end
+          else
+            render json: {
+              status:   :errors,
+              message:  "Mise à jour d'informations d'authetification impossible"
+            }
+          end
+        end
+      end
+
     end
 
     private

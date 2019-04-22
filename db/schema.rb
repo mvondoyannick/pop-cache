@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_19_173852) do
+ActiveRecord::Schema.define(version: 2019_04_22_145837) do
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "customer_id"
-    t.float "amount"
+    t.float "amount", null: false
     t.index ["customer_id"], name: "index_accounts_on_customer_id"
   end
 
@@ -211,6 +211,15 @@ ActiveRecord::Schema.define(version: 2019_04_19_173852) do
     t.index ["categorie_id"], name: "index_services_on_categorie_id"
   end
 
+  create_table "sms_passwords", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "customer_id"
+    t.string "code"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_sms_passwords_on_customer_id"
+  end
+
   create_table "transactions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "date"
     t.string "amount"
@@ -251,4 +260,5 @@ ActiveRecord::Schema.define(version: 2019_04_19_173852) do
   add_foreign_key "customers", "types"
   add_foreign_key "qrmodels", "services"
   add_foreign_key "services", "cats"
+  add_foreign_key "sms_passwords", "customers"
 end

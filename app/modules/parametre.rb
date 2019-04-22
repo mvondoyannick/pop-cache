@@ -267,6 +267,41 @@ module Parametre
         end
       end
     end
+
+    # permet de bloquer un compte client
+    # @detail     une fois que l'on demande son mot de passe, le compte se verouiller automatiquement, cas du MDP oublé
+    def self.lockCustomerAccount(customer_id)
+      @customer = customer_id
+      customer = Customer.find(@customer)
+      Rails::logger::info "#{customer.two_fa}"
+      if customer.blank?
+        return false, "Utilisateur inconnu"
+      else
+        # update two_fa item on customer
+        if customer.update(two_fa: "lock")
+          return true, "compte bloquer"
+        else
+          return false, "Impossible de mettre a jour les information de two_fa"
+        end
+      end
+    end
+
+
+    # debloquer le compte d'un utilisateur
+    def self.unlockCustomerAccount(customer_id)
+      @customer = customer_id
+      customer = Customer.find(@customer)
+      if customer.blank?
+        return false, "Utilisateur inconnu"
+      else
+        # tout est bon, on met a jours les informations du two_fa
+        if customer.update(two_fa: "authenticate")
+          return true, "Utilisateur authentifie"
+        else
+          return false, "Impossible de mettre a jour les information de two_fa"
+        end
+      end
+    end
   end
 
   class Bank

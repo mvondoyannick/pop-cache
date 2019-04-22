@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'parametres/index'
   resources :roles
   get 'agentcrtl/index'
   get 'agentcrtl/customer'                                                        #affiche tous les customer
@@ -72,6 +73,8 @@ Rails.application.routes.draw do
       match 'session/categorie/:id', to: 'session#detailCategorie', via: [:post, :options]
       match 'test/:phone', to: 'api#test', via: [:get, :options]
       match 'security/question/', to: 'session#question', via: [:get, :options]
+      match 'security/retrive/password', to: 'session#retrivePassword', via: [:post, :options]
+      match 'security/reset/password', to: 'session#resetPassword', via: [:post, :options]
 
       #gestion des agents
 

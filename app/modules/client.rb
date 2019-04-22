@@ -236,7 +236,7 @@ class Client
             @account_status = isLock?(customer.authentication_token)
 
             Rails::logger::info "Compte #{@phone} est actuellement #{customer.two_fa}"
-            return false, "Impossible d'acceder a ce compte, il est actuellement #{customer.two_fa}! merci de vous rapprocher d'une agence Expression union"
+            return false, "Impossible d'acceder a ce compte, Merci de suivre formelement les inscruction de creation de compte"
 
           end         
         else

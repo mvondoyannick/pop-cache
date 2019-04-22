@@ -1,4 +1,4 @@
-
+<%= render 'layouts/summary' %>
 <br>
 <br>
 
@@ -26,7 +26,6 @@
             <th rowspan="1" colspan="1">Prenom</th>
             <th rowspan="1" colspan="1">Téléphone</th>
             <th rowspan="1" colspan="1">Statut</th>
-            <th rowspan="1" colspan="1">Montant</th>
             <th rowspan="1" colspan="1">Type</th>
             <th rowspan="1" colspan="1">Action</th>
           </tr>
@@ -44,7 +43,6 @@
                 <p title="Utilisateur authentifié"><%= customer.two_fa %></p>
               <% end %>
             </td>
-            <td><%= Account.find_by_customer_id(customer.id).amount %></td>
             <td><%= Type.find(customer.type_id).name %></td>
             <% if customer.two_fa != "authenticate" %>
               <td>
