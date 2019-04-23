@@ -5,7 +5,7 @@
       <div class="card-body">
         <div class="row no-gutters align-items-center">
           <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"><%= link_to "Gestion des agences", nil %></div>
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"><%= link_to "Gestion des agences", parametres_agence_path, class: 'text-primary' %></div>
             <div class="h5 mb-0 font-weight-bold text-gray-800">2500 Agences</div>
           </div>
           <div class="col-auto">
@@ -22,7 +22,7 @@
       <div class="card-body">
         <div class="row no-gutters align-items-center">
           <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Rapprochement bancaire</div>
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1"><%= link_to "Rapprochement bacaire", parametres_rapprochement_path, class: 'text-success' %></div>
             <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
           </div>
           <div class="col-auto">
@@ -39,7 +39,7 @@
       <div class="card-body">
         <div class="row no-gutters align-items-center">
           <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Journal des transactions</div>
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1"><%= link_to "Journal des transaction", parametres_journal_path, class: 'text-info' %></div>
             <div class="row no-gutters align-items-center">
               <div class="col-auto">
                 <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><%= Transaction.all.count %></div>

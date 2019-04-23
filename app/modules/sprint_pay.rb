@@ -67,9 +67,9 @@ module SprintPay
       include HTTParty
 
       HEADERS = {
-          "Authorization": "SP:2c110723-f334-4638-a610-1d575eefd60f:MjBmNjBjNzg5YmE3MWYwYTAxM2Y4Nzg3ODViYjRlOTRkZjAwYTYxMg==",
-          "DateTime": "2018-12-05T18:55:25Z",
-          "Content-Type": "application/json"
+        "Authorization": "SP:2c110723-f334-4638-a610-1d575eefd60f:MjBmNjBjNzg5YmE3MWYwYTAxM2Y4Nzg3ODViYjRlOTRkZjAwYTYxMg==",
+        "DateTime": "2018-12-05T18:55:25Z",
+        "Content-Type": "application/json"
       }
 
       def initialize(phone, amount)
@@ -83,23 +83,34 @@ module SprintPay
         return request
       end
 
-      def self.send(body)
-        #https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3
-        q = HTTParty.post('https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3', headers: HEADERS, body: body)
+      def self.send(body, url)
+        # https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3
+        # https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3
+
+        q = HTTParty.post(url, headers: HEADERS, body: body)
         return q.as_json
       end
 
-      def self.payment_orange
+      def self.orange
+        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3"
         body_data = {
-            "phone": $phone,        #utiliser la variable globale disponible a cet effet
-            "amount": $amount       #utiliser le montant globale disponible a cet effet
+          "phone": $phone,        #utiliser la variable globale disponible a cet effet
+          "amount": $amount       #utiliser le montant globale disponible a cet effet
         }.to_json
 
-        send(body_data)
+        send(body_data, base_url)
       end
 
       #permet d'effectuer le paiement via MOMO -> MTN Mobile Money
-      def self.payment_mtn
+      def self.mtn
+        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3"
+        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3"
+        body_data = {
+          "phone": $phone,        #utiliser la variable globale disponible a cet effet
+          "amount": $amount       #utiliser le montant globale disponible a cet effet
+        }.to_json
+
+        send(body_data, base_url)
 
       end
 

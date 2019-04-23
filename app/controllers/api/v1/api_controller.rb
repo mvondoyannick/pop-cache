@@ -99,6 +99,11 @@ class Api::V1::ApiController < ApplicationController
     def user_history
         phone = params[:phone]
         render json: History::History::get_user_history(phone)
-    end
+		end
+
+  # effectuer le paiement d'une transaction via USSD
+  def paymentUssdExt
+		render json: "Welcome"
+	end
     
 end

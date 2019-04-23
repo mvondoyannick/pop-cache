@@ -1,5 +1,5 @@
 class Api::V1::SessionController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword]
+    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber]
 
     #creation de compte utilisateur
     def signup
@@ -20,10 +20,17 @@ class Api::V1::SessionController < ApplicationController
     def histo #retourn l'historique sur la base du telephone
       #on recupere le header/token de l'utilisateur
       #header = request.headers['HTTP_X_API_POP_KEY']
-      customer = Customer.find_by_authentication_token(request.headers['HTTP_X_API_POP_KEY']).id
-      render json: {
-        message: Transaction.where(customer: customer).order(created_at: :desc).as_json(only: [:date, :amount, :flag])
-      }
+      @customer = Customer.find_by_authentication_token(request.headers['HTTP_X_API_POP_KEY'])
+      if @customer.blank?
+        render json: {
+            status:   :not_found,
+            message:  "utilisateur inconnu"
+        }
+      else
+        render json: {
+            message: Transaction.where(customer: @customer.id).order(created_at: :desc).as_json(only: [:date, :amount, :flag])
+        }
+      end
     end
 
     # gestion des questions de securité
@@ -308,8 +315,145 @@ class Api::V1::SessionController < ApplicationController
           end
         end
       end
-
     end
+
+    # retourn le numero sur la base tu header
+    # @return [Object]
+    def getPhoneNumber
+      header = request.headers['HTTP_X_API_POP_KEY']
+
+      # on recherche le customer
+      @customer = Customer.find_by_authentication_token(header)
+      if @customer.blank?
+        render json: {
+            status:   :not_found,
+            message:  "Utilisateur inconnu"
+        }
+      else
+        render json: {
+            status:   :found,
+            message:  @customer.phone
+        }
+      end
+    end
+
+    # recharge via OM
+    # @return [Object]
+    def rechargeSprintPay
+      # phone         = params[:phone].to_i
+      token         = params[:token] #request.headers['HTTP_X_API_POP_KEY']
+      @phone        = params[:phone]
+      amount        = params[:amount].to_i
+      network_name  = params[:network_name]
+
+      #on verifie l'existance de cet utilisateur
+      customer = Customer.find_by_authentication_token(token)
+      if customer.blank?
+        render json: {
+          status:   :not_found,
+          message:  "Customer not found"
+        }
+      else
+        # on effectuer le transfert via SP en se basant sur le network name
+        if network_name == "ORANGE"
+
+          SprintPay::Pay::Payment.new(@phone, amount)
+          result = SprintPay::Pay::Payment.orange
+
+          # recuperation et application du callBack
+          if result["statusDesc"] == "FAILURE"
+            # echec de la transaction
+            render json: {
+              status:   result["statusDesc"],
+              message:  result["description"],
+              code:     result["statusCode"],
+              motif:    result["motif"]
+            }
+          else
+            # tout de passe bien
+
+            # on recupere le compte de l'utilisateur courant
+            account = Account.find_by_customer_id(customer.id)
+            if account.blank?
+              render json: {
+                status:   :not_found,
+                message:  "Compte inconnu"
+              }
+            else
+              # le compte existe, on peut continuer le traitement
+              pp_amount = result["amount"]
+
+              account.amount += pp_amount
+
+              # on met a jour le compte du customer du noveau montant recu
+              if account.update(amount: account.amount)
+                render json: {
+                  status:   :success,
+                  message:  "Votre compte POPCASH a ete credité d'un montant de #{result["amount"]}"
+                }
+              else
+                render json:
+                {
+                  status:   :failed,
+                  message:  "Impossible de mettre a jour votre compte"
+                  #Lancer le processus de  rollBack de montant precedement debité
+                }
+              end
+            end
+          end
+        elsif network_name == "MTN"
+
+          # Paiement par MTN MOMO
+
+          SprintPay::Pay::Payment.new(@phone, amount)
+          result = SprintPay::Pay::Payment.mtn
+
+          # recuperation et application du callBack
+          if result["statusDesc"] == "FAILURE"
+            # echec de la transaction
+            render json: {
+              status:   result["statusDesc"],
+              message:  result["description"],
+              code:     result["statusCode"],
+              motif:    result["motif"]
+            }
+          else
+            # tout de passe bien
+
+            # on recupere le compte de l'utilisateur courant
+            account = Account.find_by_customer_id(customer.id)
+            if account.blank?
+              render json: {
+                status:   :not_found,
+                message:  "Compte inconnu"
+              }
+            else
+              # le compte existe, on peut continuer le traitement
+              pp_amount = result["amount"]
+
+              account.amount += pp_amount
+
+              # on met a jour le compte du customer du noveau montant recu
+              if account.update(amount: account.amount)
+                render json: {
+                  status:   :success,
+                  message:  "Votre compte POPCASH a ete credité d'un montant de #{result["amount"]}"
+                }
+              else
+                render json:
+                {
+                  status:   :failed,
+                  message:  "Impossible de mettre a jour votre compte"
+                  #Lancer le processus de  rollBack de montant precedement debité
+                }
+              end
+            end
+          end
+        end
+      end
+    end
+
+    # gestion des transaction
 
     private
 

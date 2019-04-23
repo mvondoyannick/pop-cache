@@ -4,8 +4,8 @@
   "dependencies": {
     "admin-lte": "^3.0.0-alpha.2",
     "foundation-sites": "6.5.3",
-    "jquery": "3.3.1",
-    "startbootstrap-sb-admin-2": "4.0.2",
+    "jquery": "^3.4.0",
+    "startbootstrap-sb-admin-2": "^4.0.3",
     "what-input": "5.1.3"
   },
   "description": "This README would normally document whatever steps are necessary to get the application up and running.",

@@ -1,8 +1,11 @@
 class Client
-  $signature = "POP-CASH"
-  $limit_amount = 150000
-  $limit_day_transaction = 100
-  $devise = "F CFA"
+  $signature                        = "POP-CASH"
+  $version                          = "0.0.1beta-rev-11-03-83-50"
+  $limit_amount                     = 150000
+  $limit_transaction_recharge       = 500000
+  $limit_transaction_recharge_jour  = 2500000 # soit 5 recharges par jour
+  $limit_day_transaction            = 100
+  $devise                           = "F CFA"
   $status = {
     false: :false
   }
@@ -915,11 +918,11 @@ class Client
                 marchand_account.amount += @amount 
                 marchant = Transaction.new(
                   customer: @to,
-                  code: @hash,
-                  flag: "paiement".upcase,
-                  context: "none",
-                  date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-                  amount: Parametre::Parametre::agis_percentage(@amount)
+                  code:     @hash,
+                  flag:     "encaissement".upcase,
+                  context:  "none",
+                  date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                  amount:   @amount #Parametre::Parametre::agis_percentage(@amount)
                 )
   
                 #on enregistre
@@ -940,11 +943,11 @@ class Client
                   #History::History::history(@from, @to, @amount, "phone", "paiement", hash)
                   transaction = Transaction.new(
                     customer: @from,
-                    code: @hash,
-                    flag: "paiement".upcase,
-                    context: "none",
-                    date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-                    amount: @amount
+                    code:     @hash,
+                    flag:     "paiement".upcase,
+                    context:  "none",
+                    date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                    amount:   Parametre::Parametre::agis_percentage(@amount)
                   )
   
                   if transaction.save

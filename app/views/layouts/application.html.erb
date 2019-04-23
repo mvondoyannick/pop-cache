@@ -14,6 +14,8 @@
 
   <body id="page-top">
 
+  <% if agent_signed_in? %>
+
   <!-- Page Wrapper -->
   <div id="wrapper">
 
@@ -506,6 +508,53 @@
       </div>
     </div>
   </div>
+
+    <% else %>
+
+    <div class="container">
+
+      <!-- Outer Row -->
+      <div class="row justify-content-center">
+
+        <div class="col-xl-10 col-lg-12 col-md-9">
+
+          <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+              <!-- Nested Row within Card Body -->
+              <div class="row">
+                <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                <div class="col-lg-6">
+                  <div class="p-5">
+                    <div class="text-center">
+                      <h1 class="h4 text-gray-900 mb-4">S'identifier</h1>
+                    </div>
+                    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "user"}) do |f| %>
+                      <div class="form-group">
+                        <%= f.input :email, required: false, autofocus: true, input_html: { autocomplete: "email", class: "form-control form-control-user", placeholder: "Adresse email" }, label: false %>
+                      </div>
+                      <div class="form-group">
+                        <%= f.input :password, required: false, input_html: { autocomplete: "current-password", class: "form-control form-control-user", placeholder: "Mot de passe" }, label: false %>
+                      </div>
+                      <div class="form-group">
+                        <%= f.input :remember_me, as: :boolean if devise_mapping.rememberable? %>
+                      </div>
+                      <br>
+                      <br>
+                      <%= f.button :submit, "Se connecter", class: "btn btn-primary btn-user btn-block" %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <% end %>
 
   </body>
 </html>

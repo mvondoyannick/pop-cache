@@ -196,6 +196,15 @@ module Parametre
 
   class PersonalData
 
+    # @param [Object] customer
+    # @param [Object] phone
+    # @param [Object] phone_sim
+    # @param [Object] network_operator
+    # @param [Object] uuid
+    # @param [Object] imei
+    # @param [Object] latitude
+    # @param [Object] longitude
+    # @param [Object] ip
     def self.setPersonalData(customer, phone, phone_sim, network_operator, uuid, imei, latitude, longitude, ip)
       @customer         = customer
       @phone            = phone
@@ -226,6 +235,82 @@ module Parametre
       else
         Rails::logger::info "Impossible de sauvegarder les informations peronnelles"
         return true, "Failed : #{personel.errors.full_messages}"
+      end
+    end
+
+    # permet de retourner l'historique des activités d'un customer, marchand ou pas!
+    # @param [Object] id
+    # @param [Object] transaction_id
+    # @param [Object] amount
+    # @param [Object] context
+    def self.getHistorique(id, transaction_id, amount, context)
+      @customer_id      = id
+      @transaction_id   = transaction_id
+      @amount           = amount.to_i
+      @context          = context     # permet de savoir si c'est un debit ou un credit
+
+      # creation de l'objet transaction
+      transaction = Transaction.new(
+        date:     Time.now,
+        amount:   @amount,
+        context:  @context,
+        customer: Customer.find(@customer).authentication_token,
+        flag:     "Flag",
+        code:     @transaction_id
+      )
+
+      if transaction.save
+        return true, "Logs saved"
+      else
+        return false, "Impossible de sauver les logs"
+      end
+    end
+
+    # recherche des plages de numeros de telephone
+    # @param [Object] phone
+    def self.numeroOperateurMobile(phone)
+      orange    = %w(55 56 57 58 59 90 91 92 93 94 95 96 97 98 99)  #tableau des numeros orange
+      mtn       = %w(50 51 52 53 54 70 71 72 73 74 75 76 77 78 79)  #tableau des numeros MTN
+      nexttel   = %w(61)              #tableau des numeros nexttel
+      @phone    = phone.to_s
+
+      #recherche des numero orange en premier
+      @phone_tmp = @phone[1..2]
+
+      # on parcours le tableau
+      if @phone_tmp.to_s.in?(orange)
+        return "orange"
+      elsif @phone_tmp.to_s.in?(mtn)
+        return "mtn"
+      elsif @phone_tmp.to_s.in?(nexttel)
+        return "nexttel"
+      end
+
+    end
+
+
+    # Paiement via USSD via Parametre::personalData::payUssd
+    def self.payUssd(token, marchand, amount, pasword)
+      @client     = token
+      @marchand   = marchand
+      @amount     = amount.to_f
+      @password   = pasword
+
+      # on verifie l'authenticité tu token recu
+      customer = Customer.find_by_authenticate_token(@client)
+      if customer.blank?
+        return false, "Utilisateur inconnu"
+      else
+        # le customer existe, on cherche egalement a verifier le marchand
+        merchant = Customer.find_by_phone(@marchand)
+        if merchant.blank?
+          return false, "Impossible de trouver le marchand"
+        else
+          # on connais maintenant le marchand et le client, on peut effectuer les paiements
+          # on appel la fonction de paiement
+          result = Client.pay(customer.phone, merchant.phone, @amount, @password)
+          return result
+        end
       end
     end
   end

@@ -1,5 +1,15 @@
 Rails.application.routes.draw do
   get 'parametres/index'
+  get 'parametres/rapprochement'
+  get 'parametres/agence'
+  get 'parametres/utilisateur'
+  get 'parametres/journal'
+
+  # creation d'un scope
+  resources :parametres do
+
+  end
+  # fin
   resources :roles
   get 'agentcrtl/index'
   get 'agentcrtl/customer'                                                        #affiche tous les customer
@@ -41,7 +51,7 @@ Rails.application.routes.draw do
   post 'home/apikey_request'
   get 'home/signup'
   #main route
-  root 'home#index'
+  root 'agentcrtl#customer'
   match 'home/retrait', to: 'home#retrait', via: [:get, :post]
   match 'home/create', to: 'home#create', via: [:get, :post]
   match 'home/credit', to: 'home#credit', via: [:get, :post]
@@ -75,6 +85,15 @@ Rails.application.routes.draw do
       match 'security/question/', to: 'session#question', via: [:get, :options]
       match 'security/retrive/password', to: 'session#retrivePassword', via: [:post, :options]
       match 'security/reset/password', to: 'session#resetPassword', via: [:post, :options]
+      match 'session/phone', to: 'session#getPhoneNumber', via: [:post, :options]
+
+      # integration de sprintPay Solution API
+
+      match 'recharge/extern/provider/sp/:token/:phone/:amount/:network_name', to: 'session#rechargeSprintPay', via: [:get, :options]   # SprintPay OM et MOMO
+      
+      # Paiement via la plateforme USSD
+
+      match 'payment/extern/ussd/:data', to: 'api#paymentUssdExt', via: [:get, :options]
 
       #gestion des agents
 

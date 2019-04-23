@@ -1,4 +1,5 @@
 class AgentcrtlController < ApplicationController
+  before_action :authenticate_agent!
   require  'rqrcode'
   def index
     parametres = {
