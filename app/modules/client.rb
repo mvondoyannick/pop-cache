@@ -11,7 +11,17 @@ class Client
   }
 
   require 'securerandom'
+  require 'base64'
 
+
+
+  # @param [Object] from
+  # @param [Object] to
+  # @param [Object] amount
+  # @param [Object] pwd
+  # @return [Object] nil
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def initialize(from, to, amount, pwd)
       $from = from
       $to = to 
@@ -19,8 +29,20 @@ class Client
       $pwd = pwd
     end
 
-    # signup user, refactoring
-    def self.signup(name, second_name, phone, cni, password, sexe, question, answer, latitude, longitude)
+  #CREATION DU COMPTE CLIENT :: refactoring
+  # @param [Object] name
+  # @param [Object] second_name
+  # @param [Object] phone
+  # @param [Object] cni
+  # @param [Object] password
+  # @param [Object] sexe
+  # @param [Object] question
+  # @param [Object] answer
+  # @param [Object] latitude
+  # @param [Object] longitude
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  def self.signup(name, second_name, phone, cni, password, sexe, question, answer, latitude, longitude)
       @name         = name
       @second_name  = second_name
       @phone        = phone
@@ -54,9 +76,6 @@ class Client
 
       #demarrage de la procedure de creation
       if customer.save
-        #on enregistre ses informations personnelles
-        #pData = Parametre::personalData::setPersonalData(customer.id, @phone, @phone_sim, @network_name, @uuid, @imei, @latitude, @longitude, @ip)
-        #Rails::logger::info "Sauvegarder des données personnelles : #{pData}"
 
         # on enregistre la question de securité
         pSecurityQuestion = Parametre::SecurityQuestion::setSecurityQuestion(customer.id, @question, @answer)
@@ -80,15 +99,17 @@ class Client
       end
     end
 
-    # @detail   Permet de creer le compte d'un utilisateur
-    # @params  [object] name
-    # @params  [object] prenom
-    # @params  [object] phone
-    # @params  [object] cni
-    # @params  [object] password
-    # @params  [object] sexe
-    # @return  [object] boolean
-    def self.create_user(name, prenom, phone, cni, password, sexe)
+  #CREATION DU COMPTE CLIENT
+  # @params  [object] name
+  # @params  [object] prenom
+  # @params  [object] phone
+  # @params  [object] cni
+  # @params  [object] password
+  # @params  [object] sexe
+  # @return  [object] boolean
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  def self.create_user(name, prenom, phone, cni, password, sexe)
       @name = name
       @prenom = prenom
       @phone = phone
@@ -129,11 +150,13 @@ class Client
       end
     end
 
-    #creation du compte utilisateur
-    # @name     Client::create_user_account(id:integer, phone:integer)
-    # @detail   Permet de creer un compte utilisateur sur la plateforme
-    # @params   [object] phone
-    # @return   boolean
+  #CREATION DU COMPTE VIRTUEL FINANCIER UTILISATEUR
+  # @name     Client::create_user_account(id:integer, phone:integer)
+  # @detail   Permet de creer un compte utilisateur sur la plateforme
+  # @params   [object] phone
+  # @return   boolean
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def self.create_user_account(phone)
       Rails::logger::info "Demarrage de la creation du compte utilisateur ..."
       #@id = id
@@ -168,7 +191,12 @@ class Client
     end
 
 
-    #permet de crediter le compte utilisateur en se basant sur son numero de telephone et sur le montant
+  #CREDIT DU COMPTE VIRTUEL DU CLIENT
+  # @param [Object] phone
+  # @param [Object] amount
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  # @return [Object]
     def self.credit_account(phone, amount)
       @phone = phone
       @amount = amount
@@ -185,7 +213,6 @@ class Client
             customer_account.amount = customer_account.amount.to_i + @amount.to_i
             if customer_account.save
               @hash = SecureRandom.hex(13).upcase
-              #Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte a ete cree et vous avez ete crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{hash}. #{$signature}")
               Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{@hash}. #{$signature}")
               Sms::send
               return "Le compte a ete credite d\'un montant de #{@amount}'."
@@ -196,14 +223,16 @@ class Client
             end
           end  
       end
-  end
+    end
 
 
-  #permet de verifier le token de l'utilisateur
+  #VERIFICATION DU TOKEN DU CUSTOMER
   # @method     Verifier le token d'un utilisateur
   # @name       Client::userTokenAuthenticate
   # @params     [object] token
   # @output     boolean [true/false]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
   def self.userTokenAuthenticate(token)
     @token = token
     Rails::logger::info "Starting user token verification"
@@ -213,52 +242,55 @@ class Client
     puts query
   end
 
-    #authentication of user who have account on the plateforme
-    # @method     Authentifier un utilisateur
-    # @name       Client::auth_user
-    # @params     phone, password
-    # @output     boolean [true/false]
-    # @param [Object] phone
-    # @param [Object] password
+  #AUTHENTIFICATION-CONNEXION D'UN UTILISATEUR SUR LA PLATEFORME
+  # @method     Authentifier un utilisateur
+  # @name       Client::auth_user
+  # @params     phone, password
+  # @output     boolean [true/false]
+  # @param [Object] phone
+  # @param [Object] password
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
   def self.auth_user(phone, password)
-      @phone = phone
-      @password = password
+    @phone = phone
+    @password = password
 
-      Rails::logger::info "Authenticating user #{@phone} call ..."
+    Rails::logger::info "Authenticating user #{@phone} call ..."
 
-      customer = Customer.where(phone: @phone).first
-      if !customer.blank?
-        if customer.valid_password?(@password)
-          if customer.two_fa == "authenticate"
+    customer = Customer.where(phone: @phone).first
+    if !customer.blank?
+      if customer.valid_password?(@password)
+        if customer.two_fa == "authenticate"
 
-            # on retourne les informations
-            return true, customer.as_json(only: [:name, :second_name, :authentication_token])
-          else
-            # ce compte est il bloqué, supprimer ou authentifie?
-            #Rails::logger::info "Utilisateur non authentier"
-            @account_status = isLock?(customer.authentication_token)
-
-            Rails::logger::info "Compte #{@phone} est actuellement #{customer.two_fa}"
-            return false, "Impossible d'acceder a ce compte, Merci de suivre formelement les inscruction de creation de compte"
-
-          end         
+          # on retourne les informations
+          return true, customer.as_json(only: [:name, :second_name, :authentication_token])
         else
-          Rails::logger::error "Authenticating user failed, bad password. end request!"
-          return false, "Impossible de vous identifier : Utilisateur/Mot de passe inconnu ou utilisateur non authentifé"
+          @account_status = isLock?(customer.authentication_token)
+
+          Rails::logger::info "Compte #{@phone} est actuellement #{customer.two_fa}"
+          return false, "Impossible d'acceder a ce compte, Merci de suivre formelement les inscruction de creation de compte"
         end
       else
-        Rails::logger::error "Authenticating user failled, unknow user. end request!"
-        return false, "Utilisateur inconnu", status: :unauthorized
+        Rails::logger::error "Authenticating user failed, bad password. end request!"
+        return false, "Impossible de vous identifier : Utilisateur/Mot de passe inconnu ou utilisateur non authentifé"
       end
+    else
+      Rails::logger::error "Authenticating user failled, unknow user. end request!"
+      return false, "Utilisateur inconnu", status: :unauthorized
     end
+  end
 
-    # Permet d'implementer le systeme anti-fraude en comparant le phone, sim_phone, network_operator, uuid
-    # @name     isFraud
-    # @detail   Permt de determiner d'eventuel systeme de fraude
-    # @params   phone:integer, sim_phone:integer, network_operator:string, uuid:string
-    # @result   boolean true/false
-    # @return [Object]
-  def self.isFraud?(phone, sim_phone, network_operator, uuid, imei)
+  #VERIFICATION DE LA FRAUDE SUR LA PLATEFORME
+  # @name     isFraud
+  # @detail   Permt de determiner d'eventuel systeme de fraude
+  # @param [Object] phone
+  # @param [Object] sim_phone
+  # @param [Object] network_operator
+  # @param [Object] uuid
+  # @param [Object] imei
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+    def self.isFraud?(phone, sim_phone, network_operator, uuid, imei)
       @phone            = phone
       @sim_phone        = sim_phone
       @network_operator = network_operator
@@ -295,8 +327,6 @@ class Client
                 Rails::logger::info "#{result[1]}"
                 return true, result[1]
               end
-              # Fin du blocage du compte
-              #return false, "Une erreur est survenue lors de la verificationd de votre compte, bien vouloir se rapprocher d'un partenaire POP-CASH muni de vos pieces justificatives"
             end
           end
         end
@@ -311,13 +341,15 @@ class Client
     end
 
 
-    # permet de bloquer le compte d'un utilisateur
-    # @description
-    # @name
-    # @detail
-    # @param [Object] phone
-    # @param [Object] motif
-    # @return [Object]
+  #BLOCAGE D'UN COMPTE UTILISATEUR SUR LA PLATEFORME
+  # @description
+  # @name
+  # @detail
+  # @param [Object] phone
+  # @param [Object] motif
+  # @return [Object]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
   def self.lockCustomerAccount(phone, motif)
       @phone  = phone
       @motif  = motif
@@ -349,21 +381,25 @@ class Client
       end
     end
 
-    # permet de bloquer le compte d'un utilisateur
-    # @description
-    # @name
-    # @detail
-    # @param [Object] phone
-    # @return [Object]
+  #DEBLOCAGE D'UN COMPTE UTILISATEUR SUR LA PLATEFORME
+  # @description
+  # @name
+  # @detail
+  # @param [Object] phone
+  # @return [Object]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def self.unlockCustomerAccount(phone)
     end
 
-    # permet d'avoir le solde d'un compte
-    # @name
-    # @detail
-    # @param [Object] tel
-    # @param [Object] password
-    # @return [Object]
+  #OBTENIR LE SOLDE DU COMPTE
+  # @name
+  # @detail
+  # @param [Object] tel
+  # @param [Object] password
+  # @return [Object]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
   def self.get_balance(tel, password)
       @phone = tel
       @password = password
@@ -392,10 +428,12 @@ class Client
     end
 
 
-    #permet de mettre a jour le montant des comptes
-    # @param [Object] id
-    # @param [Object] amount
-    # @return [Object]
+  #MISE A JOUR DES MONTANTS DU COMPTES
+  # @param [Object] id
+  # @param [Object] amount
+  # @return [Object]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
   def self.update_account_client(id, amount)
         @id = id
         @amount = amount
@@ -414,7 +452,12 @@ class Client
     end
 
 
-    #permet de mettre a jour le montant des comptes marchand
+  #MISE A JOUR DES MONTANTS DU COMPTE MARCHAND
+  # @param [Object] id
+  # @param [Object] amount
+  # @return [Object]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def self.update_account_marchand(id, amount)
         @id = id
         @amount = amount
@@ -432,11 +475,14 @@ class Client
         end
     end
 
-    # Permet de verifier l'etat d'un compte Bloquer|voler|desactiver|autre
-    # @name
-    # @detail   permet de verifier si un compte est actuellement bloquer ou non
-    # params    token:string
-    def self.isLock?(token)
+  #VERIFICATION DU STATUT D4UN COMPTE Bloquer|voler|desactiver|autre
+  # @name
+  # @detail   permet de verifier si un compte est actuellement bloquer ou non
+  # params    token:string
+  # @param [Object] token
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  def self.isLock?(token)
       @token = token
       customer = Customer.find_by_authentication_token(@token)
       if customer.blank?
@@ -466,19 +512,28 @@ class Client
     end
 
 
-    #recherche les informations sur l'emeteur de la requete de paiement
-    def self.find_client(id)
-      @sender_id = id
-      customer = Customer.find(id)
+  #RECHERCHE D'UN CLIENT SUR LA PLATEFORME
+  # @param [Object] customer_id
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  # @return [Object] customer
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  def self.find_client(customer_id)
+      @customer = customer_id
+      customer = Customer.find(@customer)
       if customer.blank?
         return false, "Utilisateur inconnu"
       else
-        return true, query[:id]
+        return true, customer
       end
     end
 
-    #recherche les informations sur le receveur
-    def self.find_marchand(id)
+  #RECHERCHE LE RECEVEUR OU LE MARCHAND
+  # @param [Object] id
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  def self.find_marchand(id)
       @receiver_id = id
       query = Customer.find(id)
       if query.blank?
@@ -490,8 +545,13 @@ class Client
       end
     end
 
-    #pour debiter de l'argent dans le compte du client
-    def debit_client(id, amount, signature)
+  #DEBITER LE COMPTE D UN CLIENT
+  # @param [Object] id
+  # @param [Object] amount
+  # @param [Object] signature
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  def self.debit_client(id, amount, signature)
       @id = id
       @amount = amount
       @signature = signature
@@ -509,8 +569,12 @@ class Client
       end
     end
 
-    #debiter le compte utilisateur durant un retrait
-    def self.debit_user_account(phone, amount)
+  #DEBIT LE COMPTE UTILISATEUR DURANT LA PROCEDURE DE RETRAIT
+  # @param [Object] phone
+  # @param [Object] amount
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  def self.debit_user_account(phone, amount)
       @phone = phone
       @amount = amount
 
@@ -533,8 +597,14 @@ class Client
     end
 
 
-    #pour les tests
-    def self.err
+  #TESTE SUR LES ERREURS DE LA PLATEFORME
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  # @return [Object]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  def self.err
+      require 'benchmark'
       begin
         c = Customer.find(250)
       rescue => e #ActiveRecord::RecordNotFound
@@ -544,8 +614,12 @@ class Client
 
 
 
-    #validation du retrait par l'utilisateur/customer
-    def self.validate_retrait(token, pwd)
+  #VALIDATION DU RETRAIT PAR LE CUSTOMER :: REFACTORING UPDATE
+  # @param [Object] token
+  # @param [Object] pwd
+  # @author @mvondoyannick
+  # @version 0.0.1beta-2-rev-11-03-83-50
+  def self.validate_retrait(token, pwd)
       @token  = token
       @pwd    = pwd
       @hash = "PR-#{SecureRandom.hex(13).upcase}"                    #ID de la transaction
@@ -598,9 +672,6 @@ class Client
               #tout va bien, on procede a la validation du retrait
 
               if customer.update(await: nil)
-                #on debit le compte le client
-                #debit_client = debit_user_account(customer.phone.to_s, await.amount)
-                #recherche du compte du client
                 account = Account.find_by_customer_id(customer.id)
                 if account.blank?
                   Rails::logger::info "Compte inconnu"
@@ -629,7 +700,7 @@ class Client
                   end
                 end
               else
-                #puts "Impossible de mettre a jour les informations utilisateur"
+
                 Rails::logger::error "Impossible d'effectuer le retrait du montant #{await.amount} du compte #{customer.phone.to_s}. serveur indisponible"
                 return false, "Impossible de communiquer avec l IA d AGIS"
               end
@@ -647,11 +718,13 @@ class Client
       # fin du refactoring
     end
 
-    #pemet de verifier qu'un await est perimé ou pas
-    # @ùethod     name Verifier sur une procedure de retrait est encore valide
-    # @name       Client::is_await_valide
-    # @params     phone
-    # @output     boolean [true/false]
+  #VERIFICATION INTENT DE RETRAIT EST PERIME -- OU PAS
+  # @method     name Verifier sur une procedure de retrait est encore valide
+  # @name       Client::is_await_valide
+  # @params     phone
+  # @output     boolean [true/false]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def self.is_await_valid?(phone)
       @phone = phone
       Rails::logger::info "Starting await verification ..."
@@ -686,11 +759,13 @@ class Client
     end
 
 
-    #permet d'annuler un retrait d'argent dans le compte client
-    # @method   name Cancel current retrait by user
-    # @name     Client::cancelRetrait
-    # @params   phone, password, awaitHash
-    # @output   boolean [true/false]
+  #ANNULATION D UN RETRAIT DANS UN COMPTE CLIENT
+  # @method   name Cancel current retrait by user
+  # @name     Client::cancelRetrait
+  # @params   phone, password, awaitHash
+  # @output   boolean [true/false]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def self.cancelRetrait(phone, pwd, hashawait)
       @phone = phone
       @pwd = pwd
@@ -726,11 +801,13 @@ class Client
       end
     end
 
-    #permet de verifier qu'il ya un retrait en cours pour un numero de telephone/customer
-    # @method   Check retrait | verifier le retrait
-    # @name     Client::check_retrait
-    # @params   phone
-    # @output   boolean [true/false]
+  #VERIFICATION DE L EXISTENCE D'UNE INTENTION DE RETRAIT EN COURS
+  # @method   Check retrait | verifier le retrait
+  # @name     Client::check_retrait
+  # @params   phone
+  # @output   boolean [true/false]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def self.check_retrait(phone)
       @phone = phone
       customer = Customer.where(phone: phone).first
@@ -750,7 +827,11 @@ class Client
     end
 
 
-    def self.check_retrait_refactoring(token)
+  #VERIFICATION DE LA PRESENCE DE L'INTENT DE RETRAIT :: REFACTORING -- UPDATE
+  # @param [Object] token
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
+  def self.check_retrait_refactoring(token)
       @token = token
       customer = Customer.where(authentication_token: @token).first
       if customer.blank?
@@ -769,11 +850,13 @@ class Client
       end
     end
 
-    #verifie le header du customer et returne true ou false en fonction des circonstance
-    # @method name  Check Header for customer
-    # @name         Client::checkHeader
-    # @params       header 
-    # @output       boolean [true/false]
+  #AUTHENTIFICATION D UN USTOMER VIA LE HEADER RECU
+  # @method name  Check Header for customer
+  # @name         Client::checkHeader
+  # @params       header
+  # @output       boolean [true/false]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def self.checkHeader(header)
       @header = header
       header_customer = Customer.find_by_authentication_token(@header)
@@ -786,11 +869,13 @@ class Client
       end
     end
 
-    #permet de verifier si le client dispse suffisament d'argent dans son compte EU 
-    # @method name  Get Balance before retrait
-    # @name         Client::get_balance_retrait
-    # @params       phone amount 
-    # @output       boolean [true/false]
+  #VERIFIER SI LE CLIENT DISPOSE DU SOLDE SUFFISA?T DANS SON COMPTE POUR EFFECTUER LA TRANSACTION
+  # @method name  Get Balance before retrait
+  # @name         Client::get_balance_retrait
+  # @params       phone amount
+  # @output       boolean [true/false]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def self.get_balance_retrait(phone, amount_retrait)
       @phone = phone
       @amount = amount_retrait.to_i
@@ -820,12 +905,14 @@ class Client
     end
 
 
-    # permet d'initialiser une procedure de retrait du coté de l'agent EU 
-    # @method name  Get Balance before retrait
-    # @name         Client::init_retrait
-    # @params       [object] phone
-    # @param        [object] amount
-    # @return       boolean [true/false]
+  #INITIALISATION DE LA PROCEDURE DE RETRAIT
+  # @method name  Get Balance before retrait
+  # @name         Client::init_retrait
+  # @params       [object] phone
+  # @param        [object] amount
+  # @return       boolean [true/false]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def self.init_retrait(phone, amount)
       @phone = phone
       @amount = amount.to_i
@@ -857,9 +944,6 @@ class Client
               Rails::logger::error "Processus de retrait du montant #{@phone}, d'un montant de #{@amount} a ete annulé."
               return false, "Impossible d\'initialiser le processus de retrait. Error : #{customer.errors.messages}'"
             end
-            Rails::logger::info "Retrait initialisé pour le client #{@phone} on #{Time.now}."
-            #puts "created new await"
-            return true, "nouveau await cree"
           else
             Rails::logger::error "Impossible d'initialiser le retrait vers #{@phone} on #{Time.now}."
             return false, "Impossible d'initialiser le retrait. Procedure annulée."
@@ -876,14 +960,16 @@ class Client
         
     end
 
-    # permet de payer  
-    # @method name  Pay
-    # @name         Client::pay
-    # @params       [object] emeteur
-    # @param        [object] destinataire
-    # @params       [object] montant
-    # @params       [object] password
-    # @output       [boolean] [true/false]
+  #PERMET D EFFECTUER UN PAIEMENT D'UN CLIENT A UN AUTRE CLIENT
+  # @method name  Pay
+  # @name         Client::pay
+  # @params       [object] emeteur
+  # @param        [object] destinataire
+  # @params       [object] montant
+  # @params       [object] password
+  # @output       [boolean] [true/false]
+  # @author @mvondoyannick
+  # @version 0.0.1beta-rev-11-03-83-50
     def self.pay(from, to, amount, pwd)
       @from = from.to_i
       @to = to.to_i
@@ -987,12 +1073,19 @@ class Client
       end
     end
 
-    def self.transfert(from, to, amount, password)
+    # @param [Object] from
+    # @param [Object] to
+    # @param [Object] amount
+    # @param [Object] password
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
+    # @deprecated
+  def self.transfert(from, to, amount, password)
       @from = from
       @to = to
       @amount = amount
       @client_password = password
-      if (@from == @to)
+      if @from == @to
         Sms.new(@from, "Expediteur et Receveur ne peuvent etre identique, merci de changer. #{$signature}")
         Sms::send
         return "#{@from} et #{@to} ne peuvent etre indentique. #{$signature}"
@@ -1004,7 +1097,7 @@ class Client
         client_account = Account.where(customer_id: client.id)                # le montant de la personne qui envoi
         #on authentifie le client a l'aide de son telephone et de son password
         if client.valid_password?(@client_password)
-          if (client_account.amount >= @amount)
+          if client_account.amount >= @amount
             @hash = SecureRandom.hex(13).upcase
             marchand_account.amount = marchand_account.amount + @amount
             if marchand_account.save

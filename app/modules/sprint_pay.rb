@@ -1,4 +1,4 @@
-#module pour la gestion des paiements SprintPay
+#SPRINTPAY MODULE PAYMENT MOBILE
 # TODO nothing for now on this module
 
 module SprintPay
@@ -83,6 +83,9 @@ module SprintPay
         return request
       end
 
+      #ENVOI
+      # @param [Object] body
+      # @param [Object] url
       def self.send(body, url)
         # https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3
         # https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3
@@ -91,6 +94,7 @@ module SprintPay
         return q.as_json
       end
 
+      #ENVOI OM VERS CLIENTS ORANGE MONEY
       def self.orange
         base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3"
         body_data = {
@@ -101,7 +105,7 @@ module SprintPay
         send(body_data, base_url)
       end
 
-      #permet d'effectuer le paiement via MOMO -> MTN Mobile Money
+      #ENVOI D UN MOMO VERS LES CLIENTS MTN MOBILE MONEY
       def self.mtn
         base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3"
         base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3"

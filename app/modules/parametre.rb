@@ -2,6 +2,7 @@ module Parametre
   
   $key = "Bl@ckberry18"
 
+  # @param [Object] data
   def self.tested(data)
       result = data.to_s
       return result
@@ -20,19 +21,24 @@ module Parametre
           return converted
       end
 
-      #calcule de la commission
+      #CALCUL DE LA COMMISSION 
+      # @param [Object] montant_vente
       def self.setCommission(montant_vente)
         @vente = montant_vente.to_f
         return (@vente * 0.22)
       end
 
-      #calcul du montant a retirer
+      #CALCUL DU MONTANT A RETIRER
+      # @param [Object] montant_vente
       def self.setMontantARetirer(montant_vente)
         @vente = montant_vente.to_f
         return @vente + setCommission(@vente)
       end
 
-      #obention du solde
+      #OBTION DU SOLDE FINAL
+      # @param [Object] solde_initial
+      # @param [Object] montant_a_retirer
+      # @param [Object] montant_vente
       def self.soldeFinale(solde_initial, montant_a_retirer, montant_vente)
         @solde_initial = solde_initial
         @montan
@@ -40,7 +46,9 @@ module Parametre
 
       end
 
-      #formule a verifier
+      #SOLDE TEST
+      # @param [Object] solde_initial
+      # @param [Object] montant_vente
       def self.soldeTest(solde_initial, montant_vente)
         @solde = solde_initial.to_f
         @vente = montant_vente.to_f
@@ -50,6 +58,10 @@ module Parametre
 
 
       #permet d'enregistrer les commissions pour une transaction
+      # @param [Object] code
+      # @param [Object] amount
+      # @param [Object] total
+      # @param [Object] commission
       def self.commission(code, amount, total, commission)
         #debut de l'enregistrement
         query = Commission.new(
@@ -68,7 +80,9 @@ module Parametre
 
       end
 
-      
+      #ENCODAGE JWT
+      # @return [Object]
+      # @param [Object] chaine
       def self.encode_jwt(chaine)
         Rails::logger::info "Starting encode string as payload ..."
         @chaine = chaine
@@ -77,8 +91,9 @@ module Parametre
       end
 
 
-      #permet de decoder une chaine precedement code avec JWT
+      #DECODAGE JWT
       ##utilisation de l'algorythme cryptographique HMAC
+      # @param [Object] chaine
       def self.decode_jwt(chaine)
         Rails::logger::info "Starting decoding string as payload ..."
         @chaine = chaine
@@ -88,7 +103,8 @@ module Parametre
       end
 
 
-      #retourne les informations du client/customer
+      #RETOURN LES INFORMATIONS SUR UN CUSTOMER
+      # @param [Object] phone
       def self.get_customer(phone)
         @phone = phone
         query = Customer.where(phone: @phone).first
@@ -99,7 +115,8 @@ module Parametre
         end
       end
 
-      #retourne les information du compte d'un utilisateur
+      #INFORMATION DU CONSOMMATEUR
+      # @param [Object] id
       def self.get_account(id)
         @customer_id = id
         query = Account.where(customer_id: customer.id).first
@@ -115,7 +132,8 @@ module Parametre
     require 'base64'
     require 'aes'
 
-    #implementation du cryptage via AES
+    #CRYPTAGE AES 256
+    # @param [Object] chaine
     def self.aesEncode(chaine)
       @chaine = chaine.to_s
       secret = Rails.application.secrets.secret_key_base
@@ -123,7 +141,8 @@ module Parametre
       return result
     end
 
-    #implementation du decryptage via AES
+    #DECODAGE AES 256 
+    # @param [Object] chaineCryptee
     def self.aesDecode(chaineCryptee)
       @chaineCryptee = chaineCryptee
       secret = Rails.application.secrets.secret_key_base
@@ -131,18 +150,24 @@ module Parametre
       return result
     end
 
+    #DECODE EN BASE 64
+    # @param [Object] chaine
     def self.decode(chaine)
       @chaine = chaine
       result = Base64.decode64(@chaine).to_i
       return result
     end
 
+    #ENCODE EN BASE 64
+    # @param [Object] chaine
     def self.encode(chaine)
       @chaine = chaine
       result = Base64.encode64(@chaine)
       return result
     end
 
+    #CRYPTAGE AVEC SSL
+    # @param [Object] data
     def self.cryptoSSL(data)
       @data = data
       digest = OpenSSL::Digest.new('sha1')
@@ -154,13 +179,17 @@ module Parametre
     end
   end
 
+  #RECUPERATION DU MOT DE PASSE
   class ForgotPassword
     # recuperation du mot de passe
 
     def initialize
     end
 
-    # creation des questions de securité
+    #CREATION QUESTION DE SECURITE
+    # @param [Object] phone
+    # @param [Object] question
+    # @param [Object] answer
     def self.resetPassword(phone, question, answer)
 
     end
@@ -268,6 +297,7 @@ module Parametre
 
     # recherche des plages de numeros de telephone
     # @param [Object] phone
+    # @return [Object] string
     def self.numeroOperateurMobile(phone)
       orange    = %w(55 56 57 58 59 90 91 92 93 94 95 96 97 98 99)  #tableau des numeros orange
       mtn       = %w(50 51 52 53 54 70 71 72 73 74 75 76 77 78 79)  #tableau des numeros MTN
@@ -284,6 +314,33 @@ module Parametre
         return "mtn"
       elsif @phone_tmp.to_s.in?(nexttel)
         return "nexttel"
+      end
+    end
+
+    # permet de determiner si c'est un numero du cmr
+    def self.cameroun(phone)
+      cameroun        = %w(+237 00237 237)
+      sous_mobile     = %w(655 656 657 658 659 690 691 692 693 694 695 696 697 698 699 650 651 652 653 654 670 671 672 673 674 675 676 677 678 679 661)
+      sous_fixe       = %w()
+      @phone          = phone.to_s
+
+      #recherche de la longueur du numero, 9 chiffre pour le cameroun
+      if @phone.length > 9
+        # on recheche s'il contien le prefixe +237 ou 00237 ou 237
+        if @phone.in?(cameroun)
+          # on recupere la taille du phone pour savoir exactement ce qu'il faut enlever
+          taille = @phone.length
+          if taille == 12 # cas du 237
+            @phone = @phone.slice(0..2)
+            return @phone
+          elsif taille == 13 # cas +237
+            @phone = @phone.slice(0..3)
+            return @phone
+          elsif taille == 14 # cas 00237
+            @phone = @phone.slice(0..4)
+            return @phone
+          end
+        end
       end
 
     end
