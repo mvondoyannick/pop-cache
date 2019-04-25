@@ -359,7 +359,6 @@ class Api::V1::SessionController < ApplicationController
       @status = Parametre::PersonalData::numeroOperateurMobile(@phone)
       if @status == "orange"
         #on formate la nouvelle image
-        src = Rails.root.join(request.base_url, 'app/assets/apple.jpg').to_s
         render json: {
           status:         200,
           flag:           :success,
@@ -368,7 +367,7 @@ class Api::V1::SessionController < ApplicationController
           network:        @status,
           operator:       "ORANGE MONEY",
           amount_total:   Parametre::Parametre::agis_percentage(@amount),
-          logo:           "#{request.base_url}#{ActionController::Base.helpers.asset_path("orange")}"
+          logo:           "#{request.base_url}#{ActionController::Base.helpers.asset_path("orange.png")}"
         }
         elsif @status == "mtn"
           render json: {
@@ -379,7 +378,7 @@ class Api::V1::SessionController < ApplicationController
             network:      @status,
             operator:     "MOBILE MONEY",
             amount_total: Parametre::Parametre::agis_percentage(@amount),
-            logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("mtn")}"
+            logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("mtn.jpg")}"
           }
         elsif @status == "nexttel"
           render json: {
@@ -388,7 +387,7 @@ class Api::V1::SessionController < ApplicationController
             network:      @status,
             operator:     "NEXTTEL POSSA",
             message:      "NEXTTEL POSSA PAS ENCORE SUPPORTE",
-            logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("nexttel-possa")}"
+            logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("nexttel-possa.png")}"
           }
         else
           render json: {
