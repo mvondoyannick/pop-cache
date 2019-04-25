@@ -55,7 +55,9 @@ class Api::V1::ApiController < ApplicationController
 				q = Customer.find_by_authentication_token(ex_marchand[0])
 				if q.blank?
 					render json: {
-						message: "Impossible de trouver cet utilisateur!"
+						status: 	404,
+						flag: 		:customer_not_found,
+						message: "Impossible de trouver ce marchand."
 					}
 				else
 					Rails::logger::info "#{ex_marchand[4]} ++ #{ex_marchand[1]} ++ #{ex_marchand[0]}"
