@@ -272,20 +272,20 @@ module Parametre
     # @param [Object] transaction_id
     # @param [Object] amount
     # @param [Object] context
-    def self.getHistorique(id, transaction_id, amount, context)
-      @customer_id      = id
-      @transaction_id   = transaction_id
-      @amount           = amount.to_i
-      @context          = context     # permet de savoir si c'est un debit ou un credit
+    def self.getHistorique(id, hash, amount, flag)
+      @customer_id      = id              # le customer
+      @hash             = hash            #code de l'activite
+      @amount           = amount.to_i     # le montant
+      @flag             = flag            # le drapeau de description
 
       # creation de l'objet transaction
       transaction = Transaction.new(
-        date:     Time.now,
-        amount:   @amount,
-        context:  @context,
-        customer: Customer.find(@customer).authentication_token,
-        flag:     "Flag",
-        code:     @transaction_id
+        customer: @customer_id,
+        code:     @hash,
+        flag:     @flag, #"paiement".upcase,
+        context:  "none",
+        date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+        amount:   @amount #Parametre::Parametre::agis_percentage(@amount)
       )
 
       if transaction.save
@@ -301,7 +301,7 @@ module Parametre
     def self.numeroOperateurMobile(phone)
       orange    = %w(55 56 57 58 59 90 91 92 93 94 95 96 97 98 99)  #tableau des numeros orange
       mtn       = %w(50 51 52 53 54 70 71 72 73 74 75 76 77 78 79)  #tableau des numeros MTN
-      nexttel   = %w(61)              #tableau des numeros nexttel
+      nexttel   = %w(60 61 62 63 64 65 66 67 68 69)              #tableau des numeros nexttel
       @phone    = phone.to_s
 
       #recherche des numero orange en premier
@@ -314,6 +314,8 @@ module Parametre
         return "mtn"
       elsif @phone_tmp.to_s.in?(nexttel)
         return "nexttel"
+      else
+        return "inconnu"
       end
     end
 

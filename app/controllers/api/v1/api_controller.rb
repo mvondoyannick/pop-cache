@@ -81,20 +81,31 @@ class Api::V1::ApiController < ApplicationController
     # @details
     def payment
 			#on decompose mes donnees recu depuis le client
-			token = params[:token]
+			#token 			= params[:token]
 
 			#recherche du payeur
-			customer = Customer.find_by_authentication_token(token)
-			#from = params[:payeur]
-			from = customer.id
-			to = params[:receveur]
-			amount = params[:montant]
+			#customer 		= Customer.find_by_authentication_token(token)
+			#from 			= params[:payeur]
+			from 				= params[:token]
+			to 					= params[:receveur]
+			amount 			= params[:montant]
 			pwd = params[:password]
+			@ip = request.remote_ip
 
-			transaction = Client::pay(from, to, amount, pwd)
-			render json: {
-				message: transaction
-			}
+			@customer = Customer.find_by_authentication_token(from)
+			@marchand = Customer.find_by_authentication_token(to)
+			if @customer.blank? && @marchand.blank?
+				render json: {
+						status: 	404,
+						flag: 		:customer_unknow,
+						message: 	"Utilisateur inconnu"
+				}
+			else
+				transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip)
+				render json: {
+						message: transaction
+				}
+			end
     end
 
 

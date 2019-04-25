@@ -970,11 +970,12 @@ class Client
   # @output       [boolean] [true/false]
   # @author @mvondoyannick
   # @version 0.0.1beta-rev-11-03-83-50
-    def self.pay(from, to, amount, pwd)
-      @from = from.to_i
-      @to = to.to_i
-      @amount = amount.to_f                                               #montant de la transation
-      @client_password = pwd
+    def self.pay(from, to, amount, pwd, ip)
+      @from             = from.to_i
+      @to               = to.to_i
+      @amount           = amount.to_f #montant de la transation
+      @client_password  = pwd
+      @ip               = ip
 
       marchand = Customer.find(@to)                                       #personne qui recoit
       marchand_account = Account.where(customer_id: marchand.id).first    #le montant de la personne qui recoit
@@ -1008,7 +1009,8 @@ class Client
                   flag:     "encaissement".upcase,
                   context:  "none",
                   date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-                  amount:   @amount #Parametre::Parametre::agis_percentage(@amount)
+                  amount:   @amount, #Parametre::Parametre::agis_percentage(@amount)
+                  ip:       @ip
                 )
   
                 #on enregistre
@@ -1033,7 +1035,8 @@ class Client
                     flag:     "paiement".upcase,
                     context:  "none",
                     date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-                    amount:   Parametre::Parametre::agis_percentage(@amount)
+                    amount:   Parametre::Parametre::agis_percentage(@amount),
+                    ip:       @ip
                   )
   
                   if transaction.save

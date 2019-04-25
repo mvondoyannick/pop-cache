@@ -76,6 +76,7 @@ Rails.application.routes.draw do
       match 'session/validate_retrait/:token/:password', to: 'session#validate_retrait', via: [:get, :options]
       match 'session/validate/authentication', to: 'session#signup_authentication', via: [:post, :options]
       match 'session/history', to: 'session#histo', via: [:post, :options]
+      match 'session/history/detail/:code', to: 'session#histoDetail', via: [:get, :options]
       #match 'session/history/h/payment', to: 'session#p', via: [:post, :options]
       match 'test/:code(/:amount)', to: 'api#test', via: [:get, :options]
       match 'session/service', to: 'session#service', via: [:post, :options]
@@ -89,7 +90,13 @@ Rails.application.routes.draw do
 
       # integration de sprintPay Solution API
 
+      match 'recharge/extern/provider/sp/new/:token/:phone/:amount', to: 'session#getSpData', via: [:get, :options]
       match 'recharge/extern/provider/sp/:token/:phone/:amount/:network_name', to: 'session#rechargeSprintPay', via: [:get, :options]   # SprintPay OM et MOMO
+
+      # configuration du compte personnel
+
+      match 'security/authorization/:token/:password', to: 'session#authorization', via: [:get, :options]
+      match 'security/authorization/update/account/:token/:name/:second_name/:sexe(/:password)', to: 'session#updateAccount', via: [:get, :options]
       
       # Paiement via la plateforme USSD
 
