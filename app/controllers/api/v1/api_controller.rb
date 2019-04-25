@@ -58,6 +58,7 @@ class Api::V1::ApiController < ApplicationController
 						message: "Impossible de trouver cet utilisateur!"
 					}
 				else
+					Rails::logger::info "#{ex_marchand[4]} ++ #{ex_marchand[1]} ++ #{ex_marchand[0]}"
 					render json:{
 						message: true,
 						context: ex_marchand[4],
