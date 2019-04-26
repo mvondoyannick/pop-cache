@@ -268,15 +268,15 @@ class Client
           @account_status = isLock?(customer.authentication_token)
 
           Rails::logger::info "Compte #{@phone} est actuellement #{customer.two_fa}"
-          return false, "Impossible d'acceder a ce compte, Merci de suivre formelement les inscruction de creation de compte"
+          return false, "Votre statut actuel de votre compte ne vous permet pas de vous connecter. Bien vouloir vous rapprocher d'un POINT POPCASH ou appeler 2XX-XXX-XXX."
         end
       else
         Rails::logger::error "Authenticating user failed, bad password. end request!"
-        return false, "Impossible de vous identifier : Utilisateur/Mot de passe inconnu ou utilisateur non authentifé"
+        return false, "Utilisateur inconnu ou mot de passe invalide."
       end
     else
       Rails::logger::error "Authenticating user failled, unknow user. end request!"
-      return false, "Utilisateur inconnu", status: :unauthorized
+      return false, "Utilisateur inconnu ou mot de passe invalide.", status: :unauthorized
     end
   end
 
