@@ -146,10 +146,30 @@ class Api::V1::SessionController < ApplicationController
       @phone = params[:customer]
       @pwd = params[:password]
 
-      render json: {
-        message: Client::get_balance(Customer.find_by_authentication_token(@phone).phone, @pwd)
-      }
-
+      #verificatin du customer
+      @customer = Customer.find_by_phone(@phone)
+      if @customer.blank?
+        render json: {
+            status:   404,
+            flag:     :customer_not_found,
+            message:  "Utilisateur inconnu"
+        }
+      else
+        balance = Client::get_balance(@phone, @pwd)
+        if balance[0] == true
+          render json: {
+            status:   200,
+            flag:     :success,
+            message:  balance[1]
+          }
+        else
+          render json: {
+            status:   404,
+            flag:     :errors,
+            message:  balance[1]
+          }
+        end
+      end
     end
 
     #verification du retrait
