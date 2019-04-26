@@ -147,7 +147,7 @@ class Api::V1::SessionController < ApplicationController
       @pwd = params[:password]
 
       #verificatin du customer
-      @customer = Customer.find_by_phone(@phone)
+      @customer = Customer.find_by_authentication_token(@phone)
       if @customer.blank?
         render json: {
             status:   404,
