@@ -90,7 +90,7 @@ module SprintPay
         # https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3
         # https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3
 
-        q = HTTParty.post(url, headers: HEADERS, body: body)
+        q = HTTParty.post(url, headers: HEADERS, body: body, timeout: 100)
         return q.as_json
       end
 
