@@ -160,13 +160,13 @@ class Api::V1::SessionController < ApplicationController
           render json: {
             status:   200,
             flag:     :success,
-            message:  balance[1]
+            message:  balance #balance[1]
           }
         else
           render json: {
             status:   404,
             flag:     :errors,
-            message:  balance[1]
+            message:  balance
           }
         end
       end

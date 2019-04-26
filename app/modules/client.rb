@@ -413,7 +413,7 @@ class Client
         return false, "Utilisateur inconnu."
       else
         if query.valid_password?(@password)
-          account = Account.where(customer_id: query.id).first
+          account = Account.find_by_customer_id(query.id)
           if account.blank?
             return false, "Aucun compte utilisateur correcpondant ou compte vide"
           else
