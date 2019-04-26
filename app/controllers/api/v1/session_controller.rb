@@ -155,7 +155,7 @@ class Api::V1::SessionController < ApplicationController
             message:  "Utilisateur inconnu"
         }
       else
-        balance = Client::get_balance(@phone, @pwd)
+        balance = Client::get_balance(@customer.phone, @pwd)
         if balance[0] == true
           render json: {
             status:   200,
