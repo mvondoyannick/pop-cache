@@ -1,5 +1,6 @@
 class Client
   $signature                        = "POP-CASH"
+  $appname                          = "PopCasH"
   $version                          = "0.0.1beta-rev-11-03-83-50"
   $limit_amount                     = 150000
   $limit_transaction_recharge       = 500000
@@ -148,7 +149,14 @@ class Client
         Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{@customer.errors.full_messages}"}
         return false, "Echec de creation du profil personnel. code erreurs : #{@customer.errors.full_messages}"
       end
-    end
+  end
+
+
+
+  #DESACTIVER UN COMPTE INUTILISER SOUS 45 JOURS
+  def self.desactivateUnusedAccount
+
+  end
 
   #CREATION DU COMPTE VIRTUEL FINANCIER UTILISATEUR
   # @name     Client::create_user_account(id:integer, phone:integer)
@@ -268,7 +276,7 @@ class Client
           @account_status = isLock?(customer.authentication_token)
 
           Rails::logger::info "Compte #{@phone} est actuellement #{customer.two_fa}"
-          return false, "Votre statut actuel de votre compte ne vous permet pas de vous connecter. Bien vouloir vous rapprocher d'un POINT POPCASH ou appeler 2XX-XXX-XXX."
+          return false, "Le statut actuel de votre compte ne vous permet pas de vous connecter. Bien vouloir vous rapprocher d'un POINT POPCASH ou appeler au 222-222-222."
         end
       else
         Rails::logger::error "Authenticating user failed, bad password. end request!"

@@ -88,6 +88,10 @@ Rails.application.routes.draw do
       match 'security/reset/password', to: 'session#resetPassword', via: [:post, :options]
       match 'session/phone', to: 'session#getPhoneNumber', via: [:post, :options]
 
+      # test de la connexion internet
+      match 'internet/test', to: 'session#testNetwork', via: [:get, :options]
+      match 'security/check/phone/:phone', to: 'session#checkPhone', via: [:get, :options]
+
       # integration de sprintPay Solution API
 
       match 'recharge/extern/provider/sp/new/:token/:phone/:amount', to: 'session#getSpData', via: [:get, :options]

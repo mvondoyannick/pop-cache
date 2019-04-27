@@ -28,12 +28,12 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         render json: {
-            message: Transaction.where(customer: @customer.id).order(created_at: :desc).as_json(only: [:date, :amount, :flag, :code])
+            message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(50).as_json(only: [:date, :amount, :flag, :code])
         }
       end
     end
 
-    #Detail de l'historique
+    #Detail de l'historiqueAnswer.all
     def histoDetail
       @code_transaction   = params[:transaction]
       detail = Transaction.where(code: @code_transaction)
@@ -657,8 +657,48 @@ class Api::V1::SessionController < ApplicationController
           end
         end
       end
+    end
+
+    #test de la connxino internet
+    def testNetwork
+      render json: true
+    end
 
 
+    #Verifier si un telephone appartient a la plateforme
+    def checkPhone
+      @phone  = params[:phone]
+
+      #on demarre les recherches
+      @customer = Customer.find_by_phone(@phone)
+      if @customer.blank?
+        render json: {
+          status:   404,
+          flag:     :false,
+          message:  "Numeron inconnu",
+          data:     nil
+        }
+      else
+        # le telephone a été trouvé sur la plateforme
+        @answer = Answer.find_by_customer_id(@customer.id)
+        if @answer.blank?
+          render json: {
+              status:  404,
+              flag:   :false,
+              message: "Aucune question trouvée pour cet utilisateur",
+              data: nil
+          }
+        else
+          #on retourne la question trouvé dans answer
+          render json: {
+            status:     200,
+            flag:       :question_found,
+            message:    "Question trouvée",
+            question:   Question.find(@answer.question_id).content,
+            question_id: Question.find(@answer.question_id).id
+          }
+        end
+      end
     end
 
     # gestion des transaction

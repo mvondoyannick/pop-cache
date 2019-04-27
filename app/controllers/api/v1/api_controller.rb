@@ -67,7 +67,7 @@ class Api::V1::ApiController < ApplicationController
 						name: q.name,
 						second_name: q.second_name,
 						amount: ex_marchand[1],
-						marchand_id: q.id,
+						marchand_id: q.authentication_token, #q.id,
 						date: Time.now.strftime("%d-%m-%Y à %H:%M:%S"),
 						expire: 5.minutes.from_now#.strftime("%T")
 					}
