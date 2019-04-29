@@ -4,7 +4,7 @@ class Client
       signature:    "PayQuick",
       version:      "0.0.1beta-rev-11-03-83-51"
   }
-  $signature                        = "PAY QUICK"
+  $signature                        = "PAYQUICK"
   $appname                          = "PayQuick"
   $version                          = "0.0.1beta-rev-11-03-83-50"
   $limit_amount                     = 150000
