@@ -302,6 +302,7 @@ module Parametre
       orange    = %w(55 56 57 58 59 90 91 92 93 94 95 96 97 98 99)  #tableau des numeros orange
       mtn       = %w(50 51 52 53 54 70 71 72 73 74 75 76 77 78 79)  #tableau des numeros MTN
       nexttel   = %w(60 61 62 63 64 65 66 67 68 69)              #tableau des numeros nexttel
+      camtel    = %w()
       @phone    = phone.to_s
 
       #recherche des numero orange en premier
@@ -485,7 +486,7 @@ module Parametre
         @data = rand(6**6) #SecureRandom.hex(2).upcase
         #auth.two_fa = Crypto::cryptoSSL(data)
         if auth.update(two_fa: @data, perime_two_fa: 1.hour.from_now)
-          Sms.new(@phone, "Votre Code authentification POPCASH : #{@data}")
+          Sms.new(@phone, "#{@data} est le code permettant de  vous authentifier sur PopCasH.")
           Sms::send
 
           #on retourne les informations
@@ -495,7 +496,7 @@ module Parametre
           Sms::send
 
           #on retourne les informations
-          return false, "Echec Identification a deux facteurs, errors: #{auth.errors.messages}"
+          return false, "Nous n'avons pas été capable de vous identifier! c'est tres génant. errors: #{auth.errors.messages}"
         end 
       end
     end

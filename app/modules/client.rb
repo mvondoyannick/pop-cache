@@ -1,6 +1,11 @@
 class Client
-  $signature                        = "POP-CASH"
-  $appname                          = "PopCasH"
+  $appData = {
+      appname:      "PAY QUICK",
+      signature:    "PayQuick",
+      version:      "0.0.1beta-rev-11-03-83-51"
+  }
+  $signature                        = "PAY QUICK"
+  $appname                          = "PayQuick"
   $version                          = "0.0.1beta-rev-11-03-83-50"
   $limit_amount                     = 150000
   $limit_transaction_recharge       = 500000
@@ -51,7 +56,7 @@ class Client
       #@uuid         = uuid
       #@imei         = imei
       @cni          = cni
-      @email        = "#{@phone.to_i}@pop-cash.cm"
+      @email        = "#{@phone.to_i}@payquick-cm.com"
       @password     = password
       @sexe         = sexe
       #@network_name = network_name
@@ -91,7 +96,7 @@ class Client
 
           # end of notifications
 
-          return @auth[1], "Impossible de transmettre le SMS de confirmarion"
+          return @auth[1], "Hum!!! c'est vraiment génant, nous sommes dans l'incapacité de vous transmettre le SMS de confirmarion"
         end
 
       else
@@ -115,7 +120,7 @@ class Client
       @prenom = prenom
       @phone = phone
       @cni = cni
-      @email = "#{@phone.to_i}@pop-cash.cm"
+      @email = "#{@phone.to_i}@payquick-cm.com"
       @password = password
       @sexe = sexe
 
@@ -185,14 +190,14 @@ class Client
         if customer_account.save
           Rails::logger::info "Utilisateur #{@phone} crée a #{Time.now}"
 
-          Sms.new(@phone, "#{@phone} Bienvenue chez POP CASH, votre porte monnaie virtuel vient d\'etre cree!")
+          Sms.new(@phone, "#{@phone} Bienvenue chez PAYQUICK, votre porte monnaie virtuel vient d\'etre cree!")
           Sms::send
 
           return true,"creation porte-monnaie effectué avec succes!"
         else
-          Sms.new(@phone, "Impossible de creer Votre porte-monnaie virtuel, merci de vous rappocher d\'un service Express Union. #{$signature}")
+          Sms.new(@phone, "Une erreur est survenue durant le processus de creation compte virtuel! Merci de vous rappocher d\'un service Express Union. #{$signature}")
           Sms::send
-          return false, "Echec de creation du porte monnaie virtuel POPCASH pour le compte #{@phone}: #{customer_account.errors.full_messages}"
+          return false, "Echec de creation du porte monnaie virtuel PAYQUICK pour le compte #{@phone}: #{customer_account.errors.full_messages}"
         end
       end
       
@@ -276,7 +281,7 @@ class Client
           @account_status = isLock?(customer.authentication_token)
 
           Rails::logger::info "Compte #{@phone} est actuellement #{customer.two_fa}"
-          return false, "Le statut actuel de votre compte ne vous permet pas de vous connecter. Bien vouloir vous rapprocher d'un POINT POPCASH ou appeler au 222-222-222."
+          return false, "Le statut actuel de votre compte ne vous permet pas de vous connecter. Bien vouloir vous rapprocher d'un POINT PAYQUICK ou appeler au 222-222-222."
         end
       else
         Rails::logger::error "Authenticating user failed, bad password. end request!"
@@ -344,7 +349,7 @@ class Client
         Sms.new(sim_phone, "La plateforme ne reconnais pas votre carte SIM!")
         Sms::send
         # fin d'envoi
-        return false, "Les numéro de votre carte SIM et celui de ce compte POP-CASH sont differents."
+        return false, "Les numéro de votre carte SIM et celui de ce compte PAYQUICK sont differents."
       end
     end
 
@@ -498,7 +503,7 @@ class Client
       else
         if customer.two_fa == "authenticate"
 
-          Rails::logger::info "Utilisateur #{customer.phone} authentifié sur POPCASH"
+          Rails::logger::info "Utilisateur #{customer.phone} authentifié sur PAYQUICK"
           return false, "authenticate", "Compte non bloqué", "Aucun motif"
 
         elsif customer.two_fa == "lock"
@@ -510,7 +515,7 @@ class Client
           # notify admin
 
           # end notification
-          Rails::logger::info "Utilisateur #{customer.phone} supprimé sur POPCASH"
+          Rails::logger::info "Utilisateur #{customer.phone} supprimé sur PAYQUICK"
           return true, "deleted", "Ce compte a ete supprimer"   
         else
           Rails::logger::info "Utilisateur #{customer.phone} rencontre des erreur, valeurs incoherentes trouvées"
@@ -991,8 +996,10 @@ class Client
       client_account = Account.where(customer_id: client.id).first        # le montant de la personne qui envoi
 
       if @from == @to
+        #Send local notifications here
         Sms.new(@from, "Vous ne pouvez pas vous payer a vous meme!. Transaction annulee. #{$signature}")
         Sms::send
+        # end sending local notifications
         Rails::logger::info "Numéro indentique, transaction annuler!"
         return false, " Vous ne pouvez pas vous payer à vous même!"
       else
@@ -1025,10 +1032,10 @@ class Client
                 marchant.save
   
                 if marchand_account.save
-                  Sms.new(marchand.phone, "Vous avez recu un paiement d un montant de #{@amount} F CFA provenant de Mr/Mme #{client.name} #{client.second_name}. La transaction c\'est correctement terminee. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{@hash}. #{$signature}")
+                  Sms.new(marchand.phone, "Paiement recu. Montant :  #{@amount} F CFA XAF, \t Payeur : Mr/Mme #{client.name} #{client.second_name if !client.second_name.nil?}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{$signature}")
                   Sms::send
                   #--------------------------------------------------
-                  Sms.new(client.phone, "Mr/Mme #{client.name} #{client.second_name}, #{Parametre::Parametre::agis_percentage(@amount)} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{@hash}. Merci de nous faire confiance. #{$signature}")
+                  Sms.new(client.phone, "Compte debité. Motif: Paiement effectué. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte débité : Mr/Mme #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
                   Sms::send
                   #----------------------------------------------------
                   Rails::logger::info "Paiement effectué de #{@amount} entre #{@from} et #{@to}."
