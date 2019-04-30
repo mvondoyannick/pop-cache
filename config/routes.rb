@@ -1,9 +1,22 @@
 Rails.application.routes.draw do
+  #gestion des interfaces des clients
+  get 'client/signing'
+  get 'client/signup'
+  get 'client/parameters'
+  get 'client/index'
+  post 'client/attemp_login'
+  post 'client/attemp_signup'
+
+  #Gestion des parametres generaux
   get 'parametres/index'
   get 'parametres/rapprochement'
   get 'parametres/agence'
   get 'parametres/utilisateur'
   get 'parametres/journal'
+
+  #gestion des partenaires
+  #
+  # fin de gestion des partenaires
 
   # creation d'un scope
   resources :parametres do
@@ -11,6 +24,10 @@ Rails.application.routes.draw do
   end
   # fin
   resources :roles
+
+  #gestion des agents partenaire de la plateforme
+  get 'agentcrtl/signin'
+  post 'agentcrtl/attemp_signin'
   get 'agentcrtl/index'
   get 'agentcrtl/customer'                                                        #affiche tous les customer
   get "agentcrtl/activity/:customer_id", to: "agentcrtl#customer_activity"        #retourne toutes les activités d'un customer
@@ -22,6 +39,9 @@ Rails.application.routes.draw do
   post 'agentcrtl/intent_credit_customer'
   get 'agentcrtl/debit_customer_account'
   post 'agentcrtl/intent_debit_customer'
+  get 'agentcrtl/activate_customer_account'
+  post 'agentcrtl/activate_customer_account'
+  get 'agentcrtl/search_phone'
   get 'agentcrtl/create_qrcode'                                                   #permet de generer un qrcode
   get 'agentcrtl/create_qrcode/:customer_token', to: 'agentcrtl#intend_qrcode'
   get 'agentcrtl/edit'
@@ -69,6 +89,7 @@ Rails.application.routes.draw do
       match 'session/get_balance/:customer/:password', to: 'session#getSoldeCustomer', via: [:get, :options]
       match 'session/transaction/:token/:receveur/:montant/:password', to: 'api#payment', via: [:get, :options]
       match 'session/qrcode/:data', to: 'api#qrcode', via: [:options, :get]
+      match 'session/qrcode/:code', to: 'api#code', via: [:options, :get]     #rechercher via le code numerique
       match 'session/history/:phone', to: 'api#user_history', via: [:get, :options] 
       match 'session/balance/:phone/:password', to: 'session#solde', via: [:get, :options]
       match 'session/check_retrait', to: 'session#check_retrait', via: [:post, :options]

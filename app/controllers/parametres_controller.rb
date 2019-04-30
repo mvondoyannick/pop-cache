@@ -1,6 +1,7 @@
 class ParametresController < ApplicationController
   before_action :authenticate_agent!
   def index
+
   end
 
   # permet d'afficher le rapprochement bancaire

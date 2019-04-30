@@ -1,5 +1,5 @@
 class AgentcrtlController < ApplicationController
-  before_action :authenticate_agent!
+  before_action :authenticate_agent!, except: [:signin, :attemp_signin]
   require  'rqrcode'
   def index
     parametres = {
@@ -25,6 +25,41 @@ class AgentcrtlController < ApplicationController
         file: Rails.root.join("tmp/#{SecureRandom.hex(3).parameterize}.png")
     )
     @agent = Agent.all
+  end
+
+  #login partenaire
+  def signin
+    render layout: 'client/application'
+
+  end
+
+  #Intention de connexion d'un partenaire
+  def attemp_signin
+    login     = params[:email]
+    password  = params[:password]
+
+    #on recherche si les valeurs sont bien presentes
+    if login.present? && password.present?
+      @agent = Agent.find_by_email(login)
+      if @agent.blank?
+        respond_to do |format|
+          format.json {}
+          format.html {redirect_to :signin, notice: "Utilisateur inconnu"}
+        end
+      else
+        if @agent.valid_password?(password)
+          respond_to do |format|
+            format.json {}
+            format.html {redirect_to agentcrtl_customer_path, notice: "Identifier en tant que #{@agent.email}"}
+          end
+        end
+      end
+    else
+      respond_to do |format|
+        format.html {redirect_to agentcrtl_signin_path, notice: "Aucun champ ne peu etre vide"}
+        format.json {}
+      end
+    end
   end
 
   def new
@@ -214,6 +249,28 @@ class AgentcrtlController < ApplicationController
 
   #debiter un compte client
   def debit_customer_account
+  end
+
+  #permet d'activer le compte d'un utilisateur
+  def activate_customer_account
+    phone = params[:phone]
+    if phone.present?
+      query = Customer.find_by_phone(phone)
+      if query.blank?
+        respond_to do |format|
+          format.html {redirect_to agentcrtl_activate_customer_account_path, notice: "Echec" }
+        end
+      else
+        respond_to do |format|
+          format.html {redirect_to agentcrtl_search_phone_path(phone: query.as_json(only: [:name, :second_name, :phone, :two_fa])) }
+        end
+      end
+    end
+  end
+
+  #resultat de la recherche du numero de telephone du compte
+  def search_phone
+
   end
 
   #intention de retirer le credit dans le compte client

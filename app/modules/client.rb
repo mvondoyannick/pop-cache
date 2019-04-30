@@ -276,7 +276,7 @@ class Client
         if customer.two_fa == "authenticate"
 
           # on retourne les informations
-          return true, customer.as_json(only: [:name, :second_name, :authentication_token])
+          return true, customer.as_json(only: [:name, :second_name, :authentication_token, :code])
         else
           @account_status = isLock?(customer.authentication_token)
 
@@ -1071,7 +1071,7 @@ class Client
                 end
               else
                 Rails::logger::info "Client non debite du montant #{@amount}"
-                Sms.new(client.phone, "Impossible d\'acceder a votre compte. Transaction annulee. #{$signature}")
+                Sms.new(client.phone, "Impossible d\n'acceder a votre compte. Transaction annulee. #{$signature}")
                 Sms::send
                 return false
               end

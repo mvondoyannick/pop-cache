@@ -73,8 +73,47 @@ class Api::V1::ApiController < ApplicationController
 					}
 				end
 			end
-        
-    end
+		end
+
+
+    #recherche via le code marchand
+    def code
+			@code = params[:code]
+
+			# on converti la chaine en entier, cela retire tous les entiers
+			@code = @code.to_i
+
+			if @code.is_a?(Integer)
+				#uniquement si le code est un entier
+				@customer = Customer.find_by_code(@cide)
+				if @customer.blank?
+					render json: {
+						message: 			false,
+						flag: 				:customer_not_found
+					}
+				else
+					#on retourne les informations
+					render json: {
+						message: 			true,
+						context: 			searchContext(@customer),
+						name:					@customer.name,
+						second_name: 	@customer.second_name,
+						marchand_id:  @customer.authentication_token,
+						date: 				Time.now.strftime("%d-%m-%Y à %H:%M:%S"),
+						expire: 			5.minutes.from_now
+					}
+				end
+			end
+		end
+
+    #recherche le context plateforme ou mobile dans un qrcode
+    def searchContext(obj)
+			if "plateform".in?(obj.hand)
+				return "plateform"
+			elsif "mobile".in?(obj.hand)
+				return "mobile"
+			end
+		end
 
     #permet de declencher le paiement entre deux clients
     # @params from, to, amount, password

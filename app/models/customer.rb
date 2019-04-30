@@ -7,7 +7,6 @@ class Customer < ApplicationRecord
   before_save :generate_apikey
   before_save :set_hand
   before_save :setName
-  after_save :generate_qr
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -41,10 +40,11 @@ class Customer < ApplicationRecord
     }.to_s).delete("\n")
   end
 
-  #Mettre le nom de la personne en majuscule
+  #Mettre le nom de la personne en majuscule et le code
   def setName
     self.name         = self.name.upcase
     self.second_name  = self.second_name.capitalize
+    self.code = rand(11**11)
   end
 
 
@@ -53,10 +53,6 @@ class Customer < ApplicationRecord
     hand = "#{self.authentication_token}@null@null@null@plateform@null"
     self.hand = Base64.encode64(hand).delete("\n")
     #Base64.encode64(self.email).delete("\n")
-  end
-
-  def generate_qr
-
   end
 
 end
