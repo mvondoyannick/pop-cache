@@ -1062,7 +1062,7 @@ class Client
   
                   #enregistrement des commissions
                   Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
-                  return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \n Frais de commission : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount} F CFA. \n\n Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA."
+                  return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA. \t Nouveau solde : #{client_account.amount}."
                 else
                   Rails::logger::info "Marchand non credite de #{@amount}"
                   Sms.new(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
