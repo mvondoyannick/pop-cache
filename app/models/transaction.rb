@@ -4,7 +4,7 @@ class Transaction < ApplicationRecord
 
   private
   def set_color
-    self.color = "#FFF" if self.flag == "PAIEMENT"
-    self.color = "#000" if self.flag == "ENCAISSEMENT"
+    self.color = "#e53935" if self.flag == "PAIEMENT"
+    self.color = "#283593" if self.flag == "ENCAISSEMENT"
   end
 end
