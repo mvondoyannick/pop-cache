@@ -557,7 +557,7 @@ class Api::V1::SessionController < ApplicationController
                 else
                   render json: {
                     status:   :failed,
-                    message:  "Impossible de recharger votre compte POPCASH d'un montant de #{result["amount"]} depuis #{network_name}"
+                    message:  "Impossible de recharger votre compte PAYQUICK d'un montant de #{result["amount"]} depuis #{network_name} : Erreurs : #{result}"
                   }
                 end
               else
