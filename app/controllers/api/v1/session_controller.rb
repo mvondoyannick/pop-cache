@@ -330,7 +330,7 @@ class Api::V1::SessionController < ApplicationController
 
               # on supprimer les anciennes informations
               if checkCode.destroy
-                Sms.new(customer.phone, "Votre mot de passe vient d etre mis a jour si vous n en etes pas l auteur, veillez vous rapprocher d un agence partenaire. POPCASH")
+                Sms.new(customer.phone, "Votre mot de passe vient d etre mis a jour si vous n en etes pas l auteur, veillez vous rapprocher d un agence partenaire. PAYQUICK")
                 #render data to json
                 render json: {
                   status:   :success,
@@ -499,7 +499,7 @@ class Api::V1::SessionController < ApplicationController
                 else
                   render json: {
                     status:   :failed,
-                    message:  "Impossible de recharger votre compte POPCASH d'un montant de #{result["amount"]} depuis #{network_name}"
+                    message:  "Impossible de recharger votre compte PAYQUICK d'un montant de #{result["amount"]} depuis #{network_name} => erreurs : #{result}"
                   }
                 end
 
