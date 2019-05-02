@@ -226,6 +226,15 @@ class Client
             customer_account.amount = customer_account.amount.to_i + @amount.to_i
             if customer_account.save
               @hash = SecureRandom.hex(13).upcase
+
+              transaction = Transaction.new(
+                customer: customer.id,
+                code:     @hash,
+                flag:     "recharge".upcase,
+                context:  "none",
+                date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                amount:   @amount
+              )
               Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{@hash}. #{$signature}")
               Sms::send
               return "Le compte a ete credite d\'un montant de #{@amount}'."
