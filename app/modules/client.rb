@@ -235,9 +235,15 @@ class Client
                 date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
                 amount:   @amount
               )
-              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{@hash}. #{$signature}")
-              Sms::send
-              return "Le compte a ete credite d\'un montant de #{@amount}'."
+
+              #on enregistre la transaction
+              if transaction.save
+                Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{@hash}. #{$signature}")
+                Sms::send
+                return "Le compte a ete credite d\'un montant de #{@amount}'."
+              else
+                return "Impossible de sauvegarder votre activité"
+              end
             else
               Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, impossible de crediter votre compte. Echec de la Transaction #{@hash}. #{$signature}")
               Sms::send
