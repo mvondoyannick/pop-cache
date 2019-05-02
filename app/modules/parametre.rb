@@ -486,7 +486,7 @@ module Parametre
         @data = rand(6**6) #SecureRandom.hex(2).upcase
         #auth.two_fa = Crypto::cryptoSSL(data)
         if auth.update(two_fa: @data, perime_two_fa: 1.hour.from_now)
-          Sms.new(@phone, "#{@data} est le code permettant de  vous authentifier sur PopCasH.")
+          Sms.new(@phone, "#{@data} est le code permettant de  vous authentifier sur PAYQUICK.")
           Sms::send
 
           #on retourne les informations
@@ -524,16 +524,16 @@ module Parametre
               Sms.new(@phone, "Mr #{@customer.name.upcase}, Votre compte a ete authentifie. Vous pouvez desormais vous connecter.")
               Sms::send
 
-              Rails::logger::info  "#{@phone} vient d'etre authentifier sur POPCASH a #{Time.now}"
+              Rails::logger::info  "#{@phone} vient d'etre authentifier sur PAYQUICK a #{Time.now}"
 
               # creation du compte "porte monnaie virtuel"
 
               virtual_account = Client::create_user_account(@phone)
               if virtual_account[0] == true
-                Rails::logger::info  "#{@phone} dispose desormais d'un compte virtuel actif sur POPCASH a #{Time.now}"
+                Rails::logger::info  "#{@phone} dispose desormais d'un compte virtuel actif sur PAYQUICK a #{Time.now}"
                 return true, "#{@phone} est Authenticated & dispose d'un compte virtuel actif"
               else
-                Rails::logger::info  "Echech de creation du compte #{@phone} sur POPCASH a #{Time.now}"
+                Rails::logger::info  "Echech de creation du compte #{@phone} sur PAYQUICK a #{Time.now}"
                 return virtual_account[0], virtual_account[1]
               end
 

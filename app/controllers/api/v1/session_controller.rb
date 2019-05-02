@@ -483,7 +483,7 @@ class Api::V1::SessionController < ApplicationController
               }
             else
               # le compte existe, on peut continuer le traitement
-              pp_amount = result["amount"]
+              pp_amount = result["amount"].to_f
 
               account.amount += pp_amount
 
