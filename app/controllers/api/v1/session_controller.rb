@@ -1,5 +1,5 @@
 class Api::V1::SessionController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount]
+    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword]
 
     #creation de compte utilisateur
     def signup
@@ -28,7 +28,7 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         render json: {
-            message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(50).as_json(only: [:date, :amount, :flag, :code])
+            message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(50).as_json(only: [:date, :amount, :flag, :code, :color])
         }
       end
     end
@@ -436,6 +436,50 @@ class Api::V1::SessionController < ApplicationController
           status: :found,
           message: @customer.phone
         }
+      end
+    end
+
+
+    #Mettre a jour son mot de passe
+    def updatePassword
+      Rails::logger::info "Starting caal method for renewing password"
+      @token          = request.headers["HTTP_X_API_POP_KEY"]
+      @previouPwd     = params[:hold_pass].to_i
+      @newPwd         = params[:new_pass]
+
+      #on recherch le client sur la base de son token
+      @customer = Customer.find_by_authentication_token(@token)
+      if @customer.blank?
+        Rails::logger::info "User is unknow"
+        render json: {
+            status:     404,
+            flag:       :cunstomer_not_found,
+            message:    "Utilisateur inconnu"
+        }
+      else
+        #tout va bien on verifie que c'est bien le @previeouPwd
+        if @customer.valid_password?(@previouPwd)
+          Rails::logger::info "User is valid"
+          #tout va bien, on peut continuer en chageant les informations sur le mot de passe
+            @customer.update(password: @newPwd)
+            #on notifie le gar que tout c'est bien passé
+            #Notification SMS
+            Sms.new(@customer.phone, "Votre mot de passe a ete mis a jour. PAYQUICK")
+            Sms::send
+
+            render json: {
+              status:     200,
+              flag:       :password_updated,
+              message:    "Votre mot de passe a ete mis a jour. Merci de vous reconnecter a PAYQUICK"
+            }
+        else
+          Rails::logger::info "User is invalid"
+          render json: {
+            status:     404,
+            flag:       :password_no_match,
+            message:    "Impossible de vous identifier"
+          }
+        end
       end
     end
 
