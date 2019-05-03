@@ -63,21 +63,21 @@ Rails.application.configure do
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   #configuration personnelle
- #  config.action_mailer.delivery_method = :smtp
- #  config.action_mailer.smtp_settings = {
- #    address:              'smtp.gmail.com',
- #    port:                 587,
- #    domain:               'example.com',
- #    user_name:            'mvondoyannick@gmail.com',
- #    password:             'Blackberry10',
- #    authentication:       'plain',
- #    enable_starttls_auto: true
- # }
-
-  #integration de maildev config
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-      :address => "localhost",
-      :port => 1025
-  }
+    address:              'smtp.gmail.com',
+    port:                 587,
+    domain:               'example.com',
+    user_name:            'mvondoyannick@gmail.com',
+    password:             'Blackberry10',
+    authentication:       'plain',
+    enable_starttls_auto: true
+ }
+
+  #integration de maildev config
+  # config.action_mailer.delivery_method = :smtp
+  # config.action_mailer.smtp_settings = {
+  #     :address => "localhost",
+  #     :port => 1025
+  # }
 end
