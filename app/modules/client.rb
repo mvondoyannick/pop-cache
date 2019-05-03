@@ -101,6 +101,10 @@ class Client
 
       else
         Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
+
+        #Envoi du courriel à l'admin
+        #
+        #Fin envoi
         return false, "Echec de creation du profil personnel. code erreurs : #{customer.errors.full_messages}"
       end
     end
@@ -163,13 +167,13 @@ class Client
 
   end
 
-  #CREATION DU COMPTE VIRTUEL FINANCIER UTILISATEUR
-  # @name     Client::create_user_account(id:integer, phone:integer)
-  # @detail   Permet de creer un compte utilisateur sur la plateforme
-  # @params   [object] phone
-  # @return   boolean
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
+    #CREATION DU COMPTE VIRTUEL FINANCIER UTILISATEUR
+    # @name     Client::create_user_account(id:integer, phone:integer)
+    # @detail   Permet de creer un compte utilisateur sur la plateforme
+    # @params   [object] phone
+    # @return   boolean
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
     def self.create_user_account(phone)
       Rails::logger::info "Demarrage de la creation du compte utilisateur ..."
       #@id = id
@@ -197,6 +201,10 @@ class Client
         else
           Sms.new(@phone, "Une erreur est survenue durant le processus de creation compte virtuel! Merci de vous rappocher d\'un service Express Union. #{$signature}")
           Sms::send
+
+          # envoi du courriel de notification
+
+          # fin de notification
           return false, "Echec de creation du porte monnaie virtuel PAYQUICK pour le compte #{@phone}: #{customer_account.errors.full_messages}"
         end
       end
@@ -445,15 +453,31 @@ class Client
           if account.blank?
             return false, "Aucun compte utilisateur correcpondant ou compte vide"
           else
-            Sms.new(@phone, "Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
+            Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
             Sms::send
-            return true,"Mr/Mme #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
+            return true,"#{prettyCallSexe(query.sexe)} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
           end
         else
           return false,  "Mot de passe invalide. #{$signature}"
         end
       end
+  end
+
+
+  #permet d'obtenir le sexe et de retourner Mr ou Mme
+  # @param [Object] sexe
+  def self.prettyCallSexe(sexe)
+    @sexe = sexe.downcase
+    if @sexe == "masculin"
+      return "M."
+    elsif @sexe == "feminin"
+      return "Mme"
+    elsif @sexe == nil
+      return "M./Mme"
+    else
+      return "M./Mme"
     end
+  end
 
 
   #MISE A JOUR DES MONTANTS DU COMPTES
@@ -849,6 +873,12 @@ class Client
           return false, "Aucun retrait sur votre compte  pour le moment"
         else
           Rails::logger::info "Existance d'un retrait pour ce compte"
+
+          #notification email
+          #ApiMailer.notifyAdmin.deliver_now
+          #ApiMailer.signupFail("MESSAGE", 691451189, Time.now, "ERRORS").deliver_now
+          ApiMailer.notify("MESSAGE", 691451189, Time.now, "ERRORS").deliver_now
+          # fin notification
           return true, await.as_json(only: :amount)
         end
       end
