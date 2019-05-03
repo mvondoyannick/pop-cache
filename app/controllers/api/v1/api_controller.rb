@@ -85,7 +85,7 @@ class Api::V1::ApiController < ApplicationController
 
 			if @code.is_a?(Integer)
 				#uniquement si le code est un entier
-				@customer = Customer.find_by_code(@cide)
+				@customer = Customer.find_by_code(@code)
 				if @customer.blank?
 					render json: {
 						message: 			false,

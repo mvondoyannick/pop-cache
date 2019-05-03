@@ -2,23 +2,17 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
   <!-- Sidebar - Brand -->
-  <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-    <div class="sidebar-brand-icon rotate-n-15">
-      <%# <i class="fas fa-laugh-wink"></i> %>
-
-    </div>
-    <%# <div class="sidebar-brand-text mx-3">POP CASH</div> %>
-    <%= image_tag("product_logo.jpeg", size: "150x50") %>
-  </a>
+  <%= link_to image_tag("product_logo.jpeg", size: "200x50"), agentcrtl_customer_path, class: 'sidebar-brand d-flex align-items-center justify-content-center' %>
 
   <!-- Divider -->
   <hr class="sidebar-divider my-0">
 
   <!-- Nav Item - Dashboard -->
   <li class="nav-item active">
-    <a class="nav-link" href="index.html">
+    <%= link_to agentcrtl_customer_path, class: "nav-link " do %>
       <i class="fas fa-fw fa-tachometer-alt"></i>
-      <span>Administration</span></a>
+      <span>Administration</span>
+    <% end %>
   </li>
 
   <!-- Divider -->
@@ -134,6 +128,23 @@
     <%= link_to agentcrtl_credit_customer_path, class: 'nav-link' do %>
       <i class="fas fa-fw fa-plus"></i>
       <span>Crediter compte client</span>
+    <% end %>
+  </li>
+
+  <!-- Nav Item - Crediter compte client -->
+  <li class="nav-item">
+    <%= link_to customer_search_lock_path, class: 'nav-link' do %>
+      <i class="fas fa-fw fa-plus"></i>
+      <span>Bloquer un compte</span>
+    <% end %>
+  </li>
+
+
+  <!-- Nav Item - Crediter compte client -->
+  <li class="nav-item">
+    <%= link_to agentcrtl_unlock_customer_account_path, class: 'nav-link' do %>
+      <i class="fas fa-fw fa-plus"></i>
+      <span>Debloquer un compte</span>
     <% end %>
   </li>
 

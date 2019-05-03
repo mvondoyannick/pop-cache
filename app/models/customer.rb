@@ -13,9 +13,9 @@ class Customer < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   #active storage
-  #has_one_attached :cni
-  #has_one_attached :formulaire
-  #has_one_attached :photo
+  has_one_attached :cni_file
+  has_one_attached :formulaire
+  has_one_attached :photo
 
 
   qrcodeable print_path: "app/assets/images/qrcode", identifier: :hand
@@ -27,6 +27,13 @@ class Customer < ApplicationRecord
   validates :name, presence: true #length: { in: 3..50 }#, format: { with: /\A[a-zA-Z]+\z/, message: "only allows letters" }
   #validates :cni, presence: true, uniqueness: {message: "%{value} a deja ete utilisé"}
   validates :email, presence: true, uniqueness: {message: "%{value} a deja ete utilisé."}
+
+  #permet de generer le code si et seulement s'il n'existe pas
+  def generate_code
+    if self.code.nil?
+      self.code = rand(11**11)
+    end
+  end
 
   private
   def generate_apikey
@@ -54,5 +61,6 @@ class Customer < ApplicationRecord
     self.hand = Base64.encode64(hand).delete("\n")
     #Base64.encode64(self.email).delete("\n")
   end
+
 
 end

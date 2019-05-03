@@ -37,10 +37,10 @@ Rails.application.routes.draw do
   post 'agentcrtl/intent_new_customer'
   get 'agentcrtl/credit_customer'
   post 'agentcrtl/intent_credit_customer'
-  get 'agentcrtl/debit_customer_account'
-  post 'agentcrtl/intent_debit_customer'
-  get 'agentcrtl/activate_customer_account'
-  post 'agentcrtl/activate_customer_account'
+  match 'agentcrtl/debit_customer_account', to: 'agentcrtl#debit_customer_account', via: [:get, :post]
+  #post 'agentcrtl/intent_debit_customer'
+  match 'agentcrtl/activate_customer_account', to: 'agentcrtl#activate_customer_account', via: [:get, :post]
+  #post 'agentcrtl/activate_customer_account'
   get 'agentcrtl/search_phone'
   get 'agentcrtl/create_qrcode'                                                   #permet de generer un qrcode
   get 'agentcrtl/create_qrcode/:customer_token', to: 'agentcrtl#intend_qrcode'
@@ -48,6 +48,21 @@ Rails.application.routes.draw do
   get 'agentcrtl/delete'
   get 'agentcrtl/new_qrcode'
   get 'agentcrtl/journal'
+  get 'agentcrtl/activate_customer'
+  post 'agentcrtl/activate_customer'
+  # blocage et debloquage d'un compte utilisateur
+  # blocage
+  get 'customer/search/lock', to: 'agentcrtl#lock_customer_account'
+  post 'customer/s/query', to: 'agentcrtl#search'
+  get 'customer/s/response', to: 'agentcrtl#result'
+  get 'customer/u/response', to: 'agentcrtl#result_unlock'          #pour le resultalt de deblocage
+  match 'customer/s', to: 'agentcrtl#lock_customer_account', via: [:post]
+  match 'customer/validate/lock', to: 'agentcrtl#validate_lock_customer_account', via: [:get]
+
+  #deblocage
+  get 'agentcrtl/unlock_customer_account'
+  match 'customer/search_unlock_customer_account', to: 'agentcrtl#search_unlock_customer_account', via: [:get, :post]
+  # fin
   resources :cats
   resources :categories
   resources :categorie_services
@@ -122,6 +137,7 @@ Rails.application.routes.draw do
 
       match 'security/authorization/:token/:password', to: 'session#authorization', via: [:get, :options]
       match 'security/authorization/update/account/:token/:name/:second_name/:sexe(/:password)', to: 'session#updateAccount', via: [:get, :options]
+      match 'security/authorization/update/password', to: 'session#updatePassword', via: [:post, :options]
       
       # Paiement via la plateforme USSD
 

@@ -18,3 +18,6 @@
 # end
 
 # Learn more: http://github.com/javan/whenever
+every 10.seconds do
+  puts Time.now
+end

@@ -44,7 +44,11 @@
                 <%= customer.two_fa %>
               <% end %>
             </td>
-            <td><%= Account.find_by_customer_id(customer.id).amount %></td>
+            <% if Account.find_by_customer_id(customer.id).blank? %>
+              <td>00.00</td>
+            <% else %>
+              <td><%= "%0.2f" % Account.find_by_customer_id(customer.id).amount %></td>
+            <% end %>
             <td><%= Type.find(customer.type_id).name %></td>
             <% if customer.two_fa != "authenticate" %>
               <td>

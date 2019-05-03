@@ -262,7 +262,7 @@ class AgentcrtlController < ApplicationController
         end
       else
         respond_to do |format|
-          format.html {redirect_to agentcrtl_search_phone_path(phone: query.as_json(only: [:name, :second_name, :phone, :two_fa])) }
+          format.html {redirect_to agentcrtl_search_phone_path(token: query.authentication_token) }
         end
       end
     end
@@ -273,37 +273,176 @@ class AgentcrtlController < ApplicationController
 
   end
 
+  #Permet de verifier si l'utilisateur est finalisé ou pas
+  def is_complete?(phone)
+    @phone = phone
+
+  end
+
+  #Permet d'activer un client
+  def activate_customer
+    token = params[:token]
+
+
+
+    #on recherche le gar en question
+    @customer = Customer.find_by_authentication_token(token)
+    if customer.blank?
+
+    else
+      #on mets a jour les informations
+
+    end
+
+  end
+
+  #intent activate customer
+  def activate_customer_intent
+    #donnée a traitées en get
+    cni_file    = params[:cni_file]
+    formulaire  = params[:formulaire]
+
+    @customer.cni_file.attach(cni_file)
+    @customer.formulaire.attach(formulaire)
+    redirect_to root_path
+  end
+
+  def search
+    phone     = params[:phone]
+    action    = params[:action]
+    if action == "lock_customer_account"
+      if phone.present?
+        @customer = Customer.find_by_phone(phone)
+        if @customer.blank?
+          respond_to do |format|
+            format.html {}
+          end
+        else
+          #on verifie si ce customer n'est pas deja bloqué
+          is_lock = Client::isLock?(@customer.authentication_token)
+          if is_lock[0] == true
+            #le compte est effectivement utilisé
+            respond_to do |format|
+              format.html {redirect_to customer_s_response_path(status: 'visible', flag: false, phone: @customer.phone, message: "Cet utilisateur est deja bloqué, impossible de le bloquer de nouveau")}
+            end
+          else
+            #le compte n'esy actuellement pas bloqué
+            respond_to do |format|
+              format.html {redirect_to customer_s_response_path(status: 'visible',flag: true, name: @customer.name, second_name: @customer.second_name, phone: @customer.phone, sexe: @customer.sexe, token: @customer.authentication_token, cni: @customer.cni)}
+            end
+          end
+        end
+      end
+    elsif action == "unlock_customer_account"
+      if phone.present?
+        @customer = Customer.find_by_phone(phone)
+        if @customer.blank?
+          respond_to do |format|
+            format.html {}
+          end
+        else
+          #on verifie si ce customer n'est pas deja bloqué
+          is_lock = Client::isLock?(@customer.authentication_token)
+          if is_lock[0] == true
+            #le compte est effectivement utilisé
+            respond_to do |format|
+              format.html {redirect_to customer_u_response_path(status: 'visible', flag: false, phone: @customer.phone, message: "Cet utilisateur est deja bloqué, impossible de le bloquer de nouveau")}
+            end
+          else
+            #le compte n'esy actuellement pas bloqué
+            respond_to do |format|
+              format.html {redirect_to customer_u_response_path(status: 'visible',flag: true, name: @customer.name, second_name: @customer.second_name, phone: @customer.phone, sexe: @customer.sexe, token: @customer.authentication_token, cni: @customer.cni)}
+            end
+          end
+        end
+      end
+    end
+  end
+
+  #resultat de la recherche lorsque l'on veut bloquer
+  def result
+
+  end
+
+  #resultat de la recherche lorsque l'on veut debloquer
+  def result_unlock
+
+  end
+
+
+  #Bloquer un compte ayants=signaler des problemes
+  def lock_customer_account
+
+    phone = params[:phone]
+
+    if phone.present?
+      #on recherche si cet utilisateur est dans le systeme
+      @customer = Customer.find_by_phone(phone)
+      if @customer.blank?
+        respond_to do |format|
+          format.html {redirect_to agentcrtl_lock_customer_account_path(search: 'Failed')}
+        end
+      else
+        #on passe a la page suivante
+        redirect_to customer_validate_lock_path(phone: @phone, s: "exist", action: "lock")
+      end
+    else
+      respond_to do |format|
+        format.html {}
+      end
+    end
+
+  end
+
+  #Permet de valider le blocage du customer
+  def validate_lock_customer_account
+
+  end
+
+
+  #debolquer une compte d'un utilisateur precedement bloqué
+  def unlock_customer_account
+    
+  end
+
   #intention de retirer le credit dans le compte client
   def intent_debit_customer
     phone         = params[:phone]
     phone_confirm = params[:phone_confirm]
     amount        = params[:amount]
-    password      = params[:password] 
+    password      = params[:password]
 
-    #procedure de verification
-    if current_agent.valid_password?(password)
-      if phone != phone_confirm
-        render json: {
-          message: "numero de telephone differents"
-        }
-      else
-        #recherche du client sur la plateforme
-        customer = Customer.find_by_phone(phone)
-        if customer.blank?
-          render json: {
-            message: "Erreur ! #{phone} est inconnu de notre plateforme"
-          }
-        else
-          query = Client::init_retrait(phone, amount)
-          render json: {
-            message: query
-          }
-        end
+    current_agent = Customer.find_by_phone(phone)
+    if current_agent.blank?
+      respond_to do |format|
+        format.html {}
       end
     else
-      render json: {
-        message: "Impossible de d'authentifier l'operateur de saisie"
-      }
+      #procedure de verification
+      if current_agent.valid_password?(password)
+        if phone != phone_confirm
+          render json: {
+              message: "numero de telephone differents"
+          }
+        else
+          #recherche du client sur la plateforme
+          customer = Customer.find_by_phone(phone)
+          if customer.blank?
+            render json: {
+                message: "Erreur ! #{phone} est inconnu de notre plateforme"
+            }
+          else
+            query = Client::init_retrait(phone, amount)
+            render json: {
+                message: query
+            }
+          end
+        end
+      else
+        render json: {
+            message: "Impossible de d'authentifier l'operateur de saisie"
+        }
+      end
     end
   end
 
