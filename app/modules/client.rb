@@ -1065,19 +1065,19 @@ class Client
                 marchand_account.amount += @amount
 
                 #on historise la transaction
-                saveHistory(@to, @hash,"ENCAISSEMENT","none",@amount,nil ,nil ,nil )
-                # marchant = Transaction.new(
-                #   customer: @to,
-                #   code:     @hash,
-                #   flag:     "encaissement".upcase,
-                #   context:  "none",
-                #   date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-                #   amount:   @amount, #Parametre::Parametre::agis_percentage(@amount)
-                #   ip:       @ip
-                # )
-                #
-                # #on enregistre
-                # marchant.save
+                #saveHistory(@to, @hash,"ENCAISSEMENT","none",@amount,nil ,nil ,nil )
+                marchant = Transaction.new(
+                  customer: @to,
+                  code:     @hash,
+                  flag:     "encaissement".upcase,
+                  context:  "none",
+                  date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                  amount:   @amount, #Parametre::Parametre::agis_percentage(@amount)
+                  ip:       @ip
+                )
+
+                #on enregistre
+                marchant.save
   
                 if marchand_account.save
                   Sms.new(marchand.phone, "Paiement recu. Montant :  #{@amount} F CFA XAF, \t Payeur : Mr/Mme #{client.name} #{client.second_name if !client.second_name.nil?}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{$signature}")
@@ -1091,18 +1091,18 @@ class Client
                   #journalisation de l'historique
   
                   #on enregistre encore l'historique
-                  transaction = saveHistory(@from,@hash,"PAIEMENT","none",Parametre::Parametre::agis_percentage(@amount),nil,nil,nil )
-                  # transaction = Transaction.new(
-                  #   customer: @from,
-                  #   code:     @hash,
-                  #   flag:     "paiement".upcase,
-                  #   context:  "none",
-                  #   date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-                  #   amount:   Parametre::Parametre::agis_percentage(@amount),
-                  #   ip:       @ip
-                  # )
+                  #transaction = saveHistory(@from,@hash,"PAIEMENT","none",Parametre::Parametre::agis_percentage(@amount),nil,nil,nil )
+                  transaction = Transaction.new(
+                    customer: @from,
+                    code:     @hash,
+                    flag:     "paiement".upcase,
+                    context:  "none",
+                    date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                    amount:   Parametre::Parametre::agis_percentage(@amount),
+                    ip:       @ip
+                  )
   
-                  if transaction
+                  if transaction.save
                     Rails::logger::info "Transaction enregistrée avec succes"
                   end
   
@@ -1237,9 +1237,7 @@ class Client
       )
 
       #On demarre l'enregistrement des informations
-      if h.save
-        return true
-      end
+      h.save
     end
 
   #Permet de hacher le montant
