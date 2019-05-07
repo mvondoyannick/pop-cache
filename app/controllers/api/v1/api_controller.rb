@@ -78,10 +78,7 @@ class Api::V1::ApiController < ApplicationController
 
     #recherche via le code marchand
     def code
-			@code = params[:code]
-
-			# on converti la chaine en entier, cela retire tous les entiers
-			@code = @code.to_i
+			@code = params[:code].to_i
 
 			if @code.is_a?(Integer)
 				#uniquement si le code est un entier
@@ -93,6 +90,7 @@ class Api::V1::ApiController < ApplicationController
 					}
 				else
 					#on retourne les informations
+					puts @customer.code
 					render json: {
 						message: 			true,
 						context: 			searchContext(@customer),
@@ -103,6 +101,10 @@ class Api::V1::ApiController < ApplicationController
 						expire: 			5.minutes.from_now
 					}
 				end
+			else
+				render json: {
+						message: "varable incorrecte"
+				}
 			end
 		end
 
@@ -118,25 +120,20 @@ class Api::V1::ApiController < ApplicationController
     #permet de declencher le paiement entre deux clients
     # @params from, to, amount, password
     # @details
-    def payment
-			#on decompose mes donnees recu depuis le client
-			#token 			= params[:token]
-
-			#recherche du payeur
-			#customer 		= Customer.find_by_authentication_token(token)
-			#from 			= params[:payeur]
+		# @return [Object]
+		def payment
 			from 				= params[:token]
 			to 					= params[:receveur]
 			amount 			= params[:montant]
-			pwd = params[:password]
-			@ip = request.remote_ip
+			pwd 				= params[:password]
+			@ip 				= request.remote_ip
 
 			@customer = Customer.find_by_authentication_token(from)
 			@marchand = Customer.find_by_authentication_token(to)
 			if @customer.blank? && @marchand.blank?
 				render json: {
 						status: 	404,
-						flag: 		:customer_unknow,
+						flag: 		:customer_not_found,
 						message: 	"Utilisateur inconnu"
 				}
 			else
@@ -156,7 +153,7 @@ class Api::V1::ApiController < ApplicationController
 
   # effectuer le paiement d'une transaction via USSD
   def paymentUssdExt
-		render json: "Welcome"
+		render plain: "Welcome"
 	end
     
 end
