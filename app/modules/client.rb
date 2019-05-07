@@ -908,13 +908,13 @@ class Client
       end
     end
 
-  #AUTHENTIFICATION D UN USTOMER VIA LE HEADER RECU
-  # @method name  Check Header for customer
-  # @name         Client::checkHeader
-  # @params       header
-  # @output       boolean [true/false]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
+    #AUTHENTIFICATION D UN USTOMER VIA LE HEADER RECU
+    # @method name  Check Header for customer
+    # @name         Client::checkHeader
+    # @params       header
+    # @output       boolean [true/false]
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
     def self.checkHeader(header)
       @header = header
       header_customer = Customer.find_by_authentication_token(@header)
@@ -927,13 +927,13 @@ class Client
       end
     end
 
-  #VERIFIER SI LE CLIENT DISPOSE DU SOLDE SUFFISA?T DANS SON COMPTE POUR EFFECTUER LA TRANSACTION
-  # @method name  Get Balance before retrait
-  # @name         Client::get_balance_retrait
-  # @params       phone amount
-  # @output       boolean [true/false]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
+    #VERIFIER SI LE CLIENT DISPOSE DU SOLDE SUFFISA?T DANS SON COMPTE POUR EFFECTUER LA TRANSACTION
+    # @method name  Get Balance before retrait
+    # @name         Client::get_balance_retrait
+    # @params       phone amount
+    # @output       boolean [true/false]
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
     def self.get_balance_retrait(phone, amount_retrait)
       @phone = phone
       @amount = amount_retrait.to_i
@@ -963,14 +963,14 @@ class Client
     end
 
 
-  #INITIALISATION DE LA PROCEDURE DE RETRAIT
-  # @method name  Get Balance before retrait
-  # @name         Client::init_retrait
-  # @params       [object] phone
-  # @param        [object] amount
-  # @return       boolean [true/false]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
+    #INITIALISATION DE LA PROCEDURE DE RETRAIT
+    # @method name  Get Balance before retrait
+    # @name         Client::init_retrait
+    # @params       [object] phone
+    # @param        [object] amount
+    # @return       boolean [true/false]
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
     def self.init_retrait(phone, amount)
       @phone = phone
       @amount = amount.to_i
@@ -1018,16 +1018,16 @@ class Client
         
     end
 
-  #PERMET D EFFECTUER UN PAIEMENT D'UN CLIENT A UN AUTRE CLIENT
-  # @method name  Pay
-  # @name         Client::pay
-  # @params       [object] emeteur
-  # @param        [object] destinataire
-  # @params       [object] montant
-  # @params       [object] password
-  # @output       [boolean] [true/false]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
+    #PERMET D EFFECTUER UN PAIEMENT D'UN CLIENT A UN AUTRE CLIENT
+    # @method name  Pay
+    # @name         Client::pay
+    # @params       [object] emeteur
+    # @param        [object] destinataire
+    # @params       [object] montant
+    # @params       [object] password
+    # @output       [boolean] [true/false]
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
     def self.pay(from, to, amount, pwd, ip)
       @from             = from.to_i
       @to               = to.to_i
@@ -1062,19 +1062,22 @@ class Client
               client_account.amount = Parametre::Parametre::soldeTest(client_account.amount, amount) #client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
               if client_account.save
                 Rails::logger::info "Solde tm : #{client_account.amount.to_f}"
-                marchand_account.amount += @amount 
-                marchant = Transaction.new(
-                  customer: @to,
-                  code:     @hash,
-                  flag:     "encaissement".upcase,
-                  context:  "none",
-                  date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-                  amount:   @amount, #Parametre::Parametre::agis_percentage(@amount)
-                  ip:       @ip
-                )
-  
-                #on enregistre
-                marchant.save
+                marchand_account.amount += @amount
+
+                #on historise la transaction
+                saveHistory(@to, @hash,"ENCAISSEMENT","none",@amount,nil ,nil ,nil )
+                # marchant = Transaction.new(
+                #   customer: @to,
+                #   code:     @hash,
+                #   flag:     "encaissement".upcase,
+                #   context:  "none",
+                #   date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                #   amount:   @amount, #Parametre::Parametre::agis_percentage(@amount)
+                #   ip:       @ip
+                # )
+                #
+                # #on enregistre
+                # marchant.save
   
                 if marchand_account.save
                   Sms.new(marchand.phone, "Paiement recu. Montant :  #{@amount} F CFA XAF, \t Payeur : Mr/Mme #{client.name} #{client.second_name if !client.second_name.nil?}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{$signature}")
@@ -1087,19 +1090,19 @@ class Client
   
                   #journalisation de l'historique
   
-                  #History::History.new(marchand.authentication_token, client.authentication_token, @amount, "phone", "paiement")
-                  #History::History::history(@from, @to, @amount, "phone", "paiement", hash)
-                  transaction = Transaction.new(
-                    customer: @from,
-                    code:     @hash,
-                    flag:     "paiement".upcase,
-                    context:  "none",
-                    date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-                    amount:   Parametre::Parametre::agis_percentage(@amount),
-                    ip:       @ip
-                  )
+                  #on enregistre encore l'historique
+                  transaction = saveHistory(@from,@hash,"PAIEMENT","none",Parametre::Parametre::agis_percentage(@amount),nil,nil,nil )
+                  # transaction = Transaction.new(
+                  #   customer: @from,
+                  #   code:     @hash,
+                  #   flag:     "paiement".upcase,
+                  #   context:  "none",
+                  #   date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                  #   amount:   Parametre::Parametre::agis_percentage(@amount),
+                  #   ip:       @ip
+                  # )
   
-                  if transaction.save
+                  if transaction
                     Rails::logger::info "Transaction enregistrée avec succes"
                   end
   
@@ -1107,7 +1110,11 @@ class Client
   
                   #enregistrement des commissions
                   Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
-                  return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA. \t Nouveau solde : #{client_account.amount}."
+
+                  #convertion en reduction de virgule flottante
+                  @amount = "%0.2f" % [@amount]
+
+                  return true, "Votre Paiement de %0.2f #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA. \t Nouveau solde : #{client_account.amount}."
                 else
                   Rails::logger::info "Marchand non credite de #{@amount}"
                   Sms.new(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
@@ -1143,7 +1150,7 @@ class Client
     # @author @mvondoyannick
     # @version 0.0.1beta-rev-11-03-83-50
     # @deprecated
-  def self.transfert(from, to, amount, password)
+    def self.transfert(from, to, amount, password)
       @from = from
       @to = to
       @amount = amount
@@ -1196,4 +1203,58 @@ class Client
         end
       end
     end
+
+
+    #Permet d'enregistrer une transaction de toutes les activités
+    # @param [Object] customer
+    # @param [Object] code
+    # @param [Object] flag
+    # @param [Object] context
+    # @param [Object] amount
+    # @param [Object] ip
+    # @param [Object] lat
+    # @param [Object] lon
+    def self.saveHistory(customer, code, flag, context, amount, ip, lat, lon)
+      @customer   = customer
+      @code       = code
+      @flag       = flag
+      @context    = context
+      @amount     = amount
+      @ip         = ip
+      @lat        = lat
+      @lon        = lon
+
+      #on determine la region sur la base de la geolocalisation
+      @region = DistanceMatrix::DistanceMatrix::geocoder_search(@lat, @lon)
+
+      #on initialise le journal de la transaction
+      h = Transaction.new(
+         date:      Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+         amount:    @amount,
+         context:   "none",
+         customer:  @customer,
+         flag:      @flag,
+         code:      @code,
+         region:     nil,
+         lat:       @lat,
+         lon:       @lon
+      )
+
+      #On demarre l'enregistrement des informations
+      if h.save
+        return true
+      else
+        return false
+      end
+    end
+
+  #Permet de hacher le montant
+  def self.hashAmount(amount)
+    @amount = amount.to_i
+
+    amountHashed = Digest::MD5.hexdigest(@amount)
+    return amountHashed
+  end
+
+
 end
