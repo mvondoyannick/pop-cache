@@ -1112,7 +1112,7 @@ class Client
                   Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
 
                   #convertion en reduction de virgule flottante
-                  @amount = "%0.2f" % [@amount]
+                  #@amount = "%0.2f" % [@amount]
 
                   return true, "Votre Paiement de %0.2f #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA. \t Nouveau solde : #{client_account.amount}."
                 else
