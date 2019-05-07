@@ -1221,7 +1221,7 @@ class Client
       @lon        = lon
 
       #on determine la region sur la base de la geolocalisation
-      @region = DistanceMatrix::DistanceMatrix::geocoder_search(@lat, @lon)
+      #@region = DistanceMatrix::DistanceMatrix::geocoder_search(@lat, @lon)
 
       #on initialise le journal de la transaction
       h = Transaction.new(
