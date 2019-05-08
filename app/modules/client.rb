@@ -233,7 +233,7 @@ class Client
           else
             customer_account.amount = customer_account.amount.to_i + @amount.to_i
             if customer_account.save
-              @hash = SecureRandom.hex(13).upcase
+              @hash = "PR_#{SecureRandom.hex(13).upcase}"
 
               transaction = Transaction.new(
                 customer: customer.id,
@@ -246,14 +246,14 @@ class Client
 
               #on enregistre la transaction
               if transaction.save
-                Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, votre compte crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{@hash}. #{$signature}")
+                Sms.new(@phone, "#{prettyCallSexe(customer.sexe)} #{customer.name} #{customer.second_name}, votre compte crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{@hash}. #{$signature}")
                 Sms::send
                 return "Le compte a ete credite d\'un montant de #{@amount}'."
               else
                 return "Impossible de sauvegarder votre activité"
               end
             else
-              Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, impossible de crediter votre compte. Echec de la Transaction #{@hash}. #{$signature}")
+              Sms.new(@phone, "#{prettyCallSexe(customer.sexe)} #{customer.name} #{customer.second_name}, impossible de crediter votre compte. Echec de la Transaction #{@hash}. #{$signature}")
               Sms::send
               return "impossible de crediter le compte. code erreurs : #{customer_account.errors}"
             end
@@ -638,11 +638,22 @@ class Client
           Rails::logger::info "Information compte client #{@phone} à #{Time.now} est de #{account.amount} F CFA."
           Rails::logger::info "Information compte client #{@phone} à avec le fameux A est de #{account.amount} F CFA."
           if account.update(customer_id: customer.id, amount: account.amount )
-            Rails::logger::info "Compte debité avec succes"
-            return true
-          else
-            Rails::logger::info "Impossible de mettre a jour les informations client"
-            return false
+            transaction = Transaction.new(
+                customer: customer.id,
+                code:     @hash,
+                flag:     "recharge".upcase,
+                context:  "none",
+                date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                amount:   @amount
+            )
+
+            if transaction.save
+              Rails::logger::info "Compte debité avec succes"
+              return true
+            else
+              Rails::logger::info "Impossible de mettre a jour les informations client"
+              return false
+            end
           end
         end
       end
@@ -1080,10 +1091,10 @@ class Client
                 marchant.save
   
                 if marchand_account.save
-                  Sms.new(marchand.phone, "Paiement recu. Montant :  #{@amount.round(2)} F CFA XAF, \t Payeur : Mr/Mme #{client.name} #{client.second_name if !client.second_name.nil?}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{$signature}")
+                  Sms.new(marchand.phone, "Paiement recu. Montant :  #{@amount.round(2)} F CFA XAF, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name if !client.second_name.nil?}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{$signature}")
                   Sms::send
                   #--------------------------------------------------
-                  Sms.new(client.phone, "Compte debite. Motif: Paiement effectue. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte debite : Mr/Mme #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
+                  Sms.new(client.phone, "Compte debite. Motif: Paiement effectue. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte debite : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
                   Sms::send
                   #----------------------------------------------------
                   Rails::logger::info "Paiement effectué de #{@amount} entre #{@from} et #{@to}."
@@ -1110,6 +1121,8 @@ class Client
   
                   #enregistrement des commissions
                   Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
+                  #fin d'enregistrement de la commission
+
                   return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA. \t Nouveau solde : #{client_account.amount}."
                 else
                   Rails::logger::info "Marchand non credite de #{@amount}"
@@ -1180,7 +1193,7 @@ class Client
                 Sms.new(@to, "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{@hash}. #{$signature}")
                 Sms::send
                 #----------------------------------
-                Sms.new(@from, "Mr/Mme #{client.name} #{client.second_name}, #{@amount} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{@hash}. #{$signature}")
+                Sms.new(@from, "#{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name}, #{@amount} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{@hash}. #{$signature}")
                 Sms::send
                 return "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. ID Transaction : #{@hash}. #{$signature}"
               else

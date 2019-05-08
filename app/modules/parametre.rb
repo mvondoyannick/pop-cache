@@ -68,7 +68,7 @@ module Parametre
           code: code,
           amount_brut: amount,
           amount_commission: total,
-          commission: commission
+          commission: commission.round(2)
         )
 
         if query.save
