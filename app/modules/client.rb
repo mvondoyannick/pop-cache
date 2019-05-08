@@ -1080,7 +1080,7 @@ class Client
                 marchant.save
   
                 if marchand_account.save
-                  Sms.new(marchand.phone, "Paiement recu. Montant :  #{@amount} F CFA XAF, \t Payeur : Mr/Mme #{client.name} #{client.second_name if !client.second_name.nil?}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{$signature}")
+                  Sms.new(marchand.phone, "Paiement recu. Montant :  #{@amount.round(2)} F CFA XAF, \t Payeur : Mr/Mme #{client.name} #{client.second_name if !client.second_name.nil?}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{$signature}")
                   Sms::send
                   #--------------------------------------------------
                   Sms.new(client.phone, "Compte debite. Motif: Paiement effectue. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte debite : Mr/Mme #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
