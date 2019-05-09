@@ -6,7 +6,7 @@ module OneSignal
 
   #definition des heraders pour l'envoi en post
   HEADERS = {
-      "Authorization" => "Basic YWJkNzQwYzAtMmYyNC00MDY2LTlmYTMtZjI0ZDc4ZTljMDk5",
+      "Authorization" => "Basic OTFlOGFjYzEtMzRkOC00OTNmLWJkOTAtMjQ2YzM2MWQ0N2Zm",
       "Content-Type" => "application/json"
   }
 
@@ -17,7 +17,7 @@ module OneSignal
 
     # Every request needs to inform the APP ID.
     @body =  {
-        "app_id" => '968c918a-8cd0-4e24-9bf4-f277782f4d09'
+        "app_id" => '680b2111-1439-4700-b338-2357cd10074b'
     }
 
     def self.send_push(body)
@@ -31,9 +31,9 @@ module OneSignal
       push_body = @body.merge(
           {
               "included_segments" => ["All"],
-              "url" => "https://onesignal.com",
+              "url" => "",
               "data" => { "type": "daily_news" },
-              "contents" => { "en" => "News!", "pt" =>  "Novidades!" }
+              "contents" => { "en" => "News!", "pt" =>  "Novidades!", "fr" => "Actualites" }
           }).to_json
 
       send_push(push_body)
@@ -63,6 +63,45 @@ module OneSignal
           }
       ).to_json
       send_push(push_body) #envoi des notification push
+    end
+
+    #recuperer l'id du telephone
+    # @param [OneSignalObject] playerId
+    # @param [IntegerObject] amount
+    # @param [Object] merchant
+    def self.sendNotification(playerId, amount, merchant, customer)
+      @playerId   = playerId
+      @amount     = amount
+      @merchant   = merchant
+      @customer   = customer
+
+      push_body = @body.merge(
+          {
+              #"included_segments" => ["All"],
+              "include_player_ids": [@playerId],
+              "button": [{"id": "id1", "text": "button1", "icon": "ic_menu_share"}, {"id": "id2", "text": "button2", "icon": "ic_menu_send"}],
+              "url": "",
+              "send_after": 5.seconds.from_now,
+              "data": { "type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
+              "contents": { "en" => "Payment done!", "pt" =>  "Novidades!", "fr" => "Transaction effectuée, montant de #{@amount} F CFA à #{@merchant}. PayQuick" }
+          }).to_json
+
+      send_push(push_body)
+    end
+
+
+    #message generale aux client payquick
+    def self.generalNotification(msg)
+      @msg    = msg
+      push_body = @body.merge(
+          {
+              "included_segments" => ["All"],
+              "url" => "https://agis-as.com",
+              "data" => { "type": "daily_news" },
+              "contents" => { "en" => "News!", "pt" =>  "Novidades!", "fr" => "#{@msg}" }
+          }).to_json
+
+      send_push(push_body)
     end
 
 

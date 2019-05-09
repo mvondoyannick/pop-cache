@@ -128,6 +128,11 @@ class Api::V1::ApiController < ApplicationController
 			pwd 				= params[:password]
 			@ip 				= request.remote_ip
 
+			#recuperation du onesignalID
+			@player_id = Base64.decode64(params[:oneSignalID])
+
+			Rails::logger::info "oneSignalId : #{@player_id}"
+
 			@customer = Customer.find_by_authentication_token(from)
 			@marchand = Customer.find_by_authentication_token(to)
 			if @customer.blank? && @marchand.blank?
@@ -137,6 +142,7 @@ class Api::V1::ApiController < ApplicationController
 						message: 	"Utilisateur inconnu"
 				}
 			else
+				OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
 				transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip)
 				render json: {
 						message: transaction

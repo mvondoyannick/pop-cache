@@ -5,9 +5,9 @@
       <div class="row no-gutters align-items-center">
         <div class="col mr-2">
           <div class="h6 font-weight-bold text-primary text-uppercase mb-1">
-            <%= link_to "Creation de compte", agentcrtl_new_customer_path, class: "text-primary" %>
+            <%= link_to "Creation", agentcrtl_new_customer_path, class: "text-primary" %>
           </div>
-          <div class="text-xs mb-0 font-weight-bold text-gray-800">Creer un nouveau compte</div>
+          <div class="text-xs mb-0 font-weight-bold text-gray-800">Creation</div>
         </div>
         <div class="col-auto">
           <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -24,9 +24,9 @@
       <div class="row no-gutters align-items-center">
         <div class="col mr-2">
           <div class="h6 font-weight-bold text-success text-uppercase mb-1">
-            <%= link_to "Activer un compte", agentcrtl_activate_customer_account_path, class: "text-gray-800" %>
+            <%= link_to "Activation", agentcrtl_activate_customer_account_path, class: "text-gray-800" %>
           </div>
-          <div class="text-xs mb-0 font-weight-bold text-gray-800">Activer un compte</div>
+          <div class="text-xs mb-0 font-weight-bold text-gray-800">Activation</div>
         </div>
         <div class="col-auto">
           <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -43,9 +43,9 @@
       <div class="row no-gutters align-items-center">
         <div class="col mr-2">
           <div class="h6 font-weight-bold text-info text-uppercase mb-1">
-            <%= link_to "Recharge du compte", agentcrtl_credit_customer_path, class: "text-info" %>
+            <%= link_to "Recharge", agentcrtl_credit_customer_path, class: "text-info" %>
           </div>
-          <div class="text-xs mb-0 font-weight-bold text-gray-800">Recharger un compte</div>
+          <div class="text-xs mb-0 font-weight-bold text-gray-800">Recharge</div>
           <div class="row no-gutters align-items-center">
             <div class="col-auto">
             </div>
@@ -66,9 +66,66 @@
       <div class="row no-gutters align-items-center">
         <div class="col mr-2">
           <div class="h6 font-weight-bold text-warning text-uppercase mb-1">
-            <%= link_to "Retrait du compte", agentcrtl_debit_customer_account_path, class: "text-warning" %>
+            <%= link_to "Retrait", agentcrtl_debit_customer_account_path, class: "text-warning" %>
           </div>
-          <div class="text-xs mb-0 font-weight-bold text-gray-800">Retirer de l'argent dans un compte</div>
+          <div class="text-xs mb-0 font-weight-bold text-gray-800">Retrait</div>
+        </div>
+        <div class="col-auto">
+          <i class="fas fa-comments fa-2x text-gray-300"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pending Requests Card Example -->
+<div class="col-xl-3 col-md-6 mb-4">
+  <div class="card border-left-warning shadow h-100 py-2">
+    <div class="card-body">
+      <div class="row no-gutters align-items-center">
+        <div class="col mr-2">
+          <div class="h6 font-weight-bold text-success text-uppercase mb-1">
+            <%= link_to "Blocage", agentcrtl_debit_customer_account_path, class: "text-success" %>
+          </div>
+          <div class="text-xs mb-0 font-weight-bold text-gray-800">Blocaque un compte</div>
+        </div>
+        <div class="col-auto">
+          <i class="fas fa-comments fa-2x text-gray-300"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pending Requests Card Example -->
+<div class="col-xl-3 col-md-6 mb-4">
+  <div class="card border-left-warning shadow h-100 py-2">
+    <div class="card-body">
+      <div class="row no-gutters align-items-center">
+        <div class="col mr-2">
+          <div class="h6 font-weight-bold text-danger text-uppercase mb-1">
+            <%= link_to "Deblocage", agentcrtl_debit_customer_account_path, class: "text-danger" %>
+          </div>
+          <div class="text-xs mb-0 font-weight-bold text-gray-800">Debloquer un compte</div>
+        </div>
+        <div class="col-auto">
+          <i class="fas fa-comments fa-2x text-gray-300"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pending Requests Card Example -->
+<div class="col-xl-3 col-md-6 mb-4">
+  <div class="card border-left-warning shadow h-100 py-2">
+    <div class="card-body">
+      <div class="row no-gutters align-items-center">
+        <div class="col mr-2">
+          <div class="h6 font-weight-bold text-primary text-uppercase mb-1">
+            <%= link_to "Rapport", agentcrtl_debit_customer_account_path, class: "text-primary" %>
+          </div>
+          <div class="text-xs mb-0 font-weight-bold text-gray-800">Rapport d'activité</div>
         </div>
         <div class="col-auto">
           <i class="fas fa-comments fa-2x text-gray-300"></i>

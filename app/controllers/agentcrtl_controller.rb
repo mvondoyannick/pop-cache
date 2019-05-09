@@ -309,8 +309,6 @@ class AgentcrtlController < ApplicationController
 
   def search
     phone     = params[:phone]
-    action    = params[:action]
-    if action == "lock_customer_account"
       if phone.present?
         @customer = Customer.find_by_phone(phone)
         if @customer.blank?
@@ -319,44 +317,20 @@ class AgentcrtlController < ApplicationController
           end
         else
           #on verifie si ce customer n'est pas deja bloqué
-          is_lock = Client::isLock?(@customer.authentication_token)
-          if is_lock[0] == true
-            #le compte est effectivement utilisé
-            respond_to do |format|
-              format.html {redirect_to customer_s_response_path(status: 'visible', flag: false, phone: @customer.phone, message: "Cet utilisateur est deja bloqué, impossible de le bloquer de nouveau")}
-            end
-          else
+          # is_lock = Client::isLock?(@customer.authentication_token)
+          # if is_lock[0] == true
+          #   #le compte est effectivement utilisé
+          #   respond_to do |format|
+          #     format.html {redirect_to customer_s_response_path(status: 'visible', flag: false, phone: @customer.phone, message: "Cet utilisateur est deja bloqué, impossible de le bloquer de nouveau")}
+          #   end
+          # else
             #le compte n'esy actuellement pas bloqué
             respond_to do |format|
               format.html {redirect_to customer_s_response_path(status: 'visible',flag: true, name: @customer.name, second_name: @customer.second_name, phone: @customer.phone, sexe: @customer.sexe, token: @customer.authentication_token, cni: @customer.cni)}
             end
-          end
+          #end
         end
       end
-    elsif action == "unlock_customer_account"
-      if phone.present?
-        @customer = Customer.find_by_phone(phone)
-        if @customer.blank?
-          respond_to do |format|
-            format.html {}
-          end
-        else
-          #on verifie si ce customer n'est pas deja bloqué
-          is_lock = Client::isLock?(@customer.authentication_token)
-          if is_lock[0] == true
-            #le compte est effectivement utilisé
-            respond_to do |format|
-              format.html {redirect_to customer_u_response_path(status: 'visible', flag: false, phone: @customer.phone, message: "Cet utilisateur est deja bloqué, impossible de le bloquer de nouveau")}
-            end
-          else
-            #le compte n'esy actuellement pas bloqué
-            respond_to do |format|
-              format.html {redirect_to customer_u_response_path(status: 'visible',flag: true, name: @customer.name, second_name: @customer.second_name, phone: @customer.phone, sexe: @customer.sexe, token: @customer.authentication_token, cni: @customer.cni)}
-            end
-          end
-        end
-      end
-    end
   end
 
   #resultat de la recherche lorsque l'on veut bloquer

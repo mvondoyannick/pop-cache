@@ -102,7 +102,7 @@ Rails.application.routes.draw do
       match 'session/signin', to: 'session#signin', via: [:post, :options, :get]
       match 'session/signup', to: 'session#signup', via: [:post, :options]
       match 'session/get_balance/:customer/:password', to: 'session#getSoldeCustomer', via: [:get, :options]
-      match 'session/transaction/:token/:receveur/:montant/:password', to: 'api#payment', via: [:get, :options]
+      match 'session/transaction/:token/:receveur/:montant/:password/:oneSignalID', to: 'api#payment', via: [:get, :options]
       match 'session/qrcode/:data', to: 'api#qrcode', via: [:options, :get]
       match 'session/code/:code', to: 'api#code', via: [:options, :get]     #rechercher via le code numerique
       match 'session/history/:phone', to: 'api#user_history', via: [:get, :options] 

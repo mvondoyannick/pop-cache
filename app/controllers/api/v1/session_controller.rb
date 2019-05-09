@@ -18,12 +18,10 @@ class Api::V1::SessionController < ApplicationController
     end
 
     def histo #retourn l'historique sur la base du telephone
-      #on recupere le header/token de l'utilisateur
-      #header = request.headers['HTTP_X_API_POP_KEY']
       @customer = Customer.find_by_authentication_token(request.headers['HTTP_X_API_POP_KEY'])
       if @customer.blank?
         render json: {
-            status:   :not_found,
+            status:   :customer_not_found,
             message:  "utilisateur inconnu"
         }
       else

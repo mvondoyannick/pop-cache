@@ -27,9 +27,9 @@ module DistanceMatrix
 
     #retourn l'adresse en fonction de la latitude et de la longitude
     def self.geocoder_search(lat, lon)
-        @lat = lat.to_s
-        @lon = lon.to_s
-        results = Geocoder.search(@lat, @lon)
+        @lat = lat.to_i
+        @lon = lon.to_i
+        results = Geocoder.search(lat, lon)
         return results.first.address
     end
     

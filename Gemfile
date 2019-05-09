@@ -35,6 +35,8 @@ gem 'httparty'
 gem 'geocoder'
 #json web token
 gem 'jwt'
+#insert table print
+gem "table_print"
 #gestion du qrcode
 gem 'rqrcode'
 #gestion du QRcode au format png
