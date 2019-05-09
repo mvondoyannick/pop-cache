@@ -1094,7 +1094,7 @@ class Client
                   Sms.new(marchand.phone, "Paiement recu. Montant :  #{@amount.round(2)} F CFA XAF, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name if !client.second_name.nil?}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{$signature}")
                   Sms::send
                   #--------------------------------------------------
-                  Sms.new(client.phone, "Compte debite. Motif: Paiement effectue. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte debite : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
+                  Sms.new(client.phone, "Compte debite. Motif: Paiement effectue. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte debite : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount.round(2)} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
                   Sms::send
                   #----------------------------------------------------
                   Rails::logger::info "Paiement effectué de #{@amount} entre #{@from} et #{@to}."
@@ -1123,7 +1123,7 @@ class Client
                   Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
                   #fin d'enregistrement de la commission
 
-                  return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA. \t Nouveau solde : #{client_account.amount}."
+                  return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA. \t Nouveau solde : #{client_account.amount.round(2)}."
                 else
                   Rails::logger::info "Marchand non credite de #{@amount}"
                   Sms.new(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
