@@ -1039,12 +1039,13 @@ class Client
     # @output       [boolean] [true/false]
     # @author @mvondoyannick
     # @version 0.0.1beta-rev-11-03-83-50
-    def self.pay(from, to, amount, pwd, ip)
+    def self.pay(from, to, amount, pwd, ip, playerId)
       @from             = from.to_i
       @to               = to.to_i
       @amount           = amount.to_f #montant de la transation
       @client_password  = pwd
       @ip               = ip
+      @playerId         = playerId
 
       marchand = Customer.find(@to)                                       #personne qui recoit
       marchand_account = Account.where(customer_id: marchand.id).first    #le montant de la personne qui recoit
@@ -1052,9 +1053,10 @@ class Client
       client_account = Account.where(customer_id: client.id).first        # le montant de la personne qui envoi
 
       if @from == @to
-        #Send local notifications here
-        Sms.new(@from, "Vous ne pouvez pas vous payer a vous meme!. Transaction annulee. #{$signature}")
-        Sms::send
+        #Send local Pushnotifications here
+        OneSignal::OneSignalSend.notPayToMe(@playerId, "#{client.name} #{client.second_name}") #sendNotification(@playerId, Parametre::Parametre.agis_percentage(@amount),"#{marchand.name} #{marchand.second_name}", "#{client.name} #{client.second_name}")
+        #Sms.new(@from, "Vous ne pouvez pas vous payer a vous meme!. Transaction annulee. #{$signature}")
+        #Sms::send
         # end sending local notifications
         Rails::logger::info "Numéro indentique, transaction annuler!"
         return false, " Vous ne pouvez pas vous payer à vous même!"
@@ -1091,11 +1093,14 @@ class Client
                 marchant.save
   
                 if marchand_account.save
+                  #envoi d'une notification OneSignal
                   Sms.new(marchand.phone, "Paiement recu. Montant :  #{@amount.round(2)} F CFA XAF, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name if !client.second_name.nil?}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{$signature}")
                   Sms::send
                   #--------------------------------------------------
-                  Sms.new(client.phone, "Compte debite. Motif: Paiement effectue. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte debite : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount.round(2)} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
-                  Sms::send
+                  # push notificatin au marchand
+                  OneSignal::OneSignalSend.sendNotification(@playerId, Parametre::Parametre.agis_percentage(@amount),"#{marchand.name} #{marchand.second_name}", "#{client.name} #{client.second_name}")
+                  #Sms.new(client.phone, "Compte debite. Motif: Paiement effectue. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte debite : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount.round(2)} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
+                  #Sms::send
                   #----------------------------------------------------
                   Rails::logger::info "Paiement effectué de #{@amount} entre #{@from} et #{@to}."
   
@@ -1138,8 +1143,9 @@ class Client
               end
             else
               Rails::logger::info "Le solde de votre compte est de : #{marchand_account.amount}. Paiment impossible"
-              Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
-              Sms::send
+              OneSignal::OneSignalSend.montantInferieur(@playerId, "#{client.name} #{client.second_name}", amount)
+              #Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
+              #Sms::send
               return false, "Le solde de votre compte est insuffisant."
             end
           end

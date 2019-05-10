@@ -83,7 +83,7 @@ module OneSignal
               "url": "",
               "send_after": 5.seconds.from_now,
               "data": { "type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
-              "contents": { "en" => "Payment done!", "pt" =>  "Novidades!", "fr" => "Transaction effectuée, montant de #{@amount} F CFA à #{@merchant}. PayQuick" }
+              "contents": { "en": "Payment done! amount of #{@amount} F CFA to #{@merchant}. PayQuick", "fr": "Transaction effectuée, montant de #{@amount} F CFA à #{@merchant}. PayQuick" }
           }).to_json
 
       send_push(push_body)
@@ -98,22 +98,45 @@ module OneSignal
               "included_segments" => ["All"],
               "url" => "https://agis-as.com",
               "data" => { "type": "daily_news" },
-              "contents" => { "en" => "News!", "pt" =>  "Novidades!", "fr" => "#{@msg}" }
+              "contents" => { "en": "News!", "fr": "#{@msg}" }
           }).to_json
 
       send_push(push_body)
     end
 
+    #On ne peut pas se payer a sois meme
+    # @param [Object] playerId
+    # @param [Object] user
+    def self.notPayToMe(playerId, user)
+      @playerId     = playerId
+      @user         = user
 
-    def self.bonjour(args)
-      @args = args
       push_body = @body.merge(
           {
-              "contents"=> {"en"=> @args},
-              "included_segments"=> ["All"]
-          }
-      ).to_json
-      #return 'bonjour'
+              "include_player_ids": [@playerId],
+              "send_after": 5.seconds.from_now,
+              "data": { "type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
+              "contents": { "en": "#{user} you can not pay yourself. PayQuick", "fr": "#{@user} vous ne pouvez pas vous payer a vous même. PayQuick" }
+          }).to_json
+
+      send_push(push_body)
+
+    end
+
+    #montant de le compte est insuffisant
+    def self.montantInferieur(playerId, user, amount)
+      @playerId     = playerId
+      @user         = user
+      @amount       = amount
+
+      push_body = @body.merge(
+        {
+        "include_player_ids": [@playerId],
+            "send_after": 1.seconds.from_now,
+        "data": { "type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
+            "contents": { "en": "#{user} you can not pay yourself. PayQuick", "fr": "#{@user} le montant de votre compte est inferieur à #{@amount} pour effectuer cette transaction. PayQuick" }
+      }).to_json
+
       send_push(push_body)
     end
 
