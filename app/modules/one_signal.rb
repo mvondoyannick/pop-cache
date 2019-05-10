@@ -134,7 +134,7 @@ module OneSignal
         "include_player_ids": [@playerId],
             "send_after": 1.seconds.from_now,
         "data": { "type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
-            "contents": { "en": "#{user} you can not pay yourself. PayQuick", "fr": "#{@user} le montant de votre compte est inferieur à #{@amount} pour effectuer cette transaction. PayQuick" }
+            "contents": { "en": "#{@user} your account amount is les than #{@amount} F CFA to process this payment. PayQuick", "fr": "#{@user} le montant de votre compte est inferieur à #{@amount} F CFA pour effectuer cette transaction. PayQuick" }
       }).to_json
 
       send_push(push_body)
