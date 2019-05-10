@@ -142,7 +142,7 @@ class Api::V1::ApiController < ApplicationController
 						message: 	"Utilisateur inconnu"
 				}
 			else
-				OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
+				#OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
 				transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip,@player_id)
 				render json: {
 						message: transaction
