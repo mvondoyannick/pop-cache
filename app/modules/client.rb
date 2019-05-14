@@ -109,17 +109,17 @@ class Client
       end
     end
 
-  #CREATION DU COMPTE CLIENT
-  # @params  [object] name
-  # @params  [object] prenom
-  # @params  [object] phone
-  # @params  [object] cni
-  # @params  [object] password
-  # @params  [object] sexe
-  # @return  [object] boolean
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  def self.create_user(name, prenom, phone, cni, password, sexe)
+    #CREATION DU COMPTE CLIENT
+    # @params  [object] name
+    # @params  [object] prenom
+    # @params  [object] phone
+    # @params  [object] cni
+    # @params  [object] password
+    # @params  [object] sexe
+    # @return  [object] boolean
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
+    def self.create_user(name, prenom, phone, cni, password, sexe)
       @name = name
       @prenom = prenom
       @phone = phone
@@ -174,10 +174,11 @@ class Client
     # @return   boolean
     # @author @mvondoyannick
     # @version 0.0.1beta-rev-11-03-83-50
-    def self.create_user_account(phone)
+    def self.create_user_account(playerId, phone)
       Rails::logger::info "Demarrage de la creation du compte utilisateur ..."
       #@id = id
-      @phone = phone
+      @phone      = phone
+      @playerId   = playerId
 
       #recherche du customer
       @customer = Customer.find_by_phone(phone)
@@ -193,9 +194,10 @@ class Client
 
         if customer_account.save
           Rails::logger::info "Utilisateur #{@phone} crée a #{Time.now}"
-
-          Sms.new(@phone, "#{@phone} Bienvenue chez PAYQUICK, votre porte monnaie virtuel vient d\'etre cree!")
-          Sms::send
+          #Send oneSignal Notifications
+          OneSignal::OneSignalSend.genericOneSignal(@playerId, "#{Customer.find_by_phone(@phone).name} #{Customer.find_by_phone(@phone).second_name} Bienvenue chez PAYQUICK. Vous pouvez désormais effectuer vos paiements, vos recharges et ... je n'en dis pas plus!", "#{Customer.find_by_phone(@phone).name} #{Customer.find_by_phone(@phone).second_name} Welcome to #{$signature}. You can do payments, refill account and ... i can't tell more!")
+          #Sms.new(@phone, "#{@phone} Bienvenue chez PAYQUICK, votre porte monnaie virtuel vient d\'etre cree!")
+          #Sms::send
 
           return true,"creation porte-monnaie effectué avec succes!"
         else
@@ -316,16 +318,16 @@ class Client
     end
   end
 
-  #VERIFICATION DE LA FRAUDE SUR LA PLATEFORME
-  # @name     isFraud
-  # @detail   Permt de determiner d'eventuel systeme de fraude
-  # @param [Object] phone
-  # @param [Object] sim_phone
-  # @param [Object] network_operator
-  # @param [Object] uuid
-  # @param [Object] imei
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
+    #VERIFICATION DE LA FRAUDE SUR LA PLATEFORME
+    # @name     isFraud
+    # @detail   Permt de determiner d'eventuel systeme de fraude
+    # @param [Object] phone
+    # @param [Object] sim_phone
+    # @param [Object] network_operator
+    # @param [Object] uuid
+    # @param [Object] imei
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
     def self.isFraud?(phone, sim_phone, network_operator, uuid, imei)
       @phone            = phone
       @sim_phone        = sim_phone
@@ -377,16 +379,16 @@ class Client
     end
 
 
-  #BLOCAGE D'UN COMPTE UTILISATEUR SUR LA PLATEFORME
-  # @description
-  # @name
-  # @detail
-  # @param [Object] phone
-  # @param [Object] motif
-  # @return [Object]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  def self.lockCustomerAccount(phone, motif)
+    #BLOCAGE D'UN COMPTE UTILISATEUR SUR LA PLATEFORME
+    # @description
+    # @name
+    # @detail
+    # @param [Object] phone
+    # @param [Object] motif
+    # @return [Object]
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
+    def self.lockCustomerAccount(phone, motif)
       @phone  = phone
       @motif  = motif
 
@@ -428,19 +430,18 @@ class Client
     def self.unlockCustomerAccount(phone)
     end
 
-  #OBTENIR LE SOLDE DU COMPTE
-  # @name
-  # @detail
-  # @param [Object] tel
-  # @param [Object] password
-  # @return [Object]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  def self.get_balance(tel, password)
-      @phone = tel
+    #OBTENIR LE SOLDE DU COMPTE
+    # @name
+    # @detail
+    # @param [Object] tel
+    # @param [Object] password
+    # @return [Object]
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
+    def self.get_balance(tel, password, playerId)
+      @phone    = tel
       @password = password
-
-      Rails::logger::info "#{@phone}++#{@password}"
+      @playerId = playerId
 
       #on recherche le client
       query = Customer.find_by_phone(@phone)
@@ -453,11 +454,14 @@ class Client
           if account.blank?
             return false, "Aucun compte utilisateur correcpondant ou compte vide"
           else
-            Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
-            Sms::send
+            #return OneSignal API
+            OneSignal::OneSignalSend.genericOneSignal(@playerId, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name} le solde de votre compte est de #{account.amount} #{$devise}. #{$signature}", "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name} your account amount is #{account.amount} #{$devise}. #{$signature}")
+            #Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
+            #Sms::send
             return true,"#{prettyCallSexe(query.sexe)} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
           end
         else
+          OneSignal::OneSignalSend.genericOneSignal(@playerId, "Votre mot de passe semble etre invalide. #{$signature}", "Your password is invalide. #{$signature}")
           return false,  "Mot de passe invalide. #{$signature}"
         end
       end

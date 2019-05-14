@@ -1,16 +1,26 @@
 class Api::V1::AgentController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [:signin]
 
   #authenticate agent
   def signin
     #render json: agent = Agents::Auth::signin(params[:phone], params[:password])
-    agent = Customer.find_by_phone(params[:phone])
-    if agent.valid_password?(params[:password])
-      render json: agent.as_json(only: [:name, :second_name, :authentication_token, :phone])
-    else
-      render json: {
-        message: :unauthorize
-      }
-    end
+    # agent = Customer.find_by_phone(params[:phone])
+    # if agent.valid_password?(params[:password])
+    #   render json: agent.as_json(only: [:name, :second_name, :authentication_token, :phone])
+    # else
+    #   render json: {
+    #     message: :unauthorize
+    #   }
+    # end
+    @email      = params[:email]
+    @password   = params[:password]
+
+    Partenaire::Authenticate.new(email: @email, password: @password)
+    @agent = Partenaire::Authenticate.signin
+    render json: {
+        status:     @agent[0],
+        response:   @agent[1]
+    }
   end
 
 

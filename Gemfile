@@ -98,6 +98,7 @@ group :development do
   gem "better_errors"
   gem "binding_of_caller"
   gem "parallel"
+  gem "wit"
 end
 
 group :test do
