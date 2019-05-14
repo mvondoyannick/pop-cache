@@ -43,7 +43,7 @@ gem 'rqrcode'
 gem 'rqrcode_png'
 #using dragonfly
 gem 'dragonfly', '~> 1.2.0'
-#AES for encrypt decrypt
+#AES for encrypt decrypt https://github.com/chicks/aes
 gem 'aes'
 #gestion des email
 gem 'mail_form'

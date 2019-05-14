@@ -2,7 +2,9 @@ class Api::V1::SessionController < ApplicationController
     skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword, :testNetwork]
 
     #creation de compte utilisateur
+    # @return [Object]
     def signup
+      @ip     = request.remote_ip
       query = Client::signup(params[:nom], params[:second_name], params[:phone], params[:cni], params[:password], params[:sexe], params[:question_id], params[:reponse], params[:lat], params[:lon])
       render json: {
         status: query

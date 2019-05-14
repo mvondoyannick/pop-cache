@@ -6,6 +6,7 @@ class Client
   }
   $signature                        = "PAYQUICK"
   $appname                          = "PayQuick"
+  $domain                           = "payquick-cm.com"
   $version                          = "0.0.1beta-rev-11-03-83-50"
   $limit_amount                     = 150000
   $limit_transaction_recharge       = 500000
@@ -47,7 +48,7 @@ class Client
   # @param [Object] latitude
   # @param [Object] longitude
   # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
+  # @version 0.0.1beta-rev-11-03-83-59
   def self.signup(name, second_name, phone, cni, password, sexe, question, answer, latitude, longitude)
       @name         = name
       @second_name  = second_name
@@ -56,17 +57,20 @@ class Client
       #@uuid         = uuid
       #@imei         = imei
       @cni          = cni
-      @email        = "#{@phone.to_i}@payquick-cm.com"
+      @email        = "#{@phone.to_i}@#{$domain}"
       @password     = password
       @sexe         = sexe
       #@network_name = network_name
       @latitude     = latitude
       @longitude    = longitude
-      #@ip           = "0.0.0.0.0" #request.remote_ip
+      @ip           = ip #request.remote_ip
       @question     = question
       @answer       = answer
 
       Rails::logger::info "Requete provenant de l'IP #{@ip}"
+
+      #on recherche le pays
+      @pays = DistanceMatrix::DistanceMatrix.pays(@ip)
 
       #initi customer creation
       customer = Customer.new(
@@ -77,7 +81,9 @@ class Client
         password:     @password,
         type_id:      1,
         cni:          @cni,
-        sexe:         @sexe
+        sexe:         @sexe,
+        ip:           @ip,
+        pays:         @pays
       )
 
       #demarrage de la procedure de creation
@@ -119,14 +125,19 @@ class Client
     # @return  [object] boolean
     # @author @mvondoyannick
     # @version 0.0.1beta-rev-11-03-83-50
-    def self.create_user(name, prenom, phone, cni, password, sexe)
-      @name = name
-      @prenom = prenom
-      @phone = phone
-      @cni = cni
-      @email = "#{@phone.to_i}@payquick-cm.com"
+    # @param [Object] ip
+    def self.create_user(name, prenom, phone, cni, password, sexe, ip)
+      @name     = name
+      @prenom   = prenom
+      @phone    = phone
+      @cni      = cni
+      @email    = "#{@phone.to_i}@#{$domain}"
       @password = password
-      @sexe = sexe
+      @sexe     = sexe
+      @ip       = ip
+
+      #on recherche le pays
+      @pays = DistanceMatrix::DistanceMatrix.pays(@ip)
 
       #creation du compte de l'utilisateur
       @customer = Customer.new(
@@ -137,7 +148,9 @@ class Client
         password: @password,
         type_id: 1,
         cni: @cni,
-        sexe: @sexe
+        sexe: @sexe,
+        ip:   @ip,
+        pays: @pays
       )
 
       if @customer.save
@@ -145,7 +158,7 @@ class Client
 
         #on envoi le code d'authentification pour verification
         @auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
-        if @auth[0] == true
+        if @auth[0]
           return true, "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
         else
           #notified admin for these errors
@@ -1263,6 +1276,13 @@ class Client
 
     amountHashed = Digest::MD5.hexdigest(@amount)
     return amountHashed
+  end
+
+  def isIpDifferent?(customerIp, currentIp)
+    @customerIp       = customerIp
+    @currentIp        = currentIp
+
+    #on verie les deux informatins
   end
 
 

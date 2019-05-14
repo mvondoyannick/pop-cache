@@ -37,9 +37,10 @@ module DistanceMatrix
     end
 
     #Permet de rechercher via l'adresse IP
-    def self.geocoder_search_by_ip(ip)
+    # @param [Object] ip
+    def self.pays(ip)
       @ip   = ip
-      results = Gorcoder.search(@ip)
+      results = Geocoder.search(@ip)
       return results.first.country
     end
     
