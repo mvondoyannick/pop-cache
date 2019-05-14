@@ -151,9 +151,9 @@ module OneSignal
 
       push_body = @body.merge(
           {
-              "include_player_ids": [@playerId],
+              "include_player_ids" => [@playerId],
               #"send_after": 1.seconds.from_now,
-              "contents": { "en": "#{@msgEn}. PayQuick", "fr": "#{msgFr}. PayQuick" }
+              "contents" => {"en" => "#{@msgEn}. PayQuick", "fr" => "#{msgFr}. PayQuick"}
           }).to_json
 
       send_push(push_body)
