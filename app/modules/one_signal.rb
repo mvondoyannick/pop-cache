@@ -83,7 +83,7 @@ module OneSignal
               "url" => "",
               "send_after" => 5.seconds.from_now,
               "data" => {"type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
-              "contents"=> { "en"=> "Payment done! amount of #{@amount} F CFA to #{@merchant}. PayQuick", "fr"=> "Transaction effectuée, montant de #{@amount} F CFA à #{@merchant}. PayQuick" }
+              "contents"=> { "en"=> "Payment done! amount of #{@amount} F CFA to #{@merchant}. PayQuick", "fr"=> "Transaction effectuée, montant de #{@amount} F CFA payé à #{@merchant}. PayQuick" }
           }).to_json
 
       send_push(push_body)
@@ -144,6 +144,9 @@ module OneSignal
     end
 
     #distance superieur a ce qui est demandée
+    # @param [Object] playerId
+    # @param [Object] msgFr
+    # @param [Object] msgEn
     def self.genericOneSignal(playerId, msgFr, msgEn)
       @playerId     = playerId
       @msgFr        = msgFr
@@ -158,6 +161,22 @@ module OneSignal
 
       send_push(push_body)
 
+    end
+
+    #Notification de retrait d'argent
+    def self.retraitOneSignal(playerId, msgFr, msgEn)
+      @playerId     = playerId
+      @msgFr        = msgFr
+      @msgEn        = msgEn
+
+      push_body = @body.merge(
+          {
+              "include_player_ids" => [@playerId],
+              #"send_after": 1.seconds.from_now,
+              "contents" => {"en" => "#{@msgEn}. PayQuick", "fr" => "#{msgFr}. PayQuick"}
+          }).to_json
+
+      send_push(push_body)
     end
 
   end

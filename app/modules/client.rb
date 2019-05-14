@@ -174,11 +174,10 @@ class Client
     # @return   boolean
     # @author @mvondoyannick
     # @version 0.0.1beta-rev-11-03-83-50
-    def self.create_user_account(playerId, phone)
+    def self.create_user_account(phone)
       Rails::logger::info "Demarrage de la creation du compte utilisateur ..."
       #@id = id
       @phone      = phone
-      @playerId   = playerId
 
       #recherche du customer
       @customer = Customer.find_by_phone(phone)
@@ -194,10 +193,6 @@ class Client
 
         if customer_account.save
           Rails::logger::info "Utilisateur #{@phone} crée a #{Time.now}"
-          #Send oneSignal Notifications
-          OneSignal::OneSignalSend.genericOneSignal(@playerId, "#{Customer.find_by_phone(@phone).name} #{Customer.find_by_phone(@phone).second_name} Bienvenue chez PAYQUICK. Vous pouvez désormais effectuer vos paiements, vos recharges et ... je n'en dis pas plus!", "#{Customer.find_by_phone(@phone).name} #{Customer.find_by_phone(@phone).second_name} Welcome to #{$signature}. You can do payments, refill account and ... i can't tell more!")
-          #Sms.new(@phone, "#{@phone} Bienvenue chez PAYQUICK, votre porte monnaie virtuel vient d\'etre cree!")
-          #Sms::send
 
           return true,"creation porte-monnaie effectué avec succes!"
         else
@@ -438,10 +433,9 @@ class Client
     # @return [Object]
     # @author @mvondoyannick
     # @version 0.0.1beta-rev-11-03-83-50
-    def self.get_balance(tel, password, playerId)
+    def self.get_balance(tel, password)
       @phone    = tel
       @password = password
-      @playerId = playerId
 
       #on recherche le client
       query = Customer.find_by_phone(@phone)
@@ -455,13 +449,11 @@ class Client
             return false, "Aucun compte utilisateur correcpondant ou compte vide"
           else
             #return OneSignal API
-            OneSignal::OneSignalSend.genericOneSignal(@playerId, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name} le solde de votre compte est de #{account.amount} #{$devise}. #{$signature}", "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name} your account amount is #{account.amount} #{$devise}. #{$signature}")
-            #Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
-            #Sms::send
+            Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
+            Sms::send
             return true,"#{prettyCallSexe(query.sexe)} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
           end
         else
-          OneSignal::OneSignalSend.genericOneSignal(@playerId, "Votre mot de passe semble etre invalide. #{$signature}", "Your password is invalide. #{$signature}")
           return false,  "Mot de passe invalide. #{$signature}"
         end
       end

@@ -531,7 +531,7 @@ module Parametre
 
               # creation du compte "porte monnaie virtuel"
 
-              virtual_account = Client::create_user_account(@playerId, @phone)
+              virtual_account = Client::create_user_account(@phone)
               if virtual_account[0]
                 Rails::logger::info  "#{@phone} dispose desormais d'un compte virtuel actif sur PAYQUICK a #{Time.now}"
                 return true, "#{@phone} est Authenticated & dispose d'un compte virtuel actif"

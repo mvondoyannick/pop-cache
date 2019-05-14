@@ -38,7 +38,7 @@ Rails.application.routes.draw do
   get 'agentcrtl/credit_customer'
   post 'agentcrtl/intent_credit_customer'
   match 'agentcrtl/debit_customer_account', to: 'agentcrtl#debit_customer_account', via: [:get, :post]
-  #post 'agentcrtl/intent_debit_customer'
+  post 'agentcrtl/intent_debit_customer'
   match 'agentcrtl/activate_customer_account', to: 'agentcrtl#activate_customer_account', via: [:get, :post]
   #post 'agentcrtl/activate_customer_account'
   get 'agentcrtl/search_phone'
@@ -101,7 +101,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       match 'session/signin', to: 'session#signin', via: [:post, :options, :get]
       match 'session/signup', to: 'session#signup', via: [:post, :options]
-      match 'session/get_balance/:customer/:password/:oneSignalID', to: 'session#getSoldeCustomer', via: [:get, :options]                #retourne le solde du client
+      match 'session/get_balance/:customer/:password', to: 'session#getSoldeCustomer', via: [:get, :options]                #retourne le solde du client
       match 'session/transaction/:token/:receveur/:montant/:password/:oneSignalID', to: 'api#payment', via: [:get, :options]
       match 'session/qrcode/:data', to: 'api#qrcode', via: [:options, :get]
       match 'session/code/:code', to: 'api#code', via: [:options, :get]     #rechercher via le code numerique
