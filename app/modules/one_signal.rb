@@ -17,7 +17,7 @@ module OneSignal
 
     # Every request needs to inform the APP ID.
     @body =  {
-        "app_id" => '680b2111-1439-4700-b338-2357cd10074b'
+        "app_id": '680b2111-1439-4700-b338-2357cd10074b'
     }
 
     def self.send_push(body)
@@ -78,12 +78,12 @@ module OneSignal
       push_body = @body.merge(
           {
               #"included_segments" => ["All"],
-              "include_player_ids": [@playerId],
-              "button": [{"id": "id1", "text": "button1", "icon": "ic_menu_share"}, {"id": "id2", "text": "button2", "icon": "ic_menu_send"}],
-              "url": "",
-              "send_after": 5.seconds.from_now,
-              "data": { "type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
-              "contents": { "en": "Payment done! amount of #{@amount} F CFA to #{@merchant}. PayQuick", "fr": "Transaction effectuée, montant de #{@amount} F CFA à #{@merchant}. PayQuick" }
+              "include_player_ids" => [@playerId],
+              "button" => [{"id": "id1", "text": "button1", "icon": "ic_menu_share"}, {"id": "id2", "text": "button2", "icon": "ic_menu_send"}],
+              "url" => "",
+              "send_after" => 5.seconds.from_now,
+              "data" => {"type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
+              "contents"=> { "en"=> "Payment done! amount of #{@amount} F CFA to #{@merchant}. PayQuick", "fr"=> "Transaction effectuée, montant de #{@amount} F CFA à #{@merchant}. PayQuick" }
           }).to_json
 
       send_push(push_body)
@@ -113,10 +113,10 @@ module OneSignal
 
       push_body = @body.merge(
           {
-              "include_player_ids": [@playerId],
-              "send_after": 5.seconds.from_now,
-              "data": { "type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
-              "contents": { "en": "#{user} you can not pay yourself. PayQuick", "fr": "#{@user} vous ne pouvez pas vous payer a vous même. PayQuick" }
+              "include_player_ids" => [@playerId],
+              "send_after" => 1.seconds.from_now,
+              "data" => {"type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
+              "contents"=> { "en"=> "#{user} you can not pay yourself. PayQuick", "fr"=> "#{@user} vous ne pouvez pas vous payer a vous même. PayQuick" }
           }).to_json
 
       send_push(push_body)
@@ -124,6 +124,9 @@ module OneSignal
     end
 
     #montant de le compte est insuffisant
+    # @param [Object] playerId
+    # @param [Object] user
+    # @param [Integer] amount
     def self.montantInferieur(playerId, user, amount)
       @playerId     = playerId
       @user         = user
@@ -138,6 +141,23 @@ module OneSignal
       }).to_json
 
       send_push(push_body)
+    end
+
+    #distance superieur a ce qui est demandée
+    def self.genericOneSignal(playerId, msgFr, msgEn)
+      @playerId     = playerId
+      @msgFr        = msgFr
+      @msgEn        = msgEn
+
+      push_body = @body.merge(
+          {
+              "include_player_ids": [@playerId],
+              #"send_after": 1.seconds.from_now,
+              "contents": { "en": "#{@msgEn}. PayQuick", "fr": "#{msgFr}. PayQuick" }
+          }).to_json
+
+      send_push(push_body)
+
     end
 
   end
