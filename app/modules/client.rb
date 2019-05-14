@@ -1008,11 +1008,9 @@ class Client
             #on mets a jour la table customer sur await
             if customer.update(await: await.id) && account.update(amount: customer_amount)
               #---------------send sms to customer--------------
-              Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. Bien vouloir cliquer sur retrait sur votre telephone. #{$signature}")
+              #OneSignal::OneSignalSend.retraitOneSignal()
+              Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. Bien vouloir cliquer sur <<RETIRER>> sur dans l'application #{$signature}")
               Sms::send
-
-              #push notof
-              OneSignal::OneSignalSend.generalNotification("Vous aller faire un  retrait")
               Rails::logger::info "Processus initialisé avec succes pour le numéro #{@phone}. Delais de #{5.minutes.from_now}"
               #puts "user await updated"
               return true, "Processus initialisé avec succes pour le numero #{@phone}"
