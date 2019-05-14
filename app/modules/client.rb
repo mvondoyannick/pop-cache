@@ -986,6 +986,7 @@ class Client
     # @return       boolean [true/false]
     # @author @mvondoyannick
     # @version 0.0.1beta-rev-11-03-83-50
+    # @OneSignal Adding oneSignal
     def self.init_retrait(phone, amount)
       @phone = phone
       @amount = amount.to_i
@@ -1009,6 +1010,9 @@ class Client
               #---------------send sms to customer--------------
               Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. Bien vouloir cliquer sur retrait sur votre telephone. #{$signature}")
               Sms::send
+
+              #push notof
+              OneSignal::OneSignalSend.generalNotification("Vous aller faire un  retrait")
               Rails::logger::info "Processus initialisé avec succes pour le numéro #{@phone}. Delais de #{5.minutes.from_now}"
               #puts "user await updated"
               return true, "Processus initialisé avec succes pour le numero #{@phone}"
