@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/modules/one_signal.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/one_signal.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/database.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/database.yml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.bundle/" />
@@ -76,8 +75,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/config/database.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="499">
-              <caret line="62" column="37" selection-start-line="62" selection-start-column="37" selection-end-line="62" selection-end-column="37" />
+            <state relative-caret-position="519">
+              <caret line="69" column="37" selection-start-line="69" selection-start-column="37" selection-end-line="69" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -487,12 +486,12 @@
       <workItem from="1557738794132" duration="13828000" />
       <workItem from="1557826353069" duration="12287000" />
       <workItem from="1558444608609" duration="11543000" />
-      <workItem from="1558527894288" duration="4085000" />
+      <workItem from="1558527894288" duration="4351000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="438106000" />
+    <option name="totallyTimeSpent" value="438372000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -904,8 +903,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/database.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="499">
-          <caret line="62" column="37" selection-start-line="62" selection-start-column="37" selection-end-line="62" selection-end-column="37" />
+        <state relative-caret-position="519">
+          <caret line="69" column="37" selection-start-line="69" selection-start-column="37" selection-end-line="69" selection-end-column="37" />
         </state>
       </provider>
     </entry>
