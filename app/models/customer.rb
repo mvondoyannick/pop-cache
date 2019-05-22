@@ -31,7 +31,7 @@ class Customer < ApplicationRecord
   #permet de generer le code si et seulement s'il n'existe pas
   def generate_code
     if self.code.nil?
-      self.code = rand(11**11)
+      self.code = rand(5**5)
     end
   end
 

@@ -1,5 +1,5 @@
 class Api::V1::AgentController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:signin]
+  # skip_before_action :verify_authenticity_token, only: [:signin]
 
   #authenticate agent
   def signin

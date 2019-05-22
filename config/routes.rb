@@ -152,6 +152,13 @@ Rails.application.routes.draw do
       match 'update/:token/:phone/:cni/:name/:second_name/:sexe/:authenticated', to: 'agent#update', via: [:get, :options]
       match 'search/phone/:phone', to: 'agent#searchCustomerByPhone', via: [:get, :options]
       match 'links/link/:token/:qrcode', to: 'agent#link', via: [:get, :options]
+
+      #gestion des utilisateurs sur le desktop
+      post 'customer/auth/signin', to:            'customer#signin'
+      post 'customer/auth/signin/validate', to:   'customer#validate_signin'
+      post 'customer/auth/signup', to:            'customer#signup'
+      post 'customer/auth/signup/validate', to:   'customer#validate_signup'
+      get 'client/logs/:token', to:                     'customer#history'
     end
   end
 end
