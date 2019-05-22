@@ -18,7 +18,7 @@ module Partenaire
         return false, "Utilisateur inconnu"
       else
         if agent.valid_password?($password)
-          return true, agent.as_json(only: [:name, :prenom, :phone, :authentication_token])
+          return true, agent.as_json(only: [:id, :name, :prenom, :phone, :authentication_token])
         else
           return false, "Email ou mot de passe invalide"
         end
