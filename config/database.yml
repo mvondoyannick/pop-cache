@@ -25,7 +25,7 @@ heroku: &heroku
   username: restoafr_mvondoyannick
   password: Bl@ckberry18
   host: 167.114.17.32
-  database: restoafr_payquick-develop
+  #database: restoafr_payquick-develop
 
 
 development:
@@ -60,6 +60,7 @@ test:
 #
 production:
   <<: *heroku
+  database: restoafr_payquick-develop
 #  adapter: mysql2
 #  encoding: utf8
 #  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>

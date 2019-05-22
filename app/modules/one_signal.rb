@@ -115,7 +115,7 @@ module OneSignal
           {
               "include_player_ids" => [@playerId],
               "send_after" => 1.seconds.from_now,
-              "data" => {"type": "PAIEMENT", payeur: "#{@customer}", marchand: "#{@customer}", montant: "#{@amount}", date: Time.now},
+              "data" => {"type"=> "PAIEMENT", payeur=> "#{@customer}", marchand=> "#{@customer}", montant=> "#{@amount}", date=> Time.now},
               "contents"=> { "en"=> "#{user} you can not pay yourself. PayQuick", "fr"=> "#{@user} vous ne pouvez pas vous payer a vous même. PayQuick" }
           }).to_json
 
