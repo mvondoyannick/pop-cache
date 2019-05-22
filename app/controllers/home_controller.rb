@@ -3,10 +3,10 @@ class HomeController < ApplicationController
   #layout 'render/yield'
 
   #multiple layout
-  layout :choose_layout
+  #layout :choose_layout
 
   def index
-    render layout: 'login'
+    #render layout: 'login'
   end
 
   def retrait
