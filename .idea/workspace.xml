@@ -2,18 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/controllers/api/v1/customer_controller.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/modules/customer_desktop.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/pop-cash.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pop-cash.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gemfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/agent_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/agent_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/customer.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/customer.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/application.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/application.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/database.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/database.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/environments/development.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/environments/development.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/assets/javascripts/application.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/javascripts/application.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/assets/stylesheets/application.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/stylesheets/application.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/environments/production.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/environments/production.rb" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.bundle/" />
     <ignored path="$PROJECT_DIR$/components/" />
@@ -61,33 +52,6 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret selection-end-column="56" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/agent_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="20">
-              <caret line="1" column="4" selection-start-line="1" selection-start-column="4" selection-end-line="1" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/customer_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="660">
-              <caret line="33" column="31" selection-start-line="33" selection-start-column="31" selection-end-line="33" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/modules/client.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="25660">
@@ -119,11 +83,38 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/database.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="499">
-              <caret line="61" column="13" lean-forward="true" selection-start-line="61" selection-start-column="13" selection-end-line="61" selection-end-column="13" />
+            <state relative-caret-position="439">
+              <caret line="58" column="37" lean-forward="true" selection-start-line="58" selection-start-column="37" selection-end-line="58" selection-end-column="37" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/environments/production.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="229">
+              <caret line="49" column="2" selection-start-line="49" selection-start-column="2" selection-end-line="49" selection-end-column="2" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/assets/javascripts/application.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="200">
+              <caret line="10" column="30" selection-start-line="10" selection-start-column="30" selection-end-line="10" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/application.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="200">
+              <caret line="10" column="63" selection-start-line="10" selection-start-column="63" selection-end-line="10" selection-end-column="63" />
             </state>
           </provider>
         </entry>
@@ -150,7 +141,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>total prele</find>
       <find>pay</find>
       <find>def self.pay</find>
       <find>paie</find>
@@ -180,6 +170,7 @@
       <find>create_</find>
       <find>signu</find>
       <find>config.</find>
+      <find>ssl</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -188,7 +179,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/views/agentcrtl/customer.html.erb" />
         <option value="$PROJECT_DIR$/app/views/agentcrtl/activate_customer_account.html.erb" />
         <option value="$PROJECT_DIR$/tmp/pids/server.pid" />
         <option value="$PROJECT_DIR$/app/views/agentcrtl/search_phone.html.erb" />
@@ -220,8 +210,6 @@
         <option value="$PROJECT_DIR$/app/modules/partenaire.rb" />
         <option value="$PROJECT_DIR$/app/modules/payquick_wit.rb" />
         <option value="$PROJECT_DIR$/db/seeds.rb" />
-        <option value="$PROJECT_DIR$/app/assets/stylesheets/application.css" />
-        <option value="$PROJECT_DIR$/app/assets/javascripts/application.js" />
         <option value="$PROJECT_DIR$/app/views/agentcrtl/debit_customer_account.html.erb" />
         <option value="$PROJECT_DIR$/app/modules/one_signal.rb" />
         <option value="$PROJECT_DIR$/app/modules/parametre.rb" />
@@ -239,6 +227,9 @@
         <option value="$PROJECT_DIR$/app/controllers/api/v1/customer_controller.rb" />
         <option value="$PROJECT_DIR$/app/modules/customer_desktop.rb" />
         <option value="$PROJECT_DIR$/config/database.yml" />
+        <option value="$PROJECT_DIR$/config/environments/production.rb" />
+        <option value="$PROJECT_DIR$/app/assets/javascripts/application.js" />
+        <option value="$PROJECT_DIR$/app/assets/stylesheets/application.css" />
       </list>
     </option>
   </component>
@@ -515,17 +506,38 @@
       <workItem from="1557738794132" duration="13828000" />
       <workItem from="1557826353069" duration="12287000" />
       <workItem from="1558444608609" duration="11543000" />
-      <workItem from="1558527894288" duration="2418000" />
+      <workItem from="1558527894288" duration="3176000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="436439000" />
+    <option name="totallyTimeSpent" value="437197000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info content_ui="combo" id="Project" order="0" weight="0.18230277" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.07258938" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" order="8" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.32936078" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.9674973" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" weight="0.32995737" />
+    </layout>
+    <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18230277" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -539,28 +551,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.2340195" />
-      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" weight="0.32995737" />
-    </layout>
-    <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.16897655" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" order="8" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.32936078" />
-      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.9674973" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.9674973" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -587,119 +578,6 @@
     </ignored-roots>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/api_mailer/notifyAdmin.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="539" column="24" lean-forward="true" selection-start-line="539" selection-start-column="24" selection-end-line="539" selection-end-column="24" />
-          <folding>
-            <element signature="n#style#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#td#0;n#tr#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#4070#4076#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#a#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#1;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#1;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#2;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#2;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#2;n#table#0;n#td#0;n#tr#0;n#table#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#5936#5942#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#div#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#6813#6819#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#2;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#7081#7087#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#3;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#7248#7254#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#1;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#8506#8512#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#div#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#2;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#9143#9149#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#p#3;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#1;n#table#2;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#9549#9555#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#10172#10178#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#2;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#11270#11276#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#table#0;n#td#0;n#tr#3;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#3;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#11560#11566#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#3;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#3;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#div#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#3;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#2;n#table#0;n#td#0;n#tr#3;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#12137#12143#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#4;n#table#0;n#td#0;n#tr#0;n#table#3;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#12306#12312#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#12594#12600#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#a#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#1;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#13690#13696#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#2;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#td#0;n#tr#2;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#div#0;n#td#0;n#tr#2;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#table#1;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#1;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#15179#15185#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#1;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#15327#15333#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#2;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#a#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#2;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#15891#15897#0#HTML" expanded="true" />
-            <element signature="e#15897#15903#0#HTML" expanded="true" />
-            <element signature="e#15903#15909#0#HTML" expanded="true" />
-            <element signature="e#15909#15915#0#HTML" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#2;n#tr#0;n#table#0;n#td#0;n#tr#2;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#a#0;n#td#2;n#tr#0;n#table#0;n#td#0;n#tr#2;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#16269#16275#0#HTML" expanded="true" />
-            <element signature="e#16275#16281#0#HTML" expanded="true" />
-            <element signature="e#16281#16287#0#HTML" expanded="true" />
-            <element signature="e#16287#16293#0#HTML" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#4;n#tr#0;n#table#0;n#td#0;n#tr#2;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#a#0;n#td#4;n#tr#0;n#table#0;n#td#0;n#tr#2;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#2;n#table#4;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#17008#17014#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#5;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#17236#17242#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#5;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#5;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#5;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#div#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#5;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#table#1;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#5;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#1;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#5;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#18315#18321#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#5;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#0;n#table#2;n#td#0;n#tr#0;n#table#0;n#td#0;n#tr#1;n#table#5;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#2;n#table#5;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="e#19294#19300#1#HTML" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/api_mailer/signupFail.html.erb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
@@ -886,20 +764,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/application.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="12" column="1" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/assets/javascripts/application.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="11" column="3" selection-start-line="11" selection-start-column="3" selection-end-line="11" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/agentcrtl/debit_customer_account.html.erb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
@@ -1038,8 +902,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/database.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="499">
-          <caret line="61" column="13" lean-forward="true" selection-start-line="61" selection-start-column="13" selection-end-line="61" selection-end-column="13" />
+        <state relative-caret-position="439">
+          <caret line="58" column="37" lean-forward="true" selection-start-line="58" selection-start-column="37" selection-end-line="58" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/environments/production.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="49" column="2" selection-start-line="49" selection-start-column="2" selection-end-line="49" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/assets/javascripts/application.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="10" column="30" selection-start-line="10" selection-start-column="30" selection-end-line="10" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/application.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="10" column="63" selection-start-line="10" selection-start-column="63" selection-end-line="10" selection-end-column="63" />
         </state>
       </provider>
     </entry>
