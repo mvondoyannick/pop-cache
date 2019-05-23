@@ -1,11 +1,11 @@
 class Api::V1::CustomerController < ApplicationController
   #controller entierement dedier à la gestion des clients en ligne
   def signin
-    @phone      = params[:phone]
+    @email      = params[:email]
     @password   = params[:password]
 
     #begin transaction
-    query = CustomerDesktop::Client.signin(@phone, @password)
+    query = CustomerDesktop::Client.signin(@email, @password)
     puts "response : #{query}"
     render json: {
         status:   query[0],
@@ -15,7 +15,7 @@ class Api::V1::CustomerController < ApplicationController
 
 
   def validate_signin
-    @phone     = params[:phone]
+    @phone     = params[:email]
     @code     = params[:code]
 
     query = CustomerDesktop::Client.confirm_signin(@phone, @code)

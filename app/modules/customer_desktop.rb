@@ -6,12 +6,12 @@
 
     end
 
-    def self.signin(phone, password)
-      @phone      = phone
+    def self.signin(email, password)
+      @phone      = email
       @password   = password
 
       #on recherche customer
-      customer = Customer.find_by_phone(@phone)
+      customer = Customer.find_by_email(@phone)
       if customer.blank?
         return false, "customer not found"
       else
