@@ -183,7 +183,7 @@ class AgentcrtlController < ApplicationController
         }
       else
         #enregistrement
-        query = Client::create_user(name, second_name, phone, cni, password, "Not Set")
+        query = Client::create_user(name, second_name, phone, cni, password, "Not Set", nil, nil)
         if query.save
           render json: {
             status:     :succes,

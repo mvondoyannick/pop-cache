@@ -1,8 +1,10 @@
 class Api::V1::SessionController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword]
+    #skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword, :testNetwork]
 
     #creation de compte utilisateur
+    # @return [Object]
     def signup
+      @ip     = request.remote_ip
       query = Client::signup(params[:nom], params[:second_name], params[:phone], params[:cni], params[:password], params[:sexe], params[:question_id], params[:reponse], params[:lat], params[:lon])
       render json: {
         status: query
@@ -11,9 +13,11 @@ class Api::V1::SessionController < ApplicationController
 
 
     def get_balance
-        phone = params[:phone]
-        password = params[:password]
-        balance = Client::get_balance(phone, password)
+        phone       = params[:phone]
+        password    = params[:password]
+        @playerId   = params[:playerId]
+
+        balance = Client::get_balance(phone, password, @playerId)
         render json: balance
     end
 
@@ -115,10 +119,9 @@ class Api::V1::SessionController < ApplicationController
 
     #obtention du solde du compte client
     def solde
-      @token = params[:customer]
-      @pwd = params[:password]
-
-      puts "=============#{@token}"
+      @token      = params[:customer]
+      @pwd        = params[:password]
+      @playerId   = params[:playerId]
 
       #recherche du phone
       @customer = Customer.find_by_authentification_token(@token).phone
@@ -127,7 +130,7 @@ class Api::V1::SessionController < ApplicationController
           message: "Utilisateur inconnu sur la plateforme"
         }
       else
-        @balance = Client::get_balance(@customer, @pwd)
+        @balance = Client::get_balance(@customer, @pwd, @playerId)
         if balance
             render json: {
               message: @balance
@@ -141,8 +144,9 @@ class Api::V1::SessionController < ApplicationController
     end
 
     def getSoldeCustomer
-      @phone = params[:customer]
-      @pwd = params[:password]
+      @phone    = params[:customer]
+      @pwd      = params[:password]
+      @playerId = params[:oneSignalID]
 
       #verificatin du customer
       @customer = Customer.find_by_authentication_token(@phone)
@@ -211,11 +215,12 @@ class Api::V1::SessionController < ApplicationController
 
     #validation de 2FA
     def signup_authentication
-      phone = params[:phone]
-      code  = params[:code]
+      phone     = params[:phone]
+      code      = params[:code]
+      @playerId = params[:playerId]
 
-      authenticate = Parametre::Authentication::validate_2fa(phone, code)
-      if authenticate[0] == true
+      authenticate = Parametre::Authentication::validate_2fa(phone, code, @playerId)
+      if authenticate[0]
         render json: {
           status: :success,
           message: "Authentifié"

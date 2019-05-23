@@ -38,7 +38,7 @@ Rails.application.routes.draw do
   get 'agentcrtl/credit_customer'
   post 'agentcrtl/intent_credit_customer'
   match 'agentcrtl/debit_customer_account', to: 'agentcrtl#debit_customer_account', via: [:get, :post]
-  #post 'agentcrtl/intent_debit_customer'
+  post 'agentcrtl/intent_debit_customer'
   match 'agentcrtl/activate_customer_account', to: 'agentcrtl#activate_customer_account', via: [:get, :post]
   #post 'agentcrtl/activate_customer_account'
   get 'agentcrtl/search_phone'
@@ -101,7 +101,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       match 'session/signin', to: 'session#signin', via: [:post, :options, :get]
       match 'session/signup', to: 'session#signup', via: [:post, :options]
-      match 'session/get_balance/:customer/:password', to: 'session#getSoldeCustomer', via: [:get, :options]
+      match 'session/get_balance/:customer/:password', to: 'session#getSoldeCustomer', via: [:get, :options]                #retourne le solde du client
       match 'session/transaction/:token/:receveur/:montant/:password/:oneSignalID', to: 'api#payment', via: [:get, :options]
       match 'session/qrcode/:data', to: 'api#qrcode', via: [:options, :get]
       match 'session/code/:code', to: 'api#code', via: [:options, :get]     #rechercher via le code numerique
@@ -125,7 +125,7 @@ Rails.application.routes.draw do
       match 'session/phone', to: 'session#getPhoneNumber', via: [:post, :options]
 
       # test de la connexion internet
-      match 'internet/test', to: 'session#testNetwork', via: [:get, :options]
+      match 'internet/test', to: 'session#testNetwork', via: [:get, :options, :post]
       match 'security/check/phone/:phone', to: 'session#checkPhone', via: [:get, :options]
 
       # integration de sprintPay Solution API
@@ -145,12 +145,20 @@ Rails.application.routes.draw do
 
       #gestion des agents
 
-      match 'agents/sigin/:phone/:password', to: 'agent#signin', via: [:get, :options]
+      get 'agents/signin/:email/:password', to: 'agent#signin'
+      post 'agents/signin', to: 'agent#signin'
       match 'search/code/:code', to: 'agent#searchQrcodeByCode', via: [:get, :options]
       match 'search/scan/:data', to: 'agent#searchQrCodeByScan', via: [:get, :options]
       match 'update/:token/:phone/:cni/:name/:second_name/:sexe/:authenticated', to: 'agent#update', via: [:get, :options]
       match 'search/phone/:phone', to: 'agent#searchCustomerByPhone', via: [:get, :options]
       match 'links/link/:token/:qrcode', to: 'agent#link', via: [:get, :options]
+
+      #gestion des utilisateurs sur le desktop
+      post 'customer/auth/signin', to:            'customer#signin'
+      post 'customer/auth/signin/validate', to:   'customer#validate_signin'
+      post 'customer/auth/signup', to:            'customer#signup'
+      post 'customer/auth/signup/validate', to:   'customer#validate_signup'
+      get 'client/logs/:token', to:                     'customer#history'
     end
   end
 end

@@ -1,16 +1,16 @@
 class Api::V1::AgentController < ApplicationController
+  # permet de gerer les agents et les partenaires sur la plateforme
 
-  #authenticate agent
+  #authenticate agent/partenaire
   def signin
-    #render json: agent = Agents::Auth::signin(params[:phone], params[:password])
-    agent = Customer.find_by_phone(params[:phone])
-    if agent.valid_password?(params[:password])
-      render json: agent.as_json(only: [:name, :second_name, :authentication_token, :phone])
-    else
-      render json: {
-        message: :unauthorize
-      }
-    end
+    @email      = params[:email]
+    @password   = params[:password]
+
+    @agent = Partenaire::Authenticate.signin(@email, @password)
+    render json: {
+        status:     @agent[0],
+        response:   @agent[1]
+    }
   end
 
 

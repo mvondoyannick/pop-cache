@@ -1,5 +1,5 @@
 class Api::V1::ApiController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:payment, :qrcode, :test]
+    #skip_before_action :verify_authenticity_token, only: [:payment, :qrcode, :test]
 
 		#require 'rqrcode'
 
@@ -142,8 +142,8 @@ class Api::V1::ApiController < ApplicationController
 						message: 	"Utilisateur inconnu"
 				}
 			else
-				OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
-				transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip)
+				#OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
+				transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip,@player_id)
 				render json: {
 						message: transaction
 				}

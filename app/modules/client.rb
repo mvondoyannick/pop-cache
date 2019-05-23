@@ -6,6 +6,7 @@ class Client
   }
   $signature                        = "PAYQUICK"
   $appname                          = "PayQuick"
+  $domain                           = "payquick-cm.com"
   $version                          = "0.0.1beta-rev-11-03-83-50"
   $limit_amount                     = 150000
   $limit_transaction_recharge       = 500000
@@ -47,7 +48,7 @@ class Client
   # @param [Object] latitude
   # @param [Object] longitude
   # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
+  # @version 0.0.1beta-rev-11-03-83-59
   def self.signup(name, second_name, phone, cni, password, sexe, question, answer, latitude, longitude)
       @name         = name
       @second_name  = second_name
@@ -56,17 +57,20 @@ class Client
       #@uuid         = uuid
       #@imei         = imei
       @cni          = cni
-      @email        = "#{@phone.to_i}@payquick-cm.com"
+      @email        = "#{@phone.to_i}@#{$domain}"
       @password     = password
       @sexe         = sexe
       #@network_name = network_name
       @latitude     = latitude
       @longitude    = longitude
-      #@ip           = "0.0.0.0.0" #request.remote_ip
+      @ip           = ip #request.remote_ip
       @question     = question
       @answer       = answer
 
       Rails::logger::info "Requete provenant de l'IP #{@ip}"
+
+      #on recherche le pays
+      @pays = DistanceMatrix::DistanceMatrix.pays(@ip)
 
       #initi customer creation
       customer = Customer.new(
@@ -77,7 +81,9 @@ class Client
         password:     @password,
         type_id:      1,
         cni:          @cni,
-        sexe:         @sexe
+        sexe:         @sexe,
+        ip:           @ip,
+        pays:         @pays
       )
 
       #demarrage de la procedure de creation
@@ -109,24 +115,29 @@ class Client
       end
     end
 
-  #CREATION DU COMPTE CLIENT
-  # @params  [object] name
-  # @params  [object] prenom
-  # @params  [object] phone
-  # @params  [object] cni
-  # @params  [object] password
-  # @params  [object] sexe
-  # @return  [object] boolean
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  def self.create_user(name, prenom, phone, cni, password, sexe)
-      @name = name
-      @prenom = prenom
-      @phone = phone
-      @cni = cni
-      @email = "#{@phone.to_i}@payquick-cm.com"
+    #CREATION DU COMPTE CLIENT
+    # @params  [object] name
+    # @params  [object] prenom
+    # @params  [object] phone
+    # @params  [object] cni
+    # @params  [object] password
+    # @params  [object] sexe
+    # @return  [object] boolean
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
+    # @param [Object] ip
+    def self.create_user(name, prenom, phone, cni, password, sexe, ip)
+      @name     = name
+      @prenom   = prenom
+      @phone    = phone
+      @cni      = cni
+      @email    = "#{@phone.to_i}@#{$domain}"
       @password = password
-      @sexe = sexe
+      @sexe     = sexe
+      @ip       = ip
+
+      #on recherche le pays
+      @pays = DistanceMatrix::DistanceMatrix.pays(@ip)
 
       #creation du compte de l'utilisateur
       @customer = Customer.new(
@@ -137,7 +148,9 @@ class Client
         password: @password,
         type_id: 1,
         cni: @cni,
-        sexe: @sexe
+        sexe: @sexe,
+        ip:   @ip,
+        pays: @pays
       )
 
       if @customer.save
@@ -145,7 +158,7 @@ class Client
 
         #on envoi le code d'authentification pour verification
         @auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
-        if @auth[0] == true
+        if @auth[0]
           return true, "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
         else
           #notified admin for these errors
@@ -177,7 +190,7 @@ class Client
     def self.create_user_account(phone)
       Rails::logger::info "Demarrage de la creation du compte utilisateur ..."
       #@id = id
-      @phone = phone
+      @phone      = phone
 
       #recherche du customer
       @customer = Customer.find_by_phone(phone)
@@ -193,9 +206,6 @@ class Client
 
         if customer_account.save
           Rails::logger::info "Utilisateur #{@phone} crée a #{Time.now}"
-
-          Sms.new(@phone, "#{@phone} Bienvenue chez PAYQUICK, votre porte monnaie virtuel vient d\'etre cree!")
-          Sms::send
 
           return true,"creation porte-monnaie effectué avec succes!"
         else
@@ -316,16 +326,16 @@ class Client
     end
   end
 
-  #VERIFICATION DE LA FRAUDE SUR LA PLATEFORME
-  # @name     isFraud
-  # @detail   Permt de determiner d'eventuel systeme de fraude
-  # @param [Object] phone
-  # @param [Object] sim_phone
-  # @param [Object] network_operator
-  # @param [Object] uuid
-  # @param [Object] imei
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
+    #VERIFICATION DE LA FRAUDE SUR LA PLATEFORME
+    # @name     isFraud
+    # @detail   Permt de determiner d'eventuel systeme de fraude
+    # @param [Object] phone
+    # @param [Object] sim_phone
+    # @param [Object] network_operator
+    # @param [Object] uuid
+    # @param [Object] imei
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
     def self.isFraud?(phone, sim_phone, network_operator, uuid, imei)
       @phone            = phone
       @sim_phone        = sim_phone
@@ -377,16 +387,16 @@ class Client
     end
 
 
-  #BLOCAGE D'UN COMPTE UTILISATEUR SUR LA PLATEFORME
-  # @description
-  # @name
-  # @detail
-  # @param [Object] phone
-  # @param [Object] motif
-  # @return [Object]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  def self.lockCustomerAccount(phone, motif)
+    #BLOCAGE D'UN COMPTE UTILISATEUR SUR LA PLATEFORME
+    # @description
+    # @name
+    # @detail
+    # @param [Object] phone
+    # @param [Object] motif
+    # @return [Object]
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
+    def self.lockCustomerAccount(phone, motif)
       @phone  = phone
       @motif  = motif
 
@@ -428,19 +438,17 @@ class Client
     def self.unlockCustomerAccount(phone)
     end
 
-  #OBTENIR LE SOLDE DU COMPTE
-  # @name
-  # @detail
-  # @param [Object] tel
-  # @param [Object] password
-  # @return [Object]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  def self.get_balance(tel, password)
-      @phone = tel
+    #OBTENIR LE SOLDE DU COMPTE
+    # @name
+    # @detail
+    # @param [Object] tel
+    # @param [Object] password
+    # @return [Object]
+    # @author @mvondoyannick
+    # @version 0.0.1beta-rev-11-03-83-50
+    def self.get_balance(tel, password)
+      @phone    = tel
       @password = password
-
-      Rails::logger::info "#{@phone}++#{@password}"
 
       #on recherche le client
       query = Customer.find_by_phone(@phone)
@@ -453,6 +461,7 @@ class Client
           if account.blank?
             return false, "Aucun compte utilisateur correcpondant ou compte vide"
           else
+            #return OneSignal API
             Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}")
             Sms::send
             return true,"#{prettyCallSexe(query.sexe)} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
@@ -982,6 +991,7 @@ class Client
     # @return       boolean [true/false]
     # @author @mvondoyannick
     # @version 0.0.1beta-rev-11-03-83-50
+    # @OneSignal Adding oneSignal
     def self.init_retrait(phone, amount)
       @phone = phone
       @amount = amount.to_i
@@ -1003,7 +1013,8 @@ class Client
             #on mets a jour la table customer sur await
             if customer.update(await: await.id) && account.update(amount: customer_amount)
               #---------------send sms to customer--------------
-              Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. Bien vouloir cliquer sur retrait sur votre telephone. #{$signature}")
+              #OneSignal::OneSignalSend.retraitOneSignal()
+              Sms.new(@phone, "Vous allez effectuer un retrait d un montant de #{@amount} #{$devise}. Bien vouloir cliquer sur <<RETIRER>> sur dans l'application #{$signature}")
               Sms::send
               Rails::logger::info "Processus initialisé avec succes pour le numéro #{@phone}. Delais de #{5.minutes.from_now}"
               #puts "user await updated"
@@ -1039,12 +1050,13 @@ class Client
     # @output       [boolean] [true/false]
     # @author @mvondoyannick
     # @version 0.0.1beta-rev-11-03-83-50
-    def self.pay(from, to, amount, pwd, ip)
+    def self.pay(from, to, amount, pwd, ip, playerId)
       @from             = from.to_i
       @to               = to.to_i
       @amount           = amount.to_f #montant de la transation
       @client_password  = pwd
       @ip               = ip
+      @playerId         = playerId
 
       marchand = Customer.find(@to)                                       #personne qui recoit
       marchand_account = Account.where(customer_id: marchand.id).first    #le montant de la personne qui recoit
@@ -1052,9 +1064,10 @@ class Client
       client_account = Account.where(customer_id: client.id).first        # le montant de la personne qui envoi
 
       if @from == @to
-        #Send local notifications here
-        Sms.new(@from, "Vous ne pouvez pas vous payer a vous meme!. Transaction annulee. #{$signature}")
-        Sms::send
+        #Send local Pushnotifications here
+        OneSignal::OneSignalSend.notPayToMe(@playerId, "#{client.name} #{client.second_name}") #sendNotification(@playerId, Parametre::Parametre.agis_percentage(@amount),"#{marchand.name} #{marchand.second_name}", "#{client.name} #{client.second_name}")
+        #Sms.new(@from, "Vous ne pouvez pas vous payer a vous meme!. Transaction annulee. #{$signature}")
+        #Sms::send
         # end sending local notifications
         Rails::logger::info "Numéro indentique, transaction annuler!"
         return false, " Vous ne pouvez pas vous payer à vous même!"
@@ -1091,11 +1104,14 @@ class Client
                 marchant.save
   
                 if marchand_account.save
+                  #envoi d'une notification OneSignal
                   Sms.new(marchand.phone, "Paiement recu. Montant :  #{@amount.round(2)} F CFA XAF, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name if !client.second_name.nil?}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{$signature}")
                   Sms::send
                   #--------------------------------------------------
-                  Sms.new(client.phone, "Compte debite. Motif: Paiement effectue. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte debite : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount.round(2)} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
-                  Sms::send
+                  # push notificatin au marchand
+                  OneSignal::OneSignalSend.sendNotification(@playerId, Parametre::Parametre.agis_percentage(@amount),"#{marchand.name} #{marchand.second_name}", "#{client.name} #{client.second_name}")
+                  #Sms.new(client.phone, "Compte debite. Motif: Paiement effectue. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte debite : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount.round(2)} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
+                  #Sms::send
                   #----------------------------------------------------
                   Rails::logger::info "Paiement effectué de #{@amount} entre #{@from} et #{@to}."
   
@@ -1138,8 +1154,9 @@ class Client
               end
             else
               Rails::logger::info "Le solde de votre compte est de : #{marchand_account.amount}. Paiment impossible"
-              Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
-              Sms::send
+              OneSignal::OneSignalSend.montantInferieur(@playerId, "#{client.name} #{client.second_name}", amount)
+              #Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
+              #Sms::send
               return false, "Le solde de votre compte est insuffisant."
             end
           end
@@ -1259,6 +1276,13 @@ class Client
 
     amountHashed = Digest::MD5.hexdigest(@amount)
     return amountHashed
+  end
+
+  def isIpDifferent?(customerIp, currentIp)
+    @customerIp       = customerIp
+    @currentIp        = currentIp
+
+    #on verie les deux informatins
   end
 
 

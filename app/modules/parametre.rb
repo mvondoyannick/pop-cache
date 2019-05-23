@@ -368,7 +368,7 @@ module Parametre
         else
           # on connais maintenant le marchand et le client, on peut effectuer les paiements
           # on appel la fonction de paiement
-          result = Client.pay(customer.phone, merchant.phone, @amount, @password)
+          result = Client.pay(customer.phone, merchant.phone, @amount, @password, "", "")
           return result
         end
       end
@@ -505,9 +505,10 @@ module Parametre
     # @params   [object] phone
     # @params   [object] auth_key
     # @return   [object] phone
-    def self.validate_2fa(phone, auth_key)
-      @phone = phone
-      @auth = auth_key.to_i
+    def self.validate_2fa(phone, auth_key, playerId)
+      @phone        = phone
+      @auth         = auth_key.to_i
+      @playerId     = playerId
       #on cherche le client responsable de cette demande
       @customer = Customer.where(phone: @phone, two_fa: @auth).first
       if @customer.blank?
@@ -521,15 +522,17 @@ module Parametre
             # si le code d'authentication n'est pas encore peripé
             #on supprimer les information et on les set a authenticate
             if @customer.update(two_fa: 'authenticate', perime_two_fa: 'ok')
-              Sms.new(@phone, "Mr #{@customer.name.upcase}, Votre compte a ete authentifie. Vous pouvez desormais vous connecter.")
-              Sms::send
+              #Ajout des notifications push oneSignal
+              OneSignal::OneSignalSend.genericOneSignal(@playerId, "#{Client.prettyCallSexe(@customer.sexe)} #{@customer.name.upcase} #{@customer.second_name.capitalize}, votre compte a été authentifié. Vous pouvez desormais vous connecter.", "#{Client.prettyCallSexe(@customer.sexe)} #{@customer.name.upcase} #{@customer.second_name.capitalize}, Your account has be authenticated. You can now sign in.")
+              #Sms.new(@phone, "#{Client.prettyCallSexe(@customer.sexe)} #{@customer.name.upcase} #{@customer.second_name.capitalize}, Votre compte a ete authentifie. Vous pouvez desormais vous connecter.")
+              #Sms::send
 
               Rails::logger::info  "#{@phone} vient d'etre authentifier sur PAYQUICK a #{Time.now}"
 
               # creation du compte "porte monnaie virtuel"
 
               virtual_account = Client::create_user_account(@phone)
-              if virtual_account[0] == true
+              if virtual_account[0]
                 Rails::logger::info  "#{@phone} dispose desormais d'un compte virtuel actif sur PAYQUICK a #{Time.now}"
                 return true, "#{@phone} est Authenticated & dispose d'un compte virtuel actif"
               else

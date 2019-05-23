@@ -1,6 +1,6 @@
 class ClientController < ApplicationController
   def signing
-    render layout: 'client/application'
+    #render layout: 'client/application'
   end
 
   #permet de valider les informations de connexion du partenaire

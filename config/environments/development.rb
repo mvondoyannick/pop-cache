@@ -6,6 +6,9 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
+  #debuggin informations
+  config.debug_exception_response_format = :api
+
   #donner une ID a chaquete
   config.log_tags = [ :request_id ]
 

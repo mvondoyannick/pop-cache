@@ -2,12 +2,28 @@ module Partenaire
 
   class Authenticate
 
-    def initialize
+    def initialize(arg)
+      $email      = arg[:email]
+      $password   = arg[:password]
 
     end
 
     #Authentification sur la plateforme
-    def self.signin
+    def self.signin(email, password)
+      @email      = email
+      @password   = password
+
+      #on recherche a identifier le partenaire
+      agent = Agent.find_by_email(@email)
+      if agent.blank?
+        return false, "Partenaire inconnu"
+      else
+        if agent.valid_password?(@password)
+          return true, agent.as_json(only: [:id, :name, :prenom, :phone, :authentication_token, :created_at])
+        else
+          return false, "Email ou mot de passe invalide"
+        end
+      end
 
     end
 

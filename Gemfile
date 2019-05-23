@@ -43,7 +43,7 @@ gem 'rqrcode'
 gem 'rqrcode_png'
 #using dragonfly
 gem 'dragonfly', '~> 1.2.0'
-#AES for encrypt decrypt
+#AES for encrypt decrypt https://github.com/chicks/aes
 gem 'aes'
 #gestion des email
 gem 'mail_form'
@@ -97,6 +97,8 @@ group :development do
   gem 'web-console', '>= 3.3.0'
   gem "better_errors"
   gem "binding_of_caller"
+  gem "parallel"
+  gem "wit"
 end
 
 group :test do
