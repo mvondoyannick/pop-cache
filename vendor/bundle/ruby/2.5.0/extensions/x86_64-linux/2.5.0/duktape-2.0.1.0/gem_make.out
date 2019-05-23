@@ -1,0 +1,40 @@
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/duktape-2.0.1.0/ext/duktape
+/usr/bin/ruby2.5 -r ./siteconf20190524-25924-w8stl.rb extconf.rb
+checking for rb_sym2str()... yes
+creating Makefile
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/duktape-2.0.1.0/ext/duktape
+make "DESTDIR=" clean
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/duktape-2.0.1.0/ext/duktape
+make "DESTDIR="
+compiling duktape.c
+duk_bi_date.c: In function ‘duk_bi_date_prototype_tostring_shared’:
+duk_bi_date.c:983:39: warning: ‘%02d’ directive output may be truncated writing 2 bytes into a region of size between 0 and 4 [-Wformat-truncation=]
+duk_bi_date.c:983:39: note: directive argument in the range [0, 59]
+In file included from /usr/include/stdio.h:867,
+                 from duk_config.h:678,
+                 from duktape.h:142,
+                 from duk_internal.h:26:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:67:10: note: ‘__builtin___snprintf_chk’ output between 7 and 11 bytes into a destination of size 8
+   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        __bos (__s), __fmt, __va_arg_pack ());
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+duk_bi_date.c:980:39: warning: ‘%02d’ directive output may be truncated writing 2 bytes into a region of size between 0 and 4 [-Wformat-truncation=]
+duk_bi_date.c:980:39: note: directive argument in the range [0, 59]
+In file included from /usr/include/stdio.h:867,
+                 from duk_config.h:678,
+                 from duktape.h:142,
+                 from duk_internal.h:26:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:67:10: note: ‘__builtin___snprintf_chk’ output between 7 and 11 bytes into a destination of size 8
+   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        __bos (__s), __fmt, __va_arg_pack ());
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compiling duktape_ext.c
+linking shared-object duktape_ext.so
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/duktape-2.0.1.0/ext/duktape
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 duktape_ext.so ./.gem.20190524-25924-7dklag

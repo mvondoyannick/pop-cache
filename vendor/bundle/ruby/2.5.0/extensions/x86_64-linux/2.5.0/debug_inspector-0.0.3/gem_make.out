@@ -1,0 +1,15 @@
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/debug_inspector-0.0.3/ext/debug_inspector
+/usr/bin/ruby2.5 -r ./siteconf20190524-25924-83r53b.rb extconf.rb
+creating Makefile
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/debug_inspector-0.0.3/ext/debug_inspector
+make "DESTDIR=" clean
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/debug_inspector-0.0.3/ext/debug_inspector
+make "DESTDIR="
+compiling debug_inspector.c
+linking shared-object debug_inspector.so
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/debug_inspector-0.0.3/ext/debug_inspector
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 debug_inspector.so ./.gem.20190524-25924-lce7zc

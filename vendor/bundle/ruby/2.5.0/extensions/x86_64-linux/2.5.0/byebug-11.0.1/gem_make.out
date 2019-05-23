@@ -1,0 +1,19 @@
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/byebug-11.0.1/ext/byebug
+/usr/bin/ruby2.5 -r ./siteconf20190524-25924-x9ptfw.rb extconf.rb
+creating Makefile
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/byebug-11.0.1/ext/byebug
+make "DESTDIR=" clean
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/byebug-11.0.1/ext/byebug
+make "DESTDIR="
+compiling breakpoint.c
+compiling byebug.c
+compiling context.c
+compiling locker.c
+compiling threads.c
+linking shared-object byebug/byebug.so
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/byebug-11.0.1/ext/byebug
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 byebug.so ./.gem.20190524-25924-fbic6r/byebug
