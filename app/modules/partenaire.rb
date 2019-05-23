@@ -9,16 +9,17 @@ module Partenaire
     end
 
     #Authentification sur la plateforme
-    def self.signin
-      puts $email
+    def self.signin(email, password)
+      @email      = email
+      @password   = password
 
       #on recherche a identifier le partenaire
-      agent = Agent.find_by_email($email)
+      agent = Agent.find_by_email(@email)
       if agent.blank?
-        return false, "Utilisateur inconnu"
+        return false, "Partenaire inconnu"
       else
-        if agent.valid_password?($password)
-          return true, agent.as_json(only: [:id, :name, :prenom, :phone, :authentication_token])
+        if agent.valid_password?(@password)
+          return true, agent.as_json(only: [:id, :name, :prenom, :phone, :authentication_token, :created_at])
         else
           return false, "Email ou mot de passe invalide"
         end

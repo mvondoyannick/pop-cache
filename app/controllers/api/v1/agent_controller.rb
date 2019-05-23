@@ -1,13 +1,12 @@
 class Api::V1::AgentController < ApplicationController
-  # skip_before_action :verify_authenticity_token, only: [:signin]
+  # permet de gerer les agents et les partenaires sur la plateforme
 
-  #authenticate agent
+  #authenticate agent/partenaire
   def signin
     @email      = params[:email]
     @password   = params[:password]
 
-    Partenaire::Authenticate.new(email: @email, password: @password)
-    @agent = Partenaire::Authenticate.signin
+    @agent = Partenaire::Authenticate.signin(@email, @password)
     render json: {
         status:     @agent[0],
         response:   @agent[1]
