@@ -53,6 +53,7 @@
     <orderEntry type="library" scope="PROVIDED" name="byebug (v11.0.1, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="cancancan (v2.3.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capybara (v2.18.0, ruby-2.5.3-p105) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="capybara (v3.20.2, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="carrierwave (v1.2.3, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="carrierwave-base64 (v2.8.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="chart-js-rails (v0.1.6, ruby-2.5.3-p105) [gem]" level="application" />
@@ -74,12 +75,12 @@
     <orderEntry type="library" scope="PROVIDED" name="debug_inspector (v0.0.3, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="devise (v4.6.2, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dragonfly (v1.2.0, ruby-2.5.3-p105) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="duktape (v2.0.1.1, ruby-2.5.3-p105) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="duktape (v2.3.0.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="erubi (v1.8.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="execjs (v2.7.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="faker (v1.9.3, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="faraday (v0.15.4, ruby-2.5.3-p105) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="ffi (v1.10.0, ruby-2.5.3-p105) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="ffi (v1.11.1, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="font-awesome-rails (v4.7.0.4, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="geocoder (v1.5.1, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="globalid (v0.4.2, ruby-2.5.3-p105) [gem]" level="application" />
@@ -90,7 +91,7 @@
     <orderEntry type="library" scope="PROVIDED" name="i18n (v1.6.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="i18n_data (v0.8.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="io-like (v0.3.0, ruby-2.5.3-p105) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="jbuilder (v2.9.0, ruby-2.5.3-p105) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="jbuilder (v2.9.1, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jquery-rails (v4.3.3, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jquery-ui-rails (v6.0.1, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json (v2.1.0, ruby-2.5.3-p105) [gem]" level="application" />
@@ -139,6 +140,7 @@
     <orderEntry type="library" scope="PROVIDED" name="rb-fsevent (v0.10.3, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rb-inotify (v0.10.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="redis (v4.0.3, ruby-2.5.3-p105) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="regexp_parser (v1.5.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="responders (v2.4.1, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="roo (v2.7.1, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rqrcode (v0.10.1, ruby-2.5.3-p105) [gem]" level="application" />
@@ -149,7 +151,7 @@
     <orderEntry type="library" scope="PROVIDED" name="sass (v3.7.4, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sass-listen (v4.0.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sass-rails (v5.0.7, ruby-2.5.3-p105) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="selenium-webdriver (v3.142.2, ruby-2.5.3-p105) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="selenium-webdriver (v3.142.3, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="simple_form (v4.1.0, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="simple_token_authentication (v1.15.1, ruby-2.5.3-p105) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sixarm_ruby_unaccent (v1.2.0, ruby-2.5.3-p105) [gem]" level="application" />

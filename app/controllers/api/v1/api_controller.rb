@@ -145,7 +145,7 @@ class Api::V1::ApiController < ApplicationController
 				}
 			else
 				#OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
-				transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip,@player_id)
+				transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip, @player_id, @lat, @lon)
 				render json: {
 						message: transaction
 				}
