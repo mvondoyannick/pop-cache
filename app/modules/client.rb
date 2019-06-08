@@ -1131,7 +1131,10 @@ class Client
                     context:  "none",
                     date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
                     amount:   Parametre::Parametre::agis_percentage(@amount),
-                    ip:       @ip
+                    ip:       @ip,
+                    lat:      @lat,
+                    long:     @lon,
+                    region:   Geocoder.search([@lat, @lon]).first.city
                   )
   
                   if transaction.save
