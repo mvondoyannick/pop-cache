@@ -127,6 +127,8 @@ class Api::V1::ApiController < ApplicationController
 			amount 			= params[:montant]
 			pwd 				= params[:password]
 			@ip 				= request.remote_ip
+			@lat 				= Base64.decode64(params[:lat])
+			@lon 				= Base64.decode64(params[:long])
 
 			#recuperation du onesignalID
 			@player_id = Base64.decode64(params[:oneSignalID])
