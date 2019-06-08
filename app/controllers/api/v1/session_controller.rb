@@ -30,7 +30,7 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         render json: {
-            message: Transaction.where(customer: @customer.id).order(created_at: :asc).last(10).reverse.as_json(only: [:date, :amount, :flag, :code, :color])
+            message: Transaction.where(customer: @customer.id).order(created_at: :asc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, "#{Geocoder.search('172.56.21.89').first.country}", "#{Geocoder.search('172.56.21.89').first.city}"])
         }
       end
     end
