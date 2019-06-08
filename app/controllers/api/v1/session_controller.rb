@@ -30,7 +30,7 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         render json: {
-            message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(100).as_json(only: [:date, :amount, :flag, :code, :color])
+            message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(10).as_json(only: [:date, :amount, :flag, :code, :color])
         }
       end
     end
