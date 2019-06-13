@@ -18,5 +18,9 @@
       <user-name>mvondo</user-name>
       <introspection-schemas>*:@</introspection-schemas>
     </data-source>
+    <data-source name="Rails pop-cash: developments" uuid="bc5131b1-f264-41ff-899c-b68b69053482">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" exact-version="0" />
+      <user-name>restoafr_mvondoyannick</user-name>
+    </data-source>
   </component>
 </project>

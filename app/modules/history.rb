@@ -7,6 +7,83 @@ module History
       @context = context
       @flag = flag
     end
+  
+    #Historique journalier d'un customer
+    # @param [String] token
+    # @param [String] period
+    def self.h_customer(token, period)
+      @token      = token
+      @period     = period
+
+      begin
+
+        Rails::logger.info "Starting request"
+
+        #Search customer
+        @customer = Client.find_by_token(@token)
+        if @customer[0]
+          case @period
+          when "day"
+            Rails::logger.info "Recherche des transactions journalieres ..."
+            @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            if @h.blank?
+              return false, "Aucune transaction pour ce jour."
+            else
+              return true, @h
+            end
+          when "week"
+            Rails::logger.info "Recherche des informations hebdomadaire ..."
+            @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            if @h.blank?
+              return false, "Aucune transaction pour cette semaine."
+            else
+              return true, @h
+            end
+          when "month"
+            Rails::logger.info "Recherche des informations mensuelles ..."
+            @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_month..Date.today.end_of_month).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            if @h.blank?
+              return false, "Aucune transaction pour ce mois."
+            else
+              return true, @h
+            end
+          when "all"
+            Rails::logger.info "Recherche de toutes les informations depuis le debut de l'inscription de l'utiliateur ..."
+            @h = Transaction.where(customer: @customer[1]["id"]).all.order(created_at: :desc).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            if @h.blank?
+              return false, "Aucune transaction enregistrée depuis la creation de votre compte"
+            else
+              return true, @h
+            end
+          when "year"
+            Rails::logger.info "Recherche des informations annuelles ..."
+            @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_year..Date.today.end_of_year).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            if @h.blank?
+              return false, "Aucune transaction pour cette année."
+            else
+              return true, @h
+            end
+          else
+            Rails::logger.info "Recherche des informations sans periode ..."
+            @h = Transaction.where(customer: @customer[1]["id"]).order(created_at: :asc).last(30).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            if @h.blank?
+              return false, "Il semble que vous n'ayez encore effectué aucune transaction."
+            else
+              return true, @h
+            end
+            #return false, "Nous ne sommes pas en mesure de comprendre cette Période "
+          end
+        else
+          return "Customer unknow"
+        end
+
+
+      rescue ActiveRecordError::ConnectionNotEstablished, ActiveRecordError::ConnectionFailed
+
+        return false, "Un probleme de connexion est survenu"
+
+      end
+    end
 
       def self.get_user_history(phone)
           @phone = phone
@@ -64,7 +141,7 @@ module History
       def self.payment(phone)
           @phone = phone.to_i
           customer = CustomerClient::Client::get_customer(@phone)
-          if customer[0] == false
+          if !customer[0]
               return false, customer[1]
           else
               query = Transaction.where(phone: @phone, context: "debit")
@@ -83,7 +160,7 @@ module History
       def self.encaisser(phone)
         @phone = phone.to_i
         customer = CustomerClient::Client::get_customer(@phone)
-          if customer[0] == false
+          if !customer[0]
               return false, customer[1]
           else
               query = Transaction.where(phone: @phone, context: "credit")

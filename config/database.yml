@@ -13,9 +13,9 @@ default: &default
   adapter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: root 
+  #username: root
   #password: #123456
-  host: localhost
+  #host: localhost
 
 
 heroku: &heroku
@@ -28,9 +28,14 @@ heroku: &heroku
   #database: restoafr_payquick-develop
 
 
-development:
+developments:
   <<: *default
-  database: pop-cash_development
+  #database: pop-cash_development
+  username: restoafr_mvondoyannick
+  password: Bl@ckberry18
+  host: 167.114.17.32
+  database: restoafr_payquick-develop
+
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -58,8 +63,8 @@ test:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
-production:
-  #<<: *heroku
+#production:
+development:
   adapter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>

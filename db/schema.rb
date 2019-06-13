@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_14_181145) do
+ActiveRecord::Schema.define(version: 2019_06_05_124534) do
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -55,6 +55,8 @@ ActiveRecord::Schema.define(version: 2019_05_14_181145) do
     t.bigint "role_id"
     t.string "raison"
     t.string "password"
+    t.string "authentication_token", limit: 30
+    t.index ["authentication_token"], name: "index_agents_on_authentication_token", unique: true
     t.index ["email"], name: "index_agents_on_email", unique: true
     t.index ["reset_password_token"], name: "index_agents_on_reset_password_token", unique: true
     t.index ["role_id"], name: "index_agents_on_role_id"
@@ -159,6 +161,26 @@ ActiveRecord::Schema.define(version: 2019_05_14_181145) do
     t.index ["type_id"], name: "index_customers_on_type_id"
   end
 
+  create_table "demo_user_accounts", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "demo_user_id"
+    t.float "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["demo_user_id"], name: "index_demo_user_accounts_on_demo_user_id"
+  end
+
+  create_table "demo_users", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "phone"
+    t.string "date_debut"
+    t.string "date_fin"
+    t.integer "request_day"
+    t.integer "request_mount"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "key"
+  end
+
   create_table "partners", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -255,6 +277,8 @@ ActiveRecord::Schema.define(version: 2019_05_14_181145) do
     t.string "password"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "authentication_token", limit: 30
+    t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
   end
 
   add_foreign_key "accounts", "customers"

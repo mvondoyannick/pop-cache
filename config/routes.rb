@@ -98,8 +98,19 @@ Rails.application.routes.draw do
 
   #API main root
   namespace :api, defaults: {format: :json} do
+    namespace :sandbox do
+      namespace :v1 do
+        post 'signin', to: 'api#signin'
+        post 'signup', to: 'api#signup'
+        post 'payment/read/qrcode', to: 'api#qrcode'
+        post 'payment/read/code', to: 'api#code'
+        post 'payment/read/phone', to: 'api#phone'  #Paiement sans compte sur la plateforme
+      end
+    end
+
+    #Main routing to the plateform PayMeQuick
     namespace :v1 do
-      match 'session/signin', to: 'session#signin', via: [:post, :options, :get]
+      match 'session/signin', to: 'session#signin', via: [:post, :options]
       match 'session/signup', to: 'session#signup', via: [:post, :options]
       match 'session/get_balance/:customer/:password', to: 'session#getSoldeCustomer', via: [:get, :options]                #retourne le solde du client
       match 'session/transaction/:token/:receveur/:montant/:password/:oneSignalID', to: 'api#payment', via: [:get, :options]
@@ -111,7 +122,7 @@ Rails.application.routes.draw do
       match 'session/cancel_retrait', to: 'session#cancel_retrait', via: [:post, :options]
       match 'session/validate_retrait/:token/:password', to: 'session#validate_retrait', via: [:get, :options]
       match 'session/validate/authentication', to: 'session#signup_authentication', via: [:post, :options]
-      match 'session/history', to: 'session#histo', via: [:post, :options]
+      match 'session/history', to: 'session#history', via: [:post, :options]
       match 'session/history/detail/:code', to: 'session#histoDetail', via: [:get, :options]
       #match 'session/history/h/payment', to: 'session#p', via: [:post, :options]
       match 'test/:code(/:amount)', to: 'api#test', via: [:get, :options]
@@ -159,6 +170,18 @@ Rails.application.routes.draw do
       post 'customer/auth/signup', to:            'customer#signup'
       post 'customer/auth/signup/validate', to:   'customer#validate_signup'
       get 'client/logs/:token', to:                     'customer#history'
+
+      #terminer les interface clientes
+      post 'customer/patner/signin', to: 'agent#signin'
+      post 'customer/patner/customer/new', to: 'agent#new_customer'
+      post 'customer/patner/customer/credit', to: 'agent#credit_customer'
+      post 'customer/patner/debit', to: 'agent#debit_customer'
+      post 'customer/patner/activer/search', to: 'agent#search_customer'
+      post 'customer/partner/activate/validate', to: 'agent#activate_customer'
+      get 'customer/partner/journal', to: 'agent#journal'
+
+      #paiement sans compte sur la plateforme, simplement avec un numero de telephone
+      post 'external/request/intent', to: 'api#phonePayment'
     end
   end
 end

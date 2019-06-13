@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  phone: MyString
+  date_debut: MyString
+  date_fin: MyString
+  request_day: 1
+  request_mount: 1
+  status: MyString
+
+two:
+  phone: MyString
+  date_debut: MyString
+  date_fin: MyString
+  request_day: 1
+  request_mount: 1
+  status: MyString

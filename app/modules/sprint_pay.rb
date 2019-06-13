@@ -90,8 +90,16 @@ module SprintPay
         # https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3
         # https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3
 
-        q = HTTParty.post(url, headers: HEADERS, body: body, timeout: 30)
-        return q.as_json
+        begin
+
+          q = HTTParty.post(url, headers: HEADERS, body: body, timeout: 30)
+          return q.as_json
+
+        rescue StandardError, Timeout::Error, NetworkError::Timeout, NetworkError::Error
+
+          return "Une erreur reseau est survenue. Impossible de continuer"
+
+        end
       end
 
       #ENVOI OM VERS CLIENTS ORANGE MONEY
@@ -115,21 +123,6 @@ module SprintPay
         }.to_json
 
         send(body_data, base_url)
-
-      end
-
-      #permet de faire le paiement a un compte sprintPay
-      def self.payment_sprintpay
-
-      end
-
-      #permet de faire un paiement bancaire
-      def self.payment_bank
-
-      end
-
-      #permet de faire un paiement via une carte
-      def self.payment_card
 
       end
 

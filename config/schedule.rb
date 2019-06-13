@@ -20,5 +20,6 @@
 # Learn more: http://github.com/javan/whenever
 
 every 1.minutes do
-	Rails::logger::info "testing cron jobs"
+
+  runner "Sms.sender(691451189, 'testing cron')"
 end

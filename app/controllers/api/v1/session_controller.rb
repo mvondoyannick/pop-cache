@@ -5,9 +5,17 @@ class Api::V1::SessionController < ApplicationController
     # @return [Object]
     def signup
       @ip     = request.remote_ip
-      query = Client::signup(params[:nom], params[:second_name], params[:phone], params[:cni], params[:password], params[:sexe], params[:question_id], params[:reponse], params[:lat], params[:lon])
+      @name           = params[:nom]
+      @second_name    = params[:second_name]
+      @tel            = params[:phone]
+      @cni            = params[:cni]
+      @password       = params[:password]
+      @sexe           = params[:sexe]
+      @question_id    = params[:question_id]
+      @response       = params[:response]
+      query = Client::signup(@name, @second_name, @tel, @cni, @password, @sexe, @question_id, @response, @ip)
       render json: {
-        status: query
+        status:   query
       }
     end
 
@@ -30,10 +38,36 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         render json: {
-            message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(50).as_json(only: [:date, :amount, :flag, :code, :color])
+            message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(50).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
         }
       end
     end
+
+
+     #retourne les informations de la semaine entre le début de la semaine et la fin de la semaine
+     # Refactoring
+    def history
+      @token    = request.headers['HTTP_X_API_POP_KEY']
+      @period   = params[:period]
+      if @token.present?
+
+        request = History::History.h_customer(@token, @period)
+        render json: {
+            status:     request[0],
+            message:    request[1]
+        }
+
+      else
+
+        render json: {
+            status:   false,
+            message:  "CUSTOMER KEY NOT FOUND"
+        }
+
+      end
+    end
+
+
 
     #Detail de l'historiqueAnswer.all
     def histoDetail
@@ -109,12 +143,24 @@ class Api::V1::SessionController < ApplicationController
 
     #authentification d'un client mobile
     def signin
-        phone = params[:phone]
-        password = params[:password]
+      Rails::logger.info "Starting signin process ..."
+      phone = params[:phone]
+      password = params[:password]
+
+      if phone.present? && password.present?
 
         #query the user
         signin = Client::auth_user(phone, password)
         render json: signin
+
+      else
+
+        render json: {
+            status: :missing_parameters,
+            message: "PARAMETRES MANQUANT"
+        }
+
+      end
     end
 
     #obtention du solde du compte client
@@ -130,7 +176,7 @@ class Api::V1::SessionController < ApplicationController
           message: "Utilisateur inconnu sur la plateforme"
         }
       else
-        @balance = Client::get_balance(@customer, @pwd, @playerId)
+        @balance = Client::get_balance(@customer, @pwd)
         if balance
             render json: {
               message: @balance
@@ -158,17 +204,17 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         balance = Client::get_balance(@customer.phone, @pwd)
-        if balance[0] == true
+        if balance[0]
           render json: {
             status:   200,
             flag:     :success,
-            message:  balance #balance[1]
+            message:  balance[1]
           }
         else
           render json: {
             status:   404,
             flag:     :errors,
-            message:  balance
+            message:  balance[1]
           }
         end
       end
@@ -177,6 +223,15 @@ class Api::V1::SessionController < ApplicationController
     #verification du retrait
     def check_retrait
         header = request.headers['HTTP_X_API_POP_KEY']
+        if header.present?
+
+
+
+        else
+
+
+
+        end
         begin
           render json: {
             status: Client::check_retrait_refactoring(header) #Client::check_retrait(Customer.find(header).phone)

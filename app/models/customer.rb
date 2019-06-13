@@ -3,6 +3,7 @@ class Customer < ApplicationRecord
   belongs_to :type
   has_one :badge
   has_one :customer_datum
+  has_one :account
 
   before_save :generate_apikey
   before_save :set_hand
@@ -22,7 +23,7 @@ class Customer < ApplicationRecord
 
 
   #validations
-  validates :phone, uniqueness: {message: "%{value} a deja ete utilisé" }, length: { is: 9, message: "Le numéro doit avoir 9 chiffres" }
+  validates :phone,presence:true, uniqueness: {message: "%{value} a deja ete utilisé" }, length: { is: 9, message: "Le numéro doit avoir 9 chiffres" }
   #validates :cni, presence: {message: "%{value} a deja ete utilisé" } #, length: {in: 12..20}
   validates :name, presence: true #length: { in: 3..50 }#, format: { with: /\A[a-zA-Z]+\z/, message: "only allows letters" }
   #validates :cni, presence: true, uniqueness: {message: "%{value} a deja ete utilisé"}

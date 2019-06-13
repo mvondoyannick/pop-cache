@@ -1,113 +1,15 @@
 class Api::V1::AgentController < ApplicationController
+  # permet de gerer les agents et les partenaires sur la plateforme
 
-  #authenticate agent
+  #authenticate agent/partenaire
   def signin
-    #render json: agent = Agents::Auth::signin(params[:phone], params[:password])
-    email       = params[:email]
-    password    = params[:password]
-    #Partenaire::Authenticate.new(email, password)
-    agent = P::Authenticate::signied(email, password)
+    @email      = params[:email]
+    @password   = params[:password]
+
+    @agent = Partenaire::Authenticate.signin(@email, @password)
     render json: {
-        status:     agent[0],
-        message:   agent[1]
-      }
-  end
-
-
-  def search_customer
-    @phone        = params[:phone]
-
-    customer = Customer.find_by_phone(@phone)
-    if customer.blank?
-      render json: {
-          status: false,
-          message: "Utilisateur inconnu"
-      }
-    else
-      render json: {
-          status: true,
-          message: customer.as_json(only: [:id, :name, :second_name, :phone, :sexe, :email, :created_at, :code])
-      }
-    end
-  end
-
-  def journal
-    render json: {
-        status: true,
-        message: Transaction.all.order(date: :desc)
-    }
-  end
-
-  def activate_customer
-    @phone              = params[:phone]
-    @authenticity_token = params[:authentication_token]
-    @motif              = params[:motif]
-
-    #startinf request
-    customer = Customer.find_by_phone(@phone)
-    if customer.blank?
-      render json: {
-          status: false,
-          message: "Utilisateur inconnnu"
-      }
-    else
-      #update customer data
-      if customer.update(two_fa: "authenticate")
-        render json: {
-            status: true,
-            message: "Utilisateur bloqué"
-        }
-      else
-        render json: {
-            status: false,
-            message: "Impossible de bloquer cet utilisateur : #{customer.errors.full_messages}"
-        }
-      end
-    end
-  end
-
-
-  def new_customer
-    @cni          = params[:cni]
-    @name         = params[:name]
-    @second_name  = params[:second_name]
-    @sexe         = params[:sexe]
-    @phone        = params[:phone]
-    #@agent_id     = params[:agent_id]
-
-    #enregistrement des informations sur la creation
-    query = P::Authenticate.partner_customer(@name, @second_name, @phone, @cni, @sexe)#P::Authenticate.new_customer(@name, @second_name, @phone, @cni, @agent_id)
-
-    #on lance la creation d'ou nouveau compte client
-    render json: {
-      status: query[0],
-      data:   query[1]
-    }
-  end
-
-
-  def credit_customer
-
-    @phone    = params[:phone]
-    @amount   = params[:amount]
-
-      credit = Client::credit_account(@phone, @amount)
-      render json: {
-          status: credit[0],
-          message: credit[1]
-      }
-
-  end
-
-  def debit_customer
-
-    @phone    = params[:phone]
-    @amount   = params[:amount]
-
-    credit = Client::debit_user_account(@phone, @amount)
-    render json: {
-        status: credit[0],
-        message: credit[1]
+        status:     @agent[0],
+        response:   @agent[1]
     }
   end
 
@@ -199,6 +101,26 @@ class Api::V1::AgentController < ApplicationController
       #verification de la mise a jour
       Sms.new(params[:phone], "Votre mot de passe est #{pwd}, conservez en toute securité")
     end
+  end
+
+  def new_customer
+    @name           = params[:name]
+    @second_name    = params[:second_name]
+    @phone          = params[:phone]
+    @cni            = params[:cni]
+    @name         = params[:name]
+    @name         = params[:name]
+
+
+  end
+
+
+  def signin
+    @email        = params[:email]
+    @password     = params[password]
+
+    agent = P::Authenticate.signied(@email, @password)
+    render json: 
   end
 
 
