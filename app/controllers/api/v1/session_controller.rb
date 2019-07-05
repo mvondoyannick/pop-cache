@@ -4,7 +4,7 @@ class Api::V1::SessionController < ApplicationController
     #creation de compte utilisateur
     # @return [Object]
     def signup
-      @ip     = request.remote_ip
+      @ip             = request.remote_ip
       @name           = params[:nom]
       @second_name    = params[:second_name]
       @tel            = params[:phone]
@@ -13,22 +13,40 @@ class Api::V1::SessionController < ApplicationController
       @sexe           = params[:sexe]
       @question_id    = params[:question_id]
       @response       = params[:response]
-      query = Client::signup(@name, @second_name, @tel, @cni, @password, @sexe, @question_id, @response, @ip)
-      render json: {
-        status:   query
-      }
+
+      #données elementaire de base
+      if @tel.present? && @cni.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
+
+        query = Client::signup(@name, @second_name, @tel, @cni, @password, @sexe, @question_id, @response, @ip)
+        render json: {
+            status:   query
+        }
+
+      else
+
+        render json: {
+            satus: :false,
+            message: "Centaines informations sont manquantes"
+        }
+
+      end
+
     end
 
 
+    #Get the customer balance
+    # POST
     def get_balance
         phone       = params[:phone]
         password    = params[:password]
         @playerId   = params[:playerId]
 
-        balance = Client::get_balance(phone, password, @playerId)
+        balance = Client::get_balance(phone, password)
         render json: balance
     end
 
+    # DEPRECATED
+    # TODO Remove this method on next release, deprecatd since 0.1.2
     def histo #retourn l'historique sur la base du telephone
       @customer = Customer.find_by_authentication_token(request.headers['HTTP_X_API_POP_KEY'])
       if @customer.blank?
@@ -47,15 +65,29 @@ class Api::V1::SessionController < ApplicationController
      #retourne les informations de la semaine entre le début de la semaine et la fin de la semaine
      # Refactoring
     def history
-      @token    = request.headers['HTTP_X_API_POP_KEY']
+      @token    = "gmQAoqQK98cXcGTf2nEK" #request.headers['HTTP_X_API_POP_KEY']
       @period   = params[:period]
       if @token.present?
 
-        request = History::History.h_customer(@token, @period)
-        render json: {
-            status:     request[0],
-            message:    request[1]
-        }
+        #Search and identify customer token
+        customer = Customer.find_by_authentication_token(@token)
+        if customer.blank?
+
+          render json: {
+              status:   false,
+              message:  "CUSTOMER NOT FOUND"
+          }
+
+        else
+
+          #starting get customer history
+          request = History::History.h_customer(@token, @period)
+          render json: {
+              status:     request[0],
+              message:    request[1]
+          }
+
+        end
 
       else
 
@@ -69,7 +101,25 @@ class Api::V1::SessionController < ApplicationController
 
 
 
+    # Permet de retourner le'historique en fonction d'une periode bien precise
+    def historyByDate
+      @token    = "gmQAoqQK98cXcGTf2nEK" #request.headers['HTTP_X_API_POP_KEY']
+      @debut    = params[:debut]
+      @fin      = params[:fin]
+
+      if @debut.present? && @fin.present?
+        periode = History::History.h_interval(token: @token, debut: @debut, fin: @fin)
+        render json: {
+            status:   periode[0],
+            message:  periode[1]
+        }
+      end
+    end
+
+
+
     #Detail de l'historiqueAnswer.all
+    # TODO deprecated, remove this method on next release
     def histoDetail
       @code_transaction   = params[:transaction]
       detail = Transaction.where(code: @code_transaction)
@@ -169,24 +219,38 @@ class Api::V1::SessionController < ApplicationController
       @pwd        = params[:password]
       @playerId   = params[:playerId]
 
-      #recherche du phone
-      @customer = Customer.find_by_authentification_token(@token).phone
-      if customer.blank?
-        render json: {
-          message: "Utilisateur inconnu sur la plateforme"
-        }
-      else
-        @balance = Client::get_balance(@customer, @pwd)
-        if balance
-            render json: {
-              message: @balance
-            }
+      #check all datas available
+      if @token.present? && @pwd.present? && @playerId.present?
+
+        #recherche du phone
+        @customer = Customer.find_by_authentification_token(@token).phone
+        if customer.blank?
+          render json: {
+              message: "Utilisateur inconnu sur la plateforme"
+          }
         else
+          @balance = Client::get_balance(@customer, @pwd)
+          if balance
+            render json: {
+                message: @balance
+            }
+          else
             render json: {
                 message: "compte vide"
             }
+          end
         end
+
+      else
+
+        render json: {
+            status:   false,
+            message:  "Certaines informations sont manquantes"
+        }
+
       end
+
+
     end
 
     def getSoldeCustomer
@@ -425,55 +489,68 @@ class Api::V1::SessionController < ApplicationController
       @phone    = params[:phone]
       @amount   = params[:amount]
 
-      #on recherche l'utilisateur
-      @customer = Customer.find_by_authentication_token(@token)
-      if @customer.blank?
-        render json: {
-          status:   404,
-          flag:     :customer_not_found,
-          message:  "Utilisateur inconnu"
-        }
-      else
-      @status = Parametre::PersonalData::numeroOperateurMobile(@phone)
-      if @status == "orange"
-        #on formate la nouvelle image
-        render json: {
-          status:         200,
-          flag:           :success,
-          phone:          @phone,
-          amount:         @amount.to_i,
-          network:        @status,
-          operator:       "ORANGE MONEY",
-          amount_total:   Parametre::Parametre::agis_percentage(@amount),
-          logo:           "#{request.base_url}#{ActionController::Base.helpers.asset_path("orange.png")}"
-        }
-        elsif @status == "mtn"
+      #reduction des requetes inutiles
+      if @token.present? && @phone.present? && @amount.present?
+
+        #on recherche l'utilisateur
+        @customer = Customer.find_by_authentication_token(@token)
+        if @customer.blank?
           render json: {
-            status:       200,
-            flag:         :success,
-            phone:        @phone,
-            amount:       @amount.to_i,
-            network:      @status,
-            operator:     "MOBILE MONEY",
-            amount_total: Parametre::Parametre::agis_percentage(@amount),
-            logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("mtn.jpg")}"
-          }
-        elsif @status == "nexttel"
-          render json: {
-            status:       404,
-            flag:         :failed,
-            network:      @status,
-            operator:     "NEXTTEL POSSA",
-            message:      "NEXTTEL POSSA PAS ENCORE SUPPORTE",
-            logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("nexttel-possa.png")}"
+              status:   404,
+              flag:     :customer_not_found,
+              message:  "Utilisateur inconnu"
           }
         else
-          render json: {
-            status:   404,
-            flag:     :failed,
-            message:  "OPERATEUR NON SUPPORTE"
-          }
+          @status = Parametre::PersonalData::numeroOperateurMobile(@phone)
+          if @status == "orange"
+            #on formate la nouvelle image
+            render json: {
+                status:         200,
+                flag:           :success,
+                phone:          @phone,
+                amount:         @amount.to_i,
+                network:        @status,
+                operator:       "ORANGE MONEY",
+                amount_total:   Parametre::Parametre::agis_percentage(@amount),
+                logo:           "#{request.base_url}#{ActionController::Base.helpers.asset_path("orange.png")}"
+            }
+          elsif @status == "mtn"
+            render json: {
+                status:       200,
+                flag:         :success,
+                phone:        @phone,
+                amount:       @amount.to_i,
+                network:      @status,
+                operator:     "MOBILE MONEY",
+                amount_total: Parametre::Parametre::agis_percentage(@amount),
+                logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("mtn.jpg")}"
+            }
+          elsif @status == "nexttel"
+            render json: {
+                status:       404,
+                flag:         :failed,
+                network:      @status,
+                operator:     "NEXTTEL POSSA",
+                message:      "NEXTTEL POSSA PAS ENCORE SUPPORTE",
+                logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("nexttel-possa.png")}"
+            }
+          else
+            render json: {
+                status:   404,
+                flag:     :failed,
+                message:  "OPERATEUR NON SUPPORTE"
+            }
+          end
         end
+
+      else
+
+        render json: {
+            status: 404,
+            flag:   :failed,
+            message: "Informations incorrectes"
+        }
+
       end
     end
 
@@ -482,19 +559,31 @@ class Api::V1::SessionController < ApplicationController
     def getPhoneNumber
       header = request.headers['HTTP_X_API_POP_KEY']
 
-      # on recherche le customer
-      @customer = Customer.find_by_authentication_token(header)
-      if @customer.blank?
-        render json: {
-          status: :not_found,
-          message: "Utilisateur inconnu"
-        }
+      if header.present?
+
+        # on recherche le customer
+        @customer = Customer.find_by_authentication_token(header)
+        if @customer.blank?
+          render json: {
+              status: :not_found,
+              message: "Utilisateur inconnu"
+          }
+        else
+          render json: {
+              status: :found,
+              message: @customer.phone
+          }
+        end
+
       else
+
         render json: {
-          status: :found,
-          message: @customer.phone
+            status: :unprocessable_entity,
+            message: "Certaines informations sont manquantes"
         }
+
       end
+
     end
 
 
@@ -502,23 +591,25 @@ class Api::V1::SessionController < ApplicationController
     def updatePassword
       Rails::logger::info "Starting caal method for renewing password"
       @token          = request.headers["HTTP_X_API_POP_KEY"]
-      @previouPwd     = params[:hold_pass].to_i
-      @newPwd         = params[:new_pass]
+      @previouPwd     = params[:ancien]
+      @newPwd         = params[:nouveau]
 
-      #on recherch le client sur la base de son token
-      @customer = Customer.find_by_authentication_token(@token)
-      if @customer.blank?
-        Rails::logger::info "User is unknow"
-        render json: {
-            status:     404,
-            flag:       :cunstomer_not_found,
-            message:    "Utilisateur inconnu"
-        }
-      else
-        #tout va bien on verifie que c'est bien le @previeouPwd
-        if @customer.valid_password?(@previouPwd)
-          Rails::logger::info "User is valid"
-          #tout va bien, on peut continuer en chageant les informations sur le mot de passe
+      if @token.present? && @previouPwd.present? && @newPwd.present?
+
+        #on recherch le client sur la base de son token
+        @customer = Customer.find_by_authentication_token(@token)
+        if @customer.blank?
+          Rails::logger::info "User is unknow"
+          render json: {
+              status:     404,
+              flag:       :cunstomer_not_found,
+              message:    "Utilisateur inconnu"
+          }
+        else
+          #tout va bien on verifie que c'est bien le @previeouPwd
+          if @customer.valid_password?(@previouPwd)
+            Rails::logger::info "User is valid"
+            #tout va bien, on peut continuer en chageant les informations sur le mot de passe
             @customer.update(password: @newPwd)
             #on notifie le gar que tout c'est bien passé
             #Notification SMS
@@ -526,19 +617,31 @@ class Api::V1::SessionController < ApplicationController
             Sms::send
 
             render json: {
-              status:     200,
-              flag:       :password_updated,
-              message:    "Votre mot de passe a ete mis a jour. Merci de vous reconnecter a PAYQUICK"
+                status:     200,
+                flag:       :password_updated,
+                message:    "Votre mot de passe a ete mis a jour. Merci de vous reconnecter a PAYQUICK"
             }
-        else
-          Rails::logger::info "User is invalid"
-          render json: {
-            status:     404,
-            flag:       :password_no_match,
-            message:    "Impossible de vous identifier"
-          }
+          else
+            Rails::logger::info "User is invalid"
+            render json: {
+                status:     404,
+                flag:       :password_no_match,
+                message:    "Impossible de vous identifier"
+            }
+          end
         end
+
+      else
+
+        render json: {
+            status: false,
+            flag:   "Some parametres are misssing",
+            message: "Données invalides ou manquantes",
+            params: "#{@token}, #{@previouPwd}, #{@newPwd}"
+        }
+
       end
+
     end
 
     # recharge via OM
@@ -763,6 +866,7 @@ class Api::V1::SessionController < ApplicationController
 
     #test de la connxino internet
     def testNetwork
+      #ApiMailer.sendAdmin("lorem").deliver_now!
       render json: true
     end
 

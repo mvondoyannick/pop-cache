@@ -40,8 +40,14 @@ module DistanceMatrix
     # @param [Object] ip
     def self.pays(ip)
       @ip   = ip
-      results = Geocoder.search(@ip)
-      return results.first.country
+      begin
+        results = Geocoder.search(@ip)
+        return results.first.country
+      rescue Geocoder::NetworkError
+        return "Une erreur reseau est survenu durant l'obtention des information sur l'adresse IP"
+      rescue NoMethodError
+        return "Impossible de continuer, une erreur FATAL est survenue"
+      end
     end
     
   end  

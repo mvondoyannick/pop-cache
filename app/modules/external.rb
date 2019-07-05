@@ -74,13 +74,12 @@ module External
 
           #We found an existing demoUser Account, so we can credit this account
 
-          Rails::logger.info "#{@phone} has been found on DemoUser"
+          Rails::logger.info "#{@phone} has been found on DemoUser Databases"
 
           request = credit_demo_user(@phone, @amount, @payeur)
 
+          return request[0], request[1], "Demo customer existe dans la bd demoUser", customerDemo.as_json(only: [:phone])
 
-
-          return false, "Demo customer existe dans la bd demoUser", customerDemo.as_json(only: [:phone])
         end
 
       else

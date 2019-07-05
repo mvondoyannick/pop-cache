@@ -296,7 +296,7 @@ module Parametre
     end
 
     # recherche des plages de numeros de telephone
-    # @param [Object] phone
+    # @param [Integer] phone
     # @return [Object] string
     def self.numeroOperateurMobile(phone)
       orange    = %w(55 56 57 58 59 90 91 92 93 94 95 96 97 98 99)  #tableau des numeros orange

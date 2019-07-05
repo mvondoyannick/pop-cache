@@ -110,9 +110,14 @@ Rails.application.routes.draw do
 
     #Main routing to the plateform PayMeQuick
     namespace :v1 do
+      #authentification et creation de compte
       match 'session/signin', to: 'session#signin', via: [:post, :options]
       match 'session/signup', to: 'session#signup', via: [:post, :options]
+
+      # get user balance
       match 'session/get_balance/:customer/:password', to: 'session#getSoldeCustomer', via: [:get, :options]                #retourne le solde du client
+
+      # Transaction or payment
       match 'session/transaction/:token/:receveur/:montant/:password/:oneSignalID', to: 'api#payment', via: [:get, :options]
       match 'session/qrcode/:data', to: 'api#qrcode', via: [:options, :get]
       match 'session/code/:code', to: 'api#code', via: [:options, :get]     #rechercher via le code numerique
@@ -134,6 +139,10 @@ Rails.application.routes.draw do
       match 'security/retrive/password', to: 'session#retrivePassword', via: [:post, :options]
       match 'security/reset/password', to: 'session#resetPassword', via: [:post, :options]
       match 'session/phone', to: 'session#getPhoneNumber', via: [:post, :options]
+
+      # historique des clients mobile
+      get 'history/:period', to: 'session#history'
+      post 'histories/timemachine', to: 'session#historyByDate'
 
       # test de la connexion internet
       match 'internet/test', to: 'session#testNetwork', via: [:get, :options, :post]

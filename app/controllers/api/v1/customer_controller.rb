@@ -1,7 +1,7 @@
 class Api::V1::CustomerController < ApplicationController
   #controller entierement dedier à la gestion des clients en ligne
   def signin
-    @email      = params[:email]
+    @email      = params[:phone]
     @password   = params[:password]
 
     #begin transaction

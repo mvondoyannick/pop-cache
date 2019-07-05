@@ -28,6 +28,13 @@ class Api::V1::ApiController < ApplicationController
 		def qrcode
 
 			#integration de la gestion des erreurs 1.0
+			# Il est important de noter que chaque transaction de QRCODE generé par le telephone
+			# contient une clé unique, cela permet a quelqu'un qui a deja payé cette transaction via
+			# ce QRCODE ne le repaye pas par erreur
+			# Add new params
+			# qr_id 	= params[:qrid]
+			# TODO Update and add qrid to qrcode mobile app
+
 			begin
 
 				#data = Parametre::Crypto::decode(params[:data])
@@ -142,32 +149,46 @@ class Api::V1::ApiController < ApplicationController
     def code
 			@code = params[:code].to_i
 
-			if @code.is_a?(Integer)
-				#uniquement si le code est un entier
-				@customer = Customer.find_by_code(@code)
-				if @customer.blank?
-					render json: {
-						message: 			false,
-						flag: 				:customer_not_found
-					}
+			if @code.present?
+
+				if @code.is_a?(Integer)
+					#uniquement si le code est un entier
+					@customer = Customer.find_by_code(@code)
+					if @customer.blank?
+						render json: {
+								message: 			false,
+								flag: 				:customer_not_found
+						}
+					else
+						#on retourne les informations
+						puts @customer.code
+						render json: {
+								message: 			true,
+								context: 			searchContext(@customer),
+								name:					@customer.name,
+								second_name: 	@customer.second_name,
+								marchand_id:  @customer.authentication_token,
+								date: 				Time.now.strftime("%d-%m-%Y à %H:%M:%S"),
+								expire: 			5.minutes.from_now
+						}
+					end
 				else
-					#on retourne les informations
-					puts @customer.code
 					render json: {
-						message: 			true,
-						context: 			searchContext(@customer),
-						name:					@customer.name,
-						second_name: 	@customer.second_name,
-						marchand_id:  @customer.authentication_token,
-						date: 				Time.now.strftime("%d-%m-%Y à %H:%M:%S"),
-						expire: 			5.minutes.from_now
+							message: "varable incorrecte"
 					}
 				end
+
 			else
+
 				render json: {
-						message: "varable incorrecte"
+
+						message: false,
+						content: "Certaines informations sont manquantes ou incorrecte"
+
 				}
+
 			end
+
 		end
 
     #recherche le context plateforme ou mobile dans un qrcode

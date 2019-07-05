@@ -36,6 +36,10 @@ class Customer < ApplicationRecord
     end
   end
 
+  def bjr
+    puts "bonjour current model"
+  end
+
   private
   def generate_apikey
     self.apikey = Base64.encode64({
@@ -46,6 +50,27 @@ class Customer < ApplicationRecord
       context: "plateform",
       date: nil
     }.to_s).delete("\n")
+  end
+
+  # TODO VALIDATE CHECKPHONE
+  def chechPhone
+    # Permet de verifier si le numero de teléphone appartien au cameroun
+    if self.phone.length == 9
+      if self.phone.slide(0) != "6"
+
+        raise ActiveRecord::Rollback
+
+      elsif self.phone.slice(0) != "3"
+
+        raise ActiveRecord::Rollback
+
+      elsif  self.phone.slice(0) != "2"
+
+        raise ActiveRecord::Rollback
+
+      end
+    end
+
   end
 
   #Mettre le nom de la personne en majuscule et le code

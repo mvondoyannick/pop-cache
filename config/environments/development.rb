@@ -67,11 +67,12 @@ Rails.application.configure do
 
   #configuration personnelle
   config.action_mailer.delivery_method = :smtp
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_options = {from: 'no-reply@paiemequick.com'}
   config.action_mailer.smtp_settings = {
-    address:              'smtp.gmail.com',
-    port:                 587,
-    domain:               'example.com',
-    user_name:            'mvondoyannick@gmail.com',
+    address:              'mail.viecity.com',
+    port:                 465,
+    user_name:            'fotsonadege@viecity.com',
     password:             'Blackberry10',
     authentication:       'plain',
     enable_starttls_auto: true

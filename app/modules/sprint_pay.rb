@@ -87,8 +87,8 @@ module SprintPay
       # @param [Object] body
       # @param [Object] url
       def self.send(body, url)
-        # https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3
-        # https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3
+        # https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3 || v2
+        # https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3 || V2
 
         begin
 
@@ -104,13 +104,18 @@ module SprintPay
 
       #ENVOI OM VERS CLIENTS ORANGE MONEY
       def self.orange
-        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3"
+        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v2"
         body_data = {
           "phone": $phone,        #utiliser la variable globale disponible a cet effet
           "amount": $amount       #utiliser le montant globale disponible a cet effet
         }.to_json
 
         send(body_data, base_url)
+      end
+
+      # Permet de paiement vers orange money :: REFACTORING
+      def self.om
+        
       end
 
       #ENVOI D UN MOMO VERS LES CLIENTS MTN MOBILE MONEY
@@ -128,5 +133,15 @@ module SprintPay
 
     end
 
+  end
+
+
+  # New SprintPay payment API
+  module V2
+    class SP
+      def keys
+        date  = DateTime.parse(Time.now.to_s).iso8601
+      end
+    end
   end
 end

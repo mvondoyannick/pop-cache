@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_05_124534) do
+ActiveRecord::Schema.define(version: 2019_06_17_155133) do
+
+  create_table "abonnements", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "palier_id"
+    t.bigint "customer_id"
+    t.date "date_debut"
+    t.date "date_fin"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_abonnements_on_customer_id"
+    t.index ["palier_id"], name: "index_abonnements_on_palier_id"
+  end
 
   create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -179,6 +190,14 @@ ActiveRecord::Schema.define(version: 2019_06_05_124534) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "key"
+  end
+
+  create_table "paliers", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "amount"
+    t.string "max_retrait"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
   end
 
   create_table "partners", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

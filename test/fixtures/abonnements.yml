@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  palier: one
+  customer: one
+  date_debut: 2019-06-17
+  date_fin: 2019-06-17
+
+two:
+  palier: two
+  customer: two
+  date_debut: 2019-06-17
+  date_fin: 2019-06-17

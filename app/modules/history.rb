@@ -1,4 +1,5 @@
-module History    
+# Return all history transaction from customer or enterprise
+module History
   class History
     def initialize(marchand, customer, amount, context, flag)
       @marchand = marchand
@@ -23,7 +24,7 @@ module History
         @customer = Client.find_by_token(@token)
         if @customer[0]
           case @period
-          when "day"
+          when "jour"
             Rails::logger.info "Recherche des transactions journalieres ..."
             @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
@@ -31,7 +32,7 @@ module History
             else
               return true, @h
             end
-          when "week"
+          when "semaine"
             Rails::logger.info "Recherche des informations hebdomadaire ..."
             @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
@@ -39,7 +40,7 @@ module History
             else
               return true, @h
             end
-          when "month"
+          when "mois"
             Rails::logger.info "Recherche des informations mensuelles ..."
             @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_month..Date.today.end_of_month).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
@@ -55,7 +56,7 @@ module History
             else
               return true, @h
             end
-          when "year"
+          when "annee"
             Rails::logger.info "Recherche des informations annuelles ..."
             @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_year..Date.today.end_of_year).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
@@ -83,6 +84,49 @@ module History
         return false, "Un probleme de connexion est survenu"
 
       end
+    end
+
+
+
+    # Get history with beginning and end period
+    # @param [Object] argv
+    def self.h_interval(argv)
+
+      @token    = argv[:token]
+      @debut    = argv[:debut]
+      @fin      = argv[:fin]
+
+      begin
+
+        #chech user token
+        customer = Customer.find_by_authentication_token(@token)
+        if customer.blank?
+
+          return false, "CUSTOMER NOT FOUND", status: 404
+
+        else
+
+          Rails::logger.info customer.phone
+          query = Transaction.where(customer: customer.id).where(created_at: @debut.to_date..@fin.to_date).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+          if query.blank?
+
+            return false, "Aucune transaction effectuée entre #{@debut} et #{@fin}"
+
+          else
+
+            return true, query
+
+          end
+
+        end  
+
+      rescue ActiveRecord::RecordNotFound
+
+        return false, "CUSTOMER NOT FOUND"
+
+      end
+      
+
     end
 
       def self.get_user_history(phone)

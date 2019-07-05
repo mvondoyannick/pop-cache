@@ -5,7 +5,7 @@ class Api::V1::AgentController < ApplicationController
     #render json: agent = Agents::Auth::signin(params[:phone], params[:password])
     email       = params[:email]
     password    = params[:password]
-    #Partenaire::Authenticate.new(email, password)
+    Partenaire::Authenticate.new(email, password)
     agent = P::Authenticate::signied(email, password)
     render json: {
         status:     agent[0],

@@ -42,35 +42,18 @@ class Client
     return "PayMeQuick"
   end
 
-  #retourne la clé secrete
-  def self.key
-    return Rails.application.secrets.secret_key_base
-  end
-
-  # Authorization of payment processing
-  # @detail : Check all configuration on customer account like lock, suficent amount, [...]
-  # @param [Object] arg
-  def self.authorize(arg)
-
-    if arg[:phone].present?
-      puts :ok
-    end
-
-  end
 
   #CREATION DU COMPTE CLIENT :: refactoring
-  # @param [Object] name
-  # @param [Object] second_name
-  # @param [Object] phone
-  # @param [Object] cni
-  # @param [Object] password
-  # @param [Object] sexe
-  # @param [Object] question
-  # @param [Object] answer
-  # @param [Object] latitude
-  # @param [Object] longitude
-  # @author @mvondoyannick
-  # @version 1.0.0
+  # @param [String] name
+  # @param [String] second_name
+  # @param [Integer] phone
+  # @param [String] cni
+  # @param [String] password
+  # @param [String] sexe
+  # @param [Integer] question
+  # @param [String] answer
+  # @param [String] IP
+  # @version 1.0.1
   def self.signup(name, second_name, phone, cni, password, sexe, question, answer, ip)
     include ActionDispatch
 
@@ -90,60 +73,84 @@ class Client
 
     Rails::logger::info "Requete provenant de l'IP #{@ip}, du pays : #{@pays}"
 
-    #initi customer creation
-    customer = Customer.new(
-        name: @name,
-        second_name: @second_name,
-        phone: @phone,
-        email: @email,
-        password: @password,
-        type_id: 1,
-        cni: @cni,
-        sexe: @sexe,
-        ip: @ip,
-        pays: @pays
-    )
+    # Check if password is don't rejected ::  FRAUD inclusion
+    if Fraud::Customer.passwordValidation(@password)[0]
 
-    Customer.transaction do
+      # password is OK and don't have restricted informations
+       #initi customer creation
+        customer = Customer.new(
+          name: @name,
+          second_name: @second_name,
+          phone: @phone,
+          email: @email,
+          password: @password,
+          type_id: 1,
+          cni: @cni,
+          sexe: @sexe,
+          ip: @ip,
+          pays: @pays
+      )
 
-      if customer.save
+      Customer.transaction do
 
-        # on enregistre la question de securité
-        pSecurityQuestion = Parametre::SecurityQuestion::setSecurityQuestion(customer.id, @question, @answer)
-        Rails::logger::info "Sauvegarder des données personnelles : #{pSecurityQuestion}"
+        if customer.save
 
-        @auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
-        if @auth[0]
-          Rails::logger::info "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
-          return true, customer.as_json(only: [:name, :second_name, :phone, :sexe, :authentication_token])
+          # on enregistre la question de securité
+          pSecurityQuestion = Parametre::SecurityQuestion::setSecurityQuestion(customer.id, @question, @answer)
+          Rails::logger::info "Sauvegarder des données personnelles : #{pSecurityQuestion}"
+
+          @auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
+          if @auth[0]
+            Rails::logger::info "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
+            return true, customer.as_json(only: [:name, :second_name, :phone, :sexe, :authentication_token])
+          else
+            #notified admin for these errors, customer could not receive SMS confirmation
+
+            Sms.sender(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:confirmation_failed])
+
+            # send email
+            # ApiMailer.sendAdmin("une erreur").deliver_now!
+
+            return @auth[1], "Hum!!! c'est vraiment génant, nous sommes dans l'incapacité de vous transmettre le SMS de confirmarion"
+
+          end
+
         else
-          #notified admin for these errors
+          #Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
 
+          Sms.sender(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:customer_exist])
 
-          return @auth[1], "Hum!!! c'est vraiment génant, nous sommes dans l'incapacité de vous transmettre le SMS de confirmarion"
+          return false, "Des erreurs sont survenues : #{customer.errors.full_messages}"
+
         end
-
-      else
-        #Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
-
-        return false, "Des erreurs sont survenues : #{customer.errors.full_messages}"
-        #return false, "Call tech support"
+        #raise ActiveRecord::Rollback, "Call tech support"
       end
-      #raise ActiveRecord::Rollback, "Call tech support"
+
+    else
+
+      #this password is restricted
+      return Client::customerPasswordValidation(@password)[0], Client::customerPasswordValidation(@password)[1]
+
     end
   end
 
+  # Analyse customer phone
+  def customerPhone(phone)
+    @phone      = phone
+
+    return true
+  end
+
   #CREATION DU COMPTE CLIENT
-  # @params  [object] name
-  # @params  [object] prenom
-  # @params  [object] phone
-  # @params  [object] cni
-  # @params  [object] password
-  # @params  [object] sexe
-  # @return  [object] boolean
-  # @author @mvondoyannick
+  # @params  [String] name
+  # @params  [String] prenom
+  # @params  [Integer] phone
+  # @params  [String] cni
+  # @params  [String] password
+  # @params  [String] sexe
+  # @return  [Boolean] boolean
   # @version 1.0.0
-  # @param [Object] ip
+  # @param [String] ip
   def self.create_user(name, prenom, phone, cni, password, sexe, ip)
     @name = name
     @prenom = prenom
@@ -193,7 +200,21 @@ class Client
 
 
   #DESACTIVER UN COMPTE INUTILISER SOUS 45 JOURS
+  # TODO UPDATE DESACTIVATE UNUSED CUSTOMER ACCOUNT
   def self.desactivateUnusedAccount
+
+    # Searching customer
+    begin
+
+
+
+    rescue ActiveRecord::RecordNotFound
+      #record has been not found
+
+
+    rescue ActiveRecord::TimeoutError, NetworkError::Error
+      # TimeOut or network error
+    end
 
   end
 
@@ -318,13 +339,14 @@ class Client
   # @param [Object] password
   # @author @mvondoyannick
   # @version 0.0.1beta-rev-11-03-83-50
-  def self.auth_user(phone, password)
+  def self.auth_user(phone, password) # prévoir l'ajout de l'@ IP
     @phone = phone
     @password = password
 
     Rails::logger::info "Authenticating user #{@phone} call ..."
 
-    customer = Customer.where(phone: @phone).first
+    #customer = Customer.where(phone: @phone).first
+    customer = Customer.find_by_phone(@phone)   # REFACTORING
     if !customer.blank?
       if customer.valid_password?(@password)
         if customer.two_fa == "authenticate"
@@ -339,6 +361,9 @@ class Client
         end
       else
         Rails::logger::error "Authenticating user failed, bad password. end request!"
+
+        # on enregistre cet essaie de mauvais mot de passe dans la base de données, ainsi les informations supplementaires
+
         return false, "Utilisateur inconnu ou mot de passe invalide."
       end
     else

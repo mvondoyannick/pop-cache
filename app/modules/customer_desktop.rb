@@ -7,11 +7,12 @@
     end
 
     def self.signin(email, password)
+      Rails::logger.info "Stating login customer desktop ..."
       @phone      = email
       @password   = password
 
       #on recherche customer
-      customer = Customer.find_by_email(@phone)
+      customer = Customer.find_by_phone(@phone)
       if customer.blank?
         return false, "customer not found"
       else
