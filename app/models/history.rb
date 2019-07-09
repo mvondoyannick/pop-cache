@@ -1,11 +1,7 @@
-class Transaction < ApplicationRecord
-
+class History < ApplicationRecord
   belongs_to :customer
 
   before_save :set_color
-
-  validates :code, presence: true, uniqueness: {message: "%{value} est deja utilisé"}
-
 
   private
   def set_color

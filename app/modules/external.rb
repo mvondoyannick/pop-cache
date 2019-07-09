@@ -54,7 +54,7 @@ module External
               request_day: 0,
               request_mount: 0,
               status: "activate",
-              key: AES.encrypt(@phone.to_s, Client.key)
+              # key: AES.encrypt(@phone.to_s, Client.key)
           )
           if demo_user.save
 
@@ -123,7 +123,7 @@ module External
       if data[0]
         #get current account
 
-        demo_current_account = DemoUserAccount.find_by_demo_user_id(data[1]['id'])
+        demo_current_account = DemoUser.find_by_phone(@phone).demo_user_account
         if demo_current_account.blank?
 
           return false, "conmpte virtuel inexistant."
@@ -132,9 +132,9 @@ module External
 
           #starting request payeur account authorization status
           authorization = Customer.find_by_phone(@payeur).account
-          if authorization.amount >= @amount
+          if authorization.amount.to_f >= @amount.to_f
 
-            @montant = @amount + demo_current_account.amount
+            @montant.to_f += demo_current_account.amount.to_f
 
             #credit virtal account
             if demo_current_account.update(demo_user_id: data[1]['id'], amount: @montant)

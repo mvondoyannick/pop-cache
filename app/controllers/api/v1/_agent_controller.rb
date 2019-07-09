@@ -120,7 +120,7 @@ class Api::V1::AgentController < ApplicationController
     @password     = params[password]
 
     agent = P::Authenticate.signied(@email, @password)
-    render json: 
+    render json: agent
   end
 
 

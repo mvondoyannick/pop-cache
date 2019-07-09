@@ -4,6 +4,7 @@ class Customer < ApplicationRecord
   has_one :badge
   has_one :customer_datum
   has_one :account
+  has_one :history
 
   before_save :generate_apikey
   before_save :set_hand
@@ -11,7 +12,7 @@ class Customer < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable, :trackable
 
   #active storage
   has_one_attached :cni_file
@@ -37,7 +38,15 @@ class Customer < ApplicationRecord
   end
 
   def bjr
-    puts "bonjour current model"
+    require 'aes'
+    key = Rails.application.secrets.secret_key_base #AES.key
+    # puts "bonjour current model"
+    qrtoken = {
+      id: self.authentication_token,
+      date: Time.now
+    }
+    # creating normalize qrcode
+    puts AES.encrypt(qrtoken.to_s, key)
   end
 
   private
@@ -83,9 +92,10 @@ class Customer < ApplicationRecord
 
   #generate hand from email
   def set_hand
-    hand = "#{self.authentication_token}@null@null@null@plateform@null"
+    # La forme la plus avancée de génération du QR code
+    # "#{self.authentication_token}@amount@lat@long@context"
+    hand = "#{self.authentication_token}@0000@0.0@0.0@plateform@#{Time.now}"
     self.hand = Base64.encode64(hand).delete("\n")
-    #Base64.encode64(self.email).delete("\n")
   end
 
 

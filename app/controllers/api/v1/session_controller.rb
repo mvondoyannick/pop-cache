@@ -12,7 +12,7 @@ class Api::V1::SessionController < ApplicationController
       @password       = params[:password]
       @sexe           = params[:sexe]
       @question_id    = params[:question_id]
-      @response       = params[:response]
+      @response       = params[:reponse]
 
       #données elementaire de base
       if @tel.present? && @cni.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
@@ -65,7 +65,8 @@ class Api::V1::SessionController < ApplicationController
      #retourne les informations de la semaine entre le début de la semaine et la fin de la semaine
      # Refactoring
     def history
-      @token    = "gmQAoqQK98cXcGTf2nEK" #request.headers['HTTP_X_API_POP_KEY']
+      @token    = request.headers['HTTP_X_API_POP_KEY']
+      Rails::logger::info "receive token : #{@token}"
       @period   = params[:period]
       if @token.present?
 
@@ -81,10 +82,10 @@ class Api::V1::SessionController < ApplicationController
         else
 
           #starting get customer history
-          request = History::History.h_customer(@token, @period)
+          request = Logstory::Histo.h_customer(@token, @period)
           render json: {
-              status:     request[0],
-              message:    request[1]
+            status:     request[0],
+            message:    request[1]
           }
 
         end
@@ -103,16 +104,23 @@ class Api::V1::SessionController < ApplicationController
 
     # Permet de retourner le'historique en fonction d'une periode bien precise
     def historyByDate
-      @token    = "gmQAoqQK98cXcGTf2nEK" #request.headers['HTTP_X_API_POP_KEY']
-      @debut    = params[:debut]
-      @fin      = params[:fin]
+      @token    = request.headers['HTTP_X_API_POP_KEY']
+      @debut    = params[:begin]
+      @fin      = params[:end]
 
       if @debut.present? && @fin.present?
-        periode = History::History.h_interval(token: @token, debut: @debut, fin: @fin)
-        render json: {
-            status:   periode[0],
-            message:  periode[1]
-        }
+        if @debut == @fin
+          render json: {
+            status: false,
+            message: "Les dates sont identiques!"
+          }
+        else
+          periode = Logstory::Histo.h_interval(token: @token, begin: @debut, end: @fin)
+          render json: {
+              status:   periode[0],
+              message:  periode[1]
+          }
+        end
       end
     end
 

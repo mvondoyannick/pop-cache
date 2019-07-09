@@ -102,7 +102,7 @@ class Client
           @auth = Parametre::Authentication::auth_two_factor(@phone, 'context')
           if @auth[0]
             Rails::logger::info "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
-            return true, customer.as_json(only: [:name, :second_name, :phone, :sexe, :authentication_token])
+            return true, @phone #customer.as_json(only: :phone)
           else
             #notified admin for these errors, customer could not receive SMS confirmation
 
@@ -129,7 +129,7 @@ class Client
     else
 
       #this password is restricted
-      return Client::customerPasswordValidation(@password)[0], Client::customerPasswordValidation(@password)[1]
+      return false, "Le mot de passe que vous avez choisis est non seulement faible, mais pour des raisons de securité est interndit. Merci de le modifier et de réessayer"
 
     end
   end
@@ -284,12 +284,12 @@ class Client
         if customer_account.save
           @hash = "PR_#{SecureRandom.hex(13).upcase}"
 
-          transaction = Transaction.new(
-              customer: customer.id,
+          transaction = History.new(
+              customer_id: customer.id,
               code: @hash,
               flag: "recharge".upcase,
               context: "none",
-              date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+              # date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
               amount: @amount
           )
 
@@ -693,12 +693,12 @@ class Client
         Rails::logger::info "Information compte client #{@phone} à #{Time.now} est de #{account.amount} F CFA."
         Rails::logger::info "Information compte client #{@phone} à avec le fameux A est de #{account.amount} F CFA."
         if account.update(customer_id: customer.id, amount: account.amount)
-          transaction = Transaction.new(
+          transaction = History.new(
               customer: customer.id,
               code: @hash,
               flag: "recharge".upcase,
               context: "none",
-              date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+              # date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
               amount: @amount
           )
 
@@ -798,7 +798,7 @@ class Client
                 Rails::logger::info "Suppression de l'intent de retrait"
 
                 #enregistrement de l'historique du retrait
-                transaction = Transaction.new(
+                transaction = History.new(
                     customer: customer.id,
                     code: @hash,
                     flag: "retrait".upcase,
@@ -1106,9 +1106,9 @@ class Client
     @lon = lon
 
     marchand = Customer.find(@to) #personne qui recoit
-    marchand_account = Account.where(customer_id: marchand.id).first #le montant de la personne qui recoit
+    marchand_account =  marchand.account #Account.where(customer_id: marchand.id).first #le montant de la personne qui recoit
     client = Customer.find(@from) #la personne qui envoi
-    client_account = Account.where(customer_id: client.id).first # le montant de la personne qui envoi
+    client_account = client.account #Account.where(customer_id: client.id).first # le montant de la personne qui envoi
 
     if @from == @to
       #Send local Pushnotifications here
@@ -1135,12 +1135,12 @@ class Client
 
               #on historise la transaction
               #saveHistory(@to, @hash,"ENCAISSEMENT","none",@amount,nil ,nil ,nil )
-              marchant = Transaction.new(
+              marchant = History.new(
                   customer: @to,
                   code: @hash,
                   flag: "encaissement".upcase,
                   context: "none",
-                  date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                  # date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
                   amount: @amount, #Parametre::Parametre::agis_percentage(@amount)
                   ip: @ip,
                   lat: @lat,
@@ -1167,7 +1167,7 @@ class Client
 
                 #on enregistre encore l'historique
                 #transaction = saveHistory(@from,@hash,"PAIEMENT","none",Parametre::Parametre::agis_percentage(@amount),nil,nil,nil )
-                transaction = Transaction.new(
+                transaction = History.new(
                     customer: @from,
                     code: @hash,
                     flag: "paiement".upcase,
@@ -1208,7 +1208,7 @@ class Client
             return false, "Le solde de votre compte est insuffisant."
           end
         end
-      else
+      else  
         Rails::logger::info "Invalid user password authentication"
         Sms.new(client.phone, "Mot de passe invalide. Transaction annulee. #{$signature}")
         Sms::send
@@ -1302,8 +1302,8 @@ class Client
     #@region = DistanceMatrix::DistanceMatrix::geocoder_search(@lat, @lon)
 
     #on initialise le journal de la transaction
-    h = Transaction.new(
-        date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+    h = History.new(
+        # date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
         amount: @amount,
         context: "none",
         customer: @customer,

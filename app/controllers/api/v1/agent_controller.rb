@@ -115,13 +115,13 @@ class Api::V1::AgentController < ApplicationController
   #permet de lier un compte a un qrcode
   def link
     token = params[:token].split(" \" ")
-    qrcode = params[:qrcode]
+    @qrcode = params[:qrcode]
 
     #insertion des information dans la base de données badge
     badge = Badge.new(
       customer_id: Customer.find_by_authentication_token(token).authentication_token,
-      activate:   true,
-      qrcode:     qrcode
+      activate: true,
+      qrcode: @qrcode
     )
 
     # on enregistre

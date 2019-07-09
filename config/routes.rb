@@ -98,15 +98,6 @@ Rails.application.routes.draw do
 
   #API main root
   namespace :api, defaults: {format: :json} do
-    namespace :sandbox do
-      namespace :v1 do
-        post 'signin', to: 'api#signin'
-        post 'signup', to: 'api#signup'
-        post 'payment/read/qrcode', to: 'api#qrcode'
-        post 'payment/read/code', to: 'api#code'
-        post 'payment/read/phone', to: 'api#phone'  #Paiement sans compte sur la plateforme
-      end
-    end
 
     #Main routing to the plateform PayMeQuick
     namespace :v1 do
@@ -119,6 +110,7 @@ Rails.application.routes.draw do
 
       # Transaction or payment
       match 'session/transaction/:token/:receveur/:montant/:password/:oneSignalID', to: 'api#payment', via: [:get, :options]
+      post 'session/transaction/payment', to: 'api#payment'                 #New payment including post request updated
       match 'session/qrcode/:data', to: 'api#qrcode', via: [:options, :get]
       match 'session/code/:code', to: 'api#code', via: [:options, :get]     #rechercher via le code numerique
       match 'session/history/:phone', to: 'api#user_history', via: [:get, :options] 
@@ -142,6 +134,7 @@ Rails.application.routes.draw do
 
       # historique des clients mobile
       get 'history/:period', to: 'session#history'
+      post 'history', to: 'session#history'
       post 'histories/timemachine', to: 'session#historyByDate'
 
       # test de la connexion internet

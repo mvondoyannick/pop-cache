@@ -209,29 +209,41 @@ class Api::V1::ApiController < ApplicationController
 			amount 			= params[:montant]
 			pwd 				= params[:password]
 			@ip 				= request.remote_ip
-			@lat 				= Base64.decode64(params[:lat])
-			@lon 				= Base64.decode64(params[:long])
+			@lat 				= params[:lat] #Base64.decode64(params[:lat])
+      @lon 				= params[:long] #Base64.decode64(params[:long])
+      
+      begin
 
-			#recuperation du onesignalID
-			@player_id = Base64.decode64(params[:oneSignalID])
+        #recuperation du onesignalID
+        @player_id = "d4b9e500-3374-49cb-aa4c-5ad2d318ad24" #Base64.decode64(params[:oneSignalID])
 
-			Rails::logger::info "oneSignalId : #{@player_id}"
+        Rails::logger::info "oneSignalId : #{@player_id}"
 
-			@customer = Customer.find_by_authentication_token(from)
-			@marchand = Customer.find_by_authentication_token(to)
-			if @customer.blank? && @marchand.blank?
-				render json: {
-						status: 	404,
-						flag: 		:customer_not_found,
-						message: 	"Utilisateur inconnu"
-				}
-			else
-				#OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
-				transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip, @player_id, @lat, @lon)
-				render json: {
-						message: transaction
-				}
-			end
+        @customer = Customer.find_by_authentication_token(from)
+        @marchand = Customer.find_by_authentication_token(to)
+        if @customer.blank? && @marchand.blank?
+          render json: {
+              status: 	404,
+              flag: 		:customer_not_found,
+              message: 	"Utilisateur inconnu"
+          }
+        else
+          #OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
+          transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip, @player_id, @lat, @lon)
+          render json: {
+              message: transaction
+          }
+        end
+
+        rescue ArgumentError => e
+          Rails::logger.warn "Une erreur est survenue durant de deryptage : #{e}"
+
+          render json: {
+            status: :qrcode_failed,
+            message: "QR Code invalide"
+          }
+      end
+
     end
 
 

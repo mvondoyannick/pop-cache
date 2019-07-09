@@ -1,6 +1,6 @@
 # Return all history transaction from customer or enterprise
-module History
-  class History
+module Logstory
+  class Histo
     def initialize(marchand, customer, amount, context, flag)
       @marchand = marchand
       @customer = customer
@@ -19,14 +19,14 @@ module History
       begin
 
         Rails::logger.info "Starting request"
+        @customer = Customer.find_by_authentication_token(@token) # obtention des informations sur le customer
 
         #Search customer
-        @customer = Client.find_by_token(@token)
-        if @customer[0]
+        if @customer
           case @period
           when "jour"
             Rails::logger.info "Recherche des transactions journalieres ..."
-            @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction pour ce jour."
             else
@@ -34,7 +34,7 @@ module History
             end
           when "semaine"
             Rails::logger.info "Recherche des informations hebdomadaire ..."
-            @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction pour cette semaine."
             else
@@ -42,7 +42,7 @@ module History
             end
           when "mois"
             Rails::logger.info "Recherche des informations mensuelles ..."
-            @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_month..Date.today.end_of_month).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_month..Date.today.end_of_month).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction pour ce mois."
             else
@@ -50,7 +50,7 @@ module History
             end
           when "all"
             Rails::logger.info "Recherche de toutes les informations depuis le debut de l'inscription de l'utiliateur ..."
-            @h = Transaction.where(customer: @customer[1]["id"]).all.order(created_at: :desc).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).all.order(created_at: :desc).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction enregistrée depuis la creation de votre compte"
             else
@@ -58,7 +58,7 @@ module History
             end
           when "annee"
             Rails::logger.info "Recherche des informations annuelles ..."
-            @h = Transaction.where(customer: @customer[1]["id"]).where(created_at: Date.today.beginning_of_year..Date.today.end_of_year).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_year..Date.today.end_of_year).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction pour cette année."
             else
@@ -66,7 +66,10 @@ module History
             end
           else
             Rails::logger.info "Recherche des informations sans periode ..."
-            @h = Transaction.where(customer: @customer[1]["id"]).order(created_at: :asc).last(30).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            customer = Customer.find_by_authentication_token(@token) # obtention des informations sur le customer
+            Rails::logger::info "Customer id is : #{customer.id}"
+            @h = History.where(customer_id: customer.id).order(created_at: :asc).last(30).reverse.as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
+            #@h = Customer.find_by_authentication_token(@token).history  #History.where(customer: @customer[1]["id"]).order(created_at: :asc).last(30).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Il semble que vous n'ayez encore effectué aucune transaction."
             else
@@ -79,7 +82,7 @@ module History
         end
 
 
-      rescue ActiveRecordError::ConnectionNotEstablished, ActiveRecordError::ConnectionFailed
+      rescue ActiveRecord::ConnectionNotEstablished
 
         return false, "Un probleme de connexion est survenu"
 
@@ -93,8 +96,8 @@ module History
     def self.h_interval(argv)
 
       @token    = argv[:token]
-      @debut    = argv[:debut]
-      @fin      = argv[:fin]
+      @debut    = argv[:begin]
+      @fin      = argv[:end]
 
       begin
 
@@ -107,7 +110,7 @@ module History
         else
 
           Rails::logger.info customer.phone
-          query = Transaction.where(customer: customer.id).where(created_at: @debut.to_date..@fin.to_date).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+          query = History.where(customer: customer.id).where(created_at: @debut.to_date..@fin.to_date).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
           if query.blank?
 
             return false, "Aucune transaction effectuée entre #{@debut} et #{@fin}"

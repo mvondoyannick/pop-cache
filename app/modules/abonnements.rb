@@ -2,11 +2,6 @@ module Abonnements
 
   class Paliers
 
-    #definition
-    def initialize
-
-    end
-
     # @param [String] name
     # @param [Integer] amount
     # @param [Integer] max_retrait

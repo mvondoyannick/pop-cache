@@ -37,6 +37,8 @@ gem 'httparty'
 gem 'geocoder'
 #json web token
 gem 'jwt'
+#sending Email over Heroku
+gem 'sendgrid-ruby'
 #insert table print
 gem "table_print"
 #gestion du qrcode
@@ -90,6 +92,7 @@ group :development do
   gem "binding_of_caller"
   gem "parallel"
   gem "wit"
+  gem "rails-erd"
 end
 
 group :test do
