@@ -1140,8 +1140,6 @@ class Client
               marchant = History.new(
                   customer_id: marchand.id,
                   amount: @amount,
-                  context: 'none',
-                  flag: 'encaissement'.upcase,
                   code: @hash,
                   flag: "encaissement".upcase,
                   context: "none"
