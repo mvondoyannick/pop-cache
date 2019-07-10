@@ -15,13 +15,14 @@ class Api::V1::CustomerController < ApplicationController
 
 
   def validate_signin
-    @phone     = params[:email]
-    @code     = params[:code]
+    @phone = params[:phone]
+    @code = params[:code]
 
     query = CustomerDesktop::Client.confirm_signin(@phone, @code)
+    puts query
     render json: {
-        status:   query[0],
-        message:  query[1]
+      status:   query[0],
+      message:  query[1]
     }
   end
 

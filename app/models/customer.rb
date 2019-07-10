@@ -1,10 +1,11 @@
 class Customer < ApplicationRecord
   acts_as_token_authenticatable     #pour generer le authentication_token
-  belongs_to :type
-  has_one :badge
-  has_one :customer_datum
-  has_one :account
-  has_one :history
+  belongs_to :type          # le type d'un customer, customer | demo
+  has_one :badge            # Classification d'un customer en fonction de ses activités
+  has_one :customer_datum   # Les informations du client
+  has_one :account          # Le compte du client
+  has_one :history          # L'historique du client
+  has_one :await            # L'intention de retrait du customer
 
   before_save :generate_apikey
   before_save :set_hand
@@ -14,7 +15,7 @@ class Customer < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable
 
-  #active storage
+  #active storage, gestion de la CNI | Formulaire | des Photos
   has_one_attached :cni_file
   has_one_attached :formulaire
   has_one_attached :photo
@@ -30,35 +31,23 @@ class Customer < ApplicationRecord
   #validates :cni, presence: true, uniqueness: {message: "%{value} a deja ete utilisé"}
   validates :email, presence: true, uniqueness: {message: "%{value} a deja ete utilisé."}
 
-  #permet de generer le code si et seulement s'il n'existe pas
+  #permet de generer le code/ MIN si et seulement s'il n'existe pas
   def generate_code
     if self.code.nil?
       self.code = rand(5**5)
     end
   end
 
-  def bjr
-    require 'aes'
-    key = Rails.application.secrets.secret_key_base #AES.key
-    # puts "bonjour current model"
-    qrtoken = {
-      id: self.authentication_token,
-      date: Time.now
-    }
-    # creating normalize qrcode
-    puts AES.encrypt(qrtoken.to_s, key)
-  end
-
   private
   def generate_apikey
-    self.apikey = Base64.encode64({
+    self.apikey = Base64.strict_encode64({
       id: self.authentication_token,
       montant: nil,
       long: nil,
       lat: nil,
       context: "plateform",
       date: nil
-    }.to_s).delete("\n")
+    }.to_s) #.delete("\n")
   end
 
   # TODO VALIDATE CHECKPHONE
@@ -84,9 +73,9 @@ class Customer < ApplicationRecord
 
   #Mettre le nom de la personne en majuscule et le code
   def setName
-    self.name         = self.name.upcase
-    self.second_name  = self.second_name.capitalize
-    self.code = rand(11**11)
+    self.name = self.name.upcase
+    self.second_name = self.second_name.capitalize
+    self.code = rand(5**5)
   end
 
 

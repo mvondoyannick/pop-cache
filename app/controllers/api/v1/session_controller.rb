@@ -19,14 +19,14 @@ class Api::V1::SessionController < ApplicationController
 
         query = Client::signup(@name, @second_name, @tel, @cni, @password, @sexe, @question_id, @response, @ip)
         render json: {
-            status:   query
+          status: query
         }
 
       else
 
         render json: {
-            satus: :false,
-            message: "Centaines informations sont manquantes"
+          satus: :false,
+          message: "Centaines informations sont manquantes"
         }
 
       end
@@ -37,12 +37,12 @@ class Api::V1::SessionController < ApplicationController
     #Get the customer balance
     # POST
     def get_balance
-        phone       = params[:phone]
-        password    = params[:password]
-        @playerId   = params[:playerId]
+      phone       = params[:phone]
+      password    = params[:password]
+      @playerId   = params[:playerId]
 
-        balance = Client::get_balance(phone, password)
-        render json: balance
+      balance = Client::get_balance(phone, password)
+      render json: balance
     end
 
     # DEPRECATED
@@ -51,12 +51,12 @@ class Api::V1::SessionController < ApplicationController
       @customer = Customer.find_by_authentication_token(request.headers['HTTP_X_API_POP_KEY'])
       if @customer.blank?
         render json: {
-            status:   :customer_not_found,
-            message:  "utilisateur inconnu"
+          status:   :customer_not_found,
+          message:  "utilisateur inconnu"
         }
       else
         render json: {
-            message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(50).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+          message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(50).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
         }
       end
     end
@@ -65,8 +65,9 @@ class Api::V1::SessionController < ApplicationController
      #retourne les informations de la semaine entre le début de la semaine et la fin de la semaine
      # Refactoring
     def history
-      @token    = request.headers['HTTP_X_API_POP_KEY']
-      Rails::logger::info "receive token : #{@token}"
+      @token = request.headers['HTTP_X_API_POP_KEY'] #Get the customer header
+      @ip_adresse = request.remote_ip # Get customer remote IP
+      Rails::logger::info "receive token : #{@token} from #{@ip_adresse}"
       @period   = params[:period]
       if @token.present?
 
@@ -75,8 +76,8 @@ class Api::V1::SessionController < ApplicationController
         if customer.blank?
 
           render json: {
-              status:   false,
-              message:  "CUSTOMER NOT FOUND"
+            status: false,
+            message: "CUSTOMER NOT FOUND"
           }
 
         else
@@ -84,8 +85,8 @@ class Api::V1::SessionController < ApplicationController
           #starting get customer history
           request = Logstory::Histo.h_customer(@token, @period)
           render json: {
-            status:     request[0],
-            message:    request[1]
+            status: request[0],
+            message: request[1]
           }
 
         end
@@ -599,8 +600,8 @@ class Api::V1::SessionController < ApplicationController
     def updatePassword
       Rails::logger::info "Starting caal method for renewing password"
       @token          = request.headers["HTTP_X_API_POP_KEY"]
-      @previouPwd     = params[:ancien]
-      @newPwd         = params[:nouveau]
+      @previouPwd     = params[:hold_pass] # Ancien mot de passe
+      @newPwd         = params[:new_pass] # Nouveau mot de passe
 
       if @token.present? && @previouPwd.present? && @newPwd.present?
 
@@ -609,7 +610,7 @@ class Api::V1::SessionController < ApplicationController
         if @customer.blank?
           Rails::logger::info "User is unknow"
           render json: {
-              status:     404,
+              status:     false,
               flag:       :cunstomer_not_found,
               message:    "Utilisateur inconnu"
           }
@@ -618,23 +619,34 @@ class Api::V1::SessionController < ApplicationController
           if @customer.valid_password?(@previouPwd)
             Rails::logger::info "User is valid"
             #tout va bien, on peut continuer en chageant les informations sur le mot de passe
-            @customer.update(password: @newPwd)
-            #on notifie le gar que tout c'est bien passé
-            #Notification SMS
-            Sms.new(@customer.phone, "Votre mot de passe a ete mis a jour. PAYQUICK")
-            Sms::send
+            if @customer.update(password: @newPwd, authentication_token: nil)
 
-            render json: {
-                status:     200,
-                flag:       :password_updated,
-                message:    "Votre mot de passe a ete mis a jour. Merci de vous reconnecter a PAYQUICK"
-            }
+              #on notifie le gar que tout c'est bien passé
+              #Notification SMS
+              Sms.sender(@customer.phone, "Votre mot de passe a ete mis a jour, merci de vous reconnecter. PayMeQuick")
+              Sms::send
+
+              render json: {
+                status: true,
+                flag: :password_updated,
+                message: "Votre mot de passe a ete mis a jour. Merci de vous reconnecter a PayMeQuick"
+              }
+
+            else
+              Rails::logger.info "Failed to update password"
+              render json: {
+                status: false,
+                flag: :password_not_updated,
+                message: "Impossible de mettre à jour votre mot de passe"
+              }
+
+            end
           else
             Rails::logger::info "User is invalid"
             render json: {
-                status:     404,
-                flag:       :password_no_match,
-                message:    "Impossible de vous identifier"
+              status:     404,
+              flag:       :password_no_match,
+              message:    "Impossible de vous identifier"
             }
           end
         end
@@ -642,10 +654,10 @@ class Api::V1::SessionController < ApplicationController
       else
 
         render json: {
-            status: false,
-            flag:   "Some parametres are misssing",
-            message: "Données invalides ou manquantes",
-            params: "#{@token}, #{@previouPwd}, #{@newPwd}"
+          status: false,
+          flag:   "Some parametres are misssing",
+          message: "Données invalides ou manquantes",
+          params: "#{@token}, #{@previouPwd}, #{@newPwd}"
         }
 
       end

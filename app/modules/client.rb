@@ -503,14 +503,16 @@ class Client
       return false, "Utilisateur inconnu."
     else
       if query.valid_password?(@password)
-        account = Account.find_by_customer_id(query.id)
+        # account = Account.find_by_customer_id(query.id)
+        # starting refactoring account
+        account = query.account.amount 
         if account.blank?
           return false, "Aucun compte utilisateur correcpondant ou compte vide"
         else
           #return OneSignal API
-          Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{Client.appName}")
+          Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name}, le solde de votre compte est : #{account} #{$devise}. #{Client.appName}")
           Sms::send
-          return true, "#{prettyCallSexe(query.sexe)} #{query.second_name}, le solde de votre compte est : #{account.amount} #{$devise}. #{$signature}"
+          return true, "#{prettyCallSexe(query.sexe)} #{query.second_name}, le solde de votre compte est : #{account} #{$devise}. #{$signature}"
         end
       else
         return false, "Mot de passe invalide. #{$signature}"
@@ -694,12 +696,12 @@ class Client
         Rails::logger::info "Information compte client #{@phone} à avec le fameux A est de #{account.amount} F CFA."
         if account.update(customer_id: customer.id, amount: account.amount)
           transaction = History.new(
-              customer: customer.id,
-              code: @hash,
-              flag: "recharge".upcase,
-              context: "none",
-              # date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-              amount: @amount
+            customer: customer.id,
+            code: @hash,
+            flag: "recharge".upcase,
+            context: "none",
+            # date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+            amount: @amount
           )
 
           if transaction.save
@@ -1133,19 +1135,16 @@ class Client
               Rails::logger::info "Solde tm : #{client_account.amount.to_f}"
               marchand_account.amount += @amount
 
-              #on historise la transaction
+              #on historise la transaction du marche
               #saveHistory(@to, @hash,"ENCAISSEMENT","none",@amount,nil ,nil ,nil )
               marchant = History.new(
-                  customer: @to,
+                  customer_id: marchand.id,
+                  amount: @amount,
+                  context: 'none',
+                  flag: 'encaissement'.upcase,
                   code: @hash,
                   flag: "encaissement".upcase,
-                  context: "none",
-                  # date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-                  amount: @amount, #Parametre::Parametre::agis_percentage(@amount)
-                  ip: @ip,
-                  lat: @lat,
-                  long: @lon,
-                  region: Geocoder.search([@lat, @lon]).first.address
+                  context: "none"
               )
 
               #on enregistre
@@ -1168,13 +1167,12 @@ class Client
                 #on enregistre encore l'historique
                 #transaction = saveHistory(@from,@hash,"PAIEMENT","none",Parametre::Parametre::agis_percentage(@amount),nil,nil,nil )
                 transaction = History.new(
-                    customer: @from,
-                    code: @hash,
-                    flag: "paiement".upcase,
-                    context: "none",
-                    date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-                    amount: Parametre::Parametre::agis_percentage(@amount),
-                    ip: @ip
+                  customer_id: client.id,
+                  amount: Parametre::Parametre::agis_percentage(@amount),
+                  context: 'none',
+                  flag: 'paiement'.upcase,
+                  code: @hash,
+                  context: "none"
                 )
 
                 if transaction.save

@@ -92,6 +92,7 @@ module Logstory
 
 
     # Get history with beginning and end period
+    # @calling Lostory::Histo.h_interval(token: @token, debut: @debut, fin: @fin)
     # @param [Object] argv
     def self.h_interval(argv)
 

@@ -12,13 +12,13 @@
       @password   = password
 
       #on recherche customer
-      customer = Customer.find_by_email(@phone)
+      customer = Customer.find_by_phone(@phone)
       if customer.blank?
         return false, "customer not found"
       else
         if customer.valid_password?(@password)
           intend = code_signin(@phone)
-          return true, intend[1]
+          return true, intend
         else
           return false, "Phone or password are wrong"
         end
@@ -41,9 +41,9 @@
     #Permet de generer le code d identification d authentification d'un client web
     # @param [Object] phone
     def self.code_signin(phone)
-      @phone      = phone
+      @phone = phone
 
-      @code       = rand(5**5)
+      @code = rand(5**5)
 
       #on enregistre dans la base de données
       customer = Customer.find_by_phone(@phone)
@@ -55,7 +55,7 @@
           #on genere le SMS
           Sms.new(@phone, "#{@code} est votre code PAYQUICK")
           Sms.send
-          return true, customer.as_json(only: :phone)
+          return customer.as_json(only: :phone)
         else
           return false
         end
@@ -79,11 +79,14 @@
         if customer.two_fa.eql?(@code.to_s)
           #on met a jour cette information
           if customer.update(two_fa: "authenticate")
+            puts "customer has been authenticated"
             return true, customer.as_json(only: [:name, :second_name, :phone, :email, :authentication_token, :created_at, :cni, :two_fa])
           else
+            puts "Mise a jour impossible"
             return false, "Mise a jour impossible"
           end
         else
+          puts "code pas indentique"
           return false, "Code pas indentique"
         end
       end
@@ -97,11 +100,12 @@
       if customer.blank?
         return false, "Customer not_found"
       else
-        transaction = Transaction.where(customer: customer.id).order(created_at: :desc)
+        transaction = History.where(customer_id: customer.id).order(created_at: :desc)
         if transaction.blank?
           return false, "Aucune transaction pour le moment"
         else
-          return true, transaction.as_json(only: [:id, :created_at, :amount, :context, :customer, :flag, :code, :region, :ip, :color])
+          puts transaction.as_json
+          return true, transaction.as_json
         end
       end
     end
