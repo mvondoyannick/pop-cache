@@ -1142,7 +1142,8 @@ class Client
                   amount: @amount,
                   code: @hash,
                   flag: "encaissement".upcase,
-                  context: "none"
+                  context: "Mobile".upcase,
+                  ip: @ip
               )
 
               #on enregistre
@@ -1167,7 +1168,8 @@ class Client
                 transaction = History.new(
                   customer_id: client.id,
                   amount: Parametre::Parametre::agis_percentage(@amount),
-                  context: 'none',
+                  context: "Mobile".upcase,
+                  ip: @ip
                   flag: 'paiement'.upcase,
                   code: @hash
                 )

@@ -2,6 +2,7 @@ class History < ApplicationRecord
   belongs_to :customer
 
   before_save :set_color
+  before_save :set_ipadress  #convertis un adresse IP en region
 
   private
   def set_color
@@ -10,5 +11,9 @@ class History < ApplicationRecord
     self.color = "#e53935" if self.flag == "RETRAIT"      #rouge
     self.color = "#fbc02d" if self.flag == "RECHARGE"     #jaune
     self.color = "#ab47bc" if self.flag == "ABONNEMENT"   #violet
+  end
+
+  def set_ipadress
+    self.region = DistanceMatrix::DistanceMatrix.pays(self.ip) if self.ip != nil
   end
 end
