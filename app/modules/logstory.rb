@@ -26,7 +26,7 @@ module Logstory
           case @period
           when "jour"
             Rails::logger.info "Recherche des transactions journalieres ..."
-            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).last(100).reverse.as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).last(100).as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction pour ce jour."
             else
