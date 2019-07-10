@@ -1169,8 +1169,7 @@ class Client
                   amount: Parametre::Parametre::agis_percentage(@amount),
                   context: 'none',
                   flag: 'paiement'.upcase,
-                  code: @hash,
-                  context: "none"
+                  code: @hash
                 )
 
                 if transaction.save
