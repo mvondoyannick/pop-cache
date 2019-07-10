@@ -68,25 +68,21 @@
       @token      = phone
       @code       = code
 
-      puts "le code est #{@code}"
-
       #on recherche l'utilisateur via son code
       customer = Customer.find_by_phone(@token)
       if customer.blank?
         return false, "Customer not found"
       else
-        puts "#{customer.two_fa} est le code"
         if customer.two_fa.eql?(@code.to_s)
           #on met a jour cette information
           if customer.update(two_fa: "authenticate")
-            puts "customer has been authenticated"
             return true, customer.as_json(only: [:name, :second_name, :phone, :email, :authentication_token, :created_at, :cni, :two_fa])
           else
-            puts "Mise a jour impossible"
+            
             return false, "Mise a jour impossible"
           end
         else
-          puts "code pas indentique"
+          
           return false, "Code pas indentique"
         end
       end
@@ -104,7 +100,6 @@
         if transaction.blank?
           return false, "Aucune transaction pour le moment"
         else
-          puts transaction.as_json
           return true, transaction.as_json
         end
       end

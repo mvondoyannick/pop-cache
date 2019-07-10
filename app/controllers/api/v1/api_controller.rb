@@ -102,8 +102,6 @@ class Api::V1::ApiController < ApplicationController
 			@amount 	= params[:amount]
 			@password = params[:password]
 
-			puts "This is token : #{@token}"
-
 			begin
 
 				#Recherche de ce numero sur la plateforme
@@ -161,7 +159,7 @@ class Api::V1::ApiController < ApplicationController
 						}
 					else
 						#on retourne les informations
-						puts @customer.code
+					
 						render json: {
 								message: true,
 								context: searchContext(@customer),

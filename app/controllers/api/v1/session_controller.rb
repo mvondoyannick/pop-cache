@@ -323,7 +323,7 @@ class Api::V1::SessionController < ApplicationController
 
     def validate_retrait
         password = Base64.decode64(params[:password])
-        puts "Mot de passe : #{password}"
+        
         #header = request.headers['HTTP_X_API_POP_KEY']
         token = params[:token]
 
@@ -843,7 +843,7 @@ class Api::V1::SessionController < ApplicationController
       @second_name  = params[:second_name]
       @sexe         = params[:sexe]
       @password     = params[:password]
-      puts "Mot de passe #{params[:token]}"
+      
 
       @customer = Customer.find_by_authentication_token(@token)
       if @customer.blank?

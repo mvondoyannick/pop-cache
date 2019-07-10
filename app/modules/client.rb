@@ -277,7 +277,7 @@ class Client
     else
       customer_account = customer.account #Account.find_by_customer_id(customer.id)
       if customer_account.blank?
-        puts "Auccun compte correspondant trouve."
+        #puts "Auccun compte correspondant trouve."
         return false, "Auccun compte correspondant trouve."
       else
         customer_account.amount = customer_account.amount.to_i + @amount.to_i
@@ -297,16 +297,16 @@ class Client
           if transaction.save
             Sms.new(@phone, "#{prettyCallSexe(customer.sexe)} #{customer.name} #{customer.second_name}, votre compte crediter d'un montant de #{@amount} #{$devise}, le solde de votre compte est de #{customer_account.amount} #{$devise}. ID Transaction : #{@hash}. #{$signature}")
             Sms::send
-            puts "Le compte a ete credite d\'un montant de #{@amount}"
+            #puts "Le compte a ete credite d\'un montant de #{@amount}"
             return "Le compte a ete credite d\'un montant de #{@amount}."
           else
-            puts "impossible de sauvegarder"
+            #puts "impossible de sauvegarder"
             return "Impossible de sauvegarder votre activité"
           end
         else
           Sms.new(@phone, "#{prettyCallSexe(customer.sexe)} #{customer.name} #{customer.second_name}, impossible de crediter votre compte. Echec de la Transaction #{@hash}. #{$signature}")
           Sms::send
-          puts "credit not"
+          #puts "credit not"
           return "impossible de crediter le compte. code erreurs : #{customer_account.errors}"
         end
       end
@@ -327,7 +327,7 @@ class Client
 
     #on recherche le gar en question en decodant la chaine
     query = JWT.decode token, Rails, application.secrets.secret_key_base
-    puts query
+    #puts query
   end
 
   #AUTHENTIFICATION-CONNEXION D'UN UTILISATEUR SUR LA PLATEFORME

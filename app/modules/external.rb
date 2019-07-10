@@ -16,7 +16,6 @@ module External
   #permet de gerer l'utilisateur demo, n'ayant pas de compte
   class DemoUsers
 
-
     def self.Payment(argv)
       @customer_token = argv[:token]
       @customer_password = argv[:password]
