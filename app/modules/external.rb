@@ -47,7 +47,7 @@ module External
           else
 
             # verififier qu'il s'agisse bien d'un numero du Cameroun...pour le moment
-            if Parametre::PersonalData::numeroCameroun(@phone)
+            if Parametre::PersonalData::numeroCameroun(@merchant_phone)
 
               # Ce numéro est un numéro camerounais, we can process
               #searching for merchant
@@ -175,7 +175,7 @@ module External
 
             else
 
-              return false, "Ce numéro #{@phone} ne semble pas etre un numéro appartenant au Cameroun. Merci de vérifier ce numéro et recommencer."
+              return false, "Ce numéro #{@merchant_phone} ne semble pas etre un numéro appartenant au Cameroun. Merci de vérifier ce numéro et recommencer."
 
             end
 
