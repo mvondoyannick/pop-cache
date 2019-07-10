@@ -26,7 +26,7 @@ module Logstory
           case @period
           when "jour"
             Rails::logger.info "Recherche des transactions journalieres ..."
-            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).last(100).reverse.as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction pour ce jour."
             else
@@ -34,7 +34,7 @@ module Logstory
             end
           when "semaine"
             Rails::logger.info "Recherche des informations hebdomadaire ..."
-            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).order(created_at: :desc).last(100).reverse.as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction pour cette semaine."
             else
@@ -42,7 +42,7 @@ module Logstory
             end
           when "mois"
             Rails::logger.info "Recherche des informations mensuelles ..."
-            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_month..Date.today.end_of_month).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_month..Date.today.end_of_month).order(created_at: :desc).last(100).reverse.as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction pour ce mois."
             else
@@ -50,7 +50,7 @@ module Logstory
             end
           when "all"
             Rails::logger.info "Recherche de toutes les informations depuis le debut de l'inscription de l'utiliateur ..."
-            @h = History.where(customer_id: @customer.id).all.order(created_at: :desc).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).all.order(created_at: :desc).reverse.as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction enregistrée depuis la creation de votre compte"
             else
@@ -58,7 +58,7 @@ module Logstory
             end
           when "annee"
             Rails::logger.info "Recherche des informations annuelles ..."
-            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_year..Date.today.end_of_year).order(created_at: :desc).last(100).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_year..Date.today.end_of_year).order(created_at: :desc).last(100).reverse.as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction pour cette année."
             else

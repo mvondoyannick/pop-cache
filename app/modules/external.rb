@@ -81,7 +81,7 @@ module External
                     client = History.new(
                       customer_id: customer.id,
                       amount: Parametre::Parametre::agis_percentage(@amount),
-                      context: 'none',
+                      context: 'phone',
                       flag: 'paiement'.upcase,
                       code: "EXT_PAY_#{@hash}"
                     )
@@ -93,7 +93,7 @@ module External
                       marchand = History.new(
                         customer_id: customer.id,
                         amount: @amount,
-                        context: 'none',
+                        context: 'phone',
                         flag: 'paiement'.upcase,
                         code: "EXT_PAY_#{@hash}"
                       )
@@ -128,7 +128,7 @@ module External
                     marchant = History.new(
                       customer_id: Customer.find_by_phone(@merchant_phone).id,
                       amount: @amount,
-                      context: 'none',
+                      context: 'phone',
                       flag: 'encaissement'.upcase,
                       code: "EXT_PAY_#{@hash}"
                     )
@@ -138,7 +138,7 @@ module External
                       client = History.new(
                         customer_id: customer.id,
                         amount: Parametre::Parametre::agis_percentage(@amount),
-                        context: 'none',
+                        context: 'phone',
                         flag: 'paiement'.upcase,
                         code: "EXT_PAY_#{@hash}"
                       )
