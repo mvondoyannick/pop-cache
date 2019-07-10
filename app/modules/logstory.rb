@@ -58,7 +58,7 @@ module Logstory
             end
           when "annee"
             Rails::logger.info "Recherche des informations annuelles ..."
-            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_year..Date.today.end_of_year).order(created_at: :desc).last(100).as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_year..Date.today.end_of_year).order(created_at: :desc).last(100).reverse.as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Aucune transaction pour cette année."
             else
@@ -68,8 +68,8 @@ module Logstory
             Rails::logger.info "Recherche des informations sans periode ..."
             customer = Customer.find_by_authentication_token(@token) # obtention des informations sur le customer
             Rails::logger::info "Customer id is : #{customer.id}"
-            @h = History.where(customer_id: customer.id).order(created_at: :asc).last(30).as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
-            #@h = Customer.find_by_authentication_token(@token).history  #History.where(customer: @customer[1]["id"]).order(created_at: :asc).last(30).as_json(only: [:date, :amount, :flag, :code, :color, :region])
+            @h = History.where(customer_id: customer.id).order(created_at: :asc).last(30).reverse.as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
+            #@h = Customer.find_by_authentication_token(@token).history  #History.where(customer: @customer[1]["id"]).order(created_at: :asc).last(30).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
             if @h.blank?
               return false, "Il semble que vous n'ayez encore effectué aucune transaction."
             else

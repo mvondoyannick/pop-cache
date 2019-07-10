@@ -42,7 +42,7 @@ module DistanceMatrix
       @ip   = ip
       begin
         results = Geocoder.search(@ip)
-        return results.first.country
+        return results.first.region
       rescue Geocoder::NetworkError
         return "Une erreur reseau est survenu durant l'obtention des information sur l'adresse IP"
       rescue NoMethodError
