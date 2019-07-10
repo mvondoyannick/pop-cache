@@ -1169,7 +1169,7 @@ class Client
                   customer_id: client.id,
                   amount: Parametre::Parametre::agis_percentage(@amount),
                   context: "Mobile".upcase,
-                  ip: @ip
+                  ip: @ip,
                   flag: 'paiement'.upcase,
                   code: @hash
                 )
