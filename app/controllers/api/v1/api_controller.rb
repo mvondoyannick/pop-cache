@@ -202,13 +202,13 @@ class Api::V1::ApiController < ApplicationController
     # @details
 	# @return [Object]
 	def payment
-			from = params[:token]
-			to = params[:receveur]
-			amount = params[:montant]
-			pwd = params[:password]
-			@ip = request.remote_ip
-			@lat = params[:lat] #Base64.decode64(params[:lat])
-      		@lon = params[:long] #Base64.decode64(params[:long])
+		from = params[:token]
+		to = params[:receveur]
+		amount = params[:montant]
+		pwd = params[:password]
+		@ip = request.remote_ip
+		@lat = params[:lat] #Base64.decode64(params[:lat])
+		@lon = params[:long] #Base64.decode64(params[:long])
       
       begin
 
@@ -221,9 +221,9 @@ class Api::V1::ApiController < ApplicationController
         @marchand = Customer.find_by_authentication_token(to)
         if @customer.blank? && @marchand.blank?
           render json: {
-              status: 	404,
-              flag: 		:customer_not_found,
-              message: 	"Utilisateur inconnu"
+              status: 404,
+              flag: :customer_not_found,
+              message: "Utilisateur inconnu"
           }
         else
           #OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")

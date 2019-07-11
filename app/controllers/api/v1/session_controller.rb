@@ -205,11 +205,12 @@ class Api::V1::SessionController < ApplicationController
       Rails::logger.info "Starting signin process ..."
       phone = params[:phone]
       password = params[:password]
+      device = params[:uuid]
 
       if phone.present? && password.present?
 
         #query the user
-        signin = Client::auth_user(phone, password)
+        signin = Client::auth_user(phone, password, device)
         render json: signin
 
       else
@@ -220,6 +221,22 @@ class Api::V1::SessionController < ApplicationController
         }
 
       end
+    end
+
+
+    # Update customer device uuis
+    def authNewUuidDevice
+      @phone = params[:phone]
+      @sms = params[:code]
+      @uuid = params[:uuid]
+
+      Rails::logger::info "Starting adding new uuid devices #{@uuid}"
+      query = Client::updateDevice(uuid: @uuid, phone: @phone, sms: @sms)
+      render json: {
+        status: query[0],
+        message: query[1],
+      }
+      
     end
 
     #obtention du solde du compte client

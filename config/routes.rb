@@ -132,6 +132,9 @@ Rails.application.routes.draw do
       match 'security/reset/password', to: 'session#resetPassword', via: [:post, :options]
       match 'session/phone', to: 'session#getPhoneNumber', via: [:post, :options]
 
+      # Gestion des UUID
+      post 'session/uuid', to: 'session#authNewUuidDevice'
+
       # historique des clients mobile
       get 'history/:period', to: 'session#history'
       post 'history', to: 'session#history'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_09_213533) do
+ActiveRecord::Schema.define(version: 2019_07_11_171123) do
 
   create_table "abonnements", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.bigint "palier_id"
@@ -131,15 +131,12 @@ ActiveRecord::Schema.define(version: 2019_07_09_213533) do
   create_table "customer_data", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.bigint "customer_id"
     t.string "phone"
-    t.string "sim_phone"
-    t.string "network_operator"
     t.string "uuid"
-    t.string "imei"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "latitude"
-    t.string "longitude"
     t.string "customer_ip"
+    t.string "device"
+    t.string "uuid2"
     t.index ["customer_id"], name: "index_customer_data_on_customer_id"
   end
 
@@ -167,6 +164,7 @@ ActiveRecord::Schema.define(version: 2019_07_09_213533) do
     t.string "code"
     t.string "ip"
     t.string "pays"
+    t.string "device"
     t.index ["authentication_token"], name: "index_customers_on_authentication_token", unique: true
     t.index ["email"], name: "index_customers_on_email", unique: true
     t.index ["reset_password_token"], name: "index_customers_on_reset_password_token", unique: true

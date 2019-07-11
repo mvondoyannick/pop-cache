@@ -524,14 +524,12 @@ module Parametre
         @data = rand(6**6) #SecureRandom.hex(2).upcase
         #auth.two_fa = Crypto::cryptoSSL(data)
         if auth.update(two_fa: @data, perime_two_fa: 1.hour.from_now)
-          Sms.new(@phone, "#{@data} est le code permettant de  vous authentifier sur PAYQUICK.")
-          Sms::send
+          Sms.sender(@phone, "#{@data} est le code permettant de  vous authentifier sur PAYQUICK.")
 
           #on retourne les informations
           return true, "Identification a deux facteurs envoyé"
         else
-          Sms.new(@phone, "Impossible de terminer votre inscription .")
-          Sms::send
+          Sms.sender(@phone, "Impossible de terminer votre inscription .")
 
           #on retourne les informations
           return false, "Nous n'avons pas été capable de vous identifier! c'est tres génant. errors: #{auth.errors.messages}"

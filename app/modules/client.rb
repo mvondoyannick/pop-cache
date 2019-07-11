@@ -330,6 +330,99 @@ class Client
     #puts query
   end
 
+
+  # CHECK CUSTOMER DEVICE ID
+  # detail verify if customer Device has been change on new login
+  # param [Object] argc
+  def self.device(argc)
+    @device = argc[:device]
+    @phone = argc[:phone]
+
+    # verify customer device
+    customer = Customer.find_by_phone(@phone)
+    if customer.blank?
+
+      return false, "Unknow customer"
+
+    else
+      if customer.device.nil?
+        #first time customer login on the plateform
+        if customer.customer_datum.update(uuid: @device)
+          Rails::logger::info "Mise à jour de l'UUID effectué #{device} avec success"
+          return true #, "Welcome to first login on PayCore #{customer.name}"
+        else
+          Rails::logger.info "Impossible de mettre votre device UUID a jour"
+          return false #, "send SMS for confirmation authentication on the new device"
+        end
+      else
+        if customer.device == @device
+          Rails::logger::info "UUID est indentique, authentication continu"
+          return true
+        else
+          # Update new device to customerDatum.uuid2
+          if customer.customer_datum.update(uuid2: @device)
+            Rails::logger::info "Mise a jour de l'UUID 2 effectuée avec la value #{@device}"
+            return false #Updated
+          else
+            Rails::logger::info "Impossible de mettre a jour l'UUID 2"
+            return false #Unable to updated
+          end
+          #return false
+        end
+      end
+    end
+
+  end
+
+
+  # UPDATE DEVICE NEW UUID CUSTOMER
+  # param [String] phone
+  # param [String] uuid
+  def self.updateDevice(argc)
+    @uuid = argc[:uuid]
+    @phone = argc[:phone]
+    @sms = argc[:sms]
+
+    customer = Customer.find_by_phone(@phone)
+    if customer.blank?
+      return false, "Customer Unknow"
+    else
+      # check SMS and 
+      data = CustomerDatum.find_by(customer_id: customer.id, uuid2: @uuid, phone: @phone)
+
+      if data.blank?
+        Rails::logger::info "Rien de similaire trouvé, les UUID2 ne sont pas correspondant"
+        return false, "Pas d'informations similaires trouvées, il semblerait qu'il ait une incoherence dans la transmission des données, ce compte reste bloqué!"
+      else
+        # request SMS authentication
+        if customer.two_fa == @sms
+          Rails::logger::info "Update information two_fa of customer"
+          if customer.update(two_fa: 'authenticate')
+
+            #mise a jour de l'uuid premium
+            if customer.update(device: @uuid)
+
+              Rails::logger::info "Customer has be authenticated ... welcome Mr #{customer.name}"
+              return true, "Utilisateur authentifié avec succès. Content de vous revoir Mr/Mme #{customer.name} #{customer.second_name}"
+
+            else
+
+              Rails::logger::info "Impossible de mettre a jour le nouvel UUID"
+              return false, "Impossible d'ajouter votre nouveau téléphone sur la plateforme"
+
+            end
+          else
+            Rails::logger::info "Update two_fa is impossible"
+            return false, "Impossible de mettre à jour vos information d'authentication"
+          end
+        else
+          Rails::logger::info "Les informations du SMS ne sont pas indentique"
+          return false, "Le code SMS ne semble pas etre correcte, merci de réessayer!"
+        end
+      end
+    end
+  end
+
   #AUTHENTIFICATION-CONNEXION D'UN UTILISATEUR SUR LA PLATEFORME
   # @method     Authentifier un utilisateur
   # @name       Client::auth_user
@@ -339,9 +432,10 @@ class Client
   # @param [Object] password
   # @author @mvondoyannick
   # @version 0.0.1beta-rev-11-03-83-50
-  def self.auth_user(phone, password) # prévoir l'ajout de l'@ IP
-    @phone = phone
-    @password = password
+  def self.auth_user(phone, password, device_id) # prévoir l'ajout de l'@ IP
+    @phone = phone          # Customer phone account
+    @password = password    # customer password account
+    @device_id = device_id  # customer uniq device ID
 
     Rails::logger::info "Authenticating user #{@phone} call ..."
 
@@ -351,8 +445,31 @@ class Client
       if customer.valid_password?(@password)
         if customer.two_fa == "authenticate"
 
-          # on retourne les informations
-          return true, customer.as_json(only: [:name, :second_name, :authentication_token, :code])
+          # check customer device
+          if device(device: device_id, phone: @phone)
+
+            # a ce stade, tout est true, donc tout va bien
+            # on retourne les informations
+            Rails::logger::info "Utilisateur et device indentique"
+
+            # sending push notification to say welcome to customer
+
+            return true, customer.as_json(only: [:name, :second_name, :authentication_token, :code])
+
+          else
+
+            # rien ne va!
+            Rails::logger::info "Certaines informations au niveau de votre device sont differents, confirmez-nous que c'est bien vous!"
+
+            # sending SMS to authenticate customer
+            @codeSms = Parametre::Authentication::auth_two_factor(@phone, 'context')
+            if @codeSms[0]
+              return true, "Merci de saisir le code recu par SMS", "authenticate"
+            else
+              return false, "Impossible de votre envoyer le code SMS"
+            end
+
+          end
         else
           @account_status = isLock?(customer.authentication_token)
 
