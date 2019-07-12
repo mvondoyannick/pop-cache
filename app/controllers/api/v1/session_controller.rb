@@ -1,7 +1,7 @@
 class Api::V1::SessionController < ApplicationController
     #skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword, :testNetwork]
 
-    before_action :check_customer, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword]
+    before_action :check_customer, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice]
 
     #creation de compte utilisateur
     # @return [Object]
@@ -928,10 +928,10 @@ class Api::V1::SessionController < ApplicationController
         @answer = Answer.find_by_customer_id(@customer.id)
         if @answer.blank?
           render json: {
-              status:  404,
-              flag:   :false,
-              message: "Aucune question trouvée pour cet utilisateur",
-              data: nil
+            status:  404,
+            flag:   :false,
+            message: "Aucune question trouvée pour cet utilisateur",
+            data: nil
           }
         else
           #on retourne la question trouvé dans answer
@@ -955,7 +955,7 @@ class Api::V1::SessionController < ApplicationController
     end
 
     def check_customer
-      @token = request.headers['HTTP_X_API_POP_KEY']
+      @token = request.headers['HTTP_X_API_POP_KEY'] unless request.headers['HTTP_X_API_POP_KEY'].present? 
       puts "Token receive is : #{@token}"
       customer = Customer.find_by_authentication_token(@token)
       if customer.blank?

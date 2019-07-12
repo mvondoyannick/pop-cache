@@ -106,27 +106,27 @@ Rails.application.routes.draw do
       match 'session/signup', to: 'session#signup', via: [:post, :options]
 
       # get user balance
-      match 'session/get_balance/:customer/:password', to: 'session#getSoldeCustomer', via: [:get, :options]                #retourne le solde du client
+      match 'session/get_balance', to: 'session#getSoldeCustomer', via: [:post, :options]                #retourne le solde du client
 
       # Transaction or payment
-      match 'session/transaction/:token/:receveur/:montant/:password/:oneSignalID', to: 'api#payment', via: [:get, :options]
+      match 'session/transaction/:token/:receveur/:montant/:password/:oneSignalID', to: 'api#payment', via: [:post, :options]
       post 'session/transaction/payment', to: 'api#payment'                 #New payment including post request updated
-      match 'session/qrcode/:data', to: 'api#qrcode', via: [:options, :get]
-      match 'session/code/:code', to: 'api#code', via: [:options, :get]     #rechercher via le code numerique
+      match 'session/qrcode', to: 'api#qrcode', via: [:options, :post]
+      match 'session/code', to: 'api#code', via: [:options, :post]     #rechercher via le code numerique
       match 'session/history/:phone', to: 'api#user_history', via: [:get, :options] 
       match 'session/balance/:phone/:password', to: 'session#solde', via: [:get, :options]
       match 'session/check_retrait', to: 'session#check_retrait', via: [:post, :options]
       match 'session/cancel_retrait', to: 'session#cancel_retrait', via: [:post, :options]
-      match 'session/validate_retrait/:token/:password', to: 'session#validate_retrait', via: [:get, :options]
+      match 'session/validate_retrait', to: 'session#validate_retrait', via: [:post, :options]
       match 'session/validate/authentication', to: 'session#signup_authentication', via: [:post, :options]
       match 'session/history', to: 'session#history', via: [:post, :options]
       match 'session/history/detail/:code', to: 'session#histoDetail', via: [:get, :options]
       #match 'session/history/h/payment', to: 'session#p', via: [:post, :options]
       match 'test/:code(/:amount)', to: 'api#test', via: [:get, :options]
       match 'session/service', to: 'session#service', via: [:post, :options]
-      match 'session/categories', to: 'session#serviceCategorie', via: [:get, :options]
-      match 'session/categorie/:id', to: 'session#detailCategorie', via: [:post, :options]
-      match 'test/:phone', to: 'api#test', via: [:get, :options]
+      # match 'session/categories', to: 'session#serviceCategorie', via: [:get, :options]
+      # match 'session/categorie/:id', to: 'session#detailCategorie', via: [:post, :options]
+      # match 'test/:phone', to: 'api#test', via: [:get, :options]
       match 'security/question/', to: 'session#question', via: [:get, :options]
       match 'security/retrive/password', to: 'session#retrivePassword', via: [:post, :options]
       match 'security/reset/password', to: 'session#resetPassword', via: [:post, :options]
@@ -142,17 +142,17 @@ Rails.application.routes.draw do
 
       # test de la connexion internet
       match 'internet/test', to: 'session#testNetwork', via: [:get, :options, :post]
-      match 'security/check/phone/:phone', to: 'session#checkPhone', via: [:get, :options]
+      match 'security/check/phone', to: 'session#checkPhone', via: [:post, :options]
 
       # integration de sprintPay Solution API
 
-      match 'recharge/extern/provider/sp/new/:token/:phone/:amount', to: 'session#getSpData', via: [:get, :options]
-      match 'recharge/extern/provider/sp/:token/:phone/:amount/:network_name', to: 'session#rechargeSprintPay', via: [:get, :options]   # SprintPay OM et MOMO
+      match 'recharge/extern/provider/sp/new', to: 'session#getSpData', via: [:post, :options]
+      match 'recharge/extern/provider/sp', to: 'session#rechargeSprintPay', via: [:post, :options]   # SprintPay OM et MOMO
 
       # configuration du compte personnel
 
-      match 'security/authorization/:token/:password', to: 'session#authorization', via: [:get, :options]
-      match 'security/authorization/update/account/:token/:name/:second_name/:sexe(/:password)', to: 'session#updateAccount', via: [:get, :options]
+      match 'security/authorization', to: 'session#authorization', via: [:post, :options]
+      match 'security/authorization/update/account', to: 'session#updateAccount', via: [:post, :options]
       match 'security/authorization/update/password', to: 'session#updatePassword', via: [:post, :options]
       
       # Paiement via la plateforme USSD
