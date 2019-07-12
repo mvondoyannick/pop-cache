@@ -956,7 +956,7 @@ class Api::V1::SessionController < ApplicationController
     end
 
     def check_customer
-      @token = request.headers['HTTP_X_API_POP_KEY'] unless request.headers['HTTP_X_API_POP_KEY'].present? 
+      @token = request.headers['HTTP_X_API_POP_KEY']
       puts "Token receive is : #{@token}"
       customer = Customer.find_by_authentication_token(@token)
       if customer.blank?
