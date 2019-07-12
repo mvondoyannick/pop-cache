@@ -956,6 +956,7 @@ class Api::V1::SessionController < ApplicationController
 
     def check_customer
       @token = request.headers['HTTP_X_API_POP_KEY']
+      puts "Token receive is : #{@token}"
       customer = Customer.find_by_authentication_token(@token)
       if customer.blank?
         render json: {
@@ -964,6 +965,7 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         if customer.two_fa != 'authenticate'
+          Rails::logger::info "Utilisateur non autorisé"
           head :unauthorized 
         end
       end
