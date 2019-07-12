@@ -474,7 +474,7 @@ class Client
           @account_status = isLock?(customer.authentication_token)
 
           Rails::logger::info "Compte #{@phone} est actuellement #{customer.two_fa}"
-          return false, "Le statut actuel de votre compte ne vous permet pas de vous connecter. Bien vouloir vous rapprocher d'un POINT #{Client.appName} ou appeler au 222-222-222."
+          return false, "Le statut actuel de votre compte ne vous permet pas de vous connecter. Bien vouloir vous rapprocher d'un POINT #{Client.appName} ou réinitialiser votre mot de passe."
         end
       else
         Rails::logger::error "Authenticating user failed, bad password. end request!"
