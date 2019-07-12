@@ -213,6 +213,7 @@ class Api::V1::SessionController < ApplicationController
 
         #query the user
         signin = Client::auth_user(phone, password, device)
+        puts "Login data response : #{signin}"
         render json: signin
 
       else
