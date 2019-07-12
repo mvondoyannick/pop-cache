@@ -9,7 +9,7 @@ class Customer < ApplicationRecord
 
   before_save :generate_apikey
   before_save :set_hand
-  before_save :setName
+  before_save :setName, only: :create
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,

@@ -2,6 +2,7 @@ class Api::V1::SessionController < ApplicationController
     #skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword, :testNetwork]
 
     before_action :check_customer, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice]
+    before_action :check_phone, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice]
 
     #creation de compte utilisateur
     # @return [Object]
@@ -957,6 +958,7 @@ class Api::V1::SessionController < ApplicationController
 
     def check_customer
       @token = request.headers['HTTP_X_API_POP_KEY']
+      @uuid = request.headers['HTTP_UUID']
       puts "Token receive is : #{@token}"
       customer = Customer.find_by_authentication_token(@token)
       if customer.blank?
@@ -965,12 +967,19 @@ class Api::V1::SessionController < ApplicationController
           message: "Utilisateur inconnu"
         }
       else
-        if customer.two_fa != 'authenticate'
+        if customer.two_fa != 'authenticate' && customer.device != @uuid
           Rails::logger::info "Utilisateur non autorisé"
-          head :unauthorized 
+          head :unauthorized
         end
       end
-      Rails::logger::info "token has been set before_action #{params[:puce]}"
+      #Rails::logger::info "token has been set before_action #{params[:puce]}"
+    end
+
+    
+    # Verifie  le telephone en temps réelle
+    def check_phone
+      
+      
     end
 
 end
