@@ -1,6 +1,8 @@
 class Api::V1::SessionController < ApplicationController
     #skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword, :testNetwork]
 
+    before_action :check_customer, except: [:signup, :signin]
+
     #creation de compte utilisateur
     # @return [Object]
     def signup
@@ -950,6 +952,22 @@ class Api::V1::SessionController < ApplicationController
 
     def account_params
         params.require(:customer).permit(:name, :second_name, :cni, :phone)
+    end
+
+    def check_customer
+      @token = request.headers['HTTP_X_API_POP_KEY']
+      customer = Customer.find_by_authentication_token(@token)
+      if customer.blank?
+        render json: {
+          status: false,
+          message: "Utilisateur inconnu"
+        }
+      else
+        if customer.two_fa != 'authenticate'
+          head :unauthorized 
+        end
+      end
+      Rails::logger::info "token has been set before_action #{params[:puce]}"
     end
 
 end
