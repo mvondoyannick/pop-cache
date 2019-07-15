@@ -11,10 +11,19 @@ module PayMeQuick
         end
     end
 
+
+    class Customer
+
+    end
+
     # @presentation Class to make payment
     # @method PayMeQuick::Pay.Create(payeur: @payeur, marchand: @marchand, amount: @amount, password: @password, )
     # @param [Object] nothing
     class Pay
+
+        def initialize(argv)
+
+        end
 
         def self.Create(argv)
           @payeur = argv[:payeur]
@@ -142,7 +151,7 @@ module PayMeQuick
 
             Rails::logger::info "Impossible de trouver cet enregistrement"
 
-          end
+        end
         
     end
 

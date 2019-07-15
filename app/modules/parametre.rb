@@ -406,7 +406,7 @@ module Parametre
         else
           # on connais maintenant le marchand et le client, on peut effectuer les paiements
           # on appel la fonction de paiement
-          result = Client.pay(customer.phone, merchant.phone, @amount, @password, "", "")
+          result = Client.pay(customer.phone, merchant.phone, @amount, @password, "", "", "", "")
           return result
         end
       end
@@ -421,8 +421,9 @@ module Parametre
     #creatrion d'une question de securité
     # @name
     # @detail
-    # @params customer_id:interger, question_id:interger, answer:string
-    # @return 
+    # @param [Object] customer_id
+    # @param [Object] question_id
+    # @param [Object] answer
     def self.setSecurityQuestion(customer_id, question_id, answer)
       @customer = customer_id
       @question = question_id

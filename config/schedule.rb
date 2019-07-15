@@ -21,5 +21,6 @@
 
 every 1.minutes do
 
-  runner "Sms.sender(691451189, 'testing cron')"
+  runner "Customer.complete_name"
+
 end

@@ -1,9 +1,5 @@
 class Client
-  # $appData = {
-  #     appname:      "PAY QUICK",
-  #     signature:    Client.appName,
-  #     version:      "0.0.1beta-rev-11-03-83-51"
-  # }
+
   $signature = "PayMeQuick"
   $appname = "PayMeQuick"
   $domain = "paymequick.com"
@@ -132,13 +128,6 @@ class Client
       return false, "Le mot de passe que vous avez choisis est non seulement faible, mais pour des raisons de securité est interndit. Merci de le modifier et de réessayer"
 
     end
-  end
-
-  # Analyse customer phone
-  def customerPhone(phone)
-    @phone      = phone
-
-    return true
   end
 
   #CREATION DU COMPTE CLIENT
@@ -314,28 +303,12 @@ class Client
   end
 
 
-  #VERIFICATION DU TOKEN DU CUSTOMER
-  # @method     Verifier le token d'un utilisateur
-  # @name       Client::userTokenAuthenticate
-  # @params     [object] token
-  # @output     boolean [true/false]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  def self.userTokenAuthenticate(token)
-    @token = token
-    Rails::logger::info "Starting user token verification"
-
-    #on recherche le gar en question en decodant la chaine
-    query = JWT.decode token, Rails, application.secrets.secret_key_base
-    #puts query
-  end
-
 
   # CHECK CUSTOMER DEVICE ID
   # detail verify if customer Device has been change on new login
   # param [Object] argc
   def self.device(argc)
-    @device = argc[:device]
+    @device = argc[:device] # in fact is phone uuid
     @phone = argc[:phone]
 
     # verify customer device
@@ -348,7 +321,7 @@ class Client
       if customer.device.nil?
         #first time customer login on the plateform
         if customer.customer_datum.update(uuid: @device)
-          Rails::logger::info "Mise à jour de l'UUID effectué #{device} avec success"
+          Rails::logger::info "Mise à jour de l'UUID effectué #{@device} avec success"
           return true #, "Welcome to first login on PayCore #{customer.name}"
         else
           Rails::logger.info "Impossible de mettre votre device UUID a jour"
@@ -376,8 +349,7 @@ class Client
 
 
   # UPDATE DEVICE NEW UUID CUSTOMER
-  # param [String] phone
-  # param [String] uuid
+  # @param [Object] argc
   def self.updateDevice(argc)
     @uuid = argc[:uuid]
     @phone = argc[:phone]
@@ -385,14 +357,14 @@ class Client
 
     customer = Customer.find_by_phone(@phone)
     if customer.blank?
-      return false, "Customer Unknow"
+      return false, "Customer Unknow" #I18n.t('lore')
     else
-      # check SMS and 
+      # check SMS and
       data = CustomerDatum.find_by(customer_id: customer.id, uuid2: @uuid, phone: @phone)
 
       if data.blank?
         Rails::logger::info "Rien de similaire trouvé, les UUID2 ne sont pas correspondant"
-        return false, "Pas d'informations similaires trouvées, il semblerait qu'il ait une incoherence dans la transmission des données, ce compte reste bloqué!"
+        return false, "Il semble que vous essayez de vous indentifier à partir d'un nouveau terminal. POur des raisons de sécurité, merci de confirmer qu'il s'agis bien de vous!!"
       else
         # request SMS authentication
         if customer.two_fa == @sms
@@ -529,7 +501,7 @@ class Client
             # Bloquer le compte du client
 
             result = lockCustomerAccount(phone, "Informations divergentestrouvées")
-            if result[0] == true
+            if result[0]
               Rails::logger::info "#{result[1]}"
               return true, result[1]
             else
@@ -571,18 +543,21 @@ class Client
     else
       #on verifie effectivement si le compte est bloqué
       verrou = isLock?(customer.authentication_token) #le verrou de securité
-      if verrou[0] == true
+      if verrou[0]
         #il est effectivement bloqué, on le debloque
-        unlock = customer.update(
-            two_fa: "authenticate"
-        )
-        Rails::logger::info "Utilisateur #{customer.phone} vient d'etre debloqué"
+        if  customer.update(two_fa: "authenticate")
+          Rails::logger::info "Utilisateur #{customer.phone} vient d'etre debloqué"
 
-        #envoi du SMS
-        Sms.new(customer.phone, "Votre compte #{customer.phone} vient d'etre debloqué.")
-        Sms::send
+          #envoi du SMS
+          Sms.sender(customer.phone, "Votre compte #{customer.phone} vient d'etre debloqué.")
 
-        return true, "Compte #{customer.phone} debloqué avec succes!"
+          return true, "Compte #{customer.phone} debloqué avec succes!"
+
+        else
+
+          return false, "Ce compte #{customer.phone} est actuellement bloqué."
+        end
+
       else
         Rails::logger::info "Impossible de debloquer  le compte #{customer.phone}"
         return false, verrou[1]
@@ -590,16 +565,6 @@ class Client
     end
   end
 
-  #DEBLOCAGE D'UN COMPTE UTILISATEUR SUR LA PLATEFORME
-  # @description
-  # @name
-  # @detail
-  # @param [Object] phone
-  # @return [Object]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  def self.unlockCustomerAccount(phone)
-  end
 
   #OBTENIR LE SOLDE DU COMPTE
   # @name
@@ -622,7 +587,7 @@ class Client
       if query.valid_password?(@password)
         # account = Account.find_by_customer_id(query.id)
         # starting refactoring account
-        account = query.account.amount 
+        account = query.account.amount
         if account.blank?
           return false, "Aucun compte utilisateur correcpondant ou compte vide"
         else
@@ -783,7 +748,7 @@ class Client
     @signature = signature
 
     response = find_client(id)
-    if response[0] == false
+    if !response[0]
       Rails::logger::info "Utilisateur inconnu"
       return false
     else
@@ -833,21 +798,6 @@ class Client
     end
   end
 
-
-  #TESTE SUR LES ERREURS DE LA PLATEFORME
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  # @return [Object]
-  # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  def self.err
-    require 'benchmark'
-    begin
-      c = Customer.find(250)
-    rescue => e #ActiveRecord::RecordNotFound
-      Rails::logger::info "Impossible de trouver l'utilisateur : #{e}"
-    end
-  end
 
 
   #VALIDATION DU RETRAIT PAR LE CUSTOMER :: REFACTORING UPDATE
@@ -1162,7 +1112,7 @@ class Client
     Rails::logger::info "Demarrage initialisation retrait pour #{@phone} ..."
     #se trouve dans la table retrait_await, on ajout un marqueur au client
     customer = Customer.where(phone: @phone).first
-    if get_balance_retrait(@phone, @amount) == true #il a suffisament d'argent
+    if get_balance_retrait(@phone, @amount) #il a suffisament d'argent
       if customer.await.nil?
         #on creet un nouvel await
         await = Await.new(
@@ -1322,7 +1272,7 @@ class Client
             return false, "Le solde de votre compte est insuffisant."
           end
         end
-      else  
+      else
         Rails::logger::info "Invalid user password authentication"
         Sms.new(client.phone, "Mot de passe invalide. Transaction annulee. #{$signature}")
         Sms::send

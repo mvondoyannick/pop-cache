@@ -10,6 +10,10 @@ class Customer < ApplicationRecord
   before_save :generate_apikey
   before_save :set_hand
   before_save :setName, only: :create
+
+  # Create CustomerDatum after new Customer creation
+  after_create :set_customer_datum
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -33,9 +37,15 @@ class Customer < ApplicationRecord
 
   #permet de generer le code/ MIN si et seulement s'il n'existe pas
   def generate_code
-    if self.code.nil?
-      self.code = rand(5**5)
-    end
+    # if self.code.nil?
+    #  self.code = rand(5**5)
+    #end
+    self. code = rand(5**5) if self.code.nil?
+  end
+
+  # Experiment
+  def complete_name
+    puts "bonsoir Mr"
   end
 
   private
@@ -72,10 +82,11 @@ class Customer < ApplicationRecord
   end
 
   #Mettre le nom de la personne en majuscule et le code
+  # TODO mesearing importance of unless intead of if
   def setName
-    self.name = self.name.upcase
-    self.second_name = self.second_name.capitalize
-    self.code = rand(5**5)
+    self.name = self.name.upcase if not self.name.nil?
+    self.second_name = self.second_name.titleize if  not self.second_name.nil?
+    # self.code = rand(5**5)
   end
 
 
@@ -85,6 +96,12 @@ class Customer < ApplicationRecord
     # "#{self.authentication_token}@amount@lat@long@context"
     hand = "#{self.authentication_token}@0000@0.0@0.0@plateform@#{Time.now}"
     self.hand = Base64.encode64(hand).delete("\n")
+  end
+
+  # Set customerDatum after new customer registration
+  def set_customer_datum
+    customerDatum = CustomerDatum.new(customer_id: self.id, phone: self.phone)
+    customerDatum.save
   end
 
 

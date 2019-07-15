@@ -960,26 +960,23 @@ class Api::V1::SessionController < ApplicationController
       @token = request.headers['HTTP_X_API_POP_KEY']
       @uuid = request.headers['HTTP_UUID']
       puts "Token receive is : #{@token}"
-      customer = Customer.find_by_authentication_token(@token)
-      if customer.blank?
-        render json: {
-          status: false,
-          message: "Utilisateur inconnu"
-        }
-      else
-        if customer.two_fa != 'authenticate' && customer.device != @uuid
-          Rails::logger::info "Utilisateur non autorisé"
-          head :unauthorized
+      if @token.present?
+        customer = Customer.find_by_authentication_token(@token)
+        if customer.blank?
+          render json: {
+              status: false,
+              message: "Utilisateur inconnu"
+          }
+        else
+          if customer.two_fa != 'authenticate' && customer.device != @uuid
+            Rails::logger::info "Utilisateur non autorisé"
+            head :unauthorized
+          end
         end
+      else
+        # no token has been found
+        head(:unprocessable_entity, "Impossible de traiter la requete")
       end
-      #Rails::logger::info "token has been set before_action #{params[:puce]}"
-    end
-
-    
-    # Verifie  le telephone en temps réelle
-    def check_phone
-      
-      
     end
 
 end

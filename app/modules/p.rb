@@ -32,7 +32,7 @@ module P
         return false, "partenaire inconnu"
       else
         #on debute la requet d'insertion et de creation
-        customer = Client::signup(@name, @second_name, @phone, @cni, "123456", nil, nil, nil, nil, nil)
+        customer = Client::signup(@name, @second_name, @phone, @cni, "123456", nil, nil, nil, nil)
         if customer[0]
           #on renvoi un mot de passe via le numero de la personne via SMS
           Sms.new(@phone, "Votre mot de passe est #{rand(5**5)}")
