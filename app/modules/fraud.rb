@@ -1,5 +1,9 @@
 module Fraud
 
+    class Security
+        # implementation de la 3D secure
+    end
+
     class Customer
 
         # CHECK FRAUD ON CUSTOMER PASSWORD

@@ -977,6 +977,9 @@ class Api::V1::SessionController < ApplicationController
         # no token has been found
         head(:unprocessable_entity, "Impossible de traiter la requete")
       end
+
+      def check_phone
+      end
     end
 
 end
