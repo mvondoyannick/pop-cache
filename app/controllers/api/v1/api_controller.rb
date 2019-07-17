@@ -126,49 +126,42 @@ class Api::V1::ApiController < ApplicationController
   # @param @token
   # TODO request token inside each API header un payment
   def code
-    @code = params[:code].to_i
+    @code = params[:code]
     @token = request.headers["HTTP_X_API_POP_KEY"]
+    @ip = request.remote_ip
 
-    if @code.present?
+    begin
 
-      if @code.class == "Integer"
-        #uniquement si le code est un entier
-        @customer = Customer.find_by_code(@code)
-        if @customer.blank?
-          render json: {
-              message: false,
-              flag: :customer_not_found
-          }
-        else
-          #on retourne les informations
-
-          render json: {
-              message: true,
-              context: searchContext(@customer),
-              name: @customer.name,
-              second_name: @customer.second_name,
-              marchand_id: @customer.authentication_token,
-              date: Time.now.strftime("%d-%m-%Y à %H:%M:%S"),
-              expire: 5.minutes.from_now
-          }
-        end
-      else
+      #uniquement si le code est un entier
+      @customer = Customer.find_by_code(@code)
+      if @customer.blank?
         render json: {
-            status: false,
-            message: "Le code soumis ne semble pas etre valide"
+            message: false,
+            flag: :customer_not_found
+        }
+      else
+        #on retourne les informations
+
+        render json: {
+          message: true,
+          context: searchContext(@customer),
+          name: @customer.name,
+          second_name: @customer.second_name,
+          marchand_id: @customer.authentication_token,
+          date: Time.now.strftime("%d-%m-%Y à %H:%M:%S"),
+          expire: 5.minutes.from_now
         }
       end
-
-    else
+      
+    rescue ActiveRecord::RecordNotFound
 
       render json: {
-
-          message: false,
-          content: "Certaines informations sont manquantes ou incorrecte"
-
+        message: false,
+        content: "Utilisateur inconnu"
       }
-
+      
     end
+
 
   end
 

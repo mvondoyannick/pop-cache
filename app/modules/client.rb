@@ -1349,7 +1349,7 @@ class Client
         Sms.new(client.phone, "Mot de passe invalide. Transaction annulee. #{$signature}")
         Sms::send
         return false, {
-          title: "ECHEC AUTHENTIFICATION",
+          title: "ECHEC IDENTIFICATION",
           message: "Le mot de passe utilisé est, merci de réessayer!"
         }
       end

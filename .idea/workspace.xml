@@ -7,12 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/pop-cash.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pop-cash.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/app.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/app.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/client.rb" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.bundle/" />
     <ignored path="$PROJECT_DIR$/components/" />
@@ -66,8 +61,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/modules/client.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1615">
-              <caret line="1343" column="13" lean-forward="true" selection-start-line="1340" selection-start-column="26" selection-end-line="1343" selection-end-column="13" />
+            <state relative-caret-position="1717">
+              <caret line="1343" column="13" selection-start-line="1340" selection-start-column="26" selection-end-line="1343" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -76,7 +71,7 @@
         <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="234">
-              <caret line="966" column="28" lean-forward="true" selection-start-line="966" selection-start-column="28" selection-end-line="966" selection-end-column="28" />
+              <caret line="966" column="28" selection-start-line="966" selection-start-column="28" selection-end-line="966" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -523,12 +518,12 @@
       <workItem from="1563345774071" duration="6620000" />
       <workItem from="1563360862280" duration="531000" />
       <workItem from="1563366147899" duration="3142000" />
-      <workItem from="1563371709219" duration="2543000" />
+      <workItem from="1563371709219" duration="3145000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="675043000" />
+    <option name="totallyTimeSpent" value="675645000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -541,7 +536,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1600" height="873" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.35626101" weight="0.12805663" />
       <window_info id="Structure" order="1" sideWeight="0.643739" side_tool="true" weight="0.12805663" />
@@ -968,14 +962,14 @@
     <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="234">
-          <caret line="966" column="28" lean-forward="true" selection-start-line="966" selection-start-column="28" selection-end-line="966" selection-end-column="28" />
+          <caret line="966" column="28" selection-start-line="966" selection-start-column="28" selection-end-line="966" selection-end-column="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/modules/client.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1615">
-          <caret line="1343" column="13" lean-forward="true" selection-start-line="1340" selection-start-column="26" selection-end-line="1343" selection-end-column="13" />
+        <state relative-caret-position="1717">
+          <caret line="1343" column="13" selection-start-line="1340" selection-start-column="26" selection-end-line="1343" selection-end-column="13" />
         </state>
       </provider>
     </entry>

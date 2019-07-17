@@ -164,14 +164,13 @@ module Abonnements
                   #Adding transaction history
                   begin
                     #generate uniq token hash
-                    @hash = SecureRandom.hex(13).upcase
+                    @hash = SecureRandom.uuid.upcase
 
-                    history = Transaction.new(
-                        customer: @customer_id,
+                    history = History.new(
+                        customer_id: @customer_id,
                         code: "PMQ_AB_#{@hash}",
                         flag: "abonnement".upcase,
-                        context: "none",
-                        date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
+                        context: "MOBILE",
                         amount: palier_amount
                     )
 
@@ -218,7 +217,7 @@ module Abonnements
 
           else
 
-            Sms.sender(customer.phone, "Votre solde est insuffisant ! ")
+            Sms.sender(customer.phone, "Votre solde est insuffisant pour effectuer cet abonnement, merci de recharger votre compte ! ")
             return false, "Solde client insuffisant"
 
           end
