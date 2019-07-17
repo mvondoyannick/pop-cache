@@ -88,7 +88,7 @@ module External
                       context: 'phone',
                       flag: 'paiement'.upcase,
                       code: "EXT_PAY_#{@hash}",
-                      pays: adress
+                      region: adress
                     )
 
                     # Historique du client
@@ -101,7 +101,7 @@ module External
                         context: 'phone',
                         flag: 'paiement'.upcase,
                         code: "EXT_PAY_#{@hash}",
-                        pays: adress
+                        region: adress
                       )
 
                       if marchand.save
@@ -137,7 +137,7 @@ module External
                       context: 'phone',
                       flag: 'encaissement'.upcase,
                       code: "EXT_PAY_#{@hash}",
-                      pays: adress
+                      region: adress
                     )
 
                     if marchant.save
@@ -148,7 +148,7 @@ module External
                         context: 'phone',
                         flag: 'paiement'.upcase,
                         code: "EXT_PAY_#{@hash}",
-                        pays: adress
+                        region: adress
                       )
 
                       if client.save

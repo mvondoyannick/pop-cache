@@ -6,12 +6,7 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/pop-cash.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pop-cash.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/client.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/external.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/external.rb" afterDir="false" />
-    </list>
+    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/.bundle/" />
     <ignored path="$PROJECT_DIR$/components/" />
     <ignored path="$PROJECT_DIR$/log/" />
@@ -73,7 +68,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/modules/external.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
+            <state relative-caret-position="-395">
               <caret line="150" column="36" selection-start-line="150" selection-start-column="36" selection-end-line="150" selection-end-column="36" />
             </state>
           </provider>
@@ -531,12 +526,12 @@
       <workItem from="1563360862280" duration="531000" />
       <workItem from="1563366147899" duration="3142000" />
       <workItem from="1563371709219" duration="3145000" />
-      <workItem from="1563379137409" duration="507000" />
+      <workItem from="1563379137409" duration="651000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="676152000" />
+    <option name="totallyTimeSpent" value="676296000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -549,7 +544,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1600" height="873" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.35626101" visible="true" weight="0.18146718" />
       <window_info id="Structure" order="1" sideWeight="0.643739" side_tool="true" weight="0.12805663" />
@@ -982,7 +976,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/modules/external.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
+        <state relative-caret-position="-395">
           <caret line="150" column="36" selection-start-line="150" selection-start-column="36" selection-end-line="150" selection-end-column="36" />
         </state>
       </provider>
