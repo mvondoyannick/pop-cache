@@ -78,10 +78,10 @@ module App
       def self.confirmation
 
         return {
-            sms: {
-                confirmation_failed: "Impossible d'envoyer le SMS de confirmation",
-                customer_exist: "Impossible de creer un nouvel utilisateur car il est deja existant"
-            }
+          sms: {
+            confirmation_failed: "Impossible d'envoyer le SMS de confirmation",
+            customer_exist: "Impossible de creer un nouvel utilisateur car il est deja existant"
+          }
         }
 
       end

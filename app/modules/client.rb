@@ -1224,7 +1224,10 @@ class Client
       OneSignal::OneSignalSend.notPayToMe(@playerId, "#{client.name} #{client.second_name}") #sendNotification(@playerId, Parametre::Parametre.agis_percentage(@amount),"#{marchand.name} #{marchand.second_name}", "#{client.name} #{client.second_name}")
       # end sending local notifications
       Rails::logger::info "Numéro indentique, transaction annuler!"
-      return false, " Vous ne pouvez pas vous payer à vous même!"
+      return false, {
+        title: "ERREUR DE DESTINATAIRE",
+        message: "#{prettyCallSexe(client.sexe)} #{client.complete_name} vous ne pouvez pas vous payer à vous même. Merci de verifier votre destinataire"
+      }
     else
       if client.valid_password?(@client_password)
         Rails::logger::info "Client identifié avec succes!"
@@ -1232,7 +1235,10 @@ class Client
         #contrainte si le montant depasse 150 000 F CFA XAF
         if @amount > $limit_amount
           Rails::logger::info "Limite de transaction de 150 000 F depassée"
-          return false, "Vous ne pouvez pas faire une transaction au dela de #{$limit_amount} #{$devise}."
+          return false, {
+            title: "LIMITE DE TRANSACTION",
+            message: "#{prettyCallSexe(client.sexe)} #{client.complete_name} il semblerait que votre transaction dépasse la limité autorisée de #{$limit_amount} #{$devise}. Merci de revoir le montant de votre transaction."
+          }
         else
           if client_account.amount.to_f >= Parametre::Parametre::agis_percentage(@amount) #@amount.to_i
             Rails::logger::info "Le montant est suffisant dans le compte du client, transaction possible!"
@@ -1283,7 +1289,7 @@ class Client
                 )
 
                 if transaction.save
-                  Rails::logger::info "Transaction enregistrée avec succes"
+                  Rails::logger::info "Historique de transaction enregistrée avec succes"
                 end
 
                 #fin de journalisation
@@ -1295,8 +1301,8 @@ class Client
                 a = {
                     amount: @amount,
                     device: 'XAF',
-                    frais: Parametre::Parametre::agis_percentage(@amount).to_f,
-                    total: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
+                    frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
+                    total: Parametre::Parametre::agis_percentage(@amount).to_f,
                     receiver: marchand.complete_name,
                     sender: client.complete_name,
                     date: Time.now,
@@ -1308,8 +1314,8 @@ class Client
                 return true, {
                     amount: @amount,
                     device: "XAF",
-                    frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
-                    total: Parametre::Parametre::agis_percentage(@amount).to_f,
+                    frais: (Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2),
+                    total: (Parametre::Parametre::agis_percentage(@amount).to_f).round(2),
                     receiver: marchand.complete_name,
                     sender: client.complete_name,
                     date: Time.now,
@@ -1332,14 +1338,20 @@ class Client
             OneSignal::OneSignalSend.montantInferieur(@playerId, "#{client.name} #{client.second_name}", amount)
             #Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
             #Sms::send
-            return false, "Le solde de votre compte est insuffisant."
+            return false, {
+                title: "SOLDE INSUFFISANT",
+                message: "Le solde de votre compte est insuffisant pour effectuer cette transaction! Merci de recharger votre compte!"
+            }
           end
         end
       else
         Rails::logger::info "Invalid user password authentication"
         Sms.new(client.phone, "Mot de passe invalide. Transaction annulee. #{$signature}")
         Sms::send
-        return false, "Mot de passe invalide."
+        return false, {
+          title: "ECHEC AUTHENTIFICATION",
+          message: "Le mot de passe utilisé est, merci de réessayer!"
+        }
       end
     end
   end

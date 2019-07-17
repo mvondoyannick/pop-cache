@@ -259,10 +259,10 @@ class Api::V1::SessionController < ApplicationController
               message: "Utilisateur inconnu sur la plateforme"
           }
         else
-          @balance = Client::get_balance(@customer, @pwd)
+          @customer = Client::get_balance(@customer, @pwd)
           if balance
             render json: {
-                message: @balance
+                message: @customer
             }
           else
             render json: {
