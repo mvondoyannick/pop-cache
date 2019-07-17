@@ -98,8 +98,8 @@ class Api::V1::ApiController < ApplicationController
           payment = External::DemoUsers.Payment(token: @token, password: @password, phone: @phone, amount: @amount, ip: @ip)
           Rails::logger.info "From Payment : #{payment}"
           render json: {
-            status: payment[0],
-            message: payment[1]
+            #status: payment[0],
+            message: payment
           }
 
         end
