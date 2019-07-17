@@ -1291,6 +1291,17 @@ class Client
                 #enregistrement des commissions
                 Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
                 #fin d'enregistrement de la commission
+                #
+                a = {
+                    amount: @amount,
+                    frais: Parametre::Parametre::agis_percentage(@amount).to_f,
+                    total: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
+                    receiver: marchand.complete_name,
+                    sender: client.complete_name,
+                    date: Time.now,
+                    status: "DONE"
+                  }
+                Rails::logger.info "Transaction response => #{a}"
 
                 #return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F CFA. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
                 return true, {
@@ -1300,7 +1311,7 @@ class Client
                     receiver: marchand.complete_name,
                     sender: client.complete_name,
                     date: Time.now,
-                    status: "EFFECTUE"
+                    status: "DONE"
                 }
               else
                 Rails::logger::info "Marchand non credite de #{@amount}"
