@@ -153,7 +153,16 @@ module External
 
                       if client.save
                         Sms.sender(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d etre effectue dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Le solde de votre compte est maintenant de #{m_account.amount} F CFA. Rapprochez-vous d'une agence UBA ou creer un compte PayMeQuick.")
-                        return true, "Paiement d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué à #{@merchant_phone}."
+                        return true, {
+                          amount: @amount,
+                          device: 'XAF',
+                          frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
+                          total: Parametre::Parametre::agis_percentage(@amount).to_f,
+                          receiver: Customer.find_by_phone(@merchant_phone).complete_name,
+                          sender: Customer.find_by_authentication_token(@customer_token).complete_name,
+                          date: Time.now,
+                          status: "DONE"
+                        }#,"Paiement d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué au  #{@merchant_phone}."
                       else
                         return false, "Impossible de sauver l'historique : #{client.errors.full_messages}"
                       end
