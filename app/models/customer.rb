@@ -45,7 +45,7 @@ class Customer < ApplicationRecord
 
   # Experiment
   def complete_name
-    puts "bonsoir Mr"
+    self.name + " " + self.second_name
   end
 
   private

@@ -566,6 +566,44 @@ class Client
   end
 
 
+  # GET CREDIT BALANCE ACCOUNT REFACTORING
+  # @param [Object] argv
+  def self.balance(argv)
+    @phone = argv[:phone]
+    @password = argv[:password]
+
+    begin
+
+      @customer = Customer.find_by_phone(@phone)
+      if @customer.blank?
+        raise ActiveRecord::RecordNotUnique
+      else
+        if @customer.valid_password?(@password)
+          # We can now render customer amount
+          amount = @customer.account.amount
+
+          # send SMS to customer
+          Sms.sender(@customer.phone, "Bonjour #{@customer. complete_name} le solde de votre compte est de #{amount} F CFA")
+
+          return true, amount
+        else
+          return false, "Invalid password"
+        end
+      end
+
+    rescue ActiveRecord::RecordNotFound
+
+      return false, "Utilisateur inconnu"
+
+    rescue ActiveRecord::ConnectionNotEstablished
+
+      return false, "Impossible de contacter le serveur"
+
+    end
+
+  end
+
+
   #OBTENIR LE SOLDE DU COMPTE
   # @name
   # @detail
@@ -592,12 +630,14 @@ class Client
           return false, "Aucun compte utilisateur correcpondant ou compte vide"
         else
           #return OneSignal API
-          Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.name} #{query.second_name}, le solde de votre compte est : #{account} #{$devise}. #{Client.appName}")
+          Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.complete_name}, le solde de votre compte est : #{account} #{$devise}. #{Client.appName}")
           Sms::send
-          return true, "#{prettyCallSexe(query.sexe)} #{query.second_name}, le solde de votre compte est : #{account} #{$devise}. #{$signature}"
+          return true, "#{prettyCallSexe(query.sexe)} #{query.complete_name}, le solde de votre compte est : #{account} #{$devise}. #{$signature}"
         end
       else
+
         return false, "Mot de passe invalide. #{$signature}"
+
       end
     end
   end
@@ -1197,8 +1237,9 @@ class Client
           if client_account.amount.to_f >= Parametre::Parametre::agis_percentage(@amount) #@amount.to_i
             Rails::logger::info "Le montant est suffisant dans le compte du client, transaction possible!"
             @hash = "PP_#{SecureRandom.hex(13).upcase}"
-            client_account.amount = Parametre::Parametre::soldeTest(client_account.amount, amount) #client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
-            if client_account.save
+            # client_account.amount = Parametre::Parametre::soldeTest(client_account.amount, amount) #client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
+            if client_account.update(amount: Parametre::Parametre::soldeTest(client_account.amount, amount))
+            # if client_account.save
               Rails::logger::info "Solde tm : #{client_account.amount.to_f}"
               marchand_account.amount += @amount
 
@@ -1251,7 +1292,16 @@ class Client
                 Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
                 #fin d'enregistrement de la commission
 
-                return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F CFA. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
+                #return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F CFA. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
+                return true, {
+                    amount: @amount,
+                    frais: Parametre::Parametre::agis_percentage(@amount).to_f,
+                    total: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
+                    receiver: marchand.complete_name,
+                    sender: client.complete_name,
+                    date: Time.now,
+                    status: "EFFECTUE"
+                }
               else
                 Rails::logger::info "Marchand non credite de #{@amount}"
                 Sms.new(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
