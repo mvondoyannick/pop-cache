@@ -1294,6 +1294,7 @@ class Client
                 #
                 a = {
                     amount: @amount,
+                    device: 'XAF',
                     frais: Parametre::Parametre::agis_percentage(@amount).to_f,
                     total: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
                     receiver: marchand.complete_name,
@@ -1306,8 +1307,9 @@ class Client
                 #return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F CFA. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
                 return true, {
                     amount: @amount,
-                    frais: Parametre::Parametre::agis_percentage(@amount).to_f,
-                    total: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
+                    device: "XAF",
+                    frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
+                    total: Parametre::Parametre::agis_percentage(@amount).to_f,
                     receiver: marchand.complete_name,
                     sender: client.complete_name,
                     date: Time.now,
