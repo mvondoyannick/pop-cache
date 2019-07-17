@@ -230,7 +230,16 @@ class Api::V1::ApiController < ApplicationController
   private
 
   def check_customer
-    Rails::logger.info "The token receive is #{request.headers["HTTP_X_API_POP_KEY"]}"
+    @token = request.headers["HTTP_X_API_POP_KEY"]
+    @uuid = request.headers["HTTP_UUID"]
+
+    begin
+      customer = Customer.find_by_authentication_token(@token)
+      if customer.blank? && customer.device != @uuid && customer.two_fa != "authenticate"
+        head :unauthorized
+      end
+    end
+    #Rails::logger.info "The token receive is #{request.headers["HTTP_X_API_POP_KEY"]}"
   end
 
 end
