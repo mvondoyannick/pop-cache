@@ -156,7 +156,7 @@ module External
                         return true, {
                           amount: @amount,
                           device: 'XAF',
-                          frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
+                          frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
                           total: Parametre::Parametre::agis_percentage(@amount).to_f,
                           receiver: Customer.find_by_phone(@merchant_phone).complete_name,
                           sender: Customer.find_by_authentication_token(@customer_token).complete_name,
