@@ -1226,7 +1226,7 @@ class Client
       Rails::logger::info "Numéro indentique, transaction annuler!"
       return false, {
         title: "ERREUR DE DESTINATAIRE",
-        message: "#{prettyCallSexe(client.sexe)} #{client.complete_name} vous ne pouvez pas vous payer à vous même. Merci de verifier votre destinataire"
+        message: "#{prettyCallSexe(client.sexe)} #{client.complete_name} vous ne pouvez pas vous payer à vous même. Merci de verifier votre destinataire et réessayer."
       }
     else
       if client.valid_password?(@client_password)

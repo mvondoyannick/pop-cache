@@ -79,6 +79,7 @@ class Api::V1::ApiController < ApplicationController
     @phone = params[:phone]
     @amount = params[:amount]
     @password = params[:password]
+    @ip = request.remote_ip
 
     begin
 
@@ -88,17 +89,17 @@ class Api::V1::ApiController < ApplicationController
         customer = Customer.find_by_authentication_token(@token)
         if customer.blank?
           render json: {
-              status: false,
-              message: "Utilisateur inconnu"
+            status: false,
+            message: "Utilisateur inconnu"
           }
         else
           #tout va bien, l'utilisateur payeur est connu, check the phone number
           #find if this number is not registrated to the plateforme
-          payment = External::DemoUsers.Payment(token: @token, password: @password, phone: @phone, amount: @amount)
+          payment = External::DemoUsers.Payment(token: @token, password: @password, phone: @phone, amount: @amount, ip: @ip)
           Rails::logger.info "From Payment : #{payment}"
           render json: {
-              status: payment[0],
-              message: payment[1]
+            status: payment[0],
+            message: payment[1]
           }
 
         end

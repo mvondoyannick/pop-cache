@@ -22,6 +22,10 @@ module External
       @merchant_phone = argv[:phone]
       @amount = argv[:amount]
       @hash = rand(11**11)
+      @ip = argv[:ip]
+
+      # get data from IP transaction
+      adress = DistanceMatrix::DistanceMatrix::pays(@ip)
 
       Rails::logger.info "Starting phone payement ..."
 
@@ -35,18 +39,18 @@ module External
 
         if customer.account.amount.to_f < @amount.to_f
 
-          return false, "Votre compte est insuffisant pour effectuer la transaction. Merci de le recharger"
+          return false, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} le solde de votre compte est insuffisant pour effectuer la transaction. Merci de le recharger et de réessayer."
 
         else
 
           # Verifier que le client ne se paye pas a lui même
           if customer.phone == @merchant_phone
 
-            return false, "Vous ne pouvez pas vous payer à vous même. Merci de changer le numéro du marchand"
+            return false, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} vous ne pouvez pas vous payer à vous même. Merci de changer le numéro du marchand et de réessayer."
 
           else
 
-            # verififier qu'il s'agisse bien d'un numero du Cameroun...pour le moment
+            # verifier qu'il s'agisse bien d'un numero du Cameroun...pour le moment
             if Parametre::PersonalData::numeroCameroun(@merchant_phone)
 
               # Ce numéro est un numéro camerounais, we can process
@@ -83,7 +87,8 @@ module External
                       amount: Parametre::Parametre::agis_percentage(@amount),
                       context: 'phone',
                       flag: 'paiement'.upcase,
-                      code: "EXT_PAY_#{@hash}"
+                      code: "EXT_PAY_#{@hash}",
+                      pays: adress
                     )
 
                     # Historique du client
@@ -95,7 +100,8 @@ module External
                         amount: @amount,
                         context: 'phone',
                         flag: 'paiement'.upcase,
-                        code: "EXT_PAY_#{@hash}"
+                        code: "EXT_PAY_#{@hash}",
+                        pays: adress
                       )
 
                       if marchand.save
@@ -106,7 +112,7 @@ module External
 
                       else
 
-                        return false, "Impossible de mettre a jour l'historique du marchand virtuel : #{marchand.errors.full_messages}"
+                        return false, "Impossible de mettre à jour l'historique du marchand virtuel : #{marchand.errors.full_messages}"
 
                       end
                     else
@@ -130,7 +136,8 @@ module External
                       amount: @amount,
                       context: 'phone',
                       flag: 'encaissement'.upcase,
-                      code: "EXT_PAY_#{@hash}"
+                      code: "EXT_PAY_#{@hash}",
+                      pays: adress
                     )
 
                     if marchant.save
@@ -140,7 +147,8 @@ module External
                         amount: Parametre::Parametre::agis_percentage(@amount),
                         context: 'phone',
                         flag: 'paiement'.upcase,
-                        code: "EXT_PAY_#{@hash}"
+                        code: "EXT_PAY_#{@hash}",
+                        pays: adress
                       )
 
                       if client.save
