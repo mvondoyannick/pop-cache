@@ -1305,7 +1305,7 @@ class Client
                     total: Parametre::Parametre::agis_percentage(@amount).to_f,
                     receiver: marchand.complete_name,
                     sender: client.complete_name,
-                    date: Time.now,
+                    date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
                     status: "DONE"
                   }
                 Rails::logger.info "Transaction response => #{a}"
@@ -1318,7 +1318,7 @@ class Client
                     total: (Parametre::Parametre::agis_percentage(@amount).to_f).round(2),
                     receiver: marchand.complete_name,
                     sender: client.complete_name,
-                    date: Time.now,
+                    date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
                     status: "DONE"
                 }
               else
