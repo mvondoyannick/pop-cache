@@ -236,8 +236,13 @@ class Api::V1::ApiController < ApplicationController
     Rails::logger::info "Header data receive : Token #{@token}, Uuid : #{@uuid}"
 
     begin
-      customer = Customer.find_by_authentication_token(@token)
-      if customer.blank? && customer.device != @uuid && customer.two_fa != "authenticate"
+      customer = Customer.find_by(authentication_token: @token, device: @uuid, two_fa: 'authenticate')
+      if customer.blank?
+        #response.set_header('HEADER NAME', :unauthorized)
+        #render json: {
+        #  status: :unauthorized,
+        #  message: "Utilisateur non autorisé"
+        #}
         head :unauthorized
       end
       rescue ActiveRecord::RecordNotFound
