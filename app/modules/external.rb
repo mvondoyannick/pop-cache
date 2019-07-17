@@ -160,7 +160,7 @@ module External
                           total: Parametre::Parametre::agis_percentage(@amount).to_f,
                           receiver: Customer.find_by_phone(@merchant_phone).complete_name,
                           sender: Customer.find_by_authentication_token(@customer_token).complete_name,
-                          date: Time.now,
+                          date: Time.now.strftime("%d-%m-%Y @ %H:%M"),
                           status: "DONE"
                         }#,"Paiement d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué au  #{@merchant_phone}."
                       else
