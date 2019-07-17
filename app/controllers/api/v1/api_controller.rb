@@ -233,11 +233,18 @@ class Api::V1::ApiController < ApplicationController
     @token = request.headers["HTTP_X_API_POP_KEY"]
     @uuid = request.headers["HTTP_UUID"]
 
+    Rails::logger::info "Header data receive : Token #{@token}, Uuid : #{@uuid}"
+
     begin
       customer = Customer.find_by_authentication_token(@token)
       if customer.blank? && customer.device != @uuid && customer.two_fa != "authenticate"
         head :unauthorized
       end
+      rescue ActiveRecord::RecordNotFound
+        render json: {
+          status: false,
+          message: "Utilisateur inconnu"
+        }
     end
     #Rails::logger.info "The token receive is #{request.headers["HTTP_X_API_POP_KEY"]}"
   end
