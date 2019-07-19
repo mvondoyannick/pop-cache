@@ -299,14 +299,17 @@ module Parametre
     # @param [Integer] phone
     # @return [Object] string
     def self.numeroOperateurMobile(phone)
+      
       orange    = %w(55 56 57 58 59 90 91 92 93 94 95 96 97 98 99)  #tableau des numeros orange
       mtn       = %w(50 51 52 53 54 70 71 72 73 74 75 76 77 78 79)  #tableau des numeros MTN
       nexttel   = %w(60 61 62 63 64 65 66 67 68 69)              #tableau des numeros nexttel
       camtel    = %w()
       @phone    = phone.to_s
 
+      Rails::logger::info "Starting check network operator for #{@phone}..."
+
       #On recherche la longueur des numeros de telephones qui doit etre 9 caracteres
-      if @phone.length > 10 || @phone.length < 10
+      if @phone.length > 10 || @phone.length < 9
         return false
       else
         #recherche des numero orange en premier

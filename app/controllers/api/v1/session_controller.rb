@@ -564,7 +564,7 @@ class Api::V1::SessionController < ApplicationController
                 message:      "NEXTTEL POSSA PAS ENCORE SUPPORTE",
                 logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("nexttel-possa.png")}"
             }
-          else
+          elsif @status == false || @status == inconnu
             render json: {
                 status:   404,
                 flag:     :failed,
