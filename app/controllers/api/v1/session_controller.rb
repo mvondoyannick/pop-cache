@@ -693,6 +693,7 @@ class Api::V1::SessionController < ApplicationController
       @phone        = params[:phone]
       amount        = params[:amount].to_i
       network_name  = params[:network_name].upcase
+      @ip = request.remote_ip
 
       #on verifie l'existance de cet utilisateur
       customer = Customer.find_by_authentication_token(token)
@@ -721,11 +722,11 @@ class Api::V1::SessionController < ApplicationController
             # tout de passe bien
 
             # on recupere le compte de l'utilisateur courant
-            account = Account.find_by_customer_id(customer.id)
+            account = customer.account #Account.find_by_customer_id(customer.id)
             if account.blank?
               render json: {
                   status:   :not_found,
-                  message:  "Compte inconnu"
+                  message:  "Compte inconnu ou inexistant"
               }
             else
               # le compte existe, on peut continuer le traitement
@@ -735,27 +736,38 @@ class Api::V1::SessionController < ApplicationController
 
               # on met a jour le compte du customer du noveau montant recu
               if account.update(amount: account.amount)
-                if Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
-                  Sms.new(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
-                  Sms::send
+
+                # Ecriture de l'historique
+
+                h = History.new(
+                    customer_id: customer.id,
+                    amount: amount,
+                    code: @hash,
+                    flag: "recharge".upcase,
+                    context: "Mobile".upcase,
+                    ip: @ip
+                )
+                if h.save #Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
+                  Sms.sender(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
+
                   render json: {
                       status:   :success,
-                      message:  "Votre compte POPCASH a ete credité d'un montant de #{result["amount"]} depuis #{network_name}"
+                      message:  "Votre compte PayMeQuick a ete credité d'un montant de #{result["amount"]} depuis #{network_name}"
                   }
                 else
                   render json: {
                       status:   :failed,
-                      message:  "Impossible de recharger votre compte PAYQUICK d'un montant de #{result["amount"]} depuis #{network_name} => erreurs : #{result}"
+                      message:  "Impossible de recharger votre compte PayMeQuick d'un montant de #{result["amount"]} depuis #{network_name} => erreurs : #{result}"
                   }
                 end
 
               else
                 render json:
-                           {
-                               status:   :failed,
-                               message:  "Impossible de mettre a jour votre compte"
-                               #Lancer le processus de  rollBack de montant precedement debité
-                           }
+                   {
+                       status:   :failed,
+                       message:  "Impossible de mettre a jour votre compte"
+                       #Lancer le processus de  rollBack de montant precedement debité
+                   }
               end
             end
           end
@@ -778,7 +790,7 @@ class Api::V1::SessionController < ApplicationController
             # tout de passe bien
 
             # on recupere le compte de l'utilisateur courant
-            account = Account.find_by_customer_id(customer.id)
+            account = customer.account #Account.find_by_customer_id(customer.id)
             if account.blank?
               render json: {
                   status:   :not_found,
@@ -792,25 +804,33 @@ class Api::V1::SessionController < ApplicationController
 
               # on met a jour le compte du customer du noveau montant recu
               if account.update(amount: account.amount)
-                if Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
-                  Sms.new(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
-                  Sms::send
+                h = History.new(
+                    customer_id: customer.id,
+                    amount: amount,
+                    code: @hash,
+                    flag: "recharge".upcase,
+                    context: "Mobile".upcase,
+                    ip: @ip
+                )
+                if h.save #Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
+                  Sms.sender(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
+
                   render json: {
                       status:   :success,
-                      message:  "Votre compte POPCASH a ete credité d'un montant de #{result["amount"]} depuis #{network_name}"
+                      message:  "Votre compte PayMeQuick a ete credité d'un montant de #{result["amount"]} depuis #{network_name}"
                   }
                 else
                   render json: {
                       status:   :failed,
-                      message:  "Impossible de recharger votre compte PAYQUICK d'un montant de #{result["amount"]} depuis #{network_name} : Erreurs : #{result}"
+                      message:  "Impossible de recharger votre compte PayMeQuick d'un montant de #{result["amount"]} depuis #{network_name} : Erreurs : #{result}"
                   }
                 end
               else
                 render json:
-                           {
-                               status:   :failed,
-                               message:  "Impossible de mettre a jour votre compte"
-                           }
+                   {
+                       status:   :failed,
+                       message:  "Impossible de mettre a jour votre compte"
+                   }
               end
             end
           end

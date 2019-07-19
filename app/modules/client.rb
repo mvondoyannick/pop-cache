@@ -1204,13 +1204,13 @@ class Client
   # @output       [boolean] [true/false]
   # @author @mvondoyannick
   # @version 0.0.1beta-rev-11-03-83-50
-  def self.pay(from, to, amount, pwd, ip, playerId, lat, lon)
+  def self.pay(from, to, amount, pwd, ip, lat, lon)
     @from = from.to_i
     @to = to.to_i
     @amount = amount.to_f #montant de la transation
     @client_password = pwd
     @ip = ip
-    @playerId = playerId
+    # @playerId = playerId
     @lat = lat
     @lon = lon
 
@@ -1269,7 +1269,7 @@ class Client
                 Sms::send
                 #--------------------------------------------------
                 # push notificatin au marchand
-                OneSignal::OneSignalSend.sendNotification(@playerId, Parametre::Parametre.agis_percentage(@amount), "#{marchand.name} #{marchand.second_name}", "#{client.name} #{client.second_name}")
+                # OneSignal::OneSignalSend.sendNotification(@playerId, Parametre::Parametre.agis_percentage(@amount), "#{marchand.name} #{marchand.second_name}", "#{client.name} #{client.second_name}")
                 #Sms.new(client.phone, "Compte debite. Motif: Paiement effectue. Montant : #{Parametre::Parametre::agis_percentage(@amount)} F CFA XAF, Compte debite : #{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name} (#{client.phone}). Nouveau solde : #{client_account.amount.round(2)} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now} . #{$signature}")
                 #Sms::send
                 #----------------------------------------------------
@@ -1335,7 +1335,7 @@ class Client
             end
           else
             Rails::logger::info "Le solde de votre compte est de : #{marchand_account.amount}. Paiment impossible"
-            OneSignal::OneSignalSend.montantInferieur(@playerId, "#{client.name} #{client.second_name}", amount)
+            # OneSignal::OneSignalSend.montantInferieur(@playerId, "#{client.name} #{client.second_name}", amount)
             #Sms.new(client.phone, "Le montant dans votre compte est inferieur a #{amount}. Transaction annulee. #{$signature}")
             #Sms::send
             return false, {

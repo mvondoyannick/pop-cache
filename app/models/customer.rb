@@ -8,6 +8,7 @@ class Customer < ApplicationRecord
   has_one :await            # L'intention de retrait du customer
 
   before_save :generate_apikey
+  before_save :generate_code
   before_save :set_hand
   before_save :setName, only: :create
 

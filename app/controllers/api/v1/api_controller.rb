@@ -194,9 +194,9 @@ class Api::V1::ApiController < ApplicationController
     begin
 
       #recuperation du onesignalID
-      @player_id = Base64.decode64(params[:oneSignalID])
+      # @player_id = Base64.decode64(params[:oneSignalID])
 
-      Rails::logger::info "oneSignalId : #{@player_id}"
+      # Rails::logger::info "oneSignalId : #{@player_id}"
 
       @customer = Customer.find_by_authentication_token(from)
       @marchand = Customer.find_by_authentication_token(to)
@@ -208,7 +208,7 @@ class Api::V1::ApiController < ApplicationController
         }
       else
         #OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
-        transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip, @player_id, @lat, @lon)
+        transaction = Client::pay(@customer.id, @marchand.id, amount, pwd, @ip, @lat, @lon)
         # transaction = Client::Payment.pay(customer: @customer.id, merchant: @merchant.id, amount: amount, password: pwd, ip: @ip, player_id: @player_id, lat: @lat, lon: @lon)
         #
         render json: {
