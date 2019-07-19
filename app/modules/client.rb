@@ -1512,11 +1512,3 @@ class Client
   end
 
 end
-
-module Customer
-
-end
-
-module Payment
-
-end
