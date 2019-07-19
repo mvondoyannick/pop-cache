@@ -112,7 +112,16 @@ module External
 
                         Rails::logger.info "Save new merchant account information"
                         Sms.sender(@merchant_phone, "Bonjour, un Paiement de #{@amount} F CFA vient d etre effectue dans votre compte virtuel/numero de telephone #{@merchant_phone}. ID de la transaction EXT_PAY_#{@hash}. Rapprochez-vous d'une agence UBA ou creer un compte PayMeQuick.")
-                        return true, "Paiement effectué d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} à #{@merchant_phone}"
+                        return true, {
+                            amount: @amount,
+                            device: 'XAF',
+                            frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
+                            total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
+                            receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
+                            sender: Customer.find_by_authentication_token(@customer_token).complete_name,
+                            date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
+                            status: "DONE"
+                        } #"Paiement effectué d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} à #{@merchant_phone}"
 
                       else
 
@@ -162,7 +171,7 @@ module External
                           device: 'XAF',
                           frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
                           total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
-                          receiver: Customer.find_by_phone(@merchant_phone).complete_name,
+                          receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
                           sender: Customer.find_by_authentication_token(@customer_token).complete_name,
                           date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
                           status: "DONE"
