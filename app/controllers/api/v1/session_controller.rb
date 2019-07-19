@@ -689,7 +689,7 @@ class Api::V1::SessionController < ApplicationController
     # @return [Object]
     def rechargeSprintPay
       # phone         = params[:phone].to_i
-      token         = params[:token] #request.headers['HTTP_X_API_POP_KEY']
+      token         = request.headers['HTTP_X_API_POP_KEY']
       @phone        = params[:phone]
       amount        = params[:amount].to_i
       network_name  = params[:network_name].upcase
@@ -703,8 +703,8 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         # on effectuer le transfert via SP en se basant sur le network name
-        if network_name == "ORANGE"
-
+        case network_name
+        when "ORANGE"
           SprintPay::Pay::Payment.new(@phone, amount)
           result = SprintPay::Pay::Payment.orange
 
@@ -712,10 +712,10 @@ class Api::V1::SessionController < ApplicationController
           if result["statusDesc"] == "FAILURE"
             # echec de la transaction
             render json: {
-              status:   result["statusDesc"],
-              message:  result["description"],
-              code:     result["statusCode"],
-              motif:    result["motif"]
+                status:   result["statusDesc"],
+                message:  result["description"],
+                code:     result["statusCode"],
+                motif:    result["motif"]
             }
           else
             # tout de passe bien
@@ -724,8 +724,8 @@ class Api::V1::SessionController < ApplicationController
             account = Account.find_by_customer_id(customer.id)
             if account.blank?
               render json: {
-                status:   :not_found,
-                message:  "Compte inconnu"
+                  status:   :not_found,
+                  message:  "Compte inconnu"
               }
             else
               # le compte existe, on peut continuer le traitement
@@ -744,23 +744,22 @@ class Api::V1::SessionController < ApplicationController
                   }
                 else
                   render json: {
-                    status:   :failed,
-                    message:  "Impossible de recharger votre compte PAYQUICK d'un montant de #{result["amount"]} depuis #{network_name} => erreurs : #{result}"
+                      status:   :failed,
+                      message:  "Impossible de recharger votre compte PAYQUICK d'un montant de #{result["amount"]} depuis #{network_name} => erreurs : #{result}"
                   }
                 end
 
               else
                 render json:
-                {
-                  status:   :failed,
-                  message:  "Impossible de mettre a jour votre compte"
-                  #Lancer le processus de  rollBack de montant precedement debité
-                }
+                           {
+                               status:   :failed,
+                               message:  "Impossible de mettre a jour votre compte"
+                               #Lancer le processus de  rollBack de montant precedement debité
+                           }
               end
             end
           end
-        elsif network_name == "MTN"
-
+        when "MTN"
           # Paiement par MTN MOMO
 
           SprintPay::Pay::Payment.new(@phone, amount)
@@ -770,10 +769,10 @@ class Api::V1::SessionController < ApplicationController
           if result["statusDesc"] == "FAILURE"
             # echec de la transaction
             render json: {
-              status:   result["statusDesc"],
-              message:  result["description"],
-              code:     result["statusCode"],
-              motif:    result["motif"]
+                status:   result["statusDesc"],
+                message:  result["description"],
+                code:     result["statusCode"],
+                motif:    result["motif"]
             }
           else
             # tout de passe bien
@@ -782,8 +781,8 @@ class Api::V1::SessionController < ApplicationController
             account = Account.find_by_customer_id(customer.id)
             if account.blank?
               render json: {
-                status:   :not_found,
-                message:  "Compte inconnu"
+                  status:   :not_found,
+                  message:  "Compte inconnu"
               }
             else
               # le compte existe, on peut continuer le traitement
@@ -797,30 +796,45 @@ class Api::V1::SessionController < ApplicationController
                   Sms.new(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
                   Sms::send
                   render json: {
-                    status:   :success,
-                    message:  "Votre compte POPCASH a ete credité d'un montant de #{result["amount"]} depuis #{network_name}"
+                      status:   :success,
+                      message:  "Votre compte POPCASH a ete credité d'un montant de #{result["amount"]} depuis #{network_name}"
                   }
                 else
                   render json: {
-                    status:   :failed,
-                    message:  "Impossible de recharger votre compte PAYQUICK d'un montant de #{result["amount"]} depuis #{network_name} : Erreurs : #{result}"
+                      status:   :failed,
+                      message:  "Impossible de recharger votre compte PAYQUICK d'un montant de #{result["amount"]} depuis #{network_name} : Erreurs : #{result}"
                   }
                 end
               else
                 render json:
-                {
-                  status:   :failed,
-                  message:  "Impossible de mettre a jour votre compte"
-                }
+                           {
+                               status:   :failed,
+                               message:  "Impossible de mettre a jour votre compte"
+                           }
               end
             end
           end
-        elsif network_name == "NEXTTEL"
+        when "NEXTTEL"
           render json: {
               status:   :failed,
               message:  "Pas encore supporté"
           }
+        else
+          render json: {
+              status:   :failed,
+              message:  "Opérateur pas encore supporté"
+          }
         end
+        # if network_name == "ORANGE"
+        #
+        #
+        #
+        # elsif network_name == "MTN"
+        #
+        #
+        # elsif network_name == "NEXTTEL"
+        #
+        # end
       end
     end
 
