@@ -120,7 +120,7 @@ module External
                             receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
                             sender: Customer.find_by_authentication_token(@customer_token).complete_name,
                             date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
-                            status: "DONE"
+                            status: "PAIEMENT EFFECTUÉ"
                         } #"Paiement effectué d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} à #{@merchant_phone}"
 
                       else
@@ -174,7 +174,7 @@ module External
                           receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
                           sender: Customer.find_by_authentication_token(@customer_token).complete_name,
                           date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
-                          status: "DONE"
+                          status: "PAIEMENT EFFECTUÉ"
                         }#,"Paiement d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué au  #{@merchant_phone}."
                       else
                         return false, "Impossible de sauver l'historique : #{client.errors.full_messages}"
