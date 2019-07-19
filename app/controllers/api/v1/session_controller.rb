@@ -957,29 +957,27 @@ class Api::V1::SessionController < ApplicationController
     end
 
     def check_customer
-      @token = request.headers['HTTP_X_API_POP_KEY']
-      @uuid = request.headers['HTTP_UUID']
-      puts "Token receive is : #{@token}"
-      if @token.present?
-        customer = Customer.find_by_authentication_token(@token)
+      @token = request.headers["HTTP_X_API_POP_KEY"]
+      @uuid = request.headers["HTTP_UUID"]
+
+      Rails::logger::info "Header data receive : Token #{@token}, Uuid : #{@uuid}"
+
+      begin
+        customer = Customer.find_by(authentication_token: @token, device: @uuid, two_fa: 'authenticate')
         if customer.blank?
-          render json: {
-              status: false,
-              message: "Utilisateur inconnu"
-          }
-        else
-          if customer.two_fa != 'authenticate' && customer.device != @uuid
-            Rails::logger::info "Utilisateur non autorisé"
-            head :unauthorized
-          end
+          #response.set_header('HEADER NAME', :unauthorized)
+          #render json: {
+          #  status: :unauthorized,
+          #  message: "Utilisateur non autorisé"
+          #}
+          head :unauthorized
         end
-      else
-        # no token has been found
-        head :unprocessable_entity
+      rescue ActiveRecord::RecordNotFound
+        render json: {
+            status: false,
+            message: "Utilisateur inconnu"
+        }
       end
 
-      def check_phone
-      end
     end
-
 end

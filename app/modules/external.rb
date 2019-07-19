@@ -16,6 +16,9 @@ module External
   #permet de gerer l'utilisateur demo, n'ayant pas de compte
   class DemoUsers
 
+    # @api External::DemoUsers.Payment(argv)
+    # @author mvondoyannick@gmail.com
+    # @param [Object] argv
     def self.Payment(argv)
       @customer_token = argv[:token]
       @customer_password = argv[:password]
@@ -24,7 +27,8 @@ module External
       @hash = rand(11**11)
       @ip = argv[:ip]
 
-      # get data from IP transaction
+      # get data geolocation from IP transaction
+      # TODO replace IP geolocation with lat/lon geolocation datas
       adress = DistanceMatrix::DistanceMatrix::pays(@ip)
 
       Rails::logger.info "Starting phone payement ..."
@@ -157,7 +161,7 @@ module External
                           amount: @amount,
                           device: 'XAF',
                           frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
-                          total: Parametre::Parametre::agis_percentage(@amount).to_f,
+                          total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
                           receiver: Customer.find_by_phone(@merchant_phone).complete_name,
                           sender: Customer.find_by_authentication_token(@customer_token).complete_name,
                           date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),

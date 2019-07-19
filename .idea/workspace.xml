@@ -6,7 +6,12 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="" />
+    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/client.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/external.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/external.rb" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/.bundle/" />
     <ignored path="$PROJECT_DIR$/components/" />
     <ignored path="$PROJECT_DIR$/log/" />
@@ -59,26 +64,26 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/modules/client.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="1328" column="17" selection-start-line="1328" selection-start-column="17" selection-end-line="1328" selection-end-column="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/modules/external.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-395">
-              <caret line="150" column="36" selection-start-line="150" selection-start-column="36" selection-end-line="150" selection-end-column="36" />
+            <state relative-caret-position="537">
+              <caret line="1519" column="14" selection-start-line="1519" selection-start-column="14" selection-end-line="1519" selection-end-column="14" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/modules/external.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2907">
+              <caret line="171" column="25" selection-start-line="171" selection-start-column="25" selection-end-line="171" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="16422">
-              <caret line="966" column="28" selection-start-line="966" selection-start-column="28" selection-end-line="966" selection-end-column="28" />
+            <state relative-caret-position="360">
+              <caret line="982" column="3" lean-forward="true" selection-start-line="982" selection-start-column="3" selection-end-line="982" selection-end-column="3" />
             </state>
           </provider>
         </entry>
@@ -212,7 +217,6 @@
         <option value="$PROJECT_DIR$/app/modules/pay_lib.rb" />
         <option value="$PROJECT_DIR$/config/config/schedule.rb" />
         <option value="$PROJECT_DIR$/app/modules/app.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb" />
         <option value="$PROJECT_DIR$/config/locales/devise.fr.yml" />
         <option value="$PROJECT_DIR$/config/schedule.rb" />
         <option value="$PROJECT_DIR$/app/modules/lorem.rb" />
@@ -224,8 +228,9 @@
         <option value="$PROJECT_DIR$/app/modules/pay_me_quick.rb" />
         <option value="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/customer.rb" />
-        <option value="$PROJECT_DIR$/app/modules/client.rb" />
         <option value="$PROJECT_DIR$/app/modules/external.rb" />
+        <option value="$PROJECT_DIR$/app/modules/client.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb" />
       </list>
     </option>
   </component>
@@ -270,8 +275,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="RailsProjectView" />
       <pane id="Scope" />
+      <pane id="RailsProjectView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -527,11 +532,14 @@
       <workItem from="1563366147899" duration="3142000" />
       <workItem from="1563371709219" duration="3145000" />
       <workItem from="1563379137409" duration="651000" />
+      <workItem from="1563437769427" duration="2678000" />
+      <workItem from="1563523480956" duration="896000" />
+      <workItem from="1563540191700" duration="504000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="676296000" />
+    <option name="totallyTimeSpent" value="680374000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -544,8 +552,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1600" height="873" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.35626101" visible="true" weight="0.18146718" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.35626101" visible="true" weight="0.1891892" />
       <window_info id="Structure" order="1" sideWeight="0.643739" side_tool="true" weight="0.12805663" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -558,7 +567,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" weight="0.32971507" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.5522388" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.4993565" visible="true" weight="0.275441" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.4993565" visible="true" weight="0.39484397" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5006435" side_tool="true" weight="0.95929444" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.32971507" />
       <window_info anchor="bottom" id="REST Client" order="13" weight="0.4301221" />
@@ -924,15 +933,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/modules/client.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="1328" column="17" selection-start-line="1328" selection-start-column="17" selection-end-line="1328" selection-end-column="17" />
+        <state relative-caret-position="537">
+          <caret line="1519" column="14" selection-start-line="1519" selection-start-column="14" selection-end-line="1519" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/modules/external.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16422">
-          <caret line="966" column="28" selection-start-line="966" selection-start-column="28" selection-end-line="966" selection-end-column="28" />
+        <state relative-caret-position="2907">
+          <caret line="171" column="25" selection-start-line="171" selection-start-column="25" selection-end-line="171" selection-end-column="25" />
         </state>
       </provider>
     </entry>
@@ -974,10 +983,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/modules/external.rb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-395">
-          <caret line="150" column="36" selection-start-line="150" selection-start-column="36" selection-end-line="150" selection-end-column="36" />
+        <state relative-caret-position="360">
+          <caret line="982" column="3" lean-forward="true" selection-start-line="982" selection-start-column="3" selection-end-line="982" selection-end-column="3" />
         </state>
       </provider>
     </entry>
