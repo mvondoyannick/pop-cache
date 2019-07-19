@@ -7,6 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.bundle/" />
@@ -79,8 +80,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="257">
-              <caret line="824" column="36" selection-start-line="824" selection-start-column="36" selection-end-line="824" selection-end-column="36" />
+            <state relative-caret-position="51">
+              <caret line="3" column="194" selection-start-line="3" selection-start-column="194" selection-end-line="3" selection-end-column="194" />
               <folding>
                 <element signature="e#20714#22808#1" />
                 <element signature="e#23261#25262#0" />
@@ -537,12 +538,12 @@
       <workItem from="1563437769427" duration="2678000" />
       <workItem from="1563523480956" duration="896000" />
       <workItem from="1563540191700" duration="745000" />
-      <workItem from="1563551364872" duration="428000" />
+      <workItem from="1563551364872" duration="1087000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="681043000" />
+    <option name="totallyTimeSpent" value="681702000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -988,8 +989,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="257">
-          <caret line="824" column="36" selection-start-line="824" selection-start-column="36" selection-end-line="824" selection-end-column="36" />
+        <state relative-caret-position="51">
+          <caret line="3" column="194" selection-start-line="3" selection-start-column="194" selection-end-line="3" selection-end-column="194" />
           <folding>
             <element signature="e#20714#22808#1" />
             <element signature="e#23261#25262#0" />

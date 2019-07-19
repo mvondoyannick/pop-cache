@@ -1,7 +1,7 @@
 class Api::V1::SessionController < ApplicationController
     #skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword, :testNetwork]
 
-    before_action :check_customer, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice, :question, :signup_authentication]
+    before_action :check_customer, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice, :question, :signup_authentication, :rechargeSprintPay, :getSpData]
     #before_action :check_phone, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice]
 
     #creation de compte utilisateur
