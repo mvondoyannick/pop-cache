@@ -57,31 +57,44 @@ namespace :customer do
 
   desc "Send recapitulation of customers about total payment and total receive each week, on friday morning"
   task :recap => :environment do
-    Customer.all.each do |customer|
-      # Gel customer solde account
-      solde = customer.account.amount
+    if Date.today.saturday?
+      Customer.all.each do |customer|
 
-      # Get customer depenses for one week
-      depense = History.where(customer_id: customer.id, flag: 'PAIEMENT').where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).sum(:amount)
-
-      # Get customer paiement recu for one week
-      paiement = History.where(customer_id: customer.id, flag: 'ENCAISSEMENT').where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).sum(:amount)
-
-      # Last step, send SMS to customer.phone
-      Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name}, Nous tenons a vous informer que vous avez depense #{depense} F CFA et recu #{paiement} F CFA cette semaine. Actuellement le solde de votre compte est de #{solde}.")
-
-      # Logs sommes informations to Heroku console
-      Rails::logger::info "Task has been generate to #{customer.phone} at #{Time.now}"
+        if customer.two_fa == 'authenticate'
+          # Gel customer solde account
+          solde = customer.account.amount
+    
+          # Get customer depenses for one week
+          depense = History.where(customer_id: customer.id, flag: 'PAIEMENT').where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).sum(:amount)
+    
+          # Get customer paiement recu for one week
+          paiement = History.where(customer_id: customer.id, flag: 'ENCAISSEMENT').where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).sum(:amount)
+    
+          # Last step, send SMS to customer.phone
+          Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name}, Nous tenons a vous informer que vous avez depense #{depense} F CFA et recu #{paiement} F CFA cette semaine. Actuellement le solde de votre compte est de #{solde}.")
+    
+          # Logs sommes informations to Heroku console
+          Rails::logger::info "Task has been generate to #{customer.phone} at #{Time.now}"
+        end
+      else
+        Rails::logger::info "Nothing need to done, canceled Job"
+      end
+    else
+      Rails::logger::info "We are not a saturday, Job canceled"
     end
   end
 
-  desc "test avec active record"
+  desc "Remercier l'utilisateur pour sa presence sur la plateforme PayMeQuick"
   task :thanks => :environment do 
-    Customer.all.each do |customer|
-      if customer.two_fa == 'authenticate' && customer.account.amount != '0.0' 
-        puts "Dire merci à l'utilisateurs #{customer.complete_name} en lui rappelant son"
-        Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} nous sommes fiert de vous savoir sur PayMeQuick et de vous informer que votre solde est actuellement de #{customer.account.amount}")
+    if Date.today.monday?
+      Customer.all.each do |customer|
+        if customer.two_fa == 'authenticate' && customer.account.amount != '0.0' 
+          puts "Dire merci à l'utilisateurs #{customer.complete_name} en lui rappelant son"
+          Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} nous sommes fiert de vous savoir sur PayMeQuick et de vous informer que votre solde est actuellement de #{customer.account.amount} F CFA")
+        end
       end
+    else
+      Rails::logger::info "We are not on monday! can't excecute Job!"
     end
   end
 end
