@@ -9,7 +9,7 @@ namespace :customer do
     desc "delete customer where account not used for 30 days and not activated"
     task :delete => :environment do
       puts "Starting searching and deleting only on friday"
-      if Date.today.friday?
+      if Date.today.saturday?
         puts "We can start, we are on friday"
         Customer.all.each do |customer|
           if customer.two_fa != 'authenticate' && (Date.today - customer.updated_at) > 45.customer.updated_at.from_now
