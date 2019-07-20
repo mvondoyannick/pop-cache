@@ -3,7 +3,7 @@ class Customer < ApplicationRecord
   belongs_to :type          # le type d'un customer, customer | demo
   has_one :badge            # Classification d'un customer en fonction de ses activités
   has_one :customer_datum   # Les informations du client
-  has_one :account          # Le compte du client
+  has_one :account, dependent: :destroy          # Le compte du client, qui sera supprimé si le client est supprimé
   has_one :history          # L'historique du client
   has_one :await            # L'intention de retrait du customer
 

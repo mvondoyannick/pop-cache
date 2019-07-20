@@ -8,37 +8,21 @@ end
 namespace :customer do
     desc "delete customer where account not used for 30 days and not activated"
     task :delete => :environment do
-      puts "Starting searching and deleting only on friday"
+      puts "Starting searching and deleting only on saturday ..."
       if Date.today.saturday?
         puts "We can start, we are on saturday"
         Customer.all.each do |customer|
           if customer.two_fa != 'authenticate' && customer.account.amount == '0.0' && (DateTime.now - customer.updated_at).to_i/(60*60*24) > 30 
             # customer is not authenticate and last update is 30 days
-            Rails::logger::info "Searching customer with profile : Not authenticated, not update account since 30 days, don' have money in his/her accounte"
+            puts "Searching customer with profile : Not authenticated, not update account since 30 days, don' have money in his/her accounte"
             # delete account first
-            # if customer.account.destroy
-            #   # delete customer virtual finance account firstly
-            #   Rails::logger.info "Deleting customer account #{customer.account.id} ... DONE!"
-            #   if customer.destroy
-            #     # deleting customer personal account secondly
-            #     Rails::logger::info "Deleting customer #{customer.phone} ... DONE!"
-            #     # wait 2
-            #     Sms.sender(customer.phone, "Votre compte vient d etre supprime de la plateforme PayMeQuick")
-            #   else
-            #     Rails::logger::info "Impossible de supprimer le compte #{customer.phone}"
-            #     Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte #{customer.phone}")
-            #   end
-            # else
-            #   Rails::logger::info "Impossible de supprimer le compte financier de #{customer.phone} : #{customer.account.id}"
-            #   Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte financier #{customer.phone} : #{customer.account.id}")
-            # end
             if customer.destroy
               # deleting customer personal account secondly
-              Rails::logger::info "Deleting customer #{customer.phone} ... DONE!"
+              puts "Deleting customer #{customer.phone} ... DONE!"
               # wait 2
               Sms.sender(customer.phone, "Votre compte vient d etre supprime de la plateforme PayMeQuick")
             else
-              Rails::logger::info "Impossible de supprimer le compte #{customer.phone}"
+              puts "Impossible de supprimer le compte #{customer.phone}"
               Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte #{customer.phone}")
             end
           #else
@@ -48,11 +32,11 @@ namespace :customer do
         end
       else
 
-        Rails::logger::info "This day is not a friday, delection canceled!"
+        puts "This day is not a friday, delection canceled!"
         Sms.sender(691451189, "Job canceled from Heroku at #{Time.now}: Cause: we are not a friday day.")
 
       end
-      
+      puts "DONE!"
     end
 
   desc "Send recapitulation of customers about total payment and total receive each week, on friday morning"

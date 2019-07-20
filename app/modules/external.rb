@@ -177,6 +177,8 @@ module External
                           status: "PAIEMENT EFFECTUÉ"
                         }#,"Paiement d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué au  #{@merchant_phone}."
                       else
+
+                        # Notify admin for this errors
                         return false, "Impossible de sauver l'historique : #{client.errors.full_messages}"
                       end
 

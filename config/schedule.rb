@@ -21,6 +21,7 @@
 
 every 1.minutes do
 
-  runner "Customer.complete_name"
+  # runner "Customer.complete_name"
+  rake "update_feed"
 
 end
