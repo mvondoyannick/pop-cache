@@ -10,27 +10,40 @@ namespace :customer do
     task :delete => :environment do
       puts "Starting searching and deleting only on friday"
       if Date.today.saturday?
-        puts "We can start, we are on friday"
+        puts "We can start, we are on saturday"
         Customer.all.each do |customer|
-          if customer.two_fa != 'authenticate' && (Date.today - customer.updated_at) > 45.customer.updated_at.from_now
-            # customer is not authenticate and last update is 45 days
+          if customer.two_fa != 'authenticate' && customer.account.amount == '0.0' && (DateTime.now - customer.updated_at).to_i/(60*60*24) > 30 
+            # customer is not authenticate and last update is 30 days
+            Rails::logger::info "Searching customer with profile : Not authenticated, not update account since 30 days, don' have money in his/her accounte"
             # delete account first
-            if customer.account.destroy
-              # delete customer virtual finance account firstly
-              Rails::logger.info "Deleting customer account #{customer.account.id} ... DONE!"
-              if customer.destroy
-                # deleting customer personal account secondly
-                Rails::logger::info "Deleting customer #{customer.phone} ... DONE!"
-                # wait 2
-                Sms.sender(customer.phone, "Votre compte vient d etre supprime de la plateforme PayMeQuick")
-              else
-                Rails::logger::info "Impossible de supprimer le compte #{customer.phone}"
-                Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte #{customer.phone}")
-              end
+            # if customer.account.destroy
+            #   # delete customer virtual finance account firstly
+            #   Rails::logger.info "Deleting customer account #{customer.account.id} ... DONE!"
+            #   if customer.destroy
+            #     # deleting customer personal account secondly
+            #     Rails::logger::info "Deleting customer #{customer.phone} ... DONE!"
+            #     # wait 2
+            #     Sms.sender(customer.phone, "Votre compte vient d etre supprime de la plateforme PayMeQuick")
+            #   else
+            #     Rails::logger::info "Impossible de supprimer le compte #{customer.phone}"
+            #     Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte #{customer.phone}")
+            #   end
+            # else
+            #   Rails::logger::info "Impossible de supprimer le compte financier de #{customer.phone} : #{customer.account.id}"
+            #   Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte financier #{customer.phone} : #{customer.account.id}")
+            # end
+            if customer.destroy
+              # deleting customer personal account secondly
+              Rails::logger::info "Deleting customer #{customer.phone} ... DONE!"
+              # wait 2
+              Sms.sender(customer.phone, "Votre compte vient d etre supprime de la plateforme PayMeQuick")
             else
-              Rails::logger::info "Impossible de supprimer le compte financier de #{customer.phone} : #{customer.account.id}"
-              Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte financier #{customer.phone} : #{customer.account.id}")
+              Rails::logger::info "Impossible de supprimer le compte #{customer.phone}"
+              Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte #{customer.phone}")
             end
+          else
+            Rails::logger::info "Aucune information a supprimer"
+            Sms.sender(App::PayMeQuick::App::developer[:phone], "Aucune information a supprimer pour cette date : #{Date.today}")
           end
         end
       else
@@ -59,6 +72,19 @@ namespace :customer do
 
       # Logs sommes informations to Heroku console
       Rails::logger::info "Task has been generate to #{customer.phone} at #{Time.now}"
+    end
+  end
+
+  desc "test avec active record"
+  task :lorem => :environment do 
+    Customer.all.each do |customer|
+      if customer.two_fa != 'authenticate' && customer.account.amount == '0.0' && (DateTime.now - customer.updated_at).to_i/(60*60*24) > 30 
+        puts "Il existe des choses comme cela"
+        puts customer.complete_name if customer.two_fa != 'authenticate'
+      else
+        puts "rake n'en sait rien"
+      end
+      # puts customer.complete_name
     end
   end
 end
