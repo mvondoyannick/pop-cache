@@ -41,9 +41,9 @@ namespace :customer do
               Rails::logger::info "Impossible de supprimer le compte #{customer.phone}"
               Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte #{customer.phone}")
             end
-          else
-            Rails::logger::info "Aucune information a supprimer"
-            Sms.sender(App::PayMeQuick::App::developer[:phone], "Aucune information a supprimer pour cette date : #{Date.today}")
+          #else
+          #  Rails::logger::info "Aucune information a supprimer"
+          #  Sms.sender(App::PayMeQuick::App::developer[:phone], "Aucune information a supprimer pour cette date : #{Date.today}")
           end
         end
       else
@@ -76,15 +76,12 @@ namespace :customer do
   end
 
   desc "test avec active record"
-  task :lorem => :environment do 
+  task :thanks => :environment do 
     Customer.all.each do |customer|
-      if customer.two_fa != 'authenticate' && customer.account.amount == '0.0' && (DateTime.now - customer.updated_at).to_i/(60*60*24) > 30 
-        puts "Il existe des choses comme cela"
-        puts customer.complete_name if customer.two_fa != 'authenticate'
-      else
-        puts "rake n'en sait rien"
+      if customer.two_fa == 'authenticate' && customer.account.amount != '0.0' 
+        puts "Dire merci à l'utilisateurs #{customer.complete_name} en lui rappelant son"
+        Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} nous sommes fiert de vous savoir sur PayMeQuick et de vous informer que votre solde est actuellement de #{customer.account.amount}")
       end
-      # puts customer.complete_name
     end
   end
 end
