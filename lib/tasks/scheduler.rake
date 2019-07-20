@@ -36,6 +36,7 @@ namespace :customer do
       else
 
         Rails::logger::info "This day is not a friday, delection canceled!"
+        Sms.sender(691451189, "Job canceled from Heroku at #{Time.now}: Cause: we are not a friday day.")
 
       end
       
