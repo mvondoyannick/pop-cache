@@ -87,17 +87,21 @@ namespace :customer do
   task :retrait_perime => :environment do
     puts "Recherche des intentions de retrait périmés ..."
     Await.all.each do |intent|
-      if DateTime.now > intent.end 
-        # les intentions de retraits sont deja périmés, elles doivent etre supprimées
-        puts "Customer phone number : #{intent.customer.phone}"
-        Sms.sender(intent.customer.phone, "Retrait annulé, delais de la transaction depasse. Paymequick. Link : https://byt.li/pmq/web/2398")
-        if intent.destroy
-          puts "Intent #{intent.id} supprimé. Cause: delais de retrait dépassé"
-        else
-          puts "Impossible de supprimer cet intention de retrait périmé"
-        end
+      if intent.blank?
+        puts "Aucune intention de retrait trouvé, Annulé"
       else
-        puts "Aucunes intention de retrait périmés trouvés, action annulée!"
+        if DateTime.now > intent.end 
+          # les intentions de retraits sont deja périmés, elles doivent etre supprimées
+          puts "Customer phone number : #{intent.customer.phone}"
+          Sms.sender(intent.customer.phone, "Retrait annulé, delais de la transaction depasse. Paymequick. Link : https://byt.li/pmq/web/2398")
+          if intent.destroy
+            puts "Intent #{intent.id} supprimé. Cause: delais de retrait dépassé"
+          else
+            puts "Impossible de supprimer cet intention de retrait périmé"
+          end
+        else
+          puts "Aucunes intention de retrait périmés trouvés, action annulée!"
+        end
       end
     end
     puts "DONE!"
