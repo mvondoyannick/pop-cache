@@ -53,15 +53,16 @@ namespace :customer do
     
           # Get customer paiement recu for one week
           paiement = History.where(customer_id: customer.id, flag: 'ENCAISSEMENT').where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).sum(:amount)
+
+          #recharge 
+          recharge = History.where(customer_id: customer.id, flag: 'RECHARGE').where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).sum(:amount)
     
           # Last step, send SMS to customer.phone
-          Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name}, Nous tenons a vous informer que vous avez depense #{depense} F CFA et recu #{paiement} F CFA cette semaine. Actuellement le solde de votre compte est de #{solde}.")
+          Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name}, Nous tenons a vous informer que vous avez recharge votre compte de #{recharge} F CFA, effectue des depenses de #{depense} F CFA et recu des paiements de #{paiement} F CFA cette semaine (#{Date.today.beginning_of_week} a #{Date.today.end_of_week}). Votre solde est actuellement de #{solde} F CFA.")
     
           # Logs sommes informations to Heroku console
-          Rails::logger::info "Task has been generate to #{customer.phone} at #{Time.now}"
+          puts "Task has been generate to #{customer.phone} at #{Time.now}"
         end
-      else
-        Rails::logger::info "Nothing need to done, canceled Job"
       end
     else
       Rails::logger::info "We are not a saturday, Job canceled"
@@ -80,5 +81,25 @@ namespace :customer do
     else
       Rails::logger::info "We are not on monday! can't excecute Job!"
     end
+  end
+
+  desc "Supprimer automatiquement tous les retraits perimés"
+  task :retrait_perime => :environment do
+    puts "Recherche des intentions de retrait périmés ..."
+    Await.all.each do |intent|
+      if DateTime.now > intent.end 
+        # les intentions de retraits sont deja périmés, elles doivent etre supprimées
+        puts "Customer phone number : #{intent.customer.phone}"
+        Sms.sender(intent.customer.phone, "Retrait annulé, delais de la transaction depasse. Paymequick. Link : https://byt.li/pmq/web/2398")
+        if intent.destroy
+          puts "Intent #{intent.id} supprimé. Cause: delais de retrait dépassé"
+        else
+          puts "Impossible de supprimer cet intention de retrait périmé"
+        end
+      else
+        puts "Aucunes intention de retrait périmés trouvés, action annulée!"
+      end
+    end
+    puts "DONE!"
   end
 end
