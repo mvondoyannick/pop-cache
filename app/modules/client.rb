@@ -1004,7 +1004,6 @@ class Client
                         code: @hash,
                         flag: "retrait".upcase,
                         context: "none",
-                        date: Time.now.strftime("%d-%m-%Y, %H:%M:%S"),
                         amount: awaits.amount.to_s
                       )
 
