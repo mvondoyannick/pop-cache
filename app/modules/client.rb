@@ -1009,13 +1009,31 @@ class Client
 
                       #on enregistre l'historique
                       if transaction.save
-                        # on supprime l'intent de retrait
-                        if awaits.destroy
-                          return true, "#{awaits.amount} F CFA ont été retiré de votre compte. \t Votre solde est de #{account.amount} F CFA. Merci"
+
+                        # on met a jour le compte de l'agent et on le notifie
+                        customer_agent = Customer.find_by_authentication_token(agent)
+                        if customer_agent.account.update(amount: customer_agent.amount.to_f + awaits.amount.to_f)
+                          Rails::logger::info "Mise a jour du compte de l'agent qui a initialiser le process de retrait ... FAIT!"
+
+                          # Notification de l'agent
+                          Sms.sender(agent.phone, "Retrait effectué du compte #{customer.complete_name}. Credit de votre compte : #{agent.complete_name} d'un montant de #{awaits.amount.round(2)} F CFA. Votre solde total est de #{agent.account.amount.round(2)} F CFA. Vous pouvez payer !")
+
+                          # on supprime l'intent de retrait
+                          if awaits.destroy
+
+                            return true, "#{awaits.amount} F CFA ont été retiré de votre compte. \t Votre solde est de #{account.amount} F CFA. Merci"
+
+                          else
+
+                            puts "Une erreur est survenue, engagement d'ActiveRecord::RollBack"
+                            raise ActiveRecord::Rollback "Annulation de la transaction car Une erreur est survenu durant la transaction"
+                            #return false, "Une erreur est survenu durant la transaction"
+
+                          end
                         else
-                          puts "Une erreur est survenue"
-                          #raise ActiveRecord::Rollback "Annulation de la transaction car Une erreur est survenu durant la transaction"
-                          return false, "Une erreur est survenu durant la transaction"
+
+                          Rails::logger.info "Impossible de mettre a jour le compte de l'agent"
+
                         end
 
                       else
