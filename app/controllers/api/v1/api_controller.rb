@@ -14,7 +14,7 @@ class Api::V1::ApiController < ApplicationController
 
     begin
 
-      data = Base64.strict_decode64(params[:otp_sms]).split("#")
+      data = Base64.strict_decode64(params[:data]).split("#")
 
       #recheche du payeur
       payeur_data = data[0]
