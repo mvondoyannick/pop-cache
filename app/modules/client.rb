@@ -963,7 +963,7 @@ class Client
                   return false, "Compte inexistant"
                 else
                   #processus de retrocession
-                  retro = account.amount += await.amount.to_f
+                  retro = account.amount += awaits.amount.to_f
                   if account.update(amount: retro)
                     Rails::logger::info "Montant remboursé avec succes"
 
