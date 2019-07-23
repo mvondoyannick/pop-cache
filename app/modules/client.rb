@@ -329,8 +329,18 @@ class Client
         #first time customer login on the plateform
         if customer.customer_datum.update(uuid: @device)
 
-          Rails::logger::info "Mise à jour de l'UUID effectué #{@device} avec success"
-          return true #, "Welcome to first login on PayCore #{customer.name}"
+          # mise a jour de la valeur de trouvant dans customer.device
+          if customer.update(device: @device)
+
+            Rails::logger::info "Mise à jour de l'UUID effectué #{@device} avec success"
+            return true #, "Welcome to first login on PayCore #{customer.name}"
+
+          else
+
+            puts "Fail to update main device"
+            return false, "Impossible de valide ce terminal"
+
+          end
 
         else
 

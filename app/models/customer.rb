@@ -64,6 +64,8 @@ class Customer < ApplicationRecord
 
   def set_cni
     self.cni = "**vide**" if self.cni.nil?
+
+    sleep 30
     Sms::sender(self.phone, "Pensez a renseigner votre Carte Natinale dans les 30 jours, sinon vous serez suspendu!")
   end
 
