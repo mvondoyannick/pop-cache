@@ -953,7 +953,7 @@ class Client
 
               #il existe effectivement un intent de retrait pour ce customer
               #on verifie si ce retrait est encore valide ou perimé
-              if Time.now > await.end.to_time
+              if Time.now > awaits.end.to_time
                 Rails::logger::info "Intention de retrait périmé, retrait annulé!"
 
                 # On effectue le rembourssement du retrait au client
@@ -969,7 +969,7 @@ class Client
 
                     #on supprime ensuite l'intent de retrait dans Await
                     Rails::logger::info "Suppression de l'intent de retrait"
-                    await.destroy
+                    awaits.destroy
 
                     #on remet a jour le flag await sur le customer
                     Rails::logger::info "Mise a jour de user"
