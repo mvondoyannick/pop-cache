@@ -95,7 +95,7 @@ class Client
           pSecurityQuestion = Parametre::SecurityQuestion::setSecurityQuestion(customer.id, @question, @answer)
           Rails::logger::info "Sauvegarder des données personnelles : #{pSecurityQuestion}"
 
-          @otp = Parametre::Authentication::authentification_top(@phone, 'context')
+          @otp = Parametre::Authentication::auth_top(@phone)
           if @otp[0]
             Rails::logger::info "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
             return true, @phone #customer.as_json(only: :phone)
@@ -103,9 +103,6 @@ class Client
             #notified admin for these errors, customer could not receive SMS confirmation
 
             Sms.sender(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:confirmation_failed])
-
-            # send email
-            # ApiMailer.sendAdmin("une erreur").deliver_now!
 
             return @otp[1], "Hum!!! c'est vraiment génant, nous sommes dans l'incapacité de vous transmettre le SMS de confirmarion"
 
@@ -171,7 +168,7 @@ class Client
       Rails::logger::info {"Creation de de l'utiliateur #{@phone} avec succes."}
 
       #on envoi le code d'authentification pour verification
-      @otp = Parametre::Authentication::authentification_top(@phone, 'context')
+      @otp = Parametre::Authentication::auth_top(@phone, 'context')
       if @otp[0]
         return true, "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
       else
@@ -455,7 +452,7 @@ class Client
             Rails::logger::info "Certaines informations au niveau de votre device sont differents, confirmez-nous que c'est bien vous!"
 
             # sending SMS to authenticate customer
-            @codeSms = Parametre::Authentication::authentification_top(@phone, 'context')
+            @codeSms = Parametre::Authentication::auth_top(@phone, 'context')
             if @codeSms[0]
 
               return true, "Merci de saisir le code recu par SMS", "authenticate"
@@ -928,11 +925,11 @@ class Client
                   Sms.sms_to_many({yannick: 691451189, nana: 698500871, boss: 697970210}, "Impossible de supprimer l'intention de retrait du client N° #{customer.complete_name} ayant l'ID #{await.id}")
 
                   # Mise a jour de l'await avec la valuer nil
-                  if customer.await.update(amount: nil)
-                    Rails::logger.info "Mise a jour de l'intention de retrait avec la valeur NIL ... REUSSI"
-                  else
-                    Rails::logger.info "Une erreur est survenu durant la processure de mise a jour de l'intention de retrait avec la valeur nil"
-                  end
+                  #if customer.await.update(amount: nil)
+                    #Rails::logger.info "Mise a jour de l'intention de retrait avec la valeur NIL ... REUSSI"
+                  #else
+                    #Rails::logger.info "Une erreur est survenu durant la processure de mise a jour de l'intention de retrait avec la valeur nil"
+                  #end
                 end
               else
                 # Failed to update customer restauration
