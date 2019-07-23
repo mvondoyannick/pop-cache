@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_22_132135) do
+ActiveRecord::Schema.define(version: 2019_07_23_122908) do
 
   create_table "abonnements", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.bigint "palier_id"
@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(version: 2019_07_22_132135) do
     t.string "end"
     t.boolean "used"
     t.string "hashawait"
+    t.string "agent"
     t.index ["customer_id"], name: "index_awaits_on_customer_id"
   end
 

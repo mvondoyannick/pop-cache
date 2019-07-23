@@ -1005,14 +1005,14 @@ class Client
                         flag: "retrait".upcase,
                         context: "none",
                         date: Time.now.strftime("%d-%m-%Y, %H:%M:%S"),
-                        amount: await.amount.to_s
+                        amount: awaits.amount.to_s
                       )
 
                       #on enregistre l'historique
                       if transaction.save
                         # on supprime l'intent de retrait
                         if awaits.destroy
-                          return true, "#{await.amount} F CFA ont été retiré de votre compte. \t Votre solde est de #{account.amount} F CFA. Merci"
+                          return true, "#{awaits.amount} F CFA ont été retiré de votre compte. \t Votre solde est de #{account.amount} F CFA. Merci"
                         else
                           puts "Une erreur est survenue"
                           #raise ActiveRecord::Rollback "Annulation de la transaction car Une erreur est survenu durant la transaction"
@@ -1247,9 +1247,10 @@ class Client
   # @author @mvondoyannick
   # @version 1.0.0
   # @OneSignal Adding oneSignal
-  def self.init_retrait(phone, amount)
+  def self.init_retrait(phone, amount, agent)
     @phone = phone
     @amount = amount.to_i
+    @agent = agent # Agent initialisateur de la procedure de retrait
     Rails::logger::info "Demarrage initialisation retrait pour #{@phone} ..."
     #se trouve dans la table retrait_await, on ajout un marqueur au client
     customer = Customer.find_by_phone(@phone)
@@ -1261,7 +1262,8 @@ class Client
           #on creet un nouvel await
           await = Await.new(
               amount: @amount,
-              customer_id: customer.id
+              customer_id: customer.id,
+              agent: @agent
           )
           if await.save
             #mise a jour du montant du customer
