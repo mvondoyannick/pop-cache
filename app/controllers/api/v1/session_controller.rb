@@ -213,7 +213,7 @@ class Api::V1::SessionController < ApplicationController
       if phone.present? && password.present?
 
         #query the user
-        signin = Client::auth_user(phone, password, device)
+        signin = Client::signin(phone, password, device)
         puts "Login data response : #{signin}"
         render json: signin
 
@@ -368,7 +368,7 @@ class Api::V1::SessionController < ApplicationController
       code      = params[:code]
       @playerId = params[:playerId]
 
-      authenticate = Parametre::Authentication::validate_2fa(phone, code, @playerId)
+      authenticate = Parametre::Authentication::validate_otp(phone, code, @playerId)
       if authenticate[0]
         render json: {
           status: :success,

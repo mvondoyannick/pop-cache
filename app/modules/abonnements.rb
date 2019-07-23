@@ -253,6 +253,30 @@ module Abonnements
 
     end
 
-  end
+    #Search customer Abonnement
+    # @param [Object] customer_id
+    def self.search(customer_id)
 
+      @customer_id = customer_id
+
+      customer = Customer.find(@customer_id)
+      if customer.blank?
+        return false, "Utilisateur inconnu"
+      else
+        # customer has be found
+        abonnement = Abonnement.find_by(customer_id: customer.id)
+        if abonnement.blank?
+          return false, "Aucun abonnement pour cet utilisateur"
+        else
+          palier = abonnement.palier.max_retrait
+          if palier.blank?
+            return false, "Aucun palier existant"
+          else
+            return true, palier
+          end
+        end
+      end
+    end
+
+  end
 end

@@ -10,12 +10,12 @@
       </div>
       <div class="card-body">
         <%= simple_form_for root_path, defaults: { input_html: { class: 'form-group' } } do |f| %>
-          <%= f.input :context, readonly: true, input_html: { value: @data.name}, label: "Client" %>
+          <%= f.input :context, readonly: true, input_html: { value: @otp_sms.name}, label: "Client" %>
           <%= f.input :context, readonly: true, input_html: { value: "Plateforme"}, label: "Context plateforme" %>
-          <%= f.input :key, readonly: true, input_html: { value: @data.key}, label: "Identifiant entreprise" %>
-          <%= f.input :cat_id, readonly: true, input_html: { value: @data.cat.name}, label: "Categorie" %>
+          <%= f.input :key, readonly: true, input_html: { value: @otp_sms.key}, label: "Identifiant entreprise" %>
+          <%= f.input :cat_id, readonly: true, input_html: { value: @otp_sms.cat.name}, label: "Categorie" %>
 
-          <%= f.submit "Generer QR Code pour #{@data.name}", class: 'btn btn-outline-primary' %>
+          <%= f.submit "Generer QR Code pour #{@otp_sms.name}", class: 'btn btn-outline-primary' %>
         <% end %>
       </div>
     </div>
@@ -53,4 +53,4 @@
 </div>
 
 
-<%= @data.inspect %>
+<%= @otp_sms.inspect %>

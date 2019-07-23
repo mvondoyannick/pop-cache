@@ -14,6 +14,7 @@ module Parametre
       $hmac_secret = Rails.application.secrets.secret_key_base
 
       #retourne le montant majoré du client
+      # @param [Integer] amount
       def self.agis_percentage(amount)
           @amount = amount.to_f
           tmp = @amount.to_f * 0.02
@@ -74,7 +75,7 @@ module Parametre
         if query.save
           return true
         else
-          return false, query.errors.full_messages
+          return false
         end
 
 
@@ -83,24 +84,24 @@ module Parametre
       #ENCODAGE JWT
       # @return [Object]
       # @param [Object] chaine
-      def self.encode_jwt(chaine)
-        Rails::logger::info "Starting encode string as payload ..."
-        @chaine = chaine
-        token = JWT.encode @chaine, nil, 'none'
-        return token
-      end
+      # def self.encode_jwt(chaine)
+      #   Rails::logger::info "Starting encode string as payload ..."
+      #   @chaine = chaine
+      #   token = JWT.encode @chaine, nil, 'none'
+      #   return token
+      # end
 
 
       #DECODAGE JWT
       ##utilisation de l'algorythme cryptographique HMAC
       # @param [Object] chaine
-      def self.decode_jwt(chaine)
-        Rails::logger::info "Starting decoding string as payload ..."
-        @chaine = chaine
-        token = JWT.decode @chaine, nil, false
-        #HashWithIndifferentAccess.new token
-        return token
-      end
+      # def self.decode_jwt(chaine)
+      #   Rails::logger::info "Starting decoding string as payload ..."
+      #   @chaine = chaine
+      #   token = JWT.decode @chaine, nil, false
+      #   #HashWithIndifferentAccess.new token
+      #   return token
+      # end
 
 
       #RETOURN LES INFORMATIONS SUR UN CUSTOMER
@@ -143,20 +144,20 @@ module Parametre
 
     #DECODAGE AES 256 
     # @param [Object] chaineCryptee
-    def self.aesDecode(chaineCryptee)
-      @chaineCryptee = chaineCryptee
-      secret = Rails.application.secrets.secret_key_base
-      result = AES.decrypt(@chaineCryptee, secret)
-      return result
-    end
+    # def self.aesDecode(chaineCryptee)
+    #   @chaineCryptee = chaineCryptee
+    #   secret = Rails.application.secrets.secret_key_base
+    #   result = AES.decrypt(@chaineCryptee, secret)
+    #   return result
+    # end
 
     #DECODE EN BASE 64
     # @param [Object] chaine
-    def self.decode(chaine)
-      @chaine = chaine
-      result = Base64.decode64(@chaine).to_i
-      return result
-    end
+    # def self.decode(chaine)
+    #   @chaine = chaine
+    #   result = Base64.decode64(@chaine).to_i
+    #   return result
+    # end
 
     #ENCODE EN BASE 64
     # @param [Object] chaine
@@ -169,10 +170,10 @@ module Parametre
     #CRYPTAGE AVEC SSL
     # @param [Object] data
     def self.cryptoSSL(data)
-      @data = data
+      @otp_sms = data
       digest = OpenSSL::Digest.new('sha1')
 
-      hmac = OpenSSL::HMAC.hexdigest(digest, $key, @data)
+      hmac = OpenSSL::HMAC.hexdigest(digest, $key, @otp_sms)
       #=> "de7c9b85b8b78aa6bc8a7a36f70a90701c9db4d9"
 
       return hmac
@@ -264,34 +265,6 @@ module Parametre
       else
         Rails::logger::info "Impossible de sauvegarder les informations peronnelles"
         return true, "Failed : #{personel.errors.full_messages}"
-      end
-    end
-
-    # permet de retourner l'historique des activités d'un customer, marchand ou pas!
-    # @param [Object] id
-    # @param [Object] transaction_id
-    # @param [Object] amount
-    # @param [Object] context
-    def self.getHistorique(id, hash, amount, flag)
-      @customer_id      = id              # le customer
-      @hash             = hash            #code de l'activite
-      @amount           = amount.to_i     # le montant
-      @flag             = flag            # le drapeau de description
-
-      # creation de l'objet transaction
-      transaction = Transaction.new(
-        customer: @customer_id,
-        code:     @hash,
-        flag:     @flag, #"paiement".upcase,
-        context:  "none",
-        date:     Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
-        amount:   @amount #Parametre::Parametre::agis_percentage(@amount)
-      )
-
-      if transaction.save
-        return true, "Logs saved"
-      else
-        return false, "Impossible de sauver les logs"
       end
     end
 
@@ -491,73 +464,67 @@ module Parametre
     end
   end
 
-  class Bank
-
-    def self.new
-    end
-
-    #supprimer une banque de la plateforme
-    def self.delete
-    end
-
-    #obtenir la liste des banque
-    def self.get
-    end
-
-    def self.list
-    end
-  end
-
   class Authentication
     #permet l'authentification a deux niveau a la creation du compte
     #pour s'assurer que le client
+    # One Time Password | OTP
     # @params   [object] phone
     # @params   [object] context
     # @return   [object] boolean
-    def self.auth_two_factor(phone, context)
+    def self.auth_top(phone, context="phone")
       @phone = phone.to_i
       @context = context
+      @secret = ROTP::Base32.random
 
       #on cherche ce nouvel utilisateur
-      auth = Customer.find_by_phone(phone)
+      customer = Customer.find_by_phone(phone)
 
       #on inscrit le nouveau mot de passe dans son compte
-      if auth.blank?
+      if customer.blank?
         return false, "Aucun utilisateur trouve"
       else
-        @data = rand(6**6) #SecureRandom.hex(2).upcase
-        #auth.two_fa = Crypto::cryptoSSL(data)
-        if auth.update(two_fa: @data, perime_two_fa: 1.hour.from_now)
-          Sms.sender(@phone, "#{@data} est le code permettant de  vous authentifier sur PAYQUICK.")
+        # Generation One time password for SMS
+        @otp_sms = ROTP::TOTP.new(@secret, issuer: "PayMeQuick")
+
+
+        if customer.update(two_fa: @otp_sms.now.to_i, perime_two_fa: 30.seconds.from_now)
+
+          # Sending SMS to customer with @otp_sms
+          Sms.sender(@phone, "#{@otp_sms.now} est le code permettant de  vous authentifier sur PayMeQuick.")
 
           #on retourne les informations
           return true, "Identification a deux facteurs envoyé"
         else
-          Sms.sender(@phone, "Impossible de terminer votre inscription .")
+
+          # Notify customer
+          Sms.sender(customer.phone, "Nous sommes dans l impossibilité de vous creer un mot de passe, pas de panique, un administrateur PayMeQuick vous contactera sous 1 minute pour vous aider a finaliser la procedure d'inscription. Toutes nos excuses.")
+
+          # Sending SMS to admin
+          Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de d'envoyer le mot de passe a l'utilisateur #{customer.phone}, merci de le contacter d urgence .")
 
           #on retourne les informations
-          return false, "Nous n'avons pas été capable de vous identifier! c'est tres génant. errors: #{auth.errors.messages}"
+          return false, "Nous sommes dans l impossibilité de vous creer un mot de passe, pas de panique, un administrateur PayMeQuick vous contactera sous 1 minute pour vous aider a finaliser la procedure d'inscription. Toutes nos excuses. errors was : #{customer.errors.messages}"
         end 
       end
     end
 
-    #permet de valider un code 2fa
+    #permet de valider un code OTP (One Time Password)
     # @params   [object] phone
     # @params   [object] auth_key
     # @return   [object] phone
-    def self.validate_2fa(phone, auth_key, playerId)
+    def self.validate_otp(phone, auth_key, playerId)
       @phone        = phone
-      @auth         = auth_key.to_i
+      @otp         = auth_key.to_i
       @playerId     = playerId
       #on cherche le client responsable de cette demande
-      @customer = Customer.where(phone: @phone, two_fa: @auth).first
+      @customer = Customer.find_by(phone: @phone, two_fa: @otp)
       if @customer.blank?
         Rails::logger::info "Utilisateur inconnu"
         return false, "Aucun code pour ce numero"
       else
         Rails::logger::info "le code d'authentification actuel est #{@customer.two_fa}"
         #on verifie que le code auth_key est encore valide dans le temps
-        if  @customer.two_fa.to_i.eql?(@auth)
+        if  @customer.two_fa.to_i.eql?(@otp)
           if Time.now <= @customer.perime_two_fa
             # si le code d'authentication n'est pas encore peripé
             #on supprimer les information et on les set a authenticate
@@ -567,7 +534,7 @@ module Parametre
               #Sms.new(@phone, "#{Client.prettyCallSexe(@customer.sexe)} #{@customer.name.upcase} #{@customer.second_name.capitalize}, Votre compte a ete authentifie. Vous pouvez desormais vous connecter.")
               #Sms::send
 
-              Rails::logger::info  "#{@phone} vient d'etre authentifier sur PAYQUICK a #{Time.now}"
+              Rails::logger::info  "#{@customer.phone} vient d'etre authentifier sur PAYQUICK a #{Time.now}"
 
               # creation du compte "porte monnaie virtuel"
 
@@ -576,7 +543,7 @@ module Parametre
                 Rails::logger::info  "#{@phone} dispose desormais d'un compte virtuel actif sur PAYQUICK a #{Time.now}"
                 return true, "#{@phone} est Authenticated & dispose d'un compte virtuel actif"
               else
-                Rails::logger::info  "Echech de creation du compte #{@phone} sur PAYQUICK a #{Time.now}"
+                Rails::logger::info  "Echech de creation du compte #{@phone} sur PayMeQuick a #{Time.now}"
                 return virtual_account[0], virtual_account[1]
               end
 
@@ -593,7 +560,7 @@ module Parametre
           end
           #return true, "Authenticated"
         else
-          Rails::logger::info "verification du code #{@auth} impossible pour le numéro #{@phone}"
+          Rails::logger::info "verification du code #{@otp} impossible pour le numéro #{@phone}"
           return false, "Authentification Impossible : Date ou code incorrect"
         end
       end

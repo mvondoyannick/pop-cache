@@ -41,7 +41,7 @@ namespace :customer do
 
   desc "Send recapitulation of customers about total payment and total receive each week, on friday morning"
   task :recap => :environment do
-    if Date.today.saturday?
+    if Date.today.sunday?
       Customer.all.each do |customer|
 
         if customer.two_fa == 'authenticate'
@@ -58,7 +58,7 @@ namespace :customer do
           recharge = History.where(customer_id: customer.id, flag: 'RECHARGE').where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).sum(:amount)
     
           # Last step, send SMS to customer.phone
-          Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name}, Nous tenons a vous informer que vous avez recharge votre compte de #{recharge} F CFA, effectue des depenses de #{depense} F CFA et recu des paiements de #{paiement} F CFA cette semaine (#{Date.today.beginning_of_week} a #{Date.today.end_of_week}). Votre solde est actuellement de #{solde} F CFA.")
+          Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name}, Nous tenons a vous informer que vous avez recharge votre compte de #{recharge.round(2)} F CFA, effectue des depenses de #{depense.round(2)} F CFA et recu des paiements de #{paiement.round(2)} F CFA cette semaine (#{Date.today.beginning_of_week} a #{Date.today.end_of_week}). Votre solde est actuellement de #{solde.round(2)} F CFA.")
     
           # Logs sommes informations to Heroku console
           puts "Task has been generate to #{customer.phone} at #{Time.now}"

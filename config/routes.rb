@@ -170,10 +170,10 @@ Rails.application.routes.draw do
       match 'links/link/:token/:qrcode', to: 'agent#link', via: [:get, :options]
 
       #gestion des utilisateurs sur le desktop
-      post 'customer/auth/signin', to:            'customer#signin'
-      post 'customer/auth/signin/validate', to:   'customer#validate_signin'
-      post 'customer/auth/signup', to:            'customer#signup'
-      post 'customer/auth/signup/validate', to:   'customer#validate_signup'
+      post 'customer/otp/signin', to:            'customer#signin'
+      post 'customer/otp/signin/validate', to:   'customer#validate_signin'
+      post 'customer/otp/signup', to:            'customer#signup'
+      post 'customer/otp/signup/validate', to:   'customer#validate_signup'
       get 'client/logs/:token', to:                     'customer#history'
 
       #terminer les interface clientes

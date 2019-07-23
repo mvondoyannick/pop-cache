@@ -14,9 +14,7 @@ class Api::V1::ApiController < ApplicationController
 
     begin
 
-      #data = Parametre::Crypto::decode(params[:data])
-      data = Base64.strict_decode64(params[:data]).split("#") #Base64.decode64(params[:data]).split("#")
-      token = request.headers["HTTP_X_API_POP_KEY"]
+      data = Base64.strict_decode64(params[:otp_sms]).split("#")
 
       #recheche du payeur
       payeur_data = data[0]

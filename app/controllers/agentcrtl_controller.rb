@@ -98,7 +98,7 @@ class AgentcrtlController < ApplicationController
      #on recherche le service en question
      query = Service.find(service)
     if !query.blank?
-      @data = query
+      @otp_sms = query
     end
   end
 
@@ -234,7 +234,7 @@ class AgentcrtlController < ApplicationController
             message: "Erreur ! #{phone} est inconnu de notre plateforme"
           }
         else
-          query = Client::credit_account(phone, amount)
+          query = Client::credit(phone, amount)
           render json: {
             message: query
           }

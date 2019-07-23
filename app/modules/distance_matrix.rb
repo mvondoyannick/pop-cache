@@ -47,6 +47,8 @@ module DistanceMatrix
         return "Une erreur reseau est survenu durant l'obtention des information sur l'adresse IP"
       rescue NoMethodError
         return "Impossible de continuer, une erreur FATAL est survenue"
+      rescue StandardError => e
+        return "Une erreur est survenue : #{e}"
       end
     end
     

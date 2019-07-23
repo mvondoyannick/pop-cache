@@ -24,7 +24,7 @@ class Sms
         return true
     end
 
-    def self.many
+    def self.mppp
       begin
         require 'httparty'
         moussi = "697085701"
@@ -64,11 +64,23 @@ class Sms
 
     end
 
-    #inclusion de faraday
-    def self.fylo
-      require 'faraday'
-      conn = Faraday.new(:url => 'https://www.agis-as.com/epolice')
-      conn.get '/index.php', { telephone: $phone, message: $message }
-      return conn
+    # Send notification to many users
+    # @param [Object] argv
+    def self.sms_to_many(argv, message="empty SMS")
+
+      argv.each do |key, value|
+        begin
+
+          puts "Starting sending sms to ... #{value}, with message #{message}"
+          request = HTTParty.get("https://www.agis-as.com/epolice/index.php?telephone=#{value}&message=#{message}")
+
+        rescue StandardError => e
+
+          puts "Une erreur est survenue : #{e}"
+
+        end
+
+      end
+
     end
 end

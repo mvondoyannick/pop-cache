@@ -57,10 +57,10 @@ class Api::V1::AgentController < ApplicationController
       badge = Badge.find_by_customer_id(customer.id)
       if badge.blank?
         render json: {
-          status:   :true,
-          flag:     :no_badge,
-          message:  "Aucun badge rataché a cet utilisateur",
-          data:     customer.as_json(only: [:name, :second_name, :phone, :authentication_token, :sexe, :phone, :cni])
+            status:   :true,
+            flag:     :no_badge,
+            message:  "Aucun badge rataché a cet utilisateur",
+            otp_sms:     customer.as_json(only: [:name, :second_name, :phone, :authentication_token, :sexe, :phone, :cni])
         }
       else
         render json: {
@@ -126,7 +126,7 @@ class Api::V1::AgentController < ApplicationController
 
   #search by scan
   def searchQrCodeByScan
-    data = params[:data]
+    data = params[:otp_sms]
 
     #break the chain
     data = Base64.decode64(data).split("@");

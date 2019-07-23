@@ -86,7 +86,7 @@ class HomeController < ApplicationController
     amount = params[:amount]
 
     #demarrage de la procedure
-    query = Client::credit_account(phone, amount)
+    query = Client::credit(phone, amount)
     puts query
   end
 

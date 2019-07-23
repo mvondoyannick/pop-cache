@@ -2,15 +2,16 @@ class Customer < ApplicationRecord
   acts_as_token_authenticatable     #pour generer le authentication_token
   belongs_to :type          # le type d'un customer, customer | demo
   has_one :badge            # Classification d'un customer en fonction de ses activités
-  has_one :customer_datum   # Les informations du client
+  has_one :customer_datum, dependent: :destroy   # Les informations du client
   has_one :account, dependent: :destroy          # Le compte du client, qui sera supprimé si le client est supprimé
-  has_one :history          # L'historique du client
-  has_one :await            # L'intention de retrait du customer
+  has_one :history, dependent: :destroy          # L'historique du client
+  has_one :await, dependent: :destroy            # L'intention de retrait du customer
 
   before_save :generate_apikey
   before_save :generate_code
   before_save :set_hand
   before_save :setName, only: :create
+  before_save :set_cni, only: :create
 
   # Create CustomerDatum after new Customer creation
   after_create :set_customer_datum
@@ -59,6 +60,11 @@ class Customer < ApplicationRecord
       context: "plateform",
       date: nil
     }.to_s) #.delete("\n")
+  end
+
+  def set_cni
+    self.cni = "**vide**" if self.cni.nil?
+    Sms::sender(self.phone, "Pensez a renseigner votre Carte Natinale dans les 30 jours, sinon vous serez suspendu!")
   end
 
   # TODO VALIDATE CHECKPHONE

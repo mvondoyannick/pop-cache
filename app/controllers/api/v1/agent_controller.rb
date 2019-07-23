@@ -91,7 +91,7 @@ class Api::V1::AgentController < ApplicationController
     @phone    = params[:phone]
     @amount   = params[:amount]
 
-      credit = Client::credit_account(@phone, @amount)
+      credit = Client::credit(@phone, @amount)
       render json: {
           status: credit[0],
           message: credit[1]
@@ -204,7 +204,7 @@ class Api::V1::AgentController < ApplicationController
 
   #search by scan
   def searchQrCodeByScan
-    data = params[:data]
+    data = params[:otp_sms]
 
     #break the chain
     data = Base64.decode64(data).split("@");

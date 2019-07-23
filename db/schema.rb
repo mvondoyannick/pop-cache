@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_11_171123) do
+ActiveRecord::Schema.define(version: 2019_07_22_132135) do
 
   create_table "abonnements", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.bigint "palier_id"
@@ -152,7 +152,6 @@ ActiveRecord::Schema.define(version: 2019_07_11_171123) do
     t.string "cni"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "await"
     t.string "two_fa"
     t.string "perime_two_fa"
     t.string "apikey"
