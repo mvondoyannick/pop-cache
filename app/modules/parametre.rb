@@ -487,7 +487,7 @@ module Parametre
         @otp_sms = ROTP::TOTP.new(@secret, issuer: "PayMeQuick")
 
 
-        if customer.update(two_fa: @otp_sms.now.to_i, perime_two_fa: 30.seconds.from_now)
+        if customer.update(two_fa: @otp_sms.now.to_i, perime_two_fa: 1.hours.from_now)
 
           # Sending SMS to customer with @otp_sms
           Sms.sender(@phone, "#{@otp_sms.now} est le code permettant de  vous authentifier sur PayMeQuick.")
@@ -530,7 +530,7 @@ module Parametre
             #on supprimer les information et on les set a authenticate
             if @customer.update(two_fa: 'authenticate', perime_two_fa: 'ok')
               #Ajout des notifications push oneSignal
-              OneSignal::OneSignalSend.genericOneSignal(@playerId, "#{Client.prettyCallSexe(@customer.sexe)} #{@customer.name.upcase} #{@customer.second_name.capitalize}, votre compte a été authentifié. Vous pouvez desormais vous connecter.", "#{Client.prettyCallSexe(@customer.sexe)} #{@customer.name.upcase} #{@customer.second_name.capitalize}, Your account has be authenticated. You can now sign in.")
+              #OneSignal::OneSignalSend.genericOneSignal(@playerId, "#{Client.prettyCallSexe(@customer.sexe)} #{@customer.name.upcase} #{@customer.second_name.capitalize}, votre compte a été authentifié. Vous pouvez desormais vous connecter.", "#{Client.prettyCallSexe(@customer.sexe)} #{@customer.name.upcase} #{@customer.second_name.capitalize}, Your account has be authenticated. You can now sign in.")
               #Sms.new(@phone, "#{Client.prettyCallSexe(@customer.sexe)} #{@customer.name.upcase} #{@customer.second_name.capitalize}, Votre compte a ete authentifie. Vous pouvez desormais vous connecter.")
               #Sms::send
 
