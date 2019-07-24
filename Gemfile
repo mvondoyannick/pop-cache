@@ -23,8 +23,6 @@ gem 'whenever', require: false
 gem 'devise'
 #adding rack-core from https://github.com/cyu/rack-cors
 gem 'rack-cors'
-#rails security scanner https://brakemanscanner.org/docs/quickstart/
-gem "brakeman"
 #generation des fakes datas
 gem 'faker'
 #devise authentication gem from https://github.com/gonzalo-bulnes/simple_token_authentication
@@ -93,6 +91,8 @@ group :development do
   gem "parallel"
   gem "wit"
   gem "rails-erd"
+  #rails security scanner https://brakemanscanner.org/docs/quickstart/
+  gem "brakeman"
 end
 
 group :test do

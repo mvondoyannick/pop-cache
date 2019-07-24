@@ -7,11 +7,11 @@ class Customer < ApplicationRecord
   has_one :history, dependent: :destroy          # L'historique du client
   has_one :await, dependent: :destroy            # L'intention de retrait du customer
 
-  before_save :generate_apikey
-  before_save :generate_code
-  before_save :set_hand
-  before_save :setName, only: :create
-  before_save :set_cni, only: :create
+  before_save :generate_apikey, on: :create
+  before_save :generate_code, on: :create
+  before_save :set_hand, on: :create
+  before_save :setName, on: :create
+  before_save :set_cni, on: :create
 
   # Create CustomerDatum after new Customer creation
   after_create :set_customer_datum
@@ -66,7 +66,7 @@ class Customer < ApplicationRecord
     self.cni = "**vide**" if self.cni.nil?
 
     sleep 30
-    Sms::sender(self.phone, "Pensez a renseigner votre Carte Natinale dans les 30 jours, sinon vous serez suspendu!")
+    Sms::sender(self.phone, "Pensez a renseigner votre Carte Natinale dans les 30 jours, sinon vous serez suspendu!") if self.cni.nil?
   end
 
   # TODO VALIDATE CHECKPHONE

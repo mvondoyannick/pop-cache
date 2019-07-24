@@ -95,19 +95,22 @@ module SprintPay
           q = HTTParty.post(url, headers: HEADERS, body: body, timeout: 30)
           return q.as_json
 
-        rescue StandardError, Timeout::Error, NetworkError::Timeout, NetworkError::Error
+        rescue StandardError => e #, Timeout::Error, NetworkError::Timeout, NetworkError::Error
 
-          return "Une erreur reseau est survenue. Impossible de continuer"
+          return "Une erreur est survenue. Impossible de continuer : #{e}"
 
         end
       end
 
       #ENVOI OM VERS CLIENTS ORANGE MONEY
       def self.orange
-        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v2"
+        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3"
         body_data = {
           "phone": $phone,        #utiliser la variable globale disponible a cet effet
-          "amount": $amount       #utiliser le montant globale disponible a cet effet
+          "amount": $amount,       #utiliser le montant globale disponible a cet effet
+          "notify_url": "https://google.cm",
+          "return_url": "https://google.cm",
+          "cancel_url": "https://google.cm",
         }.to_json
 
         send(body_data, base_url)
@@ -120,7 +123,7 @@ module SprintPay
 
       #ENVOI D UN MOMO VERS LES CLIENTS MTN MOBILE MONEY
       def self.mtn
-        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3"
+        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v2"
         #base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3"
         body_data = {
           "phone": $phone,        #utiliser la variable globale disponible a cet effet
