@@ -1320,14 +1320,18 @@ class Client
   # @output       [boolean] [true/false]
   # @author @mvondoyannick
   # @version 1.0.2
-  def self.pay(from, to, amount, pwd, ip, lat, lon)
-    @from = from.to_i
-    @to = to.to_i
-    @amount = amount.to_f #montant de la transation
-    @client_password = pwd
-    @ip = ip
-    @lat = lat
-    @lon = lon
+  def self.pay(argv, message=nil , locale)
+    @from = argv[:customer].to_i
+    @to = argv[:merchant].to_i
+    @amount = argv[:amount].to_f #montant de la transation
+    @client_password = argv[:pwd]
+    @ip = argv[:ip]
+    @lat = argv[:lat]
+    @lon = argv[:lon]
+
+    locale = locale
+
+    Rails::logger.info "Demarrage du paiement d'une transaction : #{message}"
 
     marchand = Customer.find(@to) #personne qui recoit
     marchand_account = marchand.account #Account.where(customer_id: marchand.id).first #le montant de la personne qui recoit
@@ -1340,7 +1344,7 @@ class Client
       # end sending local notifications
       Rails::logger::info "Numéro indentique, transaction annuler!"
       return false, {
-          title: "ERREUR DE DESTINATAIRE",
+          title: I18n.t("errMerchantTitle",locale: locale)
           message: "#{prettyCallSexe(client.sexe)} #{client.complete_name} vous ne pouvez pas vous payer à vous même. Merci de verifier votre destinataire et réessayer."
       }
     else

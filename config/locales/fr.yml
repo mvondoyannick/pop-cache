@@ -18,6 +18,7 @@ fr:
   merchantNotValid: "Marchand invalide"
   transactionLimit: "Limit de transaction atteinte"
   enterSms: "Merci de saisir le code SMS recu par message"
+  errMerchantTitle: "Vous ne pouvez pas vous payer à vous même. Modifier le marchant et réessayer"
 
   # retrait - intention de retrait
   noIntent: "Aucune intention de retrait pour ce compte"
