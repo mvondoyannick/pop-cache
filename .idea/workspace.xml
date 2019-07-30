@@ -10,11 +10,7 @@
     <bookmark url="file://$PROJECT_DIR$/app/modules/client.rb" line="202" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/client.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/locales/en.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/locales/en.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/locales/fr.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/locales/fr.yml" afterDir="false" />
-    </list>
+    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/.bundle/" />
     <ignored path="$PROJECT_DIR$/components/" />
     <ignored path="$PROJECT_DIR$/log/" />
@@ -611,12 +607,12 @@
       <workItem from="1564215943885" duration="5848000" />
       <workItem from="1564230649565" duration="44904000" />
       <workItem from="1564473957041" duration="544000" />
-      <workItem from="1564502997168" duration="1577000" />
+      <workItem from="1564502997168" duration="1703000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="770260000" />
+    <option name="totallyTimeSpent" value="770386000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -629,7 +625,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1600" height="873" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.6808989" visible="true" weight="0.16023166" />
       <window_info id="Structure" order="1" sideWeight="0.31910113" side_tool="true" visible="true" weight="0.16023166" />
