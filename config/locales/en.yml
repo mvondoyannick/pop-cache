@@ -52,7 +52,8 @@ en:
   merchantNotValid: "Merchant not valid"
   transactionLimit: "Limit de transaction"
   enterSms: "Please SMS code receive previously"
-  errMerchantTitle: "You can't buy yourself, change merchant and try again"
+  errMerchantTitle: "Merchant error"
+  errMerchantContent: "You can't buy yourself, change merchant and try again"
 
   # retrait - intention de retrait
   noIntent: "No intent for this account"

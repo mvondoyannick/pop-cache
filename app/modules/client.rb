@@ -1320,7 +1320,7 @@ class Client
   # @output       [boolean] [true/false]
   # @author @mvondoyannick
   # @version 1.0.2
-  def self.pay(argv, message=nil , locale)
+  def self.pay(argv, message=nil, locale)
     @from = argv[:customer].to_i
     @to = argv[:merchant].to_i
     @amount = argv[:amount].to_f #montant de la transation
@@ -1344,8 +1344,8 @@ class Client
       # end sending local notifications
       Rails::logger::info "Numéro indentique, transaction annuler!"
       return false, {
-          title: I18n.t("errMerchantTitle",locale: locale)
-          message: "#{prettyCallSexe(client.sexe)} #{client.complete_name} vous ne pouvez pas vous payer à vous même. Merci de verifier votre destinataire et réessayer."
+          title: I18n.t("errMerchantTitle",locale: locale),
+          message: I18n.t("errMerchantContent", locale: locale)
       }
     else
       if client.valid_password?(@client_password)
