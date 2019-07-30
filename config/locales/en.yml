@@ -31,3 +31,27 @@
 
 en:
   hello: "Hello world"
+  # Gestion des erreurs
+  customerNotFound: "Unknow Customer"
+  SmsNotSend: "Hum!!! We are not abble to send to your SMS confirmation!"
+  DataNotComplete: "Some data are not complete"
+  passwordInvalid: "Password invalid"
+  PasswordNotSecure: "Password that you are use is not secure! Modify it and retry"
+
+  # Payment message internationalization
+
+  # History from Logstory
+  noHistoryDay: "No transation found for this day!"
+  noHistoryWeek: "No transaction found for this week"
+  noHistoryMonth: "No transaction found this month"
+  noHistoryBeginning: "No transaction saved since your account has been created"
+  noHistoryYear: "No transaction for this year."
+  sameDate: "Dates selected are same"
+
+  # Payment internalisation
+  merchantNotValid: "Merchant not valid"
+  transactionLimit: "Limit de transaction"
+  enterSms: "Please SMS code receive previously"
+
+  # retrait - intention de retrait
+  noIntent: "No intent for this account"

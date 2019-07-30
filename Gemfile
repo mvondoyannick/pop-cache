@@ -93,6 +93,7 @@ group :development do
   gem "rails-erd"
   #rails security scanner https://brakemanscanner.org/docs/quickstart/
   gem "brakeman"
+  #rgem "appengine", "~> 0.4.1"
 end
 
 group :test do

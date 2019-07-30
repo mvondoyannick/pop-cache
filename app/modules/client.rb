@@ -13,8 +13,8 @@ class Client
       false: :false
   }
 
-  require 'securerandom'
-  require 'base64'
+  # create new logger file
+  @push_logger = ::Logger.new(Rails.root.join('log', 'client.log'))
 
 
   # @param [Object] from
@@ -32,13 +32,6 @@ class Client
   end
 
 
-  #permet de retourner le client appName
-  # @return [Object] AppName
-  def self.appName
-    return "PayMeQuick"
-  end
-
-
   #CREATION DU COMPTE CLIENT :: refactoring
   # @param [String] name
   # @param [String] second_name
@@ -50,80 +43,90 @@ class Client
   # @param [String] answer
   # @param [String] IP
   # @version 1.0.1
-  def self.signup(name, second_name, phone, cni, password, sexe, question, answer, ip)
+  def self.signup(argv, message, locale)
     include ActionDispatch
 
-    @name = name
-    @second_name = second_name
-    @phone = phone
-    @cni = cni
-    @email = "#{Faker::Internet.email}"
-    @password = password
-    @sexe = sexe
-    @ip = ip
-    @question = question
-    @answer = answer
+    begin
 
-    #on recherche le pays
-    @pays = DistanceMatrix::DistanceMatrix.pays(@ip)
+      @name = argv[:name]
+      @second_name = argv[:second_name]
+      @phone = argv[:phone]
+      @cni = argv[:cni]
+      @email = "#{Faker::Internet.email}"
+      @password = argv[:password]
+      @sexe = argv[:sexe]
+      @ip = argv[:ip]
+      @question = argv[:question]
+      @answer = argv[:answer]
 
-    Rails::logger::info "Requete provenant de l'IP #{@ip}, du pays : #{@pays}"
+      @locale = locale # Pour la traduction, fr ou en
 
-    # Check if password is don't rejected ::  FRAUD inclusion
-    if Fraud::Customer.passwordValidation(@password)[0]
+      #on recherche le pays
+      @pays = DistanceMatrix::DistanceMatrix.pays(@ip)
 
-      # password is OK and don't have restricted informations
-      #initi customer creation
-      customer = Customer.new(
-        name: @name,
-        second_name: @second_name,
-        phone: @phone,
-        email: @email,
-        password: @password,
-        type_id: 1,
-        cni: @cni,
-        sexe: @sexe,
-        ip: @ip,
-        pays: @pays
-      )
+      Rails::logger::info "Requete provenant de l'IP #{@ip}, du pays : #{@pays}"
 
-      Customer.transaction do
+      # Check if password is don't rejected ::  FRAUD inclusion
+      if Fraud::Customer.passwordValidation(@password)[0]
 
-        if customer.save
+        # password is OK and don't have restricted informations
+        #initi customer creation
+        customer = Customer.new(
+            name: @name,
+            second_name: @second_name,
+            phone: @phone,
+            email: @email,
+            password: @password,
+            type_id: 1,
+            cni: @cni,
+            sexe: @sexe,
+            ip: @ip,
+            pays: @pays
+        )
 
-          # on enregistre la question de securité
-          pSecurityQuestion = Parametre::SecurityQuestion::setSecurityQuestion(customer.id, @question, @answer)
-          Rails::logger::info "Sauvegarder des données personnelles : #{pSecurityQuestion}"
+        Customer.transaction do
 
-          @otp = Parametre::Authentication::auth_top(@phone)
-          if @otp[0]
-            Rails::logger::info "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
-            return true, @phone #customer.as_json(only: :phone)
+          if customer.save
+
+            # on enregistre la question de securité
+            pSecurityQuestion = Parametre::SecurityQuestion::setSecurityQuestion(customer.id, @question, @answer)
+            Rails::logger::info "Sauvegarder des données personnelles : #{pSecurityQuestion}"
+
+            @otp = Parametre::Authentication::auth_top(@phone)
+            if @otp[0]
+              Rails::logger::info "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
+              return true, customer.as_json(only: :phone)
+            else
+              #notified admin for these errors, customer could not receive SMS confirmation
+
+              Sms.sender(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:confirmation_failed])
+
+              return @otp[1], I18n.t("SmsNotSend", locale: @locale) #"Hum!!! c'est vraiment génant, nous sommes dans l'incapacité de vous transmettre le SMS de confirmarion"
+
+            end
+
           else
-            #notified admin for these errors, customer could not receive SMS confirmation
+            #Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
 
-            Sms.sender(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:confirmation_failed])
+            Sms.sender(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:customer_exist])
 
-            return @otp[1], "Hum!!! c'est vraiment génant, nous sommes dans l'incapacité de vous transmettre le SMS de confirmarion"
+            return false, "Des erreurs sont survenues : #{customer.errors.full_messages}"
 
           end
-
-        else
-          #Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
-
-          Sms.sender(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:customer_exist])
-
-          return false, "Des erreurs sont survenues : #{customer.errors.full_messages}"
-
+          #raise ActiveRecord::Rollback, "Call tech support"
         end
-        #raise ActiveRecord::Rollback, "Call tech support"
+
+      else
+
+        #this password is restricted
+        return false, I18n.t("PasswordNotSecure", locale: @locale) #"Le mot de passe que vous avez choisis est non seulement faible, mais pour des raisons de securité est interndit. Merci de le modifier et de réessayer"
+
       end
 
-    else
-
-      #this password is restricted
-      return false, "Le mot de passe que vous avez choisis est non seulement faible, mais pour des raisons de securité est interndit. Merci de le modifier et de réessayer"
-
+    rescue ActiveRecord::Error::ConnectionError
+      puts "Une erreur est survenue"
+    rescue ArgumentError => e
+      puts "Une autre erreur est survenue : #{e}"
     end
   end
 
@@ -184,25 +187,6 @@ class Client
     end
   end
 
-
-  #DESACTIVER UN COMPTE INUTILISER SOUS 45 JOURS
-  # TODO UPDATE DESACTIVATE UNUSED CUSTOMER ACCOUNT
-  def self.desactivateUnusedAccount
-
-    # Searching customer
-    begin
-
-
-    rescue ActiveRecord::RecordNotFound
-      #record has been not found
-
-
-    rescue ActiveRecord::TimeoutError, NetworkError::Error
-      # TimeOut or network error
-    end
-
-  end
-
   #CREATION DU COMPTE VIRTUEL FINANCIER UTILISATEUR
   # @name     Client::create_user_account(id:integer, phone:integer)
   # @detail   Permet de creer un compte utilisateur sur la plateforme
@@ -216,6 +200,7 @@ class Client
     @phone = phone
 
     #recherche du customer
+    #customer = Customer.exists?(phone: @phone)
     @customer = Customer.find_by_phone(phone)
     if @customer.blank?
       Rails::logger::info "Utilisateur #{@phone} est inconnu"
@@ -230,8 +215,8 @@ class Client
       if account.save
 
         # Ajout de l'abonnement basique pour ce client
-        Rails::logger::info "Ajout de l'abonnement basique pour ce customer #{@customer.id}"
-        Abonnements::Abonnements.add(1, @customer.id)
+        #Rails::logger::info "Ajout de l'abonnement basique pour ce customer #{@customer.id}"
+        #Abonnements::Abonnements.add(1, @customer.id)
 
         Rails::logger::info "Utilisateur #{@customer.phone} crée a #{Time.now}"
 
@@ -239,10 +224,10 @@ class Client
 
       else
 
-        Sms.sender(@customer.phone, "Une erreur est survenue durant le processus de creation compte virtuel! Merci de vous rappocher d\'un service Express Union. #{$signature}")
+        Sms.sender(@customer.phone, "Une erreur est survenue durant le processus de creation compte virtuel! Merci de patienter, un agent PayMeQuick va vous contacter d'ici peu. #{$signature}")
 
-        # envoi du courriel de notification
-
+        # envoi du courriel de notification aux administrateurs
+        Sms.sms_to_many({yan: 691451189, nana: 698500871, boss: 697970210}, "Une erreur est survenue durant le processus de creation de compte : Impossible de creer le compte viertuel pour #{@customer.photo}")
         # fin de notification
         return false, "Echec de creation du porte monnaie virtuel #{App::PayMeQuick::App.app[:signature]} pour le compte #{@customer.phone}: #{account.errors.full_messages}"
 
@@ -311,28 +296,30 @@ class Client
   end
 
 
-  # CHECK CUSTOMER DEVICE ID
+  #CHECK CUSTOMER DEVICE ID
   # detail verify if customer Device has been change on new login
   # param [Object] argc
-  def self.device(argc)
-    @device = argc[:device] # in fact is phone uuid
+  # TODO update customer locale for translation
+  def self.device(argc, locale)
+    @device = argc[:device] # devise here mean the smartphone uuid
     @phone = argc[:phone]
+    @locale = locale
 
     # verify customer device
     customer = Customer.find_by_phone(@phone)
     if customer.blank?
-
-      return false, "Unknow customer"
-
+      return false, I18n.t("customerNotFound", locale: @locale)
     else
       if customer.device.nil?
+
         #first time customer login on the plateform
+        Rails::logger.info "Mise à jour de l'uuid du customer avec la valeur #{@device}"
         if customer.customer_datum.update(uuid: @device)
 
           # mise a jour de la valeur de trouvant dans customer.device
           if customer.update(device: @device)
 
-            Rails::logger::info "Mise à jour de l'UUID effectué #{@device} avec success"
+            Rails::logger::info "Mise à jour des données de l'utilisateur reussi"
             return true #, "Welcome to first login on PayCore #{customer.name}"
 
           else
@@ -358,7 +345,7 @@ class Client
           # Update new device to customerDatum.uuid2
           if customer.customer_datum.update(uuid2: @device)
 
-            Rails::logger::info "Mise a jour de l'UUID 2 effectuée avec la value #{@device}"
+            Rails::logger::info "Mise a jour de l'UUID 2 effectuée avec la value #{@device} pour le nouveau terminal"
             return false #Updated
 
           else
@@ -374,7 +361,7 @@ class Client
   end
 
 
-  # UPDATE DEVICE NEW UUID CUSTOMER
+  #UPDATE DEVICE NEW UUID CUSTOMER
   # @param [Object] argc
   def self.updateDevice(argc)
     @uuid = argc[:uuid]
@@ -424,18 +411,18 @@ class Client
   end
 
   #AUTHENTIFICATION-CONNEXION D'UN UTILISATEUR SUR LA PLATEFORME
-  # @method     Authentifier un utilisateur
-  # @name       Client::signin
-  # @params     phone, password
-  # @output     boolean [true/false]
-  # @param [Object] phone
-  # @param [Object] password
+  # @name Client::signin
   # @author @mvondoyannick
-  # @version 1.0.1
-  def self.signin(phone, password, device_id) # prévoir l'ajout de l'@ IP
-    @phone = phone # Customer phone account
-    @password = password # customer password account
-    @device_id = device_id # customer uniq device ID
+  # @version 1.0.1.1
+  # @param [Object] argc
+  # @param [Object] locale
+  # @param [Object] message
+  def self.signin(argc, locale, message) # prévoir l'ajout de l'@ IP
+    @phone = argc[:phone] # Customer phone account
+    @password = argc[:password] # customer password account
+    @device_id = argc[:device_id] # customer uniq device ID
+    @locale = locale
+    @message = message
 
     Rails::logger::info "Authenticating user #{@phone} call ..."
 
@@ -446,7 +433,7 @@ class Client
         if customer.two_fa == "authenticate"
 
           # check customer device
-          if device(device: device_id, phone: @phone)
+          if device({device: @device_id, phone: @phone}, @locale)
 
             # a ce stade, tout est true, donc tout va bien
             # on retourne les informations
@@ -459,13 +446,13 @@ class Client
           else
 
             # rien ne va!
-            Rails::logger::info "Certaines informations au niveau de votre device sont differents, confirmez-nous que c'est bien vous!"
+            Rails::logger::info "Les informations du terminal de cet urilisateur sont differents de ceux contenu dans la base, il doit s'authentifier"
 
             # sending SMS to authenticate customer
             @codeSms = Parametre::Authentication::auth_top(@phone, 'context')
             if @codeSms[0]
 
-              return true, "Merci de saisir le code recu par SMS", "authenticate"
+              return true, I18n.t("enterSms", locale: locale), "authenticate"
 
             else
 
@@ -478,7 +465,7 @@ class Client
           @account_status = isLock?(customer.authentication_token)
 
           Rails::logger::info "Compte #{@phone} est actuellement #{customer.two_fa}"
-          return false, "Le statut actuel de votre compte ne vous permet pas de vous connecter. Bien vouloir vous rapprocher d'un POINT #{Client.appName} ou réinitialiser votre mot de passe."
+          return false, "Le statut actuel de votre compte ne vous permet pas de vous connecter. Bien vouloir vous rapprocher d'un POINT #{App::PayMeQuick::App::app[:signature]} ou réinitialiser votre mot de passe."
         end
       else
         Rails::logger::error "Authenticating user failed, bad password. end request!"
@@ -489,7 +476,7 @@ class Client
       end
     else
       Rails::logger::error "Authenticating user failled, unknow user. end request!"
-      return false, "Utilisateur inconnu ou mot de passe invalide.", status: :unauthorized
+      return false, I18n.t("customerNotFound", locale: @locale), status: :unauthorized #"Utilisateur inconnu ou mot de passe invalide.", status: :unauthorized
     end
   end
 
@@ -549,7 +536,7 @@ class Client
       Sms.new(sim_phone, "La plateforme ne reconnais pas votre carte SIM!")
       Sms::send
       # fin d'envoi
-      return false, "Les numéro de votre carte SIM et celui de ce compte #{Client.appName} sont differents."
+      return false, "Les numéro de votre carte SIM et celui de ce compte #{App::PayMeQuick::App::app[:signature]} sont differents."
     end
   end
 
@@ -598,11 +585,12 @@ class Client
   end
 
 
-  # GET CREDIT BALANCE ACCOUNT REFACTORING
+  #GET CREDIT BALANCE ACCOUNT REFACTORING
   # @param [Object] argv
-  def self.balance(argv)
+  def self.balance(argv, locale)
     @phone = argv[:phone]
     @password = argv[:password]
+    locale = locale
 
     begin
 
@@ -643,41 +631,42 @@ class Client
   # @param [Object] password
   # @return [Object]
   # @author @mvondoyannick
-  # @version 0.0.1beta-rev-11-03-83-50
-  def self.get_balance(tel, password)
-    @phone = tel
-    @password = password
+  # @version 1.0.1.1
+  def self.get_balance(argv, message=nil , locale)
+    @phone = argv[:phone]
+    @password = argv[:password]
+    message = message
+    locale = locale
 
     #on recherche le client
-    query = Customer.find_by_phone(@phone)
-    if query.blank?
+    customer = Customer.find_by_phone(@phone)
+    if customer.blank?
       Rails::logger::error "Authenticating user failed, unknow user. end request!"
-      return false, "Utilisateur inconnu."
+      return false, I18n.t("customerNotFound", locale: locale)
     else
-      if query.valid_password?(@password)
+      if customer.valid_password?(@password)
         # account = Account.find_by_customer_id(query.id)
         # starting refactoring account
-        account = query.account.amount
+        account = customer.account.amount
         if account.blank?
           return false, "Aucun compte utilisateur correcpondant ou compte vide"
         else
           #return OneSignal API
-          Sms.new(@phone, "#{prettyCallSexe(query.sexe)} #{query.complete_name}, le solde de votre compte est : #{account} #{$devise}. #{Client.appName}")
-          Sms::send
-          return true, "#{prettyCallSexe(query.sexe)} #{query.complete_name}, le solde de votre compte est : #{account} #{$devise}. #{$signature}"
+          Sms.sender(@phone, "#{prettyCallSexe(customer.sexe)} #{customer.complete_name}, le solde de votre compte est : #{account} #{$devise}. #{App::PayMeQuick::App::app[:signature]}")
+          return true, "#{prettyCallSexe(customer.sexe)} #{customer.complete_name}, le solde de votre compte est : #{account} #{$devise}. #{$signature}"
         end
       else
 
-        return false, "Mot de passe invalide. #{$signature}"
+        return false, I18n.t("passwordInvalid", locale: locale)
 
       end
     end
   end
 
 
-  #permet d'obtenir le sexe et de retourner Mr ou Mme
-  # @param [Object] sexe
-  # @version 1.0
+  #RETOURNE UNE APPELLATION CONVIVIALE DE L'UTILISATEUR
+  # @param [String] sexe
+  # @version 1.0.1
   def self.prettyCallSexe(sexe)
     @sexe = sexe.downcase
     case @sexe
@@ -738,7 +727,7 @@ class Client
     end
   end
 
-  #VERIFICATION DU STATUT D4UN COMPTE Bloquer|voler|desactiver|autre
+  #VERIFICATION DU STATUT D'UN COMPTE Bloquer|voler|desactiver|autre
   # @name
   # @detail   permet de verifier si un compte est actuellement bloquer ou non
   # params    token:string
@@ -755,7 +744,7 @@ class Client
       case customer.two_fa
       when "authenticate"
 
-        Rails::logger::info "Utilisateur #{customer.phone} authentifié sur #{Client.appName}"
+        Rails::logger::info "Utilisateur #{customer.phone} authentifié sur #{App::PayMeQuick::App::app[:signature]}"
         return false, "authenticate", "Compte non bloqué", "Aucun motif"
 
       when "lock"
@@ -766,7 +755,7 @@ class Client
       when "delete"
 
         # end notification
-        Rails::logger::info "Utilisateur #{customer.phone} supprimé sur #{Client.appName}"
+        Rails::logger::info "Utilisateur #{customer.phone} supprimé sur #{App::PayMeQuick::App::app[:signature]}"
         return true, "deleted", "Ce compte a ete supprimer"
 
       else
@@ -885,6 +874,7 @@ class Client
   # @author @mvondoyannick
   # @version 1.0.1
   # TODO ajouter l'agent de la requete, celui qui initie l'oparation et retrait et se voit virer l'argent une fois la validation effectuée
+  # TODO verifier et finaliser cette procedure de validation de retrait
   def self.validate_retrait(token, pwd)
     @token = token
     @pwd = pwd
@@ -920,27 +910,30 @@ class Client
               # Cancel retrait and restare fond
               Rails::logger.info "Plafond de retrait maximum atteint pour cette abonnement"
 
-              # Starting restauration
+              # Starting restauration, and await suppression amount
               restauration = customer.await.amount
 
               if customer.account.update(amount: customer.account.amount + restauration.to_f)
-                # delete customer await intend
-                if customer.await.destroy
-                  Rails::logger.info "Suppression de l'intention de retrait du customer ...DONE!"
+                # before delete await, set it's amount to nil
+                if awaits.update(amount: nil )
+                  # delete customer await intend
+                  if awaits.destroy
+                    Rails::logger.info "Suppression de l'intention de retrait du customer ...DONE!"
 
-                  # send notification
-                  return false, "Ce retrait est au dessus de la limite maximum de votre plafond, impossible effectuer ce retrait. merci de revoir le montant à la baisse et de réessayer."
+                    # send notification
+                    return false, "Ce retrait est au dessus de la limite maximum de votre plafond retrait, impossible effectuer le retrait. merci de revoir le montant à la baisse et de réessayer."
+                  else
+                    # si on ne peut pas detruire cela, on notify les administrateurs et on mets le compte a jour avec une valeur nil
+                    Sms.sms_to_many({yannick: 691451189, nana: 698500871, boss: 697970210}, "Impossible de supprimer l'intention de retrait du client N° #{customer.complete_name} ayant l'ID #{await.id}")
+                  end
                 else
-                  # si on ne peut pas detruire cela, on notify les administrateurs et on mets le compte a jour avec une valeur nil
-                  Sms.sms_to_many({yannick: 691451189, nana: 698500871, boss: 697970210}, "Impossible de supprimer l'intention de retrait du client N° #{customer.complete_name} ayant l'ID #{await.id}")
+                  # force updating
+                  awaits.update!(amount: nil )
 
-                  # Mise a jour de l'await avec la valuer nil
-                  #if customer.await.update(amount: nil)
-                    #Rails::logger.info "Mise a jour de l'intention de retrait avec la valeur NIL ... REUSSI"
-                  #else
-                    #Rails::logger.info "Une erreur est survenu durant la processure de mise a jour de l'intention de retrait avec la valeur nil"
-                  #end
+                  #notify somes administrator
+                  Sms.sms_to_many({yannick: 691451189, nana: 698500871, boss: 697970210}, "Impossible de supprimer l'intention de retrait du client N° #{customer.complete_name} ayant l'ID #{await.id}")
                 end
+
               else
                 # Failed to update customer restauration
                 # raise ActiveRecord::Rollback "Restauration en cours ..."
@@ -948,6 +941,8 @@ class Client
 
                 # Notify admins
                 Sms.sms_to_many({yannick: 691451189, nana: 698500871, boss: 697970210}, "Impossible de restaurer le compte du client N° #{customer.complete_name} ayant l'ID #{customer.id}, merci de rapidement intervenir!")
+
+                raise ActiveRecord::Rollback "Reinitialisation des comptes aux status initials"
               end
             else
 
@@ -963,90 +958,92 @@ class Client
                   return false, "Compte inexistant"
                 else
                   #processus de retrocession
-                  retro = account.amount += awaits.amount.to_f
-                  if account.update(amount: retro)
-                    Rails::logger::info "Montant remboursé avec succes"
+                  # retro = account.amount += awaits.amount.to_f
+                  # if account.update(amount: retro)
+                  #   Rails::logger::info "Montant remboursé avec succes"
+                  #
+                  #   #on supprime ensuite l'intent de retrait dans Await
+                  #   Rails::logger::info "Suppression de l'intent de retrait"
+                  #   awaits.destroy
+                  #
+                  #   #on remet a jour le flag await sur le customer
+                  #   Rails::logger::info "Mise a jour de user"
+                  #   customer.update(await: nil)
 
-                    #on supprime ensuite l'intent de retrait dans Await
-                    Rails::logger::info "Suppression de l'intent de retrait"
-                    awaits.destroy
+                  Rails::logger::info "Suppression de l'intent de retrait ..."
+                  awaits.destroy
 
-                    #on remet a jour le flag await sur le customer
-                    Rails::logger::info "Mise a jour de user"
-                    customer.update(await: nil)
-
-                    return true, "Retrait perimé, impossible de continuer"
-                  else
-                    Rails::logger::info "Impossible de mettre à jour le remboursement"
-                    return false, "Votre rembourssement a echoué, merci de vous rapprocher d'une agence Express Union"
-                  end
+                  return true, "Retrait perimé, impossible de continuer"
+                  # else
+                  #   Rails::logger::info "Impossible de mettre à jour le remboursement"
+                  #   return false, "Votre rembourssement a echoué, merci de vous rapprocher d'une agence Express Union"
+                  # end
                 end
               else
                 #tout va bien, on procede a la validation du retrait
 
-                  account = customer.account #Account.find_by_customer_id(customer.id)
-                  if account.blank?
-                    Rails::logger::info "Compte inconnu"
-                    return false
-                  else
-                    # on debit effectivement le compte client
-                    Rails::logger::info "Suppression de l'intent de retrait ..."
+                account = customer.account #Account.find_by_customer_id(customer.id)
+                if account.blank?
+                  Rails::logger::info "Compte inconnu"
+                  return false
+                else
+                  # on debit effectivement le compte client
+                  Rails::logger::info "Suppression de l'intent de retrait ..."
 
-                    # introduction de l'agent dans le processus, credit du compte de l'agent
-                    agent = customer.await.agent  # Retourne le token de l'agent
+                  # introduction de l'agent dans le processus, credit du compte de l'agent
+                  agent = customer.await.agent # Retourne le token de l'agent
 
-                    # Credit du compte de l'agent
-                    if Customer.find_by_authentication_token(agent).account.update(amount: customer.await.amount)
-                      # save history
-                      #enregistrement de l'historique du retrait
-                      transaction = History.new(
+                  # Credit du compte de l'agent
+                  if Customer.find_by_authentication_token(agent).account.update(amount: customer.await.amount)
+                    # save history
+                    #enregistrement de l'historique du retrait
+                    transaction = History.new(
                         customer_id: customer.id,
                         code: @hash,
                         flag: "retrait".upcase,
                         context: "none",
                         amount: awaits.amount.to_s
-                      )
+                    )
 
-                      #on enregistre l'historique
-                      if transaction.save
+                    #on enregistre l'historique
+                    if transaction.save
 
-                        # on met a jour le compte de l'agent et on le notifie
-                        customer_agent = Customer.find_by_authentication_token(agent)
-                        if customer_agent.account.update(amount: customer_agent.amount.to_f + awaits.amount.to_f)
-                          Rails::logger::info "Mise a jour du compte de l'agent qui a initialiser le process de retrait ... FAIT!"
+                      # on met a jour le compte de l'agent et on le notifie
+                      customer_agent = Customer.find_by_authentication_token(agent)
+                      if customer_agent.account.update(amount: customer_agent.amount.to_f + awaits.amount.to_f)
+                        Rails::logger::info "Mise a jour du compte de l'agent qui a initialiser le process de retrait ... FAIT!"
 
-                          # Notification de l'agent
-                          Sms.sender(agent.phone, "Retrait effectué du compte #{customer.complete_name}. Credit de votre compte : #{agent.complete_name} d'un montant de #{awaits.amount.round(2)} F CFA. Votre solde total est de #{agent.account.amount.round(2)} F CFA. Vous pouvez payer !")
+                        # Notification de l'agent
+                        Sms.sender(agent.phone, "Retrait effectué du compte #{customer.complete_name}. Credit de votre compte : #{agent.complete_name} d'un montant de #{awaits.amount.round(2)} F CFA. Votre solde total est de #{agent.account.amount.round(2)} F CFA. Vous pouvez payer !")
 
-                          # on supprime l'intent de retrait
-                          if awaits.destroy
+                        # on supprime l'intent de retrait
+                        if awaits.destroy
 
-                            return true, "#{awaits.amount} F CFA ont été retiré de votre compte. \t Votre solde est de #{account.amount} F CFA. Merci"
+                          return true, "#{awaits.amount} F CFA ont été retiré de votre compte. \t Votre solde est de #{account.amount} F CFA. Merci"
 
-                          else
-
-                            puts "Une erreur est survenue, engagement d'ActiveRecord::RollBack"
-                            raise ActiveRecord::Rollback "Annulation de la transaction car Une erreur est survenu durant la transaction"
-                            #return false, "Une erreur est survenu durant la transaction"
-
-                          end
                         else
 
-                          Rails::logger.info "Impossible de mettre a jour le compte de l'agent"
+                          puts "Une erreur est survenue, engagement d'ActiveRecord::RollBack"
+                          raise ActiveRecord::Rollback "Annulation de la transaction car Une erreur est survenu durant la transaction"
+                          #return false, "Une erreur est survenu durant la transaction"
 
                         end
-
                       else
-                        raise ActiveRecord::Rollback "Une erreur est survenue durant la mise à jour des informations. merci de vous rapprocher d'un point Express Union."
-                        #return false, "Une erreur est survenue durant la mise à jour des informations. merci de vous rapprocher d'un point Express Union."
-                      end
-                    else
-                      raise ActiveRecord::Rollback "Impossible de continuer"
-                      # RollBack
-                    end
-                  end
-              end
 
+                        Rails::logger.info "Impossible de mettre a jour le compte de l'agent"
+
+                      end
+
+                    else
+                      raise ActiveRecord::Rollback "Une erreur est survenue durant la mise à jour des informations. merci de vous rapprocher d'un point Express Union."
+                      #return false, "Une erreur est survenue durant la mise à jour des informations. merci de vous rapprocher d'un point Express Union."
+                    end
+                  else
+                    raise ActiveRecord::Rollback "Impossible de continuer"
+                    # RollBack
+                  end
+                end
+              end
             end
           else
             Rails::logger.info "Impossible de determiner le palier d'appartenance du customer"
@@ -1062,7 +1059,7 @@ class Client
     # fin du refactoring
   end
 
-  # VERIFICATION INTENT DE RETRAIT EST PERIME -- OU PAS
+  #VERIFICATION INTENT DE RETRAIT EST PERIME -- OU PAS
   # @method     name Verifier sur une procedure de retrait est encore valide
   # @name       Client::is_await_valide
   # @params     phone
@@ -1110,36 +1107,29 @@ class Client
   # @output   boolean [true/false]
   # @author @mvondoyannick
   # @version 1.0.1
-  def self.cancelRetrait(phone, pwd, hashawait)
-    @phone = phone
-    @pwd = pwd
-    @hash = hashawait
-    Rails::logger::info "Starting cancel retrait validation ..."
-    customer = Customer.find_by_phone(@phone) #where(phone: @phone).first
-    if !customer.blank? && customer.valid_password?(@pwd)
-      Rails::logger::info "Utilisateur authentifié @ #{Time.now}"
-      await = Await.find_by(customer_id: customer.id, hashawait: @hash)
-      if await.blank?
-        Rails::logger::warn "Aucune transaction existante pour la transaction #{@hash}"
-        return false, "Aucune transaction existante pour la transaction #{@hash}"
+  def self.cancelRetrait(argv, message=nil , locale)
+    token = argv[:token]
+    message = message
+    locale = locale
+
+    #searching customer
+    customer = Customer.find_by_authentication_token(token)
+    if customer.blank?
+      return false, I18n.t("customerNotFound", locale: locale)
+    else
+      # check existance of await
+      Rails::logger.info "Searching intents for customer #{token}"
+      intent = customer.await
+      if intent.blank?
+        return false , "Aucune intention de retrait disponible pour ce compte"
       else
-        Rails::logger::info "Suppression de la transaction #{@hash} en cours ..."
-        if await.destroy
-          Rails::logger::info "Suppression du marqueur de retrait sur le customer"
-          if customer.update(await: nil)
-            Rails::logger::info "Suppression de la transaction #{@hash} terminées. annulation validée et terminée!"
-            return true, "Transaction annulée!"
-          else
-            Rails::logger::error "Impossible de supprimer le marqueur de retrait de l'utillisateur"
-            contact = ContactForm.new(name: "MVONDO", email: "yaf.mvondo@agis-as.com", message: "FATAL : Impossible de supprimer le marqueur de retrait  de la transaction #{await.hashawait} durant un processus d'annulation du client #{customer.phone}. Une erreur est survenue!")
-            contact.deliver
-            return false, "Impossible de supprimer le marqueur, une erreur est survenue"
-          end
+        # we found an intent, we can destroy it
+        # See restauration on Await model
+        if intent.destroy
+          # cancel and restore customer credit account
+          return true, "Retrait annulé avec succes du montant de #{intent.amount.round(2)}"
         else
-          Rails::logger::error "La suppression de la transaction #{@hash}  a echouée. notification du service de maintenance"
-          contact = ContactForm.new(name: "MVONDO", email: "yaf.mvondo@agis-as.com", message: "FATAL : Impossible de supprimer la transaction #{await.hashawait} durant un processus d'annulation du client #{customer.phone}. Une erreur est survenue!")
-          contact.deliver
-          return false, "Impossible de supprimer la transaction, contact du service de maintenance!"
+          return false, "Une erreur est survenue durant le processus d'annulation du retrait de #{intent.amount.round(2)} F CFA"
         end
       end
     end
@@ -1181,18 +1171,20 @@ class Client
   # @param [Object] token
   # @author @mvondoyannick
   # @version 1.0.1
-  def self.check_retrait_refactoring(token)
+  def self.check_retrait_refactoring(token, locale)
     @token = token
-    customer = Customer.find_by_authentication_token(@token) #where(authentication_token: @token).first
+    locale = locale
+
+    customer = Customer.find_by_authentication_token(@token)
     if customer.blank?
       Rails::logger::info "Utilisateur inconnu"
-      return false, "Utilisateur inconnu"
+      return false, I18n.t("customerNotFound", locale: locale) #"Utilisateur inconnu"
     else
       #on recherche le compte await du customer
-      intent_retrait = customer.await #Await.find_by_customer_id(customer.id)
+      intent_retrait = customer.await
       if intent_retrait.blank?
         Rails::logger::info "Aucun retrait pour cet utilisateur"
-        return false, "Aucun retrait pour ce compte."
+        return false, I18n.t("noIntent", locale: locale) #"Aucun retrait pour ce compte."
       else
         Rails::logger::info "Intent retrait trouvé"
         return true, intent_retrait.as_json(only: :amount)
@@ -1286,7 +1278,7 @@ class Client
             #mise a jour du montant du customer
             account = customer.account #Account.where(customer_id: customer.id).first
             customer_amount = account.amount.to_f - @amount.to_f
-  
+
             #on mets a jour la table customer sur await
             if customer.account.update(amount: customer_amount)
               #---------------send sms to customer--------------

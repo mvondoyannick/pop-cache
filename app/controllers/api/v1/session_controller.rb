@@ -4,7 +4,7 @@ class Api::V1::SessionController < ApplicationController
     before_action :check_customer, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice, :question, :signup_authentication, :rechargeSprintPay, :getSpData]
     #before_action :check_phone, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice]
 
-    #creation de compte utilisateur
+    #CREATE CUSTOMER ACCOUNTpassword 
     # @return [Object]
     def signup
       @ip             = request.remote_ip
@@ -17,10 +17,13 @@ class Api::V1::SessionController < ApplicationController
       @question_id    = params[:question_id]
       @response       = params[:reponse]
 
+      #adding locale I18n
+      @locale         = request.headers["HTTP_LOCALE"]
+
       #données elementaire de base
       if @tel.present? && @cni.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
 
-        query = Client::signup(@name, @second_name, @tel, @cni, @password, @sexe, @question_id, @response, @ip)
+        query = Client::signup({name: @name, second_name: @second_name, phone: @tel, cni: @cni, password: @password, sexe: @sexe, question: @question_id, answer: @response, ip: @ip}, "create customer account", @locale)
         render json: {
           status: query
         }
@@ -29,7 +32,7 @@ class Api::V1::SessionController < ApplicationController
 
         render json: {
           satus: :false,
-          message: "Centaines informations sont manquantes"
+          message: I18n.t("DataNotComplete", locale: @locale) #"Centaines informations sont manquantes"
         }
 
       end
@@ -37,8 +40,7 @@ class Api::V1::SessionController < ApplicationController
     end
 
 
-    #Get the customer balance
-    # POST
+    #CUSTOMER ACCOUNT BALANCE
     def get_balance
       phone       = params[:phone]
       password    = params[:password]
@@ -48,6 +50,7 @@ class Api::V1::SessionController < ApplicationController
       render json: balance
     end
 
+    #CUSTOMER HISTORY
     # DEPRECATED
     # TODO Remove this method on next release, deprecatd since 0.1.2
     def histo #retourn l'historique sur la base du telephone
@@ -69,6 +72,7 @@ class Api::V1::SessionController < ApplicationController
      # Refactoring
     def history
       @token = request.headers['HTTP_X_API_POP_KEY'] #Get the customer header
+      @locale = request.headers["HTTP_LOCALE"] # Get client locale lang between en and fr
       @ip_adresse = request.remote_ip # Get customer remote IP
       Rails::logger::info "receive token : #{@token} from #{@ip_adresse}"
       @period   = params[:period]
@@ -86,7 +90,7 @@ class Api::V1::SessionController < ApplicationController
         else
 
           #starting get customer history
-          request = Logstory::Histo.h_customer(@token, @period)
+          request = Logstory::Histo.h_customer(@token, @period, locale)
           render json: {
             status: request[0],
             message: request[1]
@@ -98,7 +102,7 @@ class Api::V1::SessionController < ApplicationController
 
         render json: {
             status:   false,
-            message:  "CUSTOMER KEY NOT FOUND"
+            message:  I18n.t("customerNotFound", locale: @locale)
         }
 
       end
@@ -106,9 +110,11 @@ class Api::V1::SessionController < ApplicationController
 
 
 
+    #CUSTOMER PERIOD HISTORY
     # Permet de retourner le'historique en fonction d'une periode bien precise
     def historyByDate
       @token    = request.headers['HTTP_X_API_POP_KEY']
+      @locate   = request.headers["HTTP_LOCALE"]
       @debut    = params[:begin]
       @fin      = params[:end]
 
@@ -116,10 +122,10 @@ class Api::V1::SessionController < ApplicationController
         if @debut == @fin
           render json: {
             status: false,
-            message: "Les dates sont identiques!"
+            message: I18n.t("sameDate", locale: @locale) #"Les dates sont identiques!"
           }
         else
-          periode = Logstory::Histo.h_interval(token: @token, begin: @debut, end: @fin)
+          periode = Logstory::Histo.h_interval({token: @token, begin: @debut, end: @fin}, @locale)
           render json: {
               status:   periode[0],
               message:  periode[1]
@@ -130,7 +136,8 @@ class Api::V1::SessionController < ApplicationController
 
 
 
-    #Detail de l'historiqueAnswer.all
+    #CUSTOMER ALL HISTORY SINCE BEGINING
+    # Detail de l'historiqueAnswer.all
     # TODO deprecated, remove this method on next release
     def histoDetail
       @code_transaction   = params[:transaction]
@@ -154,9 +161,9 @@ class Api::V1::SessionController < ApplicationController
       end
     end
 
+    #RENDER QUESTIONS
     # gestion des questions de securité
     # retourne toutes les question de securité  dispnible sur la plateforme
-    # 
     def question
       question = Question.all
       render json: {
@@ -165,7 +172,7 @@ class Api::V1::SessionController < ApplicationController
     end
 
 
-    #retourne toutes les categories
+    #RENDER CATEGORIES
     def serviceCategorie
       categorie = Cat.order(name: :asc)
       render json: {
@@ -173,7 +180,7 @@ class Api::V1::SessionController < ApplicationController
       }
     end
 
-    #retourne les details d'une categorie
+    #RENDER CATEGORIES DETAILS
     def detailCategorie
       id = params[:id]
       detailCat = Cat.where(cat_id: id, name: :asc)
@@ -182,7 +189,7 @@ class Api::V1::SessionController < ApplicationController
       }
     end
 
-    #permet de lister l'ensemble des services dans une categorie
+    #RENDER SERVICE FROM CATEGORIES
     def service
 
       id = params[:id]
@@ -193,6 +200,9 @@ class Api::V1::SessionController < ApplicationController
 
     end
 
+
+    #RENDER HISTORY
+    # @deprecated
     def p
       phone = params[:phone]
       query = History::History::payment(phone)
@@ -203,17 +213,18 @@ class Api::V1::SessionController < ApplicationController
 
     
 
-    #authentification d'un client mobile
+    #AUTHENTICATE CUSTOMER
     def signin
       Rails::logger.info "Starting signin process ..."
       phone = params[:phone]
       password = params[:password]
       device = params[:uuid]
+      locale = request.headers["HTTP_LOCALE"]
 
       if phone.present? && password.present?
 
         #query the user
-        signin = Client::signin(phone, password, device)
+        signin = Client::signin({phone: phone, password: password, device: device}, locale, "Authentification")
         puts "Login data response : #{signin}"
         render json: signin
 
@@ -248,18 +259,19 @@ class Api::V1::SessionController < ApplicationController
       @token      = params[:customer]
       @pwd        = params[:password]
       @playerId   = params[:playerId]
+      locale = request.headers["HTTP_LOCALE"]
 
       #check all datas available
       if @token.present? && @pwd.present? && @playerId.present?
 
         #recherche du phone
-        @customer = Customer.find_by_authentification_token(@token).phone
+        @customer = Customer.find_by_authentification_token(@token)
         if customer.blank?
           render json: {
               message: "Utilisateur inconnu sur la plateforme"
           }
         else
-          @customer = Client::get_balance(@customer, @pwd)
+          @customer = Client::get_balance({phone: @customer, password: @pwd}, locale)
           if balance
             render json: {
                 message: @customer
@@ -287,17 +299,18 @@ class Api::V1::SessionController < ApplicationController
       @phone    = params[:customer]
       @pwd      = params[:password]
       @playerId = params[:oneSignalID]
+      locale = request.headers["HTTP_LOCALE"]
 
       #verificatin du customer
       @customer = Customer.find_by_authentication_token(@phone)
       if @customer.blank?
         render json: {
-            status:   404,
-            flag:     :customer_not_found,
-            message:  "Utilisateur inconnu"
+          status:   404,
+          flag:     :customer_not_found,
+          message:  "Utilisateur inconnu"
         }
       else
-        balance = Client::get_balance(@customer.phone, @pwd)
+        balance = Client::get_balance({phone: @customer.phone, password: @pwd}, "Obtention crédit compte client", locale)
         if balance[0]
           render json: {
             status:   200,
@@ -314,34 +327,41 @@ class Api::V1::SessionController < ApplicationController
       end
     end
 
-    #verification du retrait
+    #CHECK CUSTOMER INTENT RETRAIT
+    # verification du retrait
     def check_retrait
         header = request.headers['HTTP_X_API_POP_KEY']
-        if header.present?
-
-
-
-        else
-
-
-
-        end
+        locale = request.headers["HTTP_LOCALE"].[0..1]
         begin
           render json: {
-            status: Client::check_retrait_refactoring(header) #Client::check_retrait(Customer.find(header).phone)
+            status: Client::check_retrait_refactoring(header, locale)
           }
         rescue => exception
           render json: {
-            result: exception
+            error: exception
           }
         end
     end
 
-    #permet d'annuler le retrait en cours
+    #CANCEL CUSTOMER INTENT RETRAIT
+    # permet d'annuler le retrait en cours
     def cancel_retrait
+      token = request.headers['HTTP_X_API_POP_KEY']
+      locale = locale
+      begin
+        cancel = Client.cancelRetrait({token: token}, "Annulation de la procedure de retrait", locale)
+        render json: {
+            message: cancel
+        }
+      rescue => exception
+        render json: {
+            error: exception
+        }
+      end
 
     end
 
+    #VALIDATE CUSTOMER INTENT RETRAIT
     def validate_retrait
         password = Base64.decode64(params[:password])
         
@@ -362,7 +382,8 @@ class Api::V1::SessionController < ApplicationController
         end
     end
 
-    #validation de 2FA
+    #VALIDATE SIGNUP SMS AUTHENTICATION WITH ONE TIME PASSWORD
+    # validation de 2FA
     def signup_authentication
       phone     = params[:phone]
       code      = params[:code]
@@ -395,6 +416,7 @@ class Api::V1::SessionController < ApplicationController
     end
 
 
+    #RECUPERATION DU CUSTOMER PASSWORD
     # recuperation du mot de passe perdu/oublié par le customer
     def retrivePassword
       question  = params[:question_id]
@@ -438,7 +460,7 @@ class Api::V1::SessionController < ApplicationController
                 message:  "Verifier votre messagerie SMS."
               }
             else
-              render json: {
+              render json: {app/controllers/api/v1/api_controller.rb
                 status:   :errors,
                 message:  "Une erreur est survenue"
               }
@@ -453,6 +475,7 @@ class Api::V1::SessionController < ApplicationController
       end
     end
 
+    #RESET CUSTOMER PASSWORD
     # permet  de reset le password
     def resetPassword
       code                  = params[:code_sms]
@@ -460,7 +483,7 @@ class Api::V1::SessionController < ApplicationController
       password              = params[:password]
 
       # on cherche a verifier le code
-      customer = Customer.find_by_phone(phone)
+      customer = Customer.find_by_phone(phone)app/controllers/api/v1/api_controller.rb
       if customer.blank?
         render json: {
           status: :not_found,
@@ -533,7 +556,7 @@ class Api::V1::SessionController < ApplicationController
         else
           @status = Parametre::PersonalData::numeroOperateurMobile(@phone)
           if @status == "orange"
-            #on formate la nouvelle image
+            #on formate la nouvelle imageapp/controllers/api/v1/api_controller.rb
             render json: {
                 status:         200,
                 flag:           :success,
@@ -584,8 +607,8 @@ class Api::V1::SessionController < ApplicationController
       end
     end
 
-    # retourn le numero sur la base tu header
-    # @return [Object]
+    #RENDER CUSTOMER PHONE WITH HEADER
+    # @deprecated
     def getPhoneNumber
       header = request.headers['HTTP_X_API_POP_KEY']
 
@@ -617,7 +640,8 @@ class Api::V1::SessionController < ApplicationController
     end
 
 
-    #Mettre a jour son mot de passe
+    #UPDATE CUSTOMER PASSWORD ACCOUNT
+    # Mettre a jour son mot de passe
     def updatePassword
       Rails::logger::info "Starting caal method for renewing password"
       @token          = request.headers["HTTP_X_API_POP_KEY"]
@@ -645,7 +669,6 @@ class Api::V1::SessionController < ApplicationController
               #on notifie le gar que tout c'est bien passé
               #Notification SMS
               Sms.sender(@customer.phone, "Votre mot de passe a ete mis a jour, merci de vous reconnecter. PayMeQuick")
-              Sms::send
 
               render json: {
                 status: true,
@@ -685,7 +708,7 @@ class Api::V1::SessionController < ApplicationController
 
     end
 
-    # recharge via OM
+    #CREDIT PMQ WITH ORANGE MONEY | SPRINTPAY API
     # @return [Object]
     def rechargeSprintPay
       # phone         = params[:phone].to_i
@@ -845,16 +868,6 @@ class Api::V1::SessionController < ApplicationController
               message:  "Opérateur pas encore supporté"
           }
         end
-        # if network_name == "ORANGE"
-        #
-        #
-        #
-        # elsif network_name == "MTN"
-        #
-        #
-        # elsif network_name == "NEXTTEL"
-        #
-        # end
       end
     end
 
@@ -994,23 +1007,24 @@ class Api::V1::SessionController < ApplicationController
       @token = request.headers["HTTP_X_API_POP_KEY"]
       @uuid = request.headers["HTTP_UUID"]
 
-      Rails::logger::info "Header data receive : Token #{@token}, Uuid : #{@uuid}"
+      Rails::logger::info "Header data receive : Token #{@token}, UUID : #{@uuid}"
 
       begin
         customer = Customer.find_by(authentication_token: @token, device: @uuid, two_fa: 'authenticate')
         if customer.blank?
           #response.set_header('HEADER NAME', :unauthorized)
-          #render json: {
-          #  status: :unauthorized,
-          #  message: "Utilisateur non autorisé"
-          #}
-          head :unauthorized
+          render json: {
+              message: "Vous n'etes pas autorisé à acceder à ce service."
+          },
+          status: :unauthorized
+          #head :unauthorized
         end
       rescue ActiveRecord::RecordNotFound
         render json: {
             status: false,
             message: "Utilisateur inconnu"
-        }
+        },
+        status: :unprocessable_entity
       end
 
     end

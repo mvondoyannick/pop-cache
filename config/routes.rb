@@ -114,7 +114,7 @@ Rails.application.routes.draw do
       match 'session/qrcode', to: 'api#qrcode', via: [:options, :post]
       match 'session/code', to: 'api#code', via: [:options, :post]     #rechercher via le code numerique
       match 'session/history/:phone', to: 'api#user_history', via: [:get, :options] 
-      match 'session/balance/:phone/:password', to: 'session#solde', via: [:get, :options]
+      # match 'session/balance/:phone/:password', to: 'session#solde', via: [:get, :options]
       match 'session/check_retrait', to: 'session#check_retrait', via: [:post, :options]
       match 'session/cancel_retrait', to: 'session#cancel_retrait', via: [:post, :options]
       match 'session/validate_retrait', to: 'session#validate_retrait', via: [:post, :options]

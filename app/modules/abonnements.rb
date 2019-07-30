@@ -199,7 +199,7 @@ module Abonnements
                   end
 
                   #Notify customer with SMS
-                  Sms.sender(Customer.find(@customer_id).phone, "Vous vener de vous abonner au palier #{Palier.find(@palier_id).name.upcase}, cela vous a coute #{Palier.find(@palier_id).amount} F CFA et vous permet de retirer un montant maximum #{Palier.find(@palier_id).max_retrait } F CFA. Date d'expiration : #{query.date_fin}. #{Client.appName}")
+                  Sms.sender(Customer.find(@customer_id).phone, "Vous vener de vous abonner au palier #{Palier.find(@palier_id).name.upcase}, cela vous a coute #{Palier.find(@palier_id).amount} F CFA et vous permet de retirer un montant maximum #{Palier.find(@palier_id).max_retrait } F CFA. Date d'expiration : #{query.date_fin}. #{App::PayMeQuick::App::app[:signature]}")
 
                   return true, "new abonnement added for customer #{customer.name}"
 

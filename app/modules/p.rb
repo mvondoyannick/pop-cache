@@ -32,7 +32,7 @@ module P
         return false, "partenaire inconnu"
       else
         #on debute la requet d'insertion et de creation
-        customer = Client::signup(@name, @second_name, @phone, @cni, "123456", nil, nil, nil, nil)
+        customer = Client::signup({name: @name, second_name: @second_name, phone: @phone, cni: @cni, password: "123456", sexe: nil, question: nil, answer: nil, ip: nil}, "creation partenaire")
         if customer[0]
           #on renvoi un mot de passe via le numero de la personne via SMS
           Sms.new(@phone, "Votre mot de passe est #{rand(5**5)}")
@@ -67,7 +67,7 @@ module P
       @sexe           = sexe
       #@partner        = partner_id
       @password       = 123456
-      @email          = "#{rand(6**6)}@#{Client.appName}-cm.com"
+      @email          = "#{rand(6**6)}@#{App::PayMeQuick::App::app[:domain]}"
 
       #check patner
       partner = partner_verify(@partner)
@@ -79,7 +79,7 @@ module P
           link = true #PartnerCustomer.new(customer_id: customer.id, partenaire_id: partner_id)
           if link
             #on notifi le client avec son mot de passe
-            Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, heureux de vous accueillir sur #{Client.appName}, vous etes desormais inscrit sur #{Client.appName} et vous aussi vous pouvez faire des choses extraordinaire! votre mot de passe par defaut est #{@password}, pensez a le changer des que possible.")
+            Sms.new(@phone, "Mr/Mme #{customer.name} #{customer.second_name}, heureux de vous accueillir sur #{App::PayMeQuick::App::app[:signature]}, vous etes desormais inscrit sur #{App::PayMeQuick::App::app[:signature]} et vous aussi vous pouvez faire des choses extraordinaire! votre mot de passe par defaut est #{@password}, pensez a le changer des que possible.")
             Sms.send
             return true, "Utilisateur enregistré"
           else

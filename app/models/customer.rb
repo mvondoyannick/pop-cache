@@ -1,11 +1,15 @@
+# MODEL DE L'UTILISATEUR PRINCIPAL
 class Customer < ApplicationRecord
-  acts_as_token_authenticatable     #pour generer le authentication_token
-  belongs_to :type          # le type d'un customer, customer | demo
-  has_one :badge            # Classification d'un customer en fonction de ses activités
+  acts_as_token_authenticatable                         #pour generer le authentication_token
+  belongs_to :type                                      # le type d'un customer, customer | demo
+  has_one :badge                                 # Classification d'un customer en fonction de ses activités
   has_one :customer_datum, dependent: :destroy   # Les informations du client
   has_one :account, dependent: :destroy          # Le compte du client, qui sera supprimé si le client est supprimé
   has_one :history, dependent: :destroy          # L'historique du client
   has_one :await, dependent: :destroy            # L'intention de retrait du customer
+  has_one :answer, dependent: :destroy           # Supprime les reponses aux question si le customer est supprimé
+  has_one :abonnement, dependent: :destroy       # supprimer les abonnements si le customer est supprimé
+
 
   before_save :generate_apikey, on: :create
   before_save :generate_code, on: :create
@@ -15,6 +19,11 @@ class Customer < ApplicationRecord
 
   # Create CustomerDatum after new Customer creation
   after_create :set_customer_datum
+  after_create :add_abonnement
+
+  # before_delete customer account
+  before_destroy :verify_amount_before_destroy
+
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -39,9 +48,6 @@ class Customer < ApplicationRecord
 
   #permet de generer le code/ MIN si et seulement s'il n'existe pas
   def generate_code
-    # if self.code.nil?
-    #  self.code = rand(5**5)
-    #end
     self. code = rand(5**5) if self.code.nil?
   end
 
@@ -59,35 +65,19 @@ class Customer < ApplicationRecord
       lat: nil,
       context: "plateform",
       date: nil
-    }.to_s) #.delete("\n")
+    }.to_s)
   end
 
   def set_cni
     self.cni = "**vide**" if self.cni.nil?
-
-    sleep 30
     Sms::sender(self.phone, "Pensez a renseigner votre Carte Natinale dans les 30 jours, sinon vous serez suspendu!") if self.cni.nil?
   end
 
   # TODO VALIDATE CHECKPHONE
   def chechPhone
     # Permet de verifier si le numero de teléphone appartien au cameroun
-    if self.phone.length == 9
-      if self.phone.slide(0) != "6"
-
-        raise ActiveRecord::Rollback
-
-      elsif self.phone.slice(0) != "3"
-
-        raise ActiveRecord::Rollback
-
-      elsif  self.phone.slice(0) != "2"
-
-        raise ActiveRecord::Rollback
-
-      end
-    end
-
+    phone = Parametre::PersonalData::numeroOperateurMobile(self.phone)
+    ActiveRecord::Rollback "Numéro de telephone incorrecte" if phone == "inconnu"
   end
 
   #Mettre le nom de la personne en majuscule et le code
@@ -95,7 +85,6 @@ class Customer < ApplicationRecord
   def setName
     self.name = self.name.upcase if not self.name.nil?
     self.second_name = self.second_name.titleize if  not self.second_name.nil?
-    # self.code = rand(5**5)
   end
 
 
@@ -104,13 +93,22 @@ class Customer < ApplicationRecord
     # La forme la plus avancée de génération du QR code
     # "#{self.authentication_token}@amount@lat@long@context"
     hand = "#{self.authentication_token}@0000@0.0@0.0@plateform@#{Time.now}"
-    self.hand = Base64.encode64(hand).delete("\n")
+    self.hand = Base64.strict_encode64(hand) #.delete("\n")
   end
 
   # Set customerDatum after new customer registration
   def set_customer_datum
-    customerDatum = CustomerDatum.new(customer_id: self.id, phone: self.phone)
-    customerDatum.save
+    customer_data = CustomerDatum.new(customer_id: self.id, phone: self.phone)
+    raise ActiveRecord::Rollback unless !customer_data.save
+    # if !customer_data.save
+    #   raise ActiveRecord::Rollback "Impossible de mettre les données a jour!"
+    # end
+  end
+
+  # Verifier q'un compte est vide avant de le supprimer
+  def verify_amount_before_destroy
+    amount = Account.find(self.id).amount
+    raise ActiveRecord::Rollback unless amount != 0
   end
 
 

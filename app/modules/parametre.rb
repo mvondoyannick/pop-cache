@@ -1,12 +1,8 @@
-module Parametre 
+# ALL PARAMETERS APP
+# @version 1.0
+module Parametre
   
   $key = "Bl@ckberry18"
-
-  # @param [Object] data
-  def self.tested(data)
-      result = data.to_s
-      return result
-  end
 
   class Parametre
       require 'jwt'
@@ -275,14 +271,14 @@ module Parametre
       
       orange    = %w(55 56 57 58 59 90 91 92 93 94 95 96 97 98 99)  #tableau des numeros orange
       mtn       = %w(50 51 52 53 54 70 71 72 73 74 75 76 77 78 79)  #tableau des numeros MTN
-      nexttel   = %w(60 61 62 63 64 65 66 67 68 69)              #tableau des numeros nexttel
-      camtel    = %w()
+      nexttel   = %w(60 61 62 63 64 65 66 67 68 69)                 #tableau des numeros nexttel
+      camtel    = %w(22 23 24 32 33 34)                             #tableau des numero camtel
       @phone    = phone.to_s
 
       Rails::logger::info "Starting check network operator for #{@phone}..."
 
       #On recherche la longueur des numeros de telephones qui doit etre 9 caracteres
-      if @phone.length > 10 || @phone.length < 9
+      if @phone.length != 9 #> 10 || @phone.length < 9
         return false
       else
         #recherche des numero orange en premier
@@ -295,6 +291,8 @@ module Parametre
           return "mtn"
         elsif @phone_tmp.to_s.in?(nexttel)
           return "nexttel"
+        elsif @phone_tmp.to_s.in?(camtel)
+          return "camtel"
         else
           return "inconnu"
         end
@@ -583,6 +581,101 @@ module Parametre
 
     #payer en USSD uniquement
     def self.pay
+    end
+
+  end
+
+  # Parametres d'informations de l'utilisateur
+  class Profiles
+
+    #CREATE NEW USER PROFILE ON THE PLATEFORM
+    # @param [Object] argv
+    # @param [String] message
+    def self.create(argv, message)
+      # Transaction datas
+      token = argv[:token]
+      amount = argv[:amount]
+
+      # Localisationo Datas
+      ip = argv[:ip]
+      lat = argv[:latitude]
+      long = argv[:longitude]
+
+      #devise datas
+      imei = argv[:imei]
+      uuid = argv[:uuid]
+
+
+      date = DateTime.now   # Current date transaction profile
+      message = message
+
+      # find customer on the plateforme, raise ActiveRecord::RecordNotFound once failed
+      customer = Customer.find_by_authentication_token(token)
+      if customer.blank?
+        #raise ActiveRecord::RecordNotFound I18n.t("customerNotFound", locale: locale)
+        Rails::logger::info "customer not found, no profile!"
+        exit(:ok)
+      else
+        # Find potential existing customer profile
+        profile = Profile.find_by(customer_id: customer.id)
+        if profile.blank?
+          # Not found existing customer profile so we can create new profile information
+          new_profile = Profile.new(
+            customer_id: customer.id,
+            amount: amount,
+            ip: ip,
+            lat: lat,
+            long: long,
+          )
+        else
+          # call method that update profile for customer Data
+          update({token: token, amount: amount, ip: ip, lat: lat, long: long, imei: imei, uuid: uuid}, "update customer profile")
+        end
+      end
+      #Get all customer data from transaction
+
+
+    end
+
+
+    # Search if profile existe for this user
+    # @param [Object] argv
+    # @param [String] message
+    def self.search(argv, message)
+
+    end
+
+    #UPDATE CUSTOMER PROFILE
+    def self.update(argv, message)
+
+    end
+
+    # Read profile content for this customer
+    # @param [Object] argv
+    # @param [String] message
+    def self.read(argv, message)
+
+    end
+
+    # @param [Object] argv
+    # @param [String] message
+    def self.delete(argv, message)
+      
+    end
+
+  end
+
+  # Secure customer transaction with secure3d
+  class Security
+
+    def initialize()
+
+    end
+
+    # @param [Object] argv
+    # @param [Object] message
+    def self.secure3d(argv, message)
+
     end
 
   end

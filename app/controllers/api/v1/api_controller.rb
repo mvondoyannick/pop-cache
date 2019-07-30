@@ -2,6 +2,7 @@ class Api::V1::ApiController < ApplicationController
 
   before_action :check_customer, except: :searchContext
 
+  # PAY WITH MERCHANT OR PHONE QRCODE
   def qrcode
 
     #integration de la gestion des erreurs 1.0
@@ -70,8 +71,7 @@ class Api::V1::ApiController < ApplicationController
 
   end
 
-  #paiement avec un numero de telephone pour quelqu'un qui n'est pas sur la plateforme
-  # @!method POST
+  #PAY WITH PHONE NUMBER
   def phonePayment
     @token = request.headers['HTTP_X_API_POP_KEY']
     @phone = params[:phone]
@@ -120,7 +120,7 @@ class Api::V1::ApiController < ApplicationController
   end
 
 
-  # recherche via le code marchand
+  #PAY WITH MIN MERCHANT CODE
   # @param @code
   # @param @token
   # TODO request token inside each API header un payment
@@ -164,7 +164,8 @@ class Api::V1::ApiController < ApplicationController
 
   end
 
-  #recherche le context plateforme ou mobile dans un qrcode
+  #SEARCH QRCODE CONTEXT
+  # @param [Object] obj
   def searchContext(obj)
     if "plateform".in?(obj.hand)
       return "plateform"
@@ -173,7 +174,7 @@ class Api::V1::ApiController < ApplicationController
     end
   end
 
-  #permet de declencher le paiement entre deux clients
+  #PAYMENT PROCESS
   # @details
   # @return [Object]
   # TODO add token to filter params header before_action

@@ -12,13 +12,14 @@ module Logstory
     #Historique journalier d'un customer
     # @param [String] token
     # @param [String] period
-    def self.h_customer(token, period)
+    def self.h_customer(token, period, locale)
       @token      = token
       @period     = period
+      @locale     = locale
 
       begin
 
-        Rails::logger.info "Starting request"
+        Rails::logger.info "Starting request from #{self.name}"
         @customer = Customer.find_by_authentication_token(@token) # obtention des informations sur le customer
 
         #Search customer
@@ -28,7 +29,7 @@ module Logstory
             Rails::logger.info "Recherche des transactions journalieres ..."
             @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).last(100).as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
-              return false, "Aucune transaction pour ce jour."
+              return false, I18n.t("noHistoryDay", locale: @locale) #"Aucune transaction pour ce jour."
             else
               return true, @h
             end
@@ -36,7 +37,7 @@ module Logstory
             Rails::logger.info "Recherche des informations hebdomadaire ..."
             @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).order(created_at: :desc).last(100).as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
-              return false, "Aucune transaction pour cette semaine."
+              return false, I18n.t("noHistoryWeek", locale: @locale) #"Aucune transaction pour cette semaine."
             else
               return true, @h
             end
@@ -44,7 +45,7 @@ module Logstory
             Rails::logger.info "Recherche des informations mensuelles ..."
             @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_month..Date.today.end_of_month).order(created_at: :desc).last(100).as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
-              return false, "Aucune transaction pour ce mois."
+              return false, I18n.t("noHistoryMonth", locale: @locale) #"Aucune transaction pour ce mois."
             else
               return true, @h
             end
@@ -52,7 +53,7 @@ module Logstory
             Rails::logger.info "Recherche de toutes les informations depuis le debut de l'inscription de l'utiliateur ..."
             @h = History.where(customer_id: @customer.id).all.order(created_at: :desc).as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
-              return false, "Aucune transaction enregistrée depuis la creation de votre compte"
+              return false, I18n.t("noHistoryBeginning", locale: @locale)
             else
               return true, @h
             end
@@ -60,7 +61,7 @@ module Logstory
             Rails::logger.info "Recherche des informations annuelles ..."
             @h = History.where(customer_id: @customer.id).where(created_at: Date.today.beginning_of_year..Date.today.end_of_year).order(created_at: :desc).last(100).reverse.as_json(only: [:created_at, :amount, :flag, :code, :color, :region])
             if @h.blank?
-              return false, "Aucune transaction pour cette année."
+              return false, I18n.t("noHistoryYear", locale: @locale) #"Aucune transaction pour cette année."
             else
               return true, @h
             end
@@ -94,9 +95,10 @@ module Logstory
     # Get history with beginning and end period
     # @calling Lostory::Histo.h_interval(token: @token, debut: @debut, fin: @fin)
     # @param [Object] argv
-    def self.h_interval(argv)
+    def self.h_interval(argv, locale)
 
       @token    = argv[:token]
+      @locale   = locale
       @debut    = argv[:begin]
       @fin      = argv[:end]
 
@@ -106,7 +108,7 @@ module Logstory
         customer = Customer.find_by_authentication_token(@token)
         if customer.blank?
 
-          return false, "CUSTOMER NOT FOUND", status: 404
+          return false, I18n.t("customerNotFound", locale: @locale), status: 404
 
         else
 
@@ -126,10 +128,9 @@ module Logstory
 
       rescue ActiveRecord::RecordNotFound
 
-        return false, "CUSTOMER NOT FOUND"
+        return false, I18n.t('hello')
 
       end
-      
 
     end
 

@@ -10,19 +10,31 @@ module App
       # @return [String]
       def self.app
         return {
-            name:         "paymequick",
-            signature:    "PayMeQuick",
-            domaine:      "paiemequick.com",
-            version:      "0.1.1",
-            revision:     "345"
+          name:         "paymequick",
+          signature:    "PayMeQuick",
+          domaine:      "paiemequick.com",
+          version:      "1.0.1",
+          revision:     "345"
 
         }
       end
 
 
       # GENERATE APP ID FOR BOTH ANDROID AND IOS
-      def self.id
-        return rand(10**10)
+      def self.app_id
+        include ActionDispatch
+        require 'securerandom'
+        return SecureRandom.uuid
+      end
+
+      # All limites are define here, for customer who don't have account
+      def self.limit
+        return {
+            limit_amount: 150000,
+            limit_transaction_recharge: 50000,
+            limit_transaction_recharge_jour: 2500000,
+            limit_day_transaction: 100
+        }
       end
 
       def self.developer
