@@ -331,7 +331,7 @@ class Api::V1::SessionController < ApplicationController
     # verification du retrait
     def check_retrait
         header = request.headers['HTTP_X_API_POP_KEY']
-        locale = request.headers["HTTP_LOCALE"].[0..1]
+        locale = request.headers["HTTP_LOCALE"]
         begin
           render json: {
             status: Client::check_retrait_refactoring(header, locale)
@@ -460,7 +460,7 @@ class Api::V1::SessionController < ApplicationController
                 message:  "Verifier votre messagerie SMS."
               }
             else
-              render json: {app/controllers/api/v1/api_controller.rb
+              render json: {
                 status:   :errors,
                 message:  "Une erreur est survenue"
               }
@@ -483,7 +483,7 @@ class Api::V1::SessionController < ApplicationController
       password              = params[:password]
 
       # on cherche a verifier le code
-      customer = Customer.find_by_phone(phone)app/controllers/api/v1/api_controller.rb
+      customer = Customer.find_by_phone(phone)
       if customer.blank?
         render json: {
           status: :not_found,
@@ -556,7 +556,7 @@ class Api::V1::SessionController < ApplicationController
         else
           @status = Parametre::PersonalData::numeroOperateurMobile(@phone)
           if @status == "orange"
-            #on formate la nouvelle imageapp/controllers/api/v1/api_controller.rb
+            #on formate la nouvelle image
             render json: {
                 status:         200,
                 flag:           :success,
