@@ -135,6 +135,9 @@ Rails.application.routes.draw do
       # Gestion des UUID
       post 'session/uuid', to: 'session#authNewUuidDevice'
 
+      # Afficher dynamiquement le solde du client
+      post 'session/solde/show', to: 'session#customer_account_amount'
+
       # historique des clients mobile
       get 'history/:period', to: 'session#history'
       post 'history', to: 'session#history'

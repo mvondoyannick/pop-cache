@@ -174,6 +174,25 @@ class Api::V1::ApiController < ApplicationController
     end
   end
 
+  #CUSTOMER AMOUNT DYNAMICALY
+  def customer_account_amount
+    token = request.headers["HTTP_X_API_POP_KEY"]
+    if Customer.exists?(authentication_token: token)
+      render json: {
+          status: :true,
+          amount: Customer.find_by_authentication_token(token).account.amount.round(2),
+          devise: "F CFA"
+      }
+    else
+      render json: {
+          status: false,
+          amount: nil,
+          devise: "F CFA"
+      },
+      status: :unauthorized
+    end
+  end
+
   #PAYMENT PROCESS
   # @details
   # @return [Object]

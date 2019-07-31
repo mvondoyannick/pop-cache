@@ -39,37 +39,38 @@ class Lorem
 
   def self.qrcode
 
-    Rails::logger::info @push_logger
+    begin
 
     a = {
         customer: {
             token: 'lorem'
         },
         merchant: {
-
+            token: 'agence'
         },
         transaction: {
-            amount: 250,
+            reference: "sdflkj098sdkfj",
+            amount: 25000,
             device: 'xaf',
             detail: 'description'
-        },
-        service: {
-            category: 1,
-            service: 'bus'
-        },
-        products: {
-            qty: 3,
-            name: 'sue'
         },
         geo: {
             lat: 0,
             long: 0,
             ip: "192.168.1.1"
         },
-        api: {
-            return_url: 'home'
-        }
+        context: "plateform"
     }
+
+    rescue JWT::DecodeError
+
+      return "une erreur de decodage est survenue"
+
+    rescue LoadError
+
+      return "une erreur de chargement est survenue"
+
+    end
 
   end
 
