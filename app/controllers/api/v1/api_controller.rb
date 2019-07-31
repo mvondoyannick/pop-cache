@@ -176,20 +176,29 @@ class Api::V1::ApiController < ApplicationController
 
   #CUSTOMER AMOUNT DYNAMICALY
   def customer_account_amount
+    Rails::logger.info "Starting dynamically render amount ..."
     token = request.headers["HTTP_X_API_POP_KEY"]
-    if Customer.exists?(authentication_token: token)
+    customer = Customer.find_by_authentication_token(token)
+    if customer.blank?
       render json: {
-          status: :true,
-          amount: Customer.find_by_authentication_token(token).account.amount.round(2),
-          devise: "F CFA"
-      }
-    else
-      render json: {
-          status: false,
-          amount: nil,
-          devise: "F CFA"
+        status: :false,
+        message: "Utilisateur inconnu"
       },
       status: :unauthorized
+    else
+      if customer.account.blank?
+        render json: {
+          status: false,
+          message: "Compte inexistant pour ce compte"
+        },
+        status: :unauthorized
+      else
+        render json: {
+          status: true,
+          message: customer.account.amount.round(2)
+        },
+        status: :ok
+      end
     end
   end
 
@@ -252,7 +261,7 @@ class Api::V1::ApiController < ApplicationController
     @token = request.headers["HTTP_X_API_POP_KEY"]
     @uuid = request.headers["HTTP_UUID"]
 
-    Rails::logger::info "Header data receive : Token #{@token}, Uuid : #{@uuid}"
+    Rails::logger::info "Header data receive : Token #{@token}, UUID : #{@uuid}"
 
     begin
       customer = Customer.find_by(authentication_token: @token, device: @uuid, two_fa: 'authenticate')
