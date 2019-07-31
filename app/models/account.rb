@@ -14,8 +14,8 @@ class Account < ApplicationRecord
 
   # Permet de signer le montant pour le rendre illisible
   def sign_amount
-    final_amount = JWT.encode self.amount, Rails.application.secrets.secret_key_base, 'none'
-    self.amount = final_amount
+    #final_amount = JWT.encode self.amount, Rails.application.secrets.secret_key_base, 'none'
+    #self.amount = final_amount
   end
 
   # Ajouter un abonnement apres la creation du compte client
