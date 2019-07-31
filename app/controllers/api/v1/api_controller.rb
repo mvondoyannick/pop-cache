@@ -180,12 +180,14 @@ class Api::V1::ApiController < ApplicationController
     token = request.headers["HTTP_X_API_POP_KEY"]
     customer = Customer.find_by_authentication_token(token)
     if customer.blank?
+      Rails::logger.info "Nos customer found"
       render json: {
         status: :false,
         message: "Utilisateur inconnu"
       },
       status: :unauthorized
     else
+      Rails::logger.info "This customer does not activate his account"
       if customer.account.blank?
         render json: {
           status: false,
@@ -193,6 +195,7 @@ class Api::V1::ApiController < ApplicationController
         },
         status: :unauthorized
       else
+        Rails::logger.info "Customer founs and has result of his request"
         render json: {
           status: true,
           message: customer.account.amount.round(2)
