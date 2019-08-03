@@ -31,9 +31,12 @@ module App
       def self.limit
         return {
             limit_amount: 150000,
+            limit_account_amount_day: 10000,    # Limite de transaction journaliere maximal
+            limit_account_amount_month: 300000,  # Limite de transaction mensuel maximal
             limit_transaction_recharge: 50000,
             limit_transaction_recharge_jour: 2500000,
-            limit_day_transaction: 100
+            limit_day_transaction: 100,         # Limit du nombre de transactions journaliere
+            limit_month_transaction: 3000       # limit du nombre de transactions mensuelle
         }
       end
 

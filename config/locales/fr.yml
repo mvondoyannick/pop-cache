@@ -16,7 +16,12 @@ fr:
 
   # Payment internationnalisation
   merchantNotValid: "Marchand invalide"
-  transactionLimit: "Limit de transaction atteinte"
+  done: "Paiement fait"
+
+  # Limite de transaction dépassée
+  transactionLimitTitle: "Limite de paiment"
+  transactionLimitContent: "Vous avez atteint la limite maximum de paiement, merci de revoir le montant à la baisse et de réessayer."
+
   enterSms: "Merci de saisir le code SMS recu par message"
   errMerchantTitle: "Erreur marchand"
   errMerchantContent: "Vous ne pouvez pas vous payer à vous même. Modifier le marchant et réessayer"

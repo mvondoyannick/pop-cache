@@ -187,15 +187,15 @@ class Api::V1::ApiController < ApplicationController
       },
       status: :unauthorized
     else
-      Rails::logger.info "This customer does not activate his account"
       if customer.account.blank?
+        Rails::logger.info "This customer does not activate his account"
         render json: {
           status: false,
           message: "Compte inexistant pour ce compte"
         },
         status: :unauthorized
       else
-        Rails::logger.info "Customer founs and has result of his request"
+        Rails::logger.info "Customer founds and has result of his request"
         render json: {
           status: true,
           message: customer.account.amount.round(2)
@@ -210,8 +210,8 @@ class Api::V1::ApiController < ApplicationController
   # @return [Object]
   # TODO add token to filter params header before_action
   def payment
-    from = params[:token]
-    to = params[:receveur]
+    customer = params[:token]
+    merchant = params[:receveur]
     amount = params[:montant]
     pwd = params[:password]
 
@@ -222,40 +222,20 @@ class Api::V1::ApiController < ApplicationController
     @lat = params[:lat] #Base64.decode64(params[:lat])
     @lon = params[:long] #Base64.decode64(params[:long])
 
-    begin
-
       #recuperation du onesignalID
       # @player_id = Base64.decode64(params[:oneSignalID])
 
       # Rails::logger::info "oneSignalId : #{@player_id}"
 
-      @customer = Customer.find_by_authentication_token(from)
-      @marchand = Customer.find_by_authentication_token(to)
-      if @customer.blank? && @marchand.blank?
-        render json: {
-            status: 404,
-            flag: :customer_not_found,
-            message: "Utilisateur inconnu"
-        }
-      else
-        #OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
-        transaction = Client::pay({customer: @customer.id, merchant:@marchand.id, amount: amount, password: pwd, ip: @ip, lat: @lat, lon: @lon}, locale)
-        # transaction = Client::Payment.pay(customer: @customer.id, merchant: @merchant.id, amount: amount, password: pwd, ip: @ip, player_id: @player_id, lat: @lat, lon: @lon)
-        #
-        render json: {
-            message: transaction
-        }
-      end
+      #@customer = Customer.find_by_authentication_token(from) if Customer.exists?(authentication_token: from)
+      #@marchand = Customer.find_by_authentication_token(to) if Customer.exists?(authentication_token: to)
 
-    rescue ArgumentError => e
-      Rails::logger.warn "Une erreur est survenue durant de deryptage : #{e}"
-
+      #OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
+      transaction = Client::pay({customer: customer, merchant: merchant, amount: amount, password: pwd, ip: @ip, lat: @lat, lon: @lon},"Paiement", locale)
+      # transaction = Client::Payment.pay(customer: @customer.id, merchant: @merchant.id, amount: amount, password: pwd, ip: @ip, player_id: @player_id, lat: @lat, lon: @lon)
       render json: {
-          status: :qrcode_failed,
-          message: "QR Code invalide"
+          message: transaction
       }
-    end
-
   end
 
   private

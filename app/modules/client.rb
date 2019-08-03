@@ -1320,32 +1320,36 @@ class Client
   # @output       [boolean] [true/false]
   # @author @mvondoyannick
   # @version 1.0.2
-  def self.pay(argv, message=nil, locale)
-    @from = argv[:customer].to_i
-    @to = argv[:merchant].to_i
-    @amount = argv[:amount].to_f #montant de la transation
+  def self.pay(argv, message=nil, locale="en")
+    customer = argv[:customer]
+    @to = argv[:merchant]
+    @amount = argv[:amount] #montant de la transation
     @client_password = argv[:pwd]
     @ip = argv[:ip]
     @lat = argv[:lat]
     @lon = argv[:lon]
 
-    locale = locale
+    @locale = locale
 
     Rails::logger.info "Demarrage du paiement d'une transaction : #{message}"
 
-    marchand = Customer.find(@to) #personne qui recoit
-    marchand_account = marchand.account #Account.where(customer_id: marchand.id).first #le montant de la personne qui recoit
-    client = Customer.find(@from) #la personne qui envoi
-    client_account = client.account #Account.where(customer_id: client.id).first # le montant de la personne qui envoi
+    Rails::logger.info "Getting merchant informations"
+    marchand = Customer.find_by_authentication_token(@to) #personne qui recoit
 
-    if @from == @to
-      #Send local Pushnotifications here
-      #OneSignal::OneSignalSend.notPayToMe(@playerId, "#{client.name} #{client.second_name}") #sendNotification(@playerId, Parametre::Parametre.agis_percentage(@amount),"#{marchand.name} #{marchand.second_name}", "#{client.name} #{client.second_name}")
-      # end sending local notifications
+    Rails::logger.info "Getting customer informations account"
+    marchand_account = marchand.account #le montant de la personne qui recoit
+
+    Rails::logger.info "Getting customer informations"
+    client = Customer.find_by_authentication_token(customer) #la personne qui envoi
+
+    Rails::logger.info "Getting custommer account informations ..."
+    client_account = client.account # le montant de la personne qui envoi
+
+    if customer == @to
       Rails::logger::info "Numéro indentique, transaction annuler!"
       return false, {
-          title: I18n.t("errMerchantTitle",locale: locale),
-          message: I18n.t("errMerchantContent", locale: locale)
+          title: I18n.t("errMerchantTitle",locale: @locale),
+          message: I18n.t("errMerchantContent", locale: @locale)
       }
     else
       if client.valid_password?(@client_password)
@@ -1353,19 +1357,19 @@ class Client
 
         #contrainte si le montant depasse 150 000 F CFA XAF
         if @amount > $limit_amount
-          Rails::logger::info "Limite de transaction de 150 000 F depassée"
+          Rails::logger::info "Limite de transaction de 150 000 F dépassée"
           return false, {
               title: "LIMITE DE TRANSACTION",
               message: "#{prettyCallSexe(client.sexe)} #{client.complete_name} il semblerait que votre transaction dépasse la limité autorisée de #{$limit_amount} #{$devise}. Merci de revoir le montant de votre transaction."
           }
         else
           if client_account.amount.to_f >= Parametre::Parametre::agis_percentage(@amount)
-            Rails::logger::info "Le montant est suffisant dans le compte du client, demarrage de la transaction ..."
+            Rails::logger::info "Le compte du client dispose du montant suffisant pour effectuer la transaction ..."
             @hash = "PP_#{SecureRandom.hex(13).upcase}"
-            # client_account.amount = Parametre::Parametre::soldeTest(client_account.amount, amount) #client_account.amount.to_f - Parametre::Parametre::agis_percentage(@amount).to_f #@amount
+
             if client_account.update(amount: Parametre::Parametre::soldeTest(client_account.amount, amount))
-              # if client_account.save
-              Rails::logger::info "Solde dans le compte du client #{client.phone} : #{client_account.amount.to_f}"
+              
+              Rails::logger::info "Solde dans le compte du client #{client.phone} : #{client_account.amount.to_f} F CFA"
               marchand_account.amount += @amount
 
               #on historise la transaction du marche
@@ -1386,7 +1390,7 @@ class Client
                 #envoi d'une notification OneSignal
                 Sms.sender(marchand.phone, "Paiement recu. Montant :  #{@amount.round(2)} F CFA XAF, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{App::PayMeQuick::App::app[:signature]}")
 
-                Rails::logger::info "Paiement effectué de #{@amount} entre #{@from} et #{@to}."
+                Rails::logger::info "Paiement effectué de #{@amount} F CFA entre #{customer} et #{@to}."
 
                 #on enregistre encore l'historique
                 client_log = History.new(
@@ -1467,6 +1471,8 @@ class Client
       end
     end
   end
+
+
 
   # @param [Object] from
   # @param [Object] to

@@ -50,7 +50,12 @@ en:
 
   # Payment internalisation
   merchantNotValid: "Merchant not valid"
-  transactionLimit: "Limit de transaction"
+  done: "Payment Done"
+
+  # Limite de transaction dépassée
+  transactionLimitTitle: "Payment limit"
+  transactionLimitContent: "You have reach max mobile payment, modify transaction amount a try again."
+
   enterSms: "Please SMS code receive previously"
   errMerchantTitle: "Merchant error"
   errMerchantContent: "You can't buy yourself, change merchant and try again"

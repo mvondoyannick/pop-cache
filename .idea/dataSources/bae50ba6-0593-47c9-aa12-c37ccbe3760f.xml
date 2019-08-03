@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="Rails pop-cash: development">
-  <database-model serializer="dbm" dbms="MYSQL" family-id="MYSQL" format-version="4.14">
+  <database-model serializer="dbm" dbms="MYSQL" family-id="MYSQL" format-version="4.15">
     <root id="1">
       <ServerVersion>5.7.25</ServerVersion>
       <DefaultEngine>InnoDB</DefaultEngine>
@@ -33,6 +33,7 @@
     </schema>
     <schema id="10" parent="1" name="information_schema">
       <Collation>utf8_general_ci</Collation>
+      <Substituted>1</Substituted>
     </schema>
     <schema id="11" parent="1" name="josy">
       <Collation>latin1_swedish_ci</Collation>
@@ -48,8 +49,8 @@
     </schema>
     <schema id="15" parent="1" name="pop-cash_development">
       <Current>1</Current>
-      <Visible>1</Visible>
       <Collation>utf8_general_ci</Collation>
+      <Visible>1</Visible>
     </schema>
     <schema id="16" parent="1" name="pop-cash_test">
       <Collation>utf8_general_ci</Collation>

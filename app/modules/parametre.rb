@@ -9,7 +9,7 @@ module Parametre
       $percentage = 2
       $hmac_secret = Rails.application.secrets.secret_key_base
 
-      #retourne le montant majoré du client
+      #retourne le montant majoré du client (montant avec commission)
       # @param [Integer] amount
       def self.agis_percentage(amount)
           @amount = amount.to_f
@@ -54,15 +54,16 @@ module Parametre
       end
 
 
-      #permet d'enregistrer les commissions pour une transaction
-      # @param [Object] code
+      #ENREGISTREMENT DE LA COMMISSION SUR UNE TRANSACTION
+      # @param [Object] transaction_id
       # @param [Object] amount
       # @param [Object] total
       # @param [Object] commission
-      def self.commission(code, amount, total, commission)
-        #debut de l'enregistrement
+      def self.commission(transaction_id, amount, total, commission)
+        #debut de l'enregistrement de la commission sur une transaction
+        Rails::logger.info "Enregistrement de la commission de #{commission} sur la transaction N° #{transaction_id} ..."
         query = Commission.new(
-          code: code,
+          code: transaction_id,
           amount_brut: amount,
           amount_commission: total,
           commission: commission.round(2)
@@ -73,8 +74,6 @@ module Parametre
         else
           return false
         end
-
-
       end
 
       #ENCODAGE JWT
