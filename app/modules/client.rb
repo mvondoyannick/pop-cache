@@ -1358,7 +1358,7 @@ class Client
         #puts "Customer #{client.complete_name} identifié avec succes!"
 
         #contrainte si le montant depasse 150 000 F CFA XAF
-        if @amount > App::PayMeQuick::App.limit[:limit_amount] #$limit_amount
+        if @amount.to_f > App::PayMeQuick::App.limit[:limit_amount].to_f #$limit_amount
           Rails::logger::info "Limite de transaction de 150 000 F dépassée"
           return false, {
               title: "LIMITE DE TRANSACTION",
@@ -1369,10 +1369,10 @@ class Client
             Rails::logger::info "Le compte du client dispose du montant suffisant pour effectuer la transaction ..."
             @hash = "PP_#{SecureRandom.hex(13).upcase}"
 
-            if client_account.update(amount: Parametre::Parametre::soldeTest(client_account.amount, amount))
+            if client_account.update(amount: Parametre::Parametre::soldeTest(client_account.amount, @amount))
               
               Rails::logger::info "Solde dans le compte du client #{client.phone} : #{client_account.amount.to_f} F CFA"
-              marchand_account.amount += @amount
+              marchand_account.amount += @amount.to_f
 
               #on historise la transaction du marche
               #saveHistory(@to, @hash,"ENCAISSEMENT","none",@amount,nil ,nil ,nil )
@@ -1390,7 +1390,7 @@ class Client
 
               if marchand_account.save
                 #envoi d'une notification OneSignal
-                Sms.sender(marchand.phone, "Paiement recu. Montant :  #{@amount.round(2)} F CFA XAF, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{App::PayMeQuick::App::app[:signature]}")
+                Sms.sender(marchand.phone, "Paiement recu. Montant :  #{@amount} F CFA XAF, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{App::PayMeQuick::App::app[:signature]}")
 
                 Rails::logger::info "Paiement effectué de #{@amount} F CFA entre #{customer} et #{@to}."
 
@@ -1410,13 +1410,13 @@ class Client
                   Rails::logger::info "Historique de transaction enregistrée avec succes"
 
                   #enregistrement des commissions
-                  commission = Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount))
+                  commission = Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f))
                   if commission
                     #fin d'enregistrement de la commission
                     a = {
                         amount: @amount,
                         device: 'XAF',
-                        frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount,
+                        frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
                         total: Parametre::Parametre::agis_percentage(@amount).to_f,
                         receiver: marchand.complete_name,
                         sender: client.complete_name,
@@ -1429,7 +1429,7 @@ class Client
                     return true, {
                         amount: @amount,
                         device: "XAF",
-                        frais: (Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2),
+                        frais: (Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f).round(2),
                         total: (Parametre::Parametre::agis_percentage(@amount).to_f).round(2),
                         receiver: marchand.complete_name,
                         sender: client.complete_name,
