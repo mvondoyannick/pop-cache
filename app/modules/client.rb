@@ -1324,7 +1324,7 @@ class Client
     customer = argv[:customer]
     @to = argv[:merchant]
     @amount = argv[:amount] #montant de la transation
-    @client_password = argv[:pwd]
+    @client_password = argv[:password]
     @ip = argv[:ip]
     @lat = argv[:lat]
     @lon = argv[:lon]
@@ -1333,18 +1333,6 @@ class Client
 
     Rails::logger.info "Demarrage du paiement d'une transaction : #{message}"
 
-    Rails::logger.info "Getting merchant informations"
-    marchand = Customer.find_by_authentication_token(@to) #personne qui recoit
-
-    Rails::logger.info "Getting customer informations account"
-    marchand_account = marchand.account #le montant de la personne qui recoit
-
-    Rails::logger.info "Getting customer informations"
-    client = Customer.find_by_authentication_token(customer) #la personne qui envoi
-
-    Rails::logger.info "Getting custommer account informations ..."
-    client_account = client.account # le montant de la personne qui envoi
-
     if customer == @to
       Rails::logger::info "Numéro indentique, transaction annuler!"
       return false, {
@@ -1352,11 +1340,25 @@ class Client
           message: I18n.t("errMerchantContent", locale: @locale)
       }
     else
+
+      Rails::logger.info "Getting merchant informations"
+      marchand = Customer.find_by_authentication_token(@to) #personne qui recoit
+
+      Rails::logger.info "Getting customer informations account"
+      marchand_account = marchand.account #le montant de la personne qui recoit
+
+      Rails::logger.info "Getting customer informations"
+      client = Customer.find_by_authentication_token(customer) #la personne qui envoi
+
+      Rails::logger.info "Getting custommer account informations ..."
+      client_account = client.account # le montant de la personne qui envoi
+
       if client.valid_password?(@client_password)
         Rails::logger::info "Client identifié avec succes!"
+        puts "Customer #{client.complete_name} identifié avec succes!"
 
         #contrainte si le montant depasse 150 000 F CFA XAF
-        if @amount > $limit_amount
+        if @amount > App::PayMeQuick::App.limit[:limit_amount] #$limit_amount
           Rails::logger::info "Limite de transaction de 150 000 F dépassée"
           return false, {
               title: "LIMITE DE TRANSACTION",
@@ -1464,6 +1466,7 @@ class Client
         end
       else
         Rails::logger::info "Invalid user password authentication"
+        puts "Invalid user password authentication"
         return false, {
             title: "ECHEC IDENTIFICATION",
             message: "Le mot de passe utilisé est invalide, merci de réessayer!"
