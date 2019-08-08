@@ -1,7 +1,7 @@
 class Api::V1::SessionController < ApplicationController
     #skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword, :testNetwork]
 
-    before_action :check_customer, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice, :question, :signup_authentication, :rechargeSprintPay, :getSpData]
+    before_action :check_customer, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice, :question, :signup_authentication, :rechargeSprintPay, :getSpData, :checkToken]
     #before_action :check_phone, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice]
 
     #CREATE CUSTOMER ACCOUNTpassword 
@@ -38,6 +38,28 @@ class Api::V1::SessionController < ApplicationController
       end
 
     end
+
+
+
+    #CHECK WEB
+    def checkToken
+      data = Base64.strict_decode64(params[:qrcode])
+      qrcode = data.split("@")
+      customer = Customer.find_by_authentication_token(qrcode[0])
+      if customer.blank?
+        render json: {
+          status: false,
+          message: "Utilisateur inconnu"
+        }
+      else
+        # send SMS
+        Sms.sender(customer.phone, "Merci de confirmer ce payment en entrant votre mot de passe dans la section <RECEVOIR UN PAIEMENT> de l'application PayMeQuick")
+        render json: {
+          status: true,
+          message: "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} ouvrez l'application PayMeQuick et confirmer le paiement"
+        }
+    end
+  end
 
 
     #CUSTOMER ACCOUNT BALANCE
@@ -1026,6 +1048,32 @@ class Api::V1::SessionController < ApplicationController
         },
         status: :unprocessable_entity
       end
+
+    end
+
+    def check_signature
+      signature = request.headers[:HTTP_SIGNATURE]
+
+      begin
+      #check if signature is valid
+      valid_signature = JWT.decode
+
+      rescue => exception
+        render json: {
+            status: false,
+            message: ""
+        },
+        status: :unauthorized
+
+      end
+
+    end
+
+    # Search customer data integrity
+    # only valide if customer data and md5(data) are the same
+    # return 401 header if failed
+    def check_integrity
+      integrity = params[:integrity]
 
     end
 end
