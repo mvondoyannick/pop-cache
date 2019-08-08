@@ -1355,7 +1355,7 @@ class Client
 
       if client.valid_password?(@client_password)
         Rails::logger::info "Client identifié avec succes!"
-        puts "Customer #{client.complete_name} identifié avec succes!"
+        #puts "Customer #{client.complete_name} identifié avec succes!"
 
         #contrainte si le montant depasse 150 000 F CFA XAF
         if @amount > App::PayMeQuick::App.limit[:limit_amount] #$limit_amount
