@@ -247,7 +247,7 @@ class Api::V1::ApiController < ApplicationController
     Rails::logger::info "Header data receive : Token #{@token}, UUID : #{@uuid}"
 
     begin
-      customer = Customer.find_by(authentication_token: @token, device: @uuid, two_fa: 'authenticate')
+      customer = Customer.find_by(authentication_token: @token, two_fa: 'authenticate')
       if customer.blank?
         #response.set_header('HEADER NAME', :unauthorized)
         #render json: {
