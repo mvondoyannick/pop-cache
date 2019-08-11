@@ -433,42 +433,40 @@ class Client
         if customer.two_fa == "authenticate"
 
           # check customer device
-          if device({device: @device_id, phone: @phone}, @locale)
+          # if device({device: @device_id, phone: @phone}, @locale)
 
             # a ce stade, tout est true, donc tout va bien
             # on retourne les informations
-            Rails::logger::info "Utilisateur et device indentique"
-
-            # sending push notification to say welcome to customer
+            puts "Utilisateur et devise indentique"
 
             return true, customer.as_json(only: [:name, :second_name, :authentication_token, :code])
 
-          else
-
-            # rien ne va!
-            Rails::logger::info "Les informations du terminal de cet urilisateur sont differents de ceux contenu dans la base, il doit s'authentifier"
-
-            # sending SMS to authenticate customer
-            @codeSms = Parametre::Authentication::auth_top(@phone, 'context')
-            if @codeSms[0]
-
-              return true, I18n.t("enterSms", locale: locale), "authenticate"
-
-            else
-
-              return false, "Nous rencontrons des difficultés pour vous faire parvenir votre code SMS, un opérateur #{App::PayMeQuick::App::app[:signature]} vous contactera sous une minute."
-
-            end
-
-          end
+          # else
+          #
+          #   # rien ne va!
+          #   Rails::logger::info "Les informations du terminal de cet urilisateur sont differents de ceux contenu dans la base, il doit s'authentifier"
+          #
+          #   # sending SMS to authenticate customer
+          #   @codeSms = Parametre::Authentication::auth_top(@phone, 'context')
+          #   if @codeSms[0]
+          #
+          #     return true, I18n.t("enterSms", locale: locale), "authenticate"
+          #
+          #   else
+          #
+          #     return false, "Nous rencontrons des difficultés pour vous faire parvenir votre code SMS, un opérateur #{App::PayMeQuick::App::app[:signature]} vous contactera sous une minute."
+          #
+          #   end
+          #
+          # end
         else
           @account_status = isLock?(customer.authentication_token)
 
-          Rails::logger::info "Compte #{@phone} est actuellement #{customer.two_fa}"
+          puts "Compte #{@phone} est actuellement #{customer.two_fa}"
           return false, "Le statut actuel de votre compte ne vous permet pas de vous connecter. Bien vouloir vous rapprocher d'un POINT #{App::PayMeQuick::App::app[:signature]} ou réinitialiser votre mot de passe."
         end
       else
-        Rails::logger::error "Authenticating user failed, bad password. end request!"
+        puts "Authenticating user failed, bad password. end request!"
 
         # on enregistre cet essaie de mauvais mot de passe dans la base de données, ainsi les informations supplementaires
 
