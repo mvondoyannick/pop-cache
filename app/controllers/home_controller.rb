@@ -3,10 +3,10 @@ class HomeController < ApplicationController
   #layout 'render/yield'
 
   #multiple layout
-  layout :choose_layout
+  #layout :choose_layout
 
   def index
-    render layout: 'login'
+    #render layout: 'login'
   end
 
   def retrait
@@ -86,7 +86,7 @@ class HomeController < ApplicationController
     amount = params[:amount]
 
     #demarrage de la procedure
-    query = Client::credit_account(phone, amount)
+    query = Client::credit(phone, amount)
     puts query
   end
 

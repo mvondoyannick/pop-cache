@@ -3,27 +3,125 @@ class Api::V1::AgentController < ApplicationController
   #authenticate agent
   def signin
     #render json: agent = Agents::Auth::signin(params[:phone], params[:password])
-    agent = Customer.find_by_phone(params[:phone])
-    if agent.valid_password?(params[:password])
-      render json: agent.as_json(only: [:name, :second_name, :authentication_token, :phone])
+    email       = params[:email]
+    password    = params[:password]
+    Partenaire::Authenticate.new(email: email, password: password)
+    agent = P::Authenticate::signied(email, password)
+    render json: {
+        status:     agent[0],
+        message:   agent[1]
+      }
+  end
+
+
+  def search_customer
+    @phone        = params[:phone]
+
+    customer = Customer.find_by_phone(@phone)
+    if customer.blank?
+      render json: {
+          status: false,
+          message: "Utilisateur inconnu"
+      }
     else
       render json: {
-        message: :unauthorize
+          status: true,
+          message: customer.as_json(only: [:id, :name, :second_name, :phone, :sexe, :email, :created_at, :code])
       }
     end
+  end
+
+  def journal
+    render json: {
+        status: true,
+        message: Transaction.all.order(date: :desc)
+    }
+  end
+
+  def activate_customer
+    @phone              = params[:phone]
+    @authenticity_token = params[:authentication_token]
+    @motif              = params[:motif]
+
+    #startinf request
+    customer = Customer.find_by_phone(@phone)
+    if customer.blank?
+      render json: {
+          status: false,
+          message: "Utilisateur inconnnu"
+      }
+    else
+      #update customer data
+      if customer.update(two_fa: "authenticate")
+        render json: {
+            status: true,
+            message: "Utilisateur bloqué"
+        }
+      else
+        render json: {
+            status: false,
+            message: "Impossible de bloquer cet utilisateur : #{customer.errors.full_messages}"
+        }
+      end
+    end
+  end
+
+
+  def new_customer
+    @cni          = params[:cni]
+    @name         = params[:name]
+    @second_name  = params[:second_name]
+    @sexe         = params[:sexe]
+    @phone        = params[:phone]
+    #@agent_id     = params[:agent_id]
+
+    #enregistrement des informations sur la creation
+    query = P::Authenticate.partner_customer(@name, @second_name, @phone, @cni, @sexe)#P::Authenticate.new_customer(@name, @second_name, @phone, @cni, @agent_id)
+
+    #on lance la creation d'ou nouveau compte client
+    render json: {
+      status: query[0],
+      data:   query[1]
+    }
+  end
+
+
+  def credit_customer
+
+    @phone    = params[:phone]
+    @amount   = params[:amount]
+
+      credit = Client::credit(@phone, @amount)
+      render json: {
+          status: credit[0],
+          message: credit[1]
+      }
+
+  end
+
+  def debit_customer
+
+    @phone    = params[:phone]
+    @amount   = params[:amount]
+
+    credit = Client::debit_user_account(@phone, @amount)
+    render json: {
+        status: credit[0],
+        message: credit[1]
+    }
   end
 
 
   #permet de lier un compte a un qrcode
   def link
     token = params[:token].split(" \" ")
-    qrcode = params[:qrcode]
+    @qrcode = params[:qrcode]
 
     #insertion des information dans la base de données badge
     badge = Badge.new(
       customer_id: Customer.find_by_authentication_token(token).authentication_token,
-      activate:   true,
-      qrcode:     qrcode
+      activate: true,
+      qrcode: @qrcode
     )
 
     # on enregistre
@@ -106,7 +204,7 @@ class Api::V1::AgentController < ApplicationController
 
   #search by scan
   def searchQrCodeByScan
-    data = params[:data]
+    data = params[:otp_sms]
 
     #break the chain
     data = Base64.decode64(data).split("@");

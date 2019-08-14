@@ -7,8 +7,3 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 #Client::create_user(Faker::Name.name, Faker::FunnyName.two_word_name, '699599993', 2514635874, 123456, 'Masulin')
 #Client::create_user(Faker::Name.name, Faker::FunnyName.two_word_name, '699990994', 2514665873, 123456, 'Feminin' )
-
-#gestion de 10000 transaction
-1000.times do |t|
-  Client::pay(5,3, 100, 123456, nil ) #(Faker::Name.name, Faker::Name.last_name, "1#{Faker::Number.number(8)}", Faker::Number.number(10), Faker::Number.number(6), "Masculin")
-end

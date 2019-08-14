@@ -13,13 +13,29 @@ default: &default
   adapter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: root 
+  #username: root
   #password: #123456
-  host: localhost
+  #host: localhost
 
-development:
+
+heroku: &heroku
+  adatpter: mysql2
+  encoding: utf8
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: restoafr_mvondoyannick
+  password: Bl@ckberry18
+  host: 167.114.17.32
+  #database: restoafr_payquick-develop
+
+
+developments:
   <<: *default
-  database: pop-cash_development
+  #database: pop-cash_development
+  username: restoafr_mvondoyannick
+  password: Bl@ckberry18
+  host: 167.114.17.32
+  database: restoafr_payquick-develop
+
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -48,15 +64,23 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  #<<: *default
+#development:
   adapter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: restoafr_mvondoyannick
   password: Bl@ckberry18
   host: 167.114.17.32
-#  url: <%= ENV['DATABASE_URL'] %>
 
-  database: restoafr_popcash
-  #username: pop-cash
-  #password: <%= ENV['POP-CASH_DATABASE_PASSWORD'] %>
+  database: restoafr_payquick-develop
+
+
+development:
+  adapter: mysql2
+  encoding: utf8
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: restoafr_mvondoyannick
+  password: Bl@ckberry18
+  host: 167.114.17.32
+
+  database: restoafr_payquick-develop

@@ -4,6 +4,34 @@ module CustomerClient
     def self.pay
       return nil
     end
+
+    #Payer avec le code MIN
+    # @param [Object] min
+    # @param [Object] token
+    def self.check(min, token)
+      @min      = min
+      @token    = token
+
+      customer = Customer.find_by_authentication_token(@token)
+      if customer.blank?
+        return false, "Customer not found"
+      else
+        Rails::logger.info "Searche merchant information ..."
+        merchant = Customer.find_by_code(@min)
+        if merchant.blank?
+          return false, "Utilisateur inconnu"
+        else
+          #On verifie que le marchand ne peut pas se payer lui meme
+          Rails::logger.info "Customer and merchant are same #{customer.phone}"
+          if customer.authentication_token.eql?(merchant.authentication_token)
+            return false, "Impossible de vous payer a vous meme"
+          else
+            Rails::logger.info "Marchant idenfified"
+            return true, merchant.as_json(only: [:name, :second_name, :authentication_token])
+          end
+        end
+      end
+    end
     
   end
 

@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.5.3'
+ruby '2.5.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.2'
@@ -13,6 +13,8 @@ gem 'puma', '~> 3.11'
 gem 'sass-rails', '~> 5.0'
 #simple_form rails
 gem 'simple_form'
+# For OTP, One Tome Password
+gem 'rotp'
 #country select
 gem 'country_select'
 #for cron job
@@ -21,8 +23,6 @@ gem 'whenever', require: false
 gem 'devise'
 #adding rack-core from https://github.com/cyu/rack-cors
 gem 'rack-cors'
-#rails security scanner https://brakemanscanner.org/docs/quickstart/
-gem "brakeman"
 #generation des fakes datas
 gem 'faker'
 #devise authentication gem from https://github.com/gonzalo-bulnes/simple_token_authentication
@@ -35,6 +35,8 @@ gem 'httparty'
 gem 'geocoder'
 #json web token
 gem 'jwt'
+#sending Email over Heroku
+gem 'sendgrid-ruby'
 #insert table print
 gem "table_print"
 #gestion du qrcode
@@ -43,7 +45,7 @@ gem 'rqrcode'
 gem 'rqrcode_png'
 #using dragonfly
 gem 'dragonfly', '~> 1.2.0'
-#AES for encrypt decrypt
+#AES for encrypt decrypt https://github.com/chicks/aes
 gem 'aes'
 #gestion des email
 gem 'mail_form'
@@ -61,18 +63,7 @@ gem 'coffee-rails', '~> 4.2'
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
-#admin LTE
-# source 'https://rails-assets.org' do
-#   #gem 'rails-assets-bootstrap'
-#   gem 'rails-assets-angular'
-#   gem 'rails-assets-leaflet'
-#   gem 'rails-assets-adminlte', source: 'https://rails-assets.org'
-#   gem 'rails-assets-bootstrap', source: 'https://rails-assets.org'
-#   gem 'rails-assets-chartjs', source: 'https://rails-assets.org'
-#   gem 'rails-assets-sbadmin', source: 'https://rails-assets.org'
-#   gem 'rails-assets-fontawesome', source: 'https://rails-assets.org'
-#   gem 'rails-assets-datatables.net-bs4', source: 'https://rails-assets.org'
-# end
+
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
@@ -97,6 +88,12 @@ group :development do
   gem 'web-console', '>= 3.3.0'
   gem "better_errors"
   gem "binding_of_caller"
+  gem "parallel"
+  gem "wit"
+  gem "rails-erd"
+  #rails security scanner https://brakemanscanner.org/docs/quickstart/
+  gem "brakeman"
+  #rgem "appengine", "~> 0.4.1"
 end
 
 group :test do

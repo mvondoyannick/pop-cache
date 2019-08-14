@@ -1,37 +1,166 @@
 class Api::V1::SessionController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword]
+    #skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword, :testNetwork]
 
-    #creation de compte utilisateur
+    before_action :check_customer, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice, :question, :signup_authentication, :rechargeSprintPay, :getSpData, :checkToken]
+    #before_action :check_phone, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice]
+
+    #CREATE CUSTOMER ACCOUNTpassword 
+    # @return [Object]
     def signup
-      query = Client::signup(params[:nom], params[:second_name], params[:phone], params[:cni], params[:password], params[:sexe], params[:question_id], params[:reponse], params[:lat], params[:lon])
-      render json: {
-        status: query
-      }
+      @ip             = request.remote_ip
+      @name           = params[:nom]
+      @second_name    = params[:second_name]
+      @tel            = params[:phone]
+      @cni            = params[:cni]
+      @password       = params[:password]
+      @sexe           = params[:sexe]
+      @question_id    = params[:question_id]
+      @response       = params[:reponse]
+
+      #adding locale I18n
+      @locale         = request.headers["HTTP_LOCALE"]
+
+      #données elementaire de base
+      if @tel.present? && @cni.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
+
+        query = Client::signup({name: @name, second_name: @second_name, phone: @tel, cni: @cni, password: @password, sexe: @sexe, question: @question_id, answer: @response, ip: @ip}, "create customer account", @locale)
+        render json: {
+          status: query
+        }
+
+      else
+
+        render json: {
+          satus: :false,
+          message: I18n.t("DataNotComplete", locale: @locale) #"Centaines informations sont manquantes"
+        }
+
+      end
+
     end
 
 
+
+    #CHECK WEB
+    def checkToken
+      data = Base64.strict_decode64(params[:qrcode])
+      qrcode = data.split("@")
+      customer = Customer.find_by_authentication_token(qrcode[0])
+      if customer.blank?
+        render json: {
+          status: false,
+          message: "Utilisateur inconnu"
+        }
+      else
+        # send SMS
+        Sms.sender(customer.phone, "Merci de confirmer ce payment en entrant votre mot de passe dans la section <RECEVOIR UN PAIEMENT> de l'application PayMeQuick")
+        render json: {
+          status: true,
+          message: "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} ouvrez l'application PayMeQuick et confirmer le paiement"
+        }
+    end
+  end
+
+
+    #CUSTOMER ACCOUNT BALANCE
     def get_balance
-        phone = params[:phone]
-        password = params[:password]
-        balance = Client::get_balance(phone, password)
-        render json: balance
+      phone       = params[:phone]
+      password    = params[:password]
+      @playerId   = params[:playerId]
+
+      balance = Client::get_balance(phone, password)
+      render json: balance
     end
 
+    #CUSTOMER HISTORY
+    # DEPRECATED
+    # TODO Remove this method on next release, deprecatd since 0.1.2
     def histo #retourn l'historique sur la base du telephone
       @customer = Customer.find_by_authentication_token(request.headers['HTTP_X_API_POP_KEY'])
       if @customer.blank?
         render json: {
-            status:   :customer_not_found,
-            message:  "utilisateur inconnu"
+          status:   :customer_not_found,
+          message:  "utilisateur inconnu"
         }
       else
         render json: {
-            message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(50).as_json(only: [:date, :amount, :flag, :code, :color])
+          message: Transaction.where(customer: @customer.id).order(created_at: :desc).last(50).reverse.as_json(only: [:date, :amount, :flag, :code, :color, :region])
         }
       end
     end
 
-    #Detail de l'historiqueAnswer.all
+
+     #retourne les informations de la semaine entre le début de la semaine et la fin de la semaine
+     # Refactoring
+    def history
+      @token = request.headers['HTTP_X_API_POP_KEY'] #Get the customer header
+      @locale = request.headers["HTTP_LOCALE"] # Get client locale lang between en and fr
+      @ip_adresse = request.remote_ip # Get customer remote IP
+      Rails::logger::info "receive token : #{@token} from #{@ip_adresse}"
+      @period   = params[:period]
+      if @token.present?
+
+        #Search and identify customer token
+        customer = Customer.find_by_authentication_token(@token)
+        if customer.blank?
+
+          render json: {
+            status: false,
+            message: "CUSTOMER NOT FOUND"
+          }
+
+        else
+
+          #starting get customer history
+          request = Logstory::Histo.h_customer(@token, @period, locale)
+          render json: {
+            status: request[0],
+            message: request[1]
+          }
+
+        end
+
+      else
+
+        render json: {
+            status:   false,
+            message:  I18n.t("customerNotFound", locale: @locale)
+        }
+
+      end
+    end
+
+
+
+    #CUSTOMER PERIOD HISTORY
+    # Permet de retourner le'historique en fonction d'une periode bien precise
+    def historyByDate
+      @token    = request.headers['HTTP_X_API_POP_KEY']
+      @locate   = request.headers["HTTP_LOCALE"]
+      @debut    = params[:begin]
+      @fin      = params[:end]
+
+      if @debut.present? && @fin.present?
+        if @debut == @fin
+          render json: {
+            status: false,
+            message: I18n.t("sameDate", locale: @locale) #"Les dates sont identiques!"
+          }
+        else
+          periode = Logstory::Histo.h_interval({token: @token, begin: @debut, end: @fin}, @locale)
+          render json: {
+              status:   periode[0],
+              message:  periode[1]
+          }
+        end
+      end
+    end
+
+
+
+    #CUSTOMER ALL HISTORY SINCE BEGINING
+    # Detail de l'historiqueAnswer.all
+    # TODO deprecated, remove this method on next release
     def histoDetail
       @code_transaction   = params[:transaction]
       detail = Transaction.where(code: @code_transaction)
@@ -54,9 +183,9 @@ class Api::V1::SessionController < ApplicationController
       end
     end
 
+    #RENDER QUESTIONS
     # gestion des questions de securité
     # retourne toutes les question de securité  dispnible sur la plateforme
-    # 
     def question
       question = Question.all
       render json: {
@@ -65,7 +194,7 @@ class Api::V1::SessionController < ApplicationController
     end
 
 
-    #retourne toutes les categories
+    #RENDER CATEGORIES
     def serviceCategorie
       categorie = Cat.order(name: :asc)
       render json: {
@@ -73,7 +202,7 @@ class Api::V1::SessionController < ApplicationController
       }
     end
 
-    #retourne les details d'une categorie
+    #RENDER CATEGORIES DETAILS
     def detailCategorie
       id = params[:id]
       detailCat = Cat.where(cat_id: id, name: :asc)
@@ -82,7 +211,7 @@ class Api::V1::SessionController < ApplicationController
       }
     end
 
-    #permet de lister l'ensemble des services dans une categorie
+    #RENDER SERVICE FROM CATEGORIES
     def service
 
       id = params[:id]
@@ -93,6 +222,9 @@ class Api::V1::SessionController < ApplicationController
 
     end
 
+
+    #RENDER HISTORY
+    # @deprecated
     def p
       phone = params[:phone]
       query = History::History::payment(phone)
@@ -103,95 +235,158 @@ class Api::V1::SessionController < ApplicationController
 
     
 
-    #authentification d'un client mobile
+    #AUTHENTICATE CUSTOMER
     def signin
-        phone = params[:phone]
-        password = params[:password]
+      Rails::logger.info "Starting signin process ..."
+      phone = params[:phone]
+      password = params[:password]
+      device = params[:uuid]
+      locale = request.headers["HTTP_LOCALE"]
+
+      if phone.present? && password.present?
 
         #query the user
-        signin = Client::auth_user(phone, password)
+        signin = Client::signin({phone: phone, password: password, device: device}, locale, "Authentification")
+        puts "Login data response : #{signin}"
         render json: signin
+
+      else
+
+        render json: {
+            status: :missing_parameters,
+            message: "PARAMETRES MANQUANT"
+        }
+
+      end
+    end
+
+
+    # Update customer device uuis
+    def authNewUuidDevice
+      @phone = params[:phone]
+      @sms = params[:code]
+      @uuid = params[:uuid]
+
+      Rails::logger::info "Starting adding new uuid devices #{@uuid}"
+      query = Client::updateDevice(uuid: @uuid, phone: @phone, sms: @sms)
+      render json: {
+        status: query[0],
+        message: query[1],
+      }
+      
     end
 
     #obtention du solde du compte client
     def solde
-      @token = params[:customer]
-      @pwd = params[:password]
+      @token      = params[:customer]
+      @pwd        = params[:password]
+      @playerId   = params[:playerId]
+      locale = request.headers["HTTP_LOCALE"]
 
-      puts "=============#{@token}"
+      #check all datas available
+      if @token.present? && @pwd.present? && @playerId.present?
 
-      #recherche du phone
-      @customer = Customer.find_by_authentification_token(@token).phone
-      if customer.blank?
-        render json: {
-          message: "Utilisateur inconnu sur la plateforme"
-        }
-      else
-        @balance = Client::get_balance(@customer, @pwd)
-        if balance
-            render json: {
-              message: @balance
-            }
+        #recherche du phone
+        @customer = Customer.find_by_authentification_token(@token)
+        if customer.blank?
+          render json: {
+              message: "Utilisateur inconnu sur la plateforme"
+          }
         else
+          @customer = Client::get_balance({phone: @customer, password: @pwd}, locale)
+          if balance
+            render json: {
+                message: @customer
+            }
+          else
             render json: {
                 message: "compte vide"
             }
+          end
         end
+
+      else
+
+        render json: {
+            status:   false,
+            message:  "Certaines informations sont manquantes"
+        }
+
       end
+
+
     end
 
     def getSoldeCustomer
-      @phone = params[:customer]
-      @pwd = params[:password]
+      @phone    = params[:customer]
+      @pwd      = params[:password]
+      @playerId = params[:oneSignalID]
+      locale = request.headers["HTTP_LOCALE"]
 
       #verificatin du customer
       @customer = Customer.find_by_authentication_token(@phone)
       if @customer.blank?
         render json: {
-            status:   404,
-            flag:     :customer_not_found,
-            message:  "Utilisateur inconnu"
+          status:   404,
+          flag:     :customer_not_found,
+          message:  "Utilisateur inconnu"
         }
       else
-        balance = Client::get_balance(@customer.phone, @pwd)
-        if balance[0] == true
+        balance = Client::get_balance({phone: @customer.phone, password: @pwd}, "Obtention crédit compte client", locale)
+        if balance[0]
           render json: {
             status:   200,
             flag:     :success,
-            message:  balance #balance[1]
+            message:  balance[1]
           }
         else
           render json: {
             status:   404,
             flag:     :errors,
-            message:  balance
+            message:  balance[1]
           }
         end
       end
     end
 
-    #verification du retrait
+    #CHECK CUSTOMER INTENT RETRAIT
+    # verification du retrait
     def check_retrait
         header = request.headers['HTTP_X_API_POP_KEY']
+        locale = request.headers["HTTP_LOCALE"]
         begin
           render json: {
-            status: Client::check_retrait_refactoring(header) #Client::check_retrait(Customer.find(header).phone)
+            status: Client::check_retrait_refactoring(header, locale)
           }
         rescue => exception
           render json: {
-            result: exception
+            error: exception
           }
         end
     end
 
-    #permet d'annuler le retrait en cours
+    #CANCEL CUSTOMER INTENT RETRAIT
+    # permet d'annuler le retrait en cours
     def cancel_retrait
+      token = request.headers['HTTP_X_API_POP_KEY']
+      locale = locale
+      begin
+        cancel = Client.cancelRetrait({token: token}, "Annulation de la procedure de retrait", locale)
+        render json: {
+            message: cancel
+        }
+      rescue => exception
+        render json: {
+            error: exception
+        }
+      end
 
     end
 
+    #VALIDATE CUSTOMER INTENT RETRAIT
     def validate_retrait
         password = Base64.decode64(params[:password])
-        puts "Mot de passe : #{password}"
+        
         #header = request.headers['HTTP_X_API_POP_KEY']
         token = params[:token]
 
@@ -209,13 +404,15 @@ class Api::V1::SessionController < ApplicationController
         end
     end
 
-    #validation de 2FA
+    #VALIDATE SIGNUP SMS AUTHENTICATION WITH ONE TIME PASSWORD
+    # validation de 2FA
     def signup_authentication
-      phone = params[:phone]
-      code  = params[:code]
+      phone     = params[:phone]
+      code      = params[:code]
+      @playerId = params[:playerId]
 
-      authenticate = Parametre::Authentication::validate_2fa(phone, code)
-      if authenticate[0] == true
+      authenticate = Parametre::Authentication::validate_otp(phone, code, @playerId)
+      if authenticate[0]
         render json: {
           status: :success,
           message: "Authentifié"
@@ -241,6 +438,7 @@ class Api::V1::SessionController < ApplicationController
     end
 
 
+    #RECUPERATION DU CUSTOMER PASSWORD
     # recuperation du mot de passe perdu/oublié par le customer
     def retrivePassword
       question  = params[:question_id]
@@ -299,6 +497,7 @@ class Api::V1::SessionController < ApplicationController
       end
     end
 
+    #RESET CUSTOMER PASSWORD
     # permet  de reset le password
     def resetPassword
       code                  = params[:code_sms]
@@ -365,130 +564,181 @@ class Api::V1::SessionController < ApplicationController
       @phone    = params[:phone]
       @amount   = params[:amount]
 
-      #on recherche l'utilisateur
-      @customer = Customer.find_by_authentication_token(@token)
-      if @customer.blank?
-        render json: {
-          status:   404,
-          flag:     :customer_not_found,
-          message:  "Utilisateur inconnu"
-        }
-      else
-      @status = Parametre::PersonalData::numeroOperateurMobile(@phone)
-      if @status == "orange"
-        #on formate la nouvelle image
-        render json: {
-          status:         200,
-          flag:           :success,
-          phone:          @phone,
-          amount:         @amount.to_i,
-          network:        @status,
-          operator:       "ORANGE MONEY",
-          amount_total:   Parametre::Parametre::agis_percentage(@amount),
-          logo:           "#{request.base_url}#{ActionController::Base.helpers.asset_path("orange.png")}"
-        }
-        elsif @status == "mtn"
+      #reduction des requetes inutiles
+      if @token.present? && @phone.present? && @amount.present?
+
+        #on recherche l'utilisateur
+        @customer = Customer.find_by_authentication_token(@token)
+        if @customer.blank?
           render json: {
-            status:       200,
-            flag:         :success,
-            phone:        @phone,
-            amount:       @amount.to_i,
-            network:      @status,
-            operator:     "MOBILE MONEY",
-            amount_total: Parametre::Parametre::agis_percentage(@amount),
-            logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("mtn.jpg")}"
-          }
-        elsif @status == "nexttel"
-          render json: {
-            status:       404,
-            flag:         :failed,
-            network:      @status,
-            operator:     "NEXTTEL POSSA",
-            message:      "NEXTTEL POSSA PAS ENCORE SUPPORTE",
-            logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("nexttel-possa.png")}"
+              status:   404,
+              flag:     :customer_not_found,
+              message:  "Utilisateur inconnu"
           }
         else
-          render json: {
-            status:   404,
-            flag:     :failed,
-            message:  "OPERATEUR NON SUPPORTE"
-          }
+          @status = Parametre::PersonalData::numeroOperateurMobile(@phone)
+          if @status == "orange"
+            #on formate la nouvelle image
+            render json: {
+                status:         200,
+                flag:           :success,
+                phone:          @phone,
+                amount:         @amount.to_i,
+                network:        @status,
+                operator:       "ORANGE MONEY",
+                amount_total:   Parametre::Parametre::agis_percentage(@amount),
+                logo:           "#{request.base_url}#{ActionController::Base.helpers.asset_path("orange.png")}"
+            }
+          elsif @status == "mtn"
+            render json: {
+                status:       200,
+                flag:         :success,
+                phone:        @phone,
+                amount:       @amount.to_i,
+                network:      @status,
+                operator:     "MOBILE MONEY",
+                amount_total: Parametre::Parametre::agis_percentage(@amount),
+                logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("mtn.jpg")}"
+            }
+          elsif @status == "nexttel"
+            render json: {
+                status:       404,
+                flag:         :failed,
+                network:      @status,
+                operator:     "NEXTTEL POSSA",
+                message:      "NEXTTEL POSSA PAS ENCORE SUPPORTE",
+                logo:         "#{request.base_url}#{ActionController::Base.helpers.asset_path("nexttel-possa.png")}"
+            }
+          elsif @status == false || @status == inconnu
+            render json: {
+                status:   404,
+                flag:     :failed,
+                message:  "OPERATEUR NON SUPPORTE"
+            }
+          end
         end
+
+      else
+
+        render json: {
+            status: 404,
+            flag:   :failed,
+            message: "Informations incorrectes"
+        }
+
       end
     end
 
-    # retourn le numero sur la base tu header
-    # @return [Object]
+    #RENDER CUSTOMER PHONE WITH HEADER
+    # @deprecated
     def getPhoneNumber
       header = request.headers['HTTP_X_API_POP_KEY']
 
-      # on recherche le customer
-      @customer = Customer.find_by_authentication_token(header)
-      if @customer.blank?
-        render json: {
-          status: :not_found,
-          message: "Utilisateur inconnu"
-        }
+      if header.present?
+
+        # on recherche le customer
+        @customer = Customer.find_by_authentication_token(header)
+        if @customer.blank?
+          render json: {
+              status: :not_found,
+              message: "Utilisateur inconnu"
+          }
+        else
+          render json: {
+              status: :found,
+              message: @customer.phone
+          }
+        end
+
       else
+
         render json: {
-          status: :found,
-          message: @customer.phone
+            status: :unprocessable_entity,
+            message: "Certaines informations sont manquantes"
         }
+
       end
+
     end
 
 
-    #Mettre a jour son mot de passe
+    #UPDATE CUSTOMER PASSWORD ACCOUNT
+    # Mettre a jour son mot de passe
     def updatePassword
       Rails::logger::info "Starting caal method for renewing password"
       @token          = request.headers["HTTP_X_API_POP_KEY"]
-      @previouPwd     = params[:hold_pass].to_i
-      @newPwd         = params[:new_pass]
+      @previouPwd     = params[:hold_pass] # Ancien mot de passe
+      @newPwd         = params[:new_pass] # Nouveau mot de passe
 
-      #on recherch le client sur la base de son token
-      @customer = Customer.find_by_authentication_token(@token)
-      if @customer.blank?
-        Rails::logger::info "User is unknow"
-        render json: {
-            status:     404,
-            flag:       :cunstomer_not_found,
-            message:    "Utilisateur inconnu"
-        }
-      else
-        #tout va bien on verifie que c'est bien le @previeouPwd
-        if @customer.valid_password?(@previouPwd)
-          Rails::logger::info "User is valid"
-          #tout va bien, on peut continuer en chageant les informations sur le mot de passe
-            @customer.update(password: @newPwd)
-            #on notifie le gar que tout c'est bien passé
-            #Notification SMS
-            Sms.new(@customer.phone, "Votre mot de passe a ete mis a jour. PAYQUICK")
-            Sms::send
+      if @token.present? && @previouPwd.present? && @newPwd.present?
 
-            render json: {
-              status:     200,
-              flag:       :password_updated,
-              message:    "Votre mot de passe a ete mis a jour. Merci de vous reconnecter a PAYQUICK"
-            }
-        else
-          Rails::logger::info "User is invalid"
+        #on recherch le client sur la base de son token
+        @customer = Customer.find_by_authentication_token(@token)
+        if @customer.blank?
+          Rails::logger::info "User is unknow"
           render json: {
-            status:     404,
-            flag:       :password_no_match,
-            message:    "Impossible de vous identifier"
+              status:     false,
+              flag:       :cunstomer_not_found,
+              message:    "Utilisateur inconnu"
           }
+        else
+          #tout va bien on verifie que c'est bien le @previeouPwd
+          if @customer.valid_password?(@previouPwd)
+            Rails::logger::info "User is valid"
+            #tout va bien, on peut continuer en chageant les informations sur le mot de passe
+            if @customer.update(password: @newPwd, authentication_token: nil)
+
+              #on notifie le gar que tout c'est bien passé
+              #Notification SMS
+              Sms.sender(@customer.phone, "Votre mot de passe a ete mis a jour, merci de vous reconnecter. PayMeQuick")
+
+              render json: {
+                status: true,
+                flag: :password_updated,
+                message: "Votre mot de passe a ete mis a jour. Merci de vous reconnecter a PayMeQuick"
+              }
+
+            else
+              Rails::logger.info "Failed to update password"
+              render json: {
+                status: false,
+                flag: :password_not_updated,
+                message: "Impossible de mettre à jour votre mot de passe"
+              }
+
+            end
+          else
+            Rails::logger::info "User is invalid"
+            render json: {
+              status:     404,
+              flag:       :password_no_match,
+              message:    "Impossible de vous identifier"
+            }
+          end
         end
+
+      else
+
+        render json: {
+          status: false,
+          flag:   "Some parametres are misssing",
+          message: "Données invalides ou manquantes",
+          params: "#{@token}, #{@previouPwd}, #{@newPwd}"
+        }
+
       end
+
     end
 
-    # recharge via OM
+    #CREDIT PMQ WITH ORANGE MONEY | SPRINTPAY API
     # @return [Object]
     def rechargeSprintPay
       # phone         = params[:phone].to_i
-      token         = params[:token] #request.headers['HTTP_X_API_POP_KEY']
+      token         = request.headers['HTTP_X_API_POP_KEY']
       @phone        = params[:phone]
       amount        = params[:amount].to_i
       network_name  = params[:network_name].upcase
+      @ip = request.remote_ip
 
       #on verifie l'existance de cet utilisateur
       customer = Customer.find_by_authentication_token(token)
@@ -499,8 +749,8 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         # on effectuer le transfert via SP en se basant sur le network name
-        if network_name == "ORANGE"
-
+        case network_name
+        when "ORANGE"
           SprintPay::Pay::Payment.new(@phone, amount)
           result = SprintPay::Pay::Payment.orange
 
@@ -508,20 +758,20 @@ class Api::V1::SessionController < ApplicationController
           if result["statusDesc"] == "FAILURE"
             # echec de la transaction
             render json: {
-              status:   result["statusDesc"],
-              message:  result["description"],
-              code:     result["statusCode"],
-              motif:    result["motif"]
+                status:   result["statusDesc"],
+                message:  result["description"],
+                code:     result["statusCode"],
+                motif:    result["motif"]
             }
           else
             # tout de passe bien
 
             # on recupere le compte de l'utilisateur courant
-            account = Account.find_by_customer_id(customer.id)
+            account = customer.account #Account.find_by_customer_id(customer.id)
             if account.blank?
               render json: {
-                status:   :not_found,
-                message:  "Compte inconnu"
+                  status:   :not_found,
+                  message:  "Compte inconnu ou inexistant"
               }
             else
               # le compte existe, on peut continuer le traitement
@@ -531,32 +781,42 @@ class Api::V1::SessionController < ApplicationController
 
               # on met a jour le compte du customer du noveau montant recu
               if account.update(amount: account.amount)
-                if Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
-                  Sms.new(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
-                  Sms::send
+
+                # Ecriture de l'historique
+
+                h = History.new(
+                    customer_id: customer.id,
+                    amount: amount,
+                    code: @hash,
+                    flag: "recharge".upcase,
+                    context: "Mobile".upcase,
+                    ip: @ip
+                )
+                if h.save #Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
+                  Sms.sender(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
+
                   render json: {
                       status:   :success,
-                      message:  "Votre compte POPCASH a ete credité d'un montant de #{result["amount"]} depuis #{network_name}"
+                      message:  "Votre compte PayMeQuick a ete credité d'un montant de #{result["amount"]} depuis #{network_name}"
                   }
                 else
                   render json: {
-                    status:   :failed,
-                    message:  "Impossible de recharger votre compte PAYQUICK d'un montant de #{result["amount"]} depuis #{network_name} => erreurs : #{result}"
+                      status:   :failed,
+                      message:  "Impossible de recharger votre compte PayMeQuick d'un montant de #{result["amount"]} depuis #{network_name} => erreurs : #{result}"
                   }
                 end
 
               else
                 render json:
-                {
-                  status:   :failed,
-                  message:  "Impossible de mettre a jour votre compte"
-                  #Lancer le processus de  rollBack de montant precedement debité
-                }
+                   {
+                       status:   :failed,
+                       message:  "Impossible de mettre a jour votre compte"
+                       #Lancer le processus de  rollBack de montant precedement debité
+                   }
               end
             end
           end
-        elsif network_name == "MTN"
-
+        when "MTN"
           # Paiement par MTN MOMO
 
           SprintPay::Pay::Payment.new(@phone, amount)
@@ -566,20 +826,20 @@ class Api::V1::SessionController < ApplicationController
           if result["statusDesc"] == "FAILURE"
             # echec de la transaction
             render json: {
-              status:   result["statusDesc"],
-              message:  result["description"],
-              code:     result["statusCode"],
-              motif:    result["motif"]
+                status:   result["statusDesc"],
+                message:  result["description"],
+                code:     result["statusCode"],
+                motif:    result["motif"]
             }
           else
             # tout de passe bien
 
             # on recupere le compte de l'utilisateur courant
-            account = Account.find_by_customer_id(customer.id)
+            account = customer.account #Account.find_by_customer_id(customer.id)
             if account.blank?
               render json: {
-                status:   :not_found,
-                message:  "Compte inconnu"
+                  status:   :not_found,
+                  message:  "Compte inconnu"
               }
             else
               # le compte existe, on peut continuer le traitement
@@ -589,32 +849,45 @@ class Api::V1::SessionController < ApplicationController
 
               # on met a jour le compte du customer du noveau montant recu
               if account.update(amount: account.amount)
-                if Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
-                  Sms.new(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
-                  Sms::send
+                h = History.new(
+                    customer_id: customer.id,
+                    amount: amount,
+                    code: @hash,
+                    flag: "recharge".upcase,
+                    context: "Mobile".upcase,
+                    ip: @ip
+                )
+                if h.save #Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
+                  Sms.sender(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
+
                   render json: {
-                    status:   :success,
-                    message:  "Votre compte POPCASH a ete credité d'un montant de #{result["amount"]} depuis #{network_name}"
+                      status:   :success,
+                      message:  "Votre compte PayMeQuick a ete credité d'un montant de #{result["amount"]} depuis #{network_name}"
                   }
                 else
                   render json: {
-                    status:   :failed,
-                    message:  "Impossible de recharger votre compte PAYQUICK d'un montant de #{result["amount"]} depuis #{network_name} : Erreurs : #{result}"
+                      status:   :failed,
+                      message:  "Impossible de recharger votre compte PayMeQuick d'un montant de #{result["amount"]} depuis #{network_name} : Erreurs : #{result}"
                   }
                 end
               else
                 render json:
-                {
-                  status:   :failed,
-                  message:  "Impossible de mettre a jour votre compte"
-                }
+                   {
+                       status:   :failed,
+                       message:  "Impossible de mettre a jour votre compte"
+                   }
               end
             end
           end
-        elsif network_name == "NEXTTEL"
+        when "NEXTTEL"
           render json: {
               status:   :failed,
               message:  "Pas encore supporté"
+          }
+        else
+          render json: {
+              status:   :failed,
+              message:  "Opérateur pas encore supporté"
           }
         end
       end
@@ -660,7 +933,7 @@ class Api::V1::SessionController < ApplicationController
       @second_name  = params[:second_name]
       @sexe         = params[:sexe]
       @password     = params[:password]
-      puts "Mot de passe #{params[:token]}"
+      
 
       @customer = Customer.find_by_authentication_token(@token)
       if @customer.blank?
@@ -703,6 +976,7 @@ class Api::V1::SessionController < ApplicationController
 
     #test de la connxino internet
     def testNetwork
+      #ApiMailer.sendAdmin("lorem").deliver_now!
       render json: true
     end
 
@@ -725,10 +999,10 @@ class Api::V1::SessionController < ApplicationController
         @answer = Answer.find_by_customer_id(@customer.id)
         if @answer.blank?
           render json: {
-              status:  404,
-              flag:   :false,
-              message: "Aucune question trouvée pour cet utilisateur",
-              data: nil
+            status:  404,
+            flag:   :false,
+            message: "Aucune question trouvée pour cet utilisateur",
+            data: nil
           }
         else
           #on retourne la question trouvé dans answer
@@ -751,4 +1025,55 @@ class Api::V1::SessionController < ApplicationController
         params.require(:customer).permit(:name, :second_name, :cni, :phone)
     end
 
+    def check_customer
+      @token = request.headers["HTTP_X_API_POP_KEY"]
+      @uuid = request.headers["HTTP_UUID"]
+
+      Rails::logger::info "Header data receive : Token #{@token}, UUID : #{@uuid}"
+
+      begin
+        customer = Customer.find_by(authentication_token: @token, two_fa: 'authenticate')
+        if customer.blank?
+          #response.set_header('HEADER NAME', :unauthorized)
+          render json: {
+              message: "Vous n'etes pas autorisé à acceder à ce service."
+          },
+          status: :unauthorized
+          #head :unauthorized
+        end
+      rescue ActiveRecord::RecordNotFound
+        render json: {
+            status: false,
+            message: "Utilisateur inconnu"
+        },
+        status: :unprocessable_entity
+      end
+
+    end
+
+    def check_signature
+      signature = request.headers[:HTTP_SIGNATURE]
+
+      begin
+      #check if signature is valid
+      valid_signature = JWT.decode
+
+      rescue => exception
+        render json: {
+            status: false,
+            message: ""
+        },
+        status: :unauthorized
+
+      end
+
+    end
+
+    # Search customer data integrity
+    # only valide if customer data and md5(data) are the same
+    # return 401 header if failed
+    def check_integrity
+      integrity = params[:integrity]
+
+    end
 end

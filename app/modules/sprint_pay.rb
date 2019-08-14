@@ -87,11 +87,19 @@ module SprintPay
       # @param [Object] body
       # @param [Object] url
       def self.send(body, url)
-        # https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3
-        # https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3
+        # https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3 || v2
+        # https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3 || V2
 
-        q = HTTParty.post(url, headers: HEADERS, body: body, timeout: 30)
-        return q.as_json
+        begin
+
+          q = HTTParty.post(url, headers: HEADERS, body: body, timeout: 30)
+          return q.as_json
+
+        rescue StandardError => e #, Timeout::Error, NetworkError::Timeout, NetworkError::Error
+
+          return "Une erreur est survenue. Impossible de continuer : #{e}"
+
+        end
       end
 
       #ENVOI OM VERS CLIENTS ORANGE MONEY
@@ -99,15 +107,23 @@ module SprintPay
         base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3"
         body_data = {
           "phone": $phone,        #utiliser la variable globale disponible a cet effet
-          "amount": $amount       #utiliser le montant globale disponible a cet effet
+          "amount": $amount,       #utiliser le montant globale disponible a cet effet
+          "notify_url": "https://google.cm",
+          "return_url": "https://google.cm",
+          "cancel_url": "https://google.cm",
         }.to_json
 
         send(body_data, base_url)
       end
 
+      # Permet de paiement vers orange money :: REFACTORING
+      def self.om
+        
+      end
+
       #ENVOI D UN MOMO VERS LES CLIENTS MTN MOBILE MONEY
       def self.mtn
-        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v3"
+        base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/mobilemoney/request/v2"
         #base_url = "https://test-api.sprint-pay.com/sprintpayapi/payment/orangemoney/request/v3"
         body_data = {
           "phone": $phone,        #utiliser la variable globale disponible a cet effet
@@ -118,22 +134,17 @@ module SprintPay
 
       end
 
-      #permet de faire le paiement a un compte sprintPay
-      def self.payment_sprintpay
-
-      end
-
-      #permet de faire un paiement bancaire
-      def self.payment_bank
-
-      end
-
-      #permet de faire un paiement via une carte
-      def self.payment_card
-
-      end
-
     end
 
+  end
+
+
+  # New SprintPay payment API
+  module V2
+    class SP
+      def keys
+        date  = DateTime.parse(Time.now.to_s).iso8601
+      end
+    end
   end
 end

@@ -1,0 +1,16 @@
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/binding_of_caller-0.8.0/ext/binding_of_caller
+/usr/bin/ruby2.5 -r ./siteconf20190524-25924-msvjfp.rb extconf.rb
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/binding_of_caller-0.8.0/ext/binding_of_caller
+make "DESTDIR=" clean
+make: *** Aucune règle pour fabriquer la cible « clean ». Arrêt.
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/binding_of_caller-0.8.0/ext/binding_of_caller
+make "DESTDIR="
+echo "Nada."
+Nada.
+
+current directory: /home/dell/Documents/projects/yde/pop-cache/vendor/bundle/ruby/2.5.0/gems/binding_of_caller-0.8.0/ext/binding_of_caller
+make "DESTDIR=" install
+echo "Nada."
+Nada.

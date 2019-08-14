@@ -27,6 +27,15 @@ class ApiMailer < ApplicationMailer
   end
 
 
+  # envoyer les message a l'adminstrateur
+  def sendAdmin(message)
+
+    @message    = message
+
+    mail(to: App::PayMeQuick::App::developer[:email], subject: @message)
+  end
+
+
   #mailler generique pour toutes actions
   # @param [Object] message
   # @param [Object] phone

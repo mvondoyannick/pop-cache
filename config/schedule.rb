@@ -19,6 +19,9 @@
 
 # Learn more: http://github.com/javan/whenever
 
-every 1.minutes do
-	Rails::logger::info "testing cron jobs"
+every 10.minutes do
+
+  # runner "Customer.complete_name"
+  rake "update_feed"
+
 end

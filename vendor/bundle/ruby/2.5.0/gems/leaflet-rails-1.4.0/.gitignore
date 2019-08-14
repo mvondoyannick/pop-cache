@@ -1,0 +1,11 @@
+*.gem
+.bundle
+Gemfile.lock
+pkg/*
+
+/.rspec
+/coverage/
+/log/
+.idea/*
+.ruby-gemset
+.ruby-version
