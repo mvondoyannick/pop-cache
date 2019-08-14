@@ -15,6 +15,7 @@ module PayMeQuick
 
         @merchant = Customer.find_by(authentication_token: merchant, two_fa: 'authenticate')
         if @merchant.blank?
+          Rails::logger.error "Merchant Token #{merchant} canot be found : CustomerNotFound"
           return false
         else
           return true
@@ -72,7 +73,7 @@ module PayMeQuick
           end
           
         rescue => exception
-          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class}. customer ID : #{merchant}")
+          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
           return false
         end
 
@@ -101,7 +102,7 @@ module PayMeQuick
           
         rescue => exception
           
-          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class}. customer ID : #{merchant}")
+          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
           return false
         end
 
@@ -130,7 +131,7 @@ module PayMeQuick
           
         rescue => exception
 
-          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class}. customer ID : #{merchant}")
+          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
           return false
           
         end
@@ -160,7 +161,7 @@ module PayMeQuick
           
         rescue => exception
 
-          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class}. customer ID : #{merchant}")
+          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
           return false
           
         end
@@ -192,7 +193,7 @@ module PayMeQuick
           
         rescue => exception
 
-          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class}. customer ID : #{merchant}")
+          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
           return false
           
         end

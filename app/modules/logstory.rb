@@ -8,6 +8,10 @@ module Logstory
       @context = context
       @flag = flag
     end
+
+    def self.historyLog(argv, acttive=true)
+      return false, "disabled" if acttive == false
+    end
   
     #Historique journalier d'un customer
     # @param [String] token

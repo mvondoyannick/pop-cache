@@ -39,6 +39,10 @@ class Lorem
 
   def self.qrcode
 
+    key = Rails::application.secrets.secret_key_base
+    payload = "lorem"
+    puts JWT.encode(payload, key, "none", exp: 24.hours.from_now)
+
     begin
 
     a = {

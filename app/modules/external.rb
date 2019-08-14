@@ -31,15 +31,15 @@ module External
       # TODO replace IP geolocation with lat/lon geolocation datas
       adress = DistanceMatrix::DistanceMatrix::pays(@ip)
 
-      Rails::logger.info "Starting phone payement ..."
+      puts "Starting phone payement ..."
 
-      Rails::logger.info "Verifiying Account customer amount ..."
+      puts "Verifiying Account customer #{@customer_token} amount ..."
 
       # Recherche le customer pour authentification
       customer = Customer.find_by_authentication_token(@customer_token)
       if customer && customer.valid_password?(@customer_password)
 
-        Rails::logger.info "Customer/Payer found and all his data are ok ..."
+        puts "Customer/Payer found and all his data are ok ..."
 
         if customer.account.amount.to_f < @amount.to_f
 
@@ -61,7 +61,7 @@ module External
               #searching for merchant
               merchant = Customer.find_by_phone(@merchant_phone)
               if merchant.blank?
-                Rails::logger.info "Merchant phone don't found inside the plateforme..."
+                puts "Merchant phone don't found inside the plateforme..."
                 # on n'a pas trouver le marchand, on le cree directement et on credit son compte puis le le notifie par SMS
                 new_merchant = Customer.new(
                   email: Faker::Internet.email,
@@ -76,7 +76,7 @@ module External
 
                 #trying to save new demo customer
                 if new_merchant.save
-                  Rails::logger.info "Save new merchant informations DB."
+                  puts "Save new merchant informations DB."
                   #trying to create new_merchant account and store data amount
                   new_merchant_account = Account.new(
                     customer_id: new_merchant.id,
@@ -110,8 +110,8 @@ module External
 
                       if marchand.save
 
-                        Rails::logger.info "Save new merchant account information"
-                        Sms.sender(@merchant_phone, "Bonjour, un Paiement de #{@amount} F CFA vient d etre effectue dans votre compte virtuel/numero de telephone #{@merchant_phone}. ID de la transaction EXT_PAY_#{@hash}. Rapprochez-vous d'une agence UBA ou creer un compte PayMeQuick.")
+                        puts "Save new merchant account information"
+                        Sms.sender(@merchant_phone, "Bonjour, vous venez de recevoir un Paiement de #{@amount} F CFA dans votre numéro de telephone #{@merchant_phone}. ID de la transaction EXT_PAY_#{@hash}. Rapprochez-vous d'une agence UBA ou creer un compte PayMeQuick.")
                         return true, {
                             amount: @amount,
                             device: 'XAF',
@@ -138,62 +138,67 @@ module External
 
               else
                 #merchant exist in DB, juste update his account
-                Rails::logger.info "The merchant exist in the DB ..."
+                puts "This merchant phone exist in the DB ... and data are #{customer.as_json}"
                 if customer.account.update(amount: customer.account.amount.to_f - @amount.to_f)
 
                   m_account = Customer.find_by_phone(@merchant_phone).account
 
-                  if m_account.update(amount: m_account.amount.to_f + @amount.to_f)
-                    marchant = History.new(
-                      customer_id: Customer.find_by_phone(@merchant_phone).id,
-                      amount: @amount,
-                      context: 'phone',
-                      flag: 'encaissement'.upcase,
-                      code: "EXT_PAY_#{@hash}",
-                      region: adress
-                    )
-
-                    if marchant.save
-
-                      client = History.new(
-                        customer_id: customer.id,
-                        amount: Parametre::Parametre::agis_percentage(@amount),
+                  # trigger result for merchant
+                  if m_account.blank?
+                    return false, "Compte inexistant"
+                  else
+                    if m_account.update(amount: m_account.amount.to_f + @amount.to_f)
+                      marchant = History.new(
+                        customer_id: Customer.find_by_phone(@merchant_phone).id,
+                        amount: @amount,
                         context: 'phone',
-                        flag: 'paiement'.upcase,
+                        flag: 'encaissement'.upcase,
                         code: "EXT_PAY_#{@hash}",
                         region: adress
                       )
-
-                      if client.save
-                        Sms.sender(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d etre effectue dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Le solde de votre compte est maintenant de #{m_account.amount} F CFA. Rapprochez-vous d'une agence UBA ou creer un compte PayMeQuick.")
-                        return true, {
-                          amount: @amount,
-                          device: 'XAF',
-                          frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
-                          total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
-                          receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
-                          sender: Customer.find_by_authentication_token(@customer_token).complete_name,
-                          date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
-                          status: "PAIEMENT EFFECTUÉ"
-                        }#,"Paiement d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué au  #{@merchant_phone}."
+  
+                      if marchant.save
+  
+                        client = History.new(
+                          customer_id: customer.id,
+                          amount: Parametre::Parametre::agis_percentage(@amount),
+                          context: 'phone',
+                          flag: 'paiement'.upcase,
+                          code: "EXT_PAY_#{@hash}",
+                          region: adress
+                        )
+  
+                        if client.save
+                          Sms.sender(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d etre effectue dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Le solde de votre compte est maintenant de #{m_account.amount} F CFA. Rapprochez-vous d'une agence UBA ou creer un compte PayMeQuick.")
+                          return true, {
+                            amount: @amount,
+                            device: 'XAF',
+                            frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
+                            total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
+                            receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
+                            sender: Customer.find_by_authentication_token(@customer_token).complete_name,
+                            date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
+                            status: "PAIEMENT EFFECTUÉ"
+                          }#,"Paiement d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué au  #{@merchant_phone}."
+                        else
+  
+                          # Notify admin for this errors
+                          return false, "Impossible de sauver l'historique : #{client.errors.full_messages}"
+                        end
+  
                       else
-
-                        # Notify admin for this errors
-                        return false, "Impossible de sauver l'historique : #{client.errors.full_messages}"
+  
+                        Rails::logger::info "Failed to save history on the plateforme"
+                        return false, "Impossible de sauver l'historique : #{marchand.errors.full_messages}"
+  
                       end
-
+  
                     else
-
-                      Rails::logger::info "Failed to save history on the plateforme"
-                      return false, "Impossible de sauver l'historique : #{marchand.errors.full_messages}"
-
+  
+                      Rails::logger::info "Transaction failed during process"
+                      return false, "Une erreur est survenue durant la transaction de paiement : #{m_account.errors.full_messages}"
+  
                     end
-
-                  else
-
-                    Rails::logger::info "Transaction failed during process"
-                    return false, "Une erreur est survenue durant la transaction de paiement : #{m_account.errors.full_messages}"
-
                   end
 
                 else

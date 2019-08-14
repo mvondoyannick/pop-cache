@@ -8,19 +8,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.generators" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.generators" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/bae50ba6-0593-47c9-aa12-c37ccbe3760f.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/bae50ba6-0593-47c9-aa12-c37ccbe3760f.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/pop-cash.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pop-cash.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/app.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/app.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/client.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/parametre.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/parametre.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/pay.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/pay.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/external.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/external.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/logstory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/logstory.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/lorem.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/lorem.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/modules/pay_me_quick.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/pay_me_quick.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/locales/en.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/locales/en.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/locales/fr.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/locales/fr.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/sms.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/sms.rb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -354,6 +348,11 @@
       <workItem from="1564524756567" duration="5789000" />
       <workItem from="1564588622417" duration="1313000" />
       <workItem from="1564610995459" duration="20434000" />
+      <workItem from="1564998529910" duration="4066000" />
+      <workItem from="1565004646726" duration="2014000" />
+      <workItem from="1565268774330" duration="521000" />
+      <workItem from="1565349585969" duration="564000" />
+      <workItem from="1565471055209" duration="1331000" />
     </task>
     <servers />
   </component>
