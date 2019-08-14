@@ -19,7 +19,7 @@ class Customer < ApplicationRecord
 
   # Create CustomerDatum after new Customer creation
   after_create :set_customer_datum
-  after_create :add_abonnement
+  #after_create :add_abonnement
 
   # before_delete customer account
   before_destroy :verify_amount_before_destroy
@@ -99,7 +99,7 @@ class Customer < ApplicationRecord
   # Set customerDatum after new customer registration
   def set_customer_datum
     customer_data = CustomerDatum.new(customer_id: self.id, phone: self.phone)
-    raise ActiveRecord::Rollback unless !customer_data.save
+    #raise ActiveRecord::Rollback if customer_data.save = false
     # if !customer_data.save
     #   raise ActiveRecord::Rollback "Impossible de mettre les données a jour!"
     # end

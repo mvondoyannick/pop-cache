@@ -44,7 +44,8 @@ class Client
   # @param [String] IP
   # @version 1.0.1
   def self.signup(argv, message, locale)
-    include ActionDispatch
+    #include ActionDispatch
+    puts "Datas sugnup are : #{argv}"
 
     begin
 
@@ -84,8 +85,6 @@ class Client
             pays: @pays
         )
 
-        Customer.transaction do
-
           if customer.save
 
             # on enregistre la question de securité
@@ -113,8 +112,6 @@ class Client
             return false, "Des erreurs sont survenues : #{customer.errors.full_messages}"
 
           end
-          #raise ActiveRecord::Rollback, "Call tech support"
-        end
 
       else
 
@@ -122,9 +119,6 @@ class Client
         return false, I18n.t("PasswordNotSecure", locale: @locale) #"Le mot de passe que vous avez choisis est non seulement faible, mais pour des raisons de securité est interndit. Merci de le modifier et de réessayer"
 
       end
-
-    rescue ActiveRecord::Error::ConnectionError
-      puts "Une erreur est survenue"
     rescue ArgumentError => e
       puts "Une autre erreur est survenue : #{e}"
     end
@@ -1321,7 +1315,7 @@ class Client
   def self.pay(argv, message=nil, locale="en")
     customer = argv[:customer]
     @to = argv[:merchant]
-    @amount = argv[:amount] #montant de la transation
+    @amount = argv[:amount].to_f #montant de la transation
     @client_password = argv[:password]
     @ip = argv[:ip]
     @lat = argv[:lat]

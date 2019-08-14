@@ -509,10 +509,11 @@ module Parametre
     # @params   [object] phone
     # @params   [object] auth_key
     # @return   [object] phone
-    def self.validate_otp(phone, auth_key, playerId)
+    def self.validate_otp(phone, auth_key, playerId=nil)
       @phone        = phone
-      @otp         = auth_key.to_i
+      @otp         = auth_key
       @playerId     = playerId
+      puts "Data receive from here : phone => #{@phone}, otp => #{@otp}"
       #on cherche le client responsable de cette demande
       @customer = Customer.find_by(phone: @phone, two_fa: @otp)
       if @customer.blank?
@@ -521,7 +522,7 @@ module Parametre
       else
         Rails::logger::info "le code d'authentification actuel est #{@customer.two_fa}"
         #on verifie que le code auth_key est encore valide dans le temps
-        if  @customer.two_fa.to_i.eql?(@otp)
+        if  @customer.two_fa == @otp
           if Time.now <= @customer.perime_two_fa
             # si le code d'authentication n'est pas encore peripé
             #on supprimer les information et on les set a authenticate
