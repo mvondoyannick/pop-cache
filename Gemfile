@@ -47,6 +47,8 @@ gem 'rqrcode_png'
 gem 'dragonfly', '~> 1.2.0'
 #AES for encrypt decrypt https://github.com/chicks/aes
 gem 'aes'
+#sending email from heroku
+gem 'sendgrid-ruby'
 #gestion des email
 gem 'mail_form'
 #installing faraday http gem

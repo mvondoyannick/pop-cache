@@ -1323,7 +1323,7 @@ class Client
 
     @locale = locale
 
-    Rails::logger.info "Demarrage du paiement d'une transaction : #{message}"
+    puts "Demarrage du paiement d'une transaction : #{message}"
 
     if customer == @to
       Rails::logger::info "Numéro indentique, transaction annuler!"
@@ -1332,38 +1332,69 @@ class Client
           message: I18n.t("errMerchantContent", locale: @locale)
       }
     else
+      # Traitement des informations sur le marchand
+      begin
 
-      Rails::logger.info "Getting merchant informations"
-      marchand = Customer.find_by_authentication_token(@to) #personne qui recoit
+        puts "recherche des informations sur le marchand ..."
+        marchand = Customer.find_by_authentication_token(@to)
+        Rails::logger.info "Getting customer informations account"
+        marchand_account = marchand.account #le montant de la personne qui recoit
+        
+      rescue => exception
 
-      Rails::logger.info "Getting customer informations account"
-      marchand_account = marchand.account #le montant de la personne qui recoit
+        #sending email to admin
+        OneSignal::SendEmailAPI.sendEmail(App::PayMeQuick::App::developer[:email], argv, exception, locale)
+        
+        puts "Une erreur est survenue : #{exception}"
+        Rails::logger::error "Compte marchand #{@to} voulant recevoir un paiement est inconnu"
+        return false, {
+          title: "Echec Transaction",
+          content: "Le marchand vers qui la transaction doit se faire est inconnu"
+        }
+        
+      end
 
-      Rails::logger.info "Getting customer informations"
-      client = Customer.find_by_authentication_token(customer) #la personne qui envoi
+      # Traitement des informations sur le client
+      begin
 
-      Rails::logger.info "Getting custommer account informations ..."
-      client_account = client.account # le montant de la personne qui envoi
+        puts "Getting customer informations ..."
+        client = Customer.find_by_authentication_token(customer) #la personne qui envoi
+
+        puts "Getting custommer account informations ..."
+        client_account = client.account # le montant de la personne qui envoi
+        
+      rescue => exception
+
+        #sending email to admin
+        OneSignal::SendEmailAPI.sendEmail(App::PayMeQuick::App::developer[:email], argv, exception, locale)
+        
+        puts "Une erreur est survenue : #{exception}"
+        Rails::logger::error "Compte client #{customer} voulant effectuer un paiement est inconnu : Données complementaires =>"
+        return false, {
+          title: "Echec transaction",
+          content: "Ce compte est inconnu. Transaction annulée"
+        }
+      end
 
       if client.valid_password?(@client_password)
-        Rails::logger::info "Client identifié avec succes!"
+        puts "Client identifié avec succes!"
         #puts "Customer #{client.complete_name} identifié avec succes!"
 
         #contrainte si le montant depasse 150 000 F CFA XAF
         if @amount.to_f > App::PayMeQuick::App.limit[:limit_amount].to_f #$limit_amount
-          Rails::logger::info "Limite de transaction de 150 000 F dépassée"
+          puts "Limite de transaction de 150 000 F dépassée"
           return false, {
               title: "LIMITE DE TRANSACTION",
               message: "#{prettyCallSexe(client.sexe)} #{client.complete_name} il semblerait que votre transaction dépasse la limité autorisée de #{$limit_amount} #{$devise}. Merci de revoir le montant de votre transaction."
           }
         else
           if client_account.amount.to_f >= Parametre::Parametre::agis_percentage(@amount)
-            Rails::logger::info "Le compte du client dispose du montant suffisant pour effectuer la transaction ..."
+            puts "Le compte du client dispose du montant suffisant pour effectuer la transaction ..."
             @hash = "PP_#{SecureRandom.hex(13).upcase}"
 
             if client_account.update(amount: Parametre::Parametre::soldeTest(client_account.amount, @amount))
               
-              Rails::logger::info "Solde dans le compte du client #{client.phone} : #{client_account.amount.to_f} F CFA"
+              puts "Solde dans le compte du client #{client.phone} : #{client_account.amount.to_f} F CFA"
               marchand_account.amount += @amount.to_f
 
               #on historise la transaction du marche
@@ -1384,7 +1415,7 @@ class Client
                 #envoi d'une notification OneSignal
                 Sms.sender(marchand.phone, "Paiement recu. Montant :  #{@amount} F CFA XAF, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{App::PayMeQuick::App::app[:signature]}")
 
-                Rails::logger::info "Paiement effectué de #{@amount} F CFA entre #{customer} et #{@to}."
+                puts "Paiement effectué de #{@amount} F CFA entre #{customer} et #{@to}."
 
                 #on enregistre encore l'historique
                 client_log = History.new(
@@ -1399,7 +1430,7 @@ class Client
                 if client_log.save
 
                   #fin de journalisation
-                  Rails::logger::info "Historique de transaction enregistrée avec succes"
+                  puts "Historique de transaction enregistrée avec succes"
 
                   #enregistrement des commissions
                   commission = Parametre::Parametre::commission(@hash, @amount, Parametre::Parametre::agis_percentage(@amount).to_f, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f))
@@ -1415,7 +1446,15 @@ class Client
                         date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
                         status: "DONE"
                     }
-                    Rails::logger.info "Transaction response => #{a}"
+                    puts "Transaction response => #{a}"
+
+                    resume = "#{prettyCallSexe(client.sexe)} #{client.complete_name} votre Paiement a été effectué. \n Montant de la transaction : #{@amount} F CFA, \n Frais de la transaction : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} F CFA \n Total prelevé dans votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA, \n Marchant ayant recu le paiement : #{marchand.complete_name}, \n Date de la transaction : #{Time.now.strftime("%d-%m-%Y, %Hh:%M")} \n Statut de la transaction: EFFECTUÉE ET TERMINÉE SANS ERREURS \n"
+
+                    #send email to customer
+                    OneSignal::SendEmailAPI.sendEmail(client.email, resume, message, locale)
+
+                    #send email to merchant
+                    OneSignal::SendEmailAPI.sendEmail(marchand.email, "Paiement recu. Montant :  #{@amount} F CFA XAF, \n Client ayant effectuer le Paiement : #{prettyCallSexe(client.sexe)} #{client.complete_name}. \n Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. \n Transaction ID : #{@hash}. \n Date : #{Time.now}. #{App::PayMeQuick::App::app[:signature]}", message, locale)
 
                     #return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F CFA. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
                     return true, {
