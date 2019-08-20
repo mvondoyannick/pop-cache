@@ -18,7 +18,7 @@ class Api::V1::SessionController < ApplicationController
       @response       = params[:reponse]
 
       #adding locale I18n
-      @locale         = request.headers["HTTP_LOCALE"]
+      @locale         = "en" #request.headers["HTTP_LOCALE"]
 
       #données elementaire de base
       if @tel.present? && @cni.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
@@ -94,7 +94,7 @@ class Api::V1::SessionController < ApplicationController
      # Refactoring
     def history
       @token = request.headers['HTTP_X_API_POP_KEY'] #Get the customer header
-      @locale = request.headers["HTTP_LOCALE"] # Get client locale lang between en and fr
+      @locale = "en" #request.headers["HTTP_LOCALE"] # Get client locale lang between en and fr
       @ip_adresse = request.remote_ip # Get customer remote IP
       Rails::logger::info "receive token : #{@token} from #{@ip_adresse}"
       @period   = params[:period]
@@ -136,7 +136,7 @@ class Api::V1::SessionController < ApplicationController
     # Permet de retourner le'historique en fonction d'une periode bien precise
     def historyByDate
       @token    = request.headers['HTTP_X_API_POP_KEY']
-      @locate   = request.headers["HTTP_LOCALE"]
+      @locate   = "en" #request.headers["HTTP_LOCALE"]
       @debut    = params[:begin]
       @fin      = params[:end]
 
@@ -241,7 +241,7 @@ class Api::V1::SessionController < ApplicationController
       phone = params[:phone]
       password = params[:password]
       device = params[:uuid]
-      locale = request.headers["HTTP_LOCALE"]
+      locale = "en" #request.headers["HTTP_LOCALE"]
 
       if phone.present? && password.present?
 
@@ -281,7 +281,7 @@ class Api::V1::SessionController < ApplicationController
       @token      = params[:customer]
       @pwd        = params[:password]
       @playerId   = params[:playerId]
-      locale = request.headers["HTTP_LOCALE"]
+      locale = "en" #request.headers["HTTP_LOCALE"]
 
       #check all datas available
       if @token.present? && @pwd.present? && @playerId.present?
@@ -321,7 +321,7 @@ class Api::V1::SessionController < ApplicationController
       @phone    = params[:customer]
       @pwd      = params[:password]
       @playerId = params[:oneSignalID]
-      locale = request.headers["HTTP_LOCALE"]
+      locale = "en" #request.headers["HTTP_LOCALE"]
 
       #verificatin du customer
       @customer = Customer.find_by_authentication_token(@phone)
@@ -353,7 +353,7 @@ class Api::V1::SessionController < ApplicationController
     # verification du retrait
     def check_retrait
         header = request.headers['HTTP_X_API_POP_KEY']
-        locale = request.headers["HTTP_LOCALE"]
+        locale = "en" #request.headers["HTTP_LOCALE"]
         begin
           render json: {
             status: Client::check_retrait_refactoring(header, locale[0..1])
@@ -369,7 +369,7 @@ class Api::V1::SessionController < ApplicationController
     # permet d'annuler le retrait en cours
     def cancel_retrait
       token = request.headers['HTTP_X_API_POP_KEY']
-      locale = request.headers['HTTP_LOCALE']
+      locale = "en" #request.headers['HTTP_LOCALE']
       begin
         cancel = Client.cancelRetrait({token: token}, "Annulation de la procedure de retrait", locale[0..1])
         render json: {
@@ -1028,7 +1028,9 @@ class Api::V1::SessionController < ApplicationController
     def check_customer
       @token = request.headers["HTTP_X_API_POP_KEY"]
       @uuid = request.headers["HTTP_UUID"]
-      @language = request.headers["HTTP_LOCALE"]
+
+      puts "recherche de la langue"
+      @language = "en"#request.headers["HTTP_LOCALE"]
 
       puts "La langue recu est #{@language}"
 
