@@ -28,7 +28,7 @@ class Api::V1::ApiController < ApplicationController
 
       @payeur = Customer.find_by_authentication_token(payeur[0])
       if @payeur.blank?
-        Rails::logger::info "Impossible de trouver ce customer"
+        puts "Impossible de trouver ce customer"
         render json: {
             status: 404,
             flag: :customer_not_found,
@@ -94,7 +94,7 @@ class Api::V1::ApiController < ApplicationController
           #tout va bien, l'utilisateur payeur est connu, check the phone number
           #find if this number is not registrated to the plateforme
           payment = External::DemoUsers.Payment(token: @token, password: @password, phone: @phone, amount: @amount, ip: @ip)
-          Rails::logger.info "From Payment : #{payment}"
+          puts "From Payment : #{payment}"
           render json: {
             status: payment[0],
             message: payment[1]
@@ -176,7 +176,7 @@ class Api::V1::ApiController < ApplicationController
 
   #CUSTOMER AMOUNT DYNAMICALY
   def customer_account_amount
-    Rails::logger.info "Starting dynamically render amount ..."
+    puts "Starting dynamically render amount ..."
     token = request.headers["HTTP_X_API_POP_KEY"]
     customer = Customer.find_by_authentication_token(token)
     if customer.blank?
@@ -188,7 +188,7 @@ class Api::V1::ApiController < ApplicationController
       status: :unauthorized
     else
       if customer.account.blank?
-        Rails::logger.info "This customer does not activate his account"
+        puts "This customer does not activate his account"
         render json: {
           status: false,
           message: "Compte inexistant pour ce compte"
@@ -244,7 +244,7 @@ class Api::V1::ApiController < ApplicationController
     @token = request.headers["HTTP_X_API_POP_KEY"]
     @uuid = request.headers["HTTP_UUID"]
 
-    Rails::logger::info "Header data receive : Token #{@token}, UUID : #{@uuid}"
+    puts "Header data receive : Token #{@token}, UUID : #{@uuid}"
 
     begin
       customer = Customer.find_by(authentication_token: @token, two_fa: 'authenticate')

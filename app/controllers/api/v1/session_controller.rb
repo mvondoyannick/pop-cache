@@ -23,7 +23,7 @@ class Api::V1::SessionController < ApplicationController
       #données elementaire de base
       if @tel.present? && @cni.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
 
-        query = Client::signup({name: @name, second_name: @second_name, phone: @tel, cni: @cni, password: @password, sexe: @sexe, question: @question_id, answer: @response, ip: @ip}, "create customer account", @locale)
+        query = Client::signup({name: @name, second_name: @second_name, phone: @tel, cni: @cni, password: @password, sexe: @sexe, question: @question_id, answer: @response, ip: @ip}, "create customer account", @locale[0..1])
         render json: {
           status: query
         }
@@ -32,7 +32,7 @@ class Api::V1::SessionController < ApplicationController
 
         render json: {
           satus: :false,
-          message: I18n.t("DataNotComplete", locale: @locale) #"Centaines informations sont manquantes"
+          message: I18n.t("DataNotComplete", locale: @locale[0..1]) #"Centaines informations sont manquantes"
         }
 
       end
@@ -112,7 +112,7 @@ class Api::V1::SessionController < ApplicationController
         else
 
           #starting get customer history
-          request = Logstory::Histo.h_customer(@token, @period, locale)
+          request = Logstory::Histo.h_customer(@token, @period, @locale[0..1])
           render json: {
             status: request[0],
             message: request[1]
@@ -124,7 +124,7 @@ class Api::V1::SessionController < ApplicationController
 
         render json: {
             status:   false,
-            message:  I18n.t("customerNotFound", locale: @locale)
+            message:  I18n.t("customerNotFound", locale: @locale[0..1])
         }
 
       end
@@ -147,7 +147,7 @@ class Api::V1::SessionController < ApplicationController
             message: I18n.t("sameDate", locale: @locale) #"Les dates sont identiques!"
           }
         else
-          periode = Logstory::Histo.h_interval({token: @token, begin: @debut, end: @fin}, @locale)
+          periode = Logstory::Histo.h_interval({token: @token, begin: @debut, end: @fin}, @locale[0..1])
           render json: {
               status:   periode[0],
               message:  periode[1]
@@ -246,7 +246,7 @@ class Api::V1::SessionController < ApplicationController
       if phone.present? && password.present?
 
         #query the user
-        signin = Client::signin({phone: phone, password: password, device: device}, locale, "Authentification")
+        signin = Client::signin({phone: phone, password: password, device: device}, locale[0..1], "Authentification")
         puts "Login data response : #{signin}"
         render json: signin
 
@@ -293,7 +293,7 @@ class Api::V1::SessionController < ApplicationController
               message: "Utilisateur inconnu sur la plateforme"
           }
         else
-          @customer = Client::get_balance({phone: @customer, password: @pwd}, locale)
+          @customer = Client::get_balance({phone: @customer, password: @pwd}, locale[0..1])
           if balance
             render json: {
                 message: @customer
@@ -332,7 +332,7 @@ class Api::V1::SessionController < ApplicationController
           message:  "Utilisateur inconnu"
         }
       else
-        balance = Client::get_balance({phone: @customer.phone, password: @pwd}, "Obtention crédit compte client", locale)
+        balance = Client::get_balance({phone: @customer.phone, password: @pwd}, "Obtention crédit compte client", locale[0..1])
         if balance[0]
           render json: {
             status:   200,
@@ -356,7 +356,7 @@ class Api::V1::SessionController < ApplicationController
         locale = request.headers["HTTP_LOCALE"]
         begin
           render json: {
-            status: Client::check_retrait_refactoring(header, locale)
+            status: Client::check_retrait_refactoring(header, locale[0..1])
           }
         rescue => exception
           render json: {
@@ -369,9 +369,9 @@ class Api::V1::SessionController < ApplicationController
     # permet d'annuler le retrait en cours
     def cancel_retrait
       token = request.headers['HTTP_X_API_POP_KEY']
-      locale = locale
+      locale = request.headers['HTTP_LOCALE']
       begin
-        cancel = Client.cancelRetrait({token: token}, "Annulation de la procedure de retrait", locale)
+        cancel = Client.cancelRetrait({token: token}, "Annulation de la procedure de retrait", locale[0..1])
         render json: {
             message: cancel
         }
@@ -1028,8 +1028,11 @@ class Api::V1::SessionController < ApplicationController
     def check_customer
       @token = request.headers["HTTP_X_API_POP_KEY"]
       @uuid = request.headers["HTTP_UUID"]
+      @language = request.headers["HTTP_LOCALE"]
 
-      Rails::logger::info "Header data receive : Token #{@token}, UUID : #{@uuid}"
+      puts "La langue recu est #{@language}"
+
+      puts "Header data receive : Token #{@token}, UUID : #{@uuid}"
 
       begin
         customer = Customer.find_by(authentication_token: @token, two_fa: 'authenticate')
