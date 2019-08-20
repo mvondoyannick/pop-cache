@@ -1448,7 +1448,7 @@ class Client
                     }
                     puts "Transaction response => #{a}"
 
-                    resume = "#{prettyCallSexe(client.sexe)} #{client.complete_name} votre Paiement a été effectué. \n Montant de la transaction : #{@amount} F CFA, \n Frais de la transaction : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} F CFA \n Total prelevé dans votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA, \n Marchant ayant recu le paiement : #{marchand.complete_name}, \n Date de la transaction : #{Time.now.strftime("%d-%m-%Y, %Hh:%M")} \n Statut de la transaction: EFFECTUÉE ET TERMINÉE SANS ERREURS \n"
+                    resume = "#{prettyCallSexe(client.sexe)} #{client.complete_name} votre Paiement a été effectué. \n Montant de la transaction : #{@amount} F CFA, \n Frais de la transaction : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} F CFA \n Total prelevé dans votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA, \n Marchant ayant recu le paiement : #{marchand.complete_name}, \n Date de la transaction : #{Time.now.strftime("%d-%m-%Y, %Hh:%M")} \n Statut de la transaction: EFFECTUÉE ET TERMINÉE SANS ERREURS \n Lien transaction : https://payquick-develop.herokuapp.com/webview/PP_6D9A2F26AF368BA76584F5DC3E/13"
 
                     #send email to customer
                     OneSignal::SendEmailAPI.sendEmail(client.email, resume, message, locale)

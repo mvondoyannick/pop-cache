@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'welcome/home'
   #gestion des interfaces des clients
   get 'client/signing'
   get 'client/signup'
@@ -86,7 +87,8 @@ Rails.application.routes.draw do
   post 'home/apikey_request'
   get 'home/signup'
   #main route
-  root 'agentcrtl#customer'
+  root 'welcome#home'
+  get 'webview/:hash/:token', to: 'welcome#webview'
   match 'home/retrait', to: 'home#retrait', via: [:get, :post]
   match 'home/create', to: 'home#create', via: [:get, :post]
   match 'home/credit', to: 'home#credit', via: [:get, :post]

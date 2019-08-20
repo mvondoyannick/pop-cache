@@ -63,9 +63,9 @@ class Sms
 
         HTTParty.get("https://www.agis-as.com/epolice/index.php?telephone=#{@phone}&message=#{@message}")
 
-      rescue StandardError, TimeoutError::Error, NetworkError::Error
+      rescue => exception
 
-        Rails::logger.info "Une erreur est survenue"
+        puts "Une erreur est survenue : #{exception}"
 
       end
 
