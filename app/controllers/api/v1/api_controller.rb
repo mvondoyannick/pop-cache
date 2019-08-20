@@ -74,6 +74,7 @@ class Api::V1::ApiController < ApplicationController
   #PAY WITH PHONE NUMBER
   def phonePayment
     @token = request.headers['HTTP_X_API_POP_KEY']
+    @playerID = params[:oneSignalID]
     @phone = params[:phone]
     @amount = params[:amount]
     @password = params[:password]
@@ -93,7 +94,7 @@ class Api::V1::ApiController < ApplicationController
         else
           #tout va bien, l'utilisateur payeur est connu, check the phone number
           #find if this number is not registrated to the plateforme
-          payment = External::DemoUsers.Payment(token: @token, password: @password, phone: @phone, amount: @amount, ip: @ip)
+          payment = External::DemoUsers.Payment(token: @token, password: @password, phone: @phone, amount: @amount, ip: @ip, oneSignalID: @playerID)
           puts "From Payment : #{payment}"
           render json: {
             status: payment[0],

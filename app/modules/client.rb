@@ -8,7 +8,7 @@ class Client
   $limit_transaction_recharge = 500000
   $limit_transaction_recharge_jour = 2500000 # soit 5 recharges par jour
   $limit_day_transaction = 100
-  $devise = "F CFA"
+  $devise = "FC"
   $status = {
       false: :false
   }
@@ -595,7 +595,7 @@ class Client
           amount = @customer.account.amount
 
           # send SMS to customer
-          Sms.sender(@customer.phone, "Bonjour #{@customer.complete_name} le solde de votre compte est de #{amount} F CFA")
+          Sms.sender(@customer.phone, "Bonjour #{@customer.complete_name} le solde de votre compte est de #{amount} FC")
 
           return true, amount
         else
@@ -831,8 +831,8 @@ class Client
       account = Account.where(customer_id: customer.id).first
       if !account.blank?
         a = account.amount.to_i - @amount.to_i
-        Rails::logger::info "Information compte client #{@phone} à #{Time.now} est de #{account.amount} F CFA."
-        Rails::logger::info "Information compte client #{@phone} à avec le fameux A est de #{account.amount} F CFA."
+        Rails::logger::info "Information compte client #{@phone} à #{Time.now} est de #{account.amount} FC."
+        Rails::logger::info "Information compte client #{@phone} à avec le fameux A est de #{account.amount} FC."
         if account.update(customer_id: customer.id, amount: account.amount)
           transaction = History.new(
               customer: customer.id,
@@ -895,7 +895,7 @@ class Client
 
           # On recherche le palier d'abonnement du client et voir le max qu'il peut retirer
           if customer_abonnement[0]
-            Rails::logger::info "#{customer.complete_name} a un palier lui permettant de faire un retrait maximum de #{customer_abonnement[1].to_i} F CFA"
+            Rails::logger::info "#{customer.complete_name} a un palier lui permettant de faire un retrait maximum de #{customer_abonnement[1].to_i} FC"
 
             # Est ce que le montant a retirer est superieur a ce que le palier autorise?
             if customer.await.amount.to_f > customer_abonnement[1].to_f
@@ -1006,12 +1006,12 @@ class Client
                         Rails::logger::info "Mise a jour du compte de l'agent qui a initialiser le process de retrait ... FAIT!"
 
                         # Notification de l'agent
-                        Sms.sender(agent.phone, "Retrait effectué du compte #{customer.complete_name}. Credit de votre compte : #{agent.complete_name} d'un montant de #{awaits.amount.round(2)} F CFA. Votre solde total est de #{agent.account.amount.round(2)} F CFA. Vous pouvez payer !")
+                        Sms.sender(agent.phone, "Retrait effectué du compte #{customer.complete_name}. Credit de votre compte : #{agent.complete_name} d'un montant de #{awaits.amount.round(2)} FC. Votre solde total est de #{agent.account.amount.round(2)} FC. Vous pouvez payer !")
 
                         # on supprime l'intent de retrait
                         if awaits.destroy
 
-                          return true, "#{awaits.amount} F CFA ont été retiré de votre compte. \t Votre solde est de #{account.amount} F CFA. Merci"
+                          return true, "#{awaits.amount} FC ont été retiré de votre compte. \t Votre solde est de #{account.amount} FC. Merci"
 
                         else
 
@@ -1121,7 +1121,7 @@ class Client
           # cancel and restore customer credit account
           return true, "Retrait annulé avec succes du montant de #{intent.amount.round(2)}"
         else
-          return false, "Une erreur est survenue durant le processus d'annulation du retrait de #{intent.amount.round(2)} F CFA"
+          return false, "Une erreur est survenue durant le processus d'annulation du retrait de #{intent.amount.round(2)} FC"
         end
       end
     end
@@ -1214,7 +1214,7 @@ class Client
     @phone = phone
     @amount = amount_retrait.to_i
     Rails::logger::info "Starting get balance for account #{@phone}, amount of #{@amount}"
-    #on ne peut pas retirer moins de 500 F CFA XAF
+    #on ne peut pas retirer moins de 500 FC XAF
     if @amount < 500
       Rails::logger::warn "Tentative de retrait d'un montant inferieur a 500F, Transaction annulée"
       return false
@@ -1380,7 +1380,7 @@ class Client
         puts "Client identifié avec succes!"
         #puts "Customer #{client.complete_name} identifié avec succes!"
 
-        #contrainte si le montant depasse 150 000 F CFA XAF
+        #contrainte si le montant depasse 150 000 FC XAF
         if @amount.to_f > App::PayMeQuick::App.limit[:limit_amount].to_f #$limit_amount
           puts "Limite de transaction de 150 000 F dépassée"
           return false, {
@@ -1394,7 +1394,7 @@ class Client
 
             if client_account.update(amount: Parametre::Parametre::soldeTest(client_account.amount, @amount))
               
-              puts "Solde dans le compte du client #{client.phone} : #{client_account.amount.to_f} F CFA"
+              puts "Solde dans le compte du client #{client.phone} : #{client_account.amount.to_f} FC"
               marchand_account.amount += @amount.to_f
 
               #on historise la transaction du marche
@@ -1413,9 +1413,9 @@ class Client
 
               if marchand_account.save
                 #envoi d'une notification OneSignal
-                Sms.sender(marchand.phone, "Paiement recu. Montant :  #{@amount} F CFA, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} F CFA. ID : #{@hash}. #{App::PayMeQuick::App::app[:signature]}")
+                Sms.sender(marchand.phone, "Paiement recu. Montant :  #{@amount} FC, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} FC. ID : #{@hash}. #{App::PayMeQuick::App::app[:signature]}")
 
-                puts "Paiement effectué de #{@amount} F CFA entre #{customer} et #{@to}."
+                puts "Paiement effectué de #{@amount} FC entre #{customer} et #{@to}."
 
                 #on enregistre encore l'historique
                 client_log = History.new(
@@ -1448,21 +1448,21 @@ class Client
                     }
                     puts "Transaction response => #{a}"
 
-                    resume = "#{prettyCallSexe(client.sexe)} #{client.complete_name} votre Paiement a été effectué. \n Montant de la transaction : #{@amount} F CFA, \n Frais de la transaction : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} F CFA \n Total prelevé dans votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} F CFA, \n Marchant ayant recu le paiement : #{marchand.complete_name}, \n Date de la transaction : #{Time.now.strftime("%d-%m-%Y, %Hh:%M")} \n Statut de la transaction: EFFECTUÉE ET TERMINÉE SANS ERREURS \n Lien transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{client.id}"
+                    resume = "#{prettyCallSexe(client.sexe)} #{client.complete_name} votre Paiement a été effectué. \n Montant de la transaction : #{@amount} FC, \n Frais de la transaction : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC \n Total prelevé dans votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} FC, \n Marchant ayant recu le paiement : #{marchand.complete_name}, \n Date de la transaction : #{Time.now.strftime("%d-%m-%Y, %Hh:%M")} \n Statut de la transaction: EFFECTUÉE ET TERMINÉE SANS ERREURS \n Lien transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{client.id}"
 
                     #send email to customer
                     OneSignal::SendEmailAPI.sendEmail(client.email, resume, message, locale)
 
                     #send email to merchant
-                    OneSignal::SendEmailAPI.sendEmail(marchand.email, "Paiement recu. Montant :  #{@amount} F CFA XAF, \n Client ayant effectuer le Paiement : #{prettyCallSexe(client.sexe)} #{client.complete_name}. \n Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. \n Transaction ID : #{@hash}. \n Date : #{Time.now}. \n Lien de transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id} \n #{App::PayMeQuick::App::app[:signature]}", message, locale)
+                    OneSignal::SendEmailAPI.sendEmail(marchand.email, "Paiement recu. Montant :  #{@amount} FC \n Client ayant effectuer le Paiement : #{prettyCallSexe(client.sexe)} #{client.complete_name}. \n Votre nouveau solde:  #{marchand_account.amount} FC . \n Transaction ID : #{@hash}. \n Date : #{Time.now}. \n Lien de transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id} \n #{App::PayMeQuick::App::app[:signature]}", message, locale)
 
                     # send SMS
-                    Sms.sender(marchand.phone, "Paiement recu! montant : #{@amount} F CFA, paiement recu de #{client.complete_name}. Plus d'informations sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
+                    Sms.sender(marchand.phone, "Paiement recu! montant : #{@amount} FC, paiement recu de #{client.complete_name}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
 
-                    #return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F CFA. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
+                    #return true, "Votre Paiement de #{@amount} FC vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F FC. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F FC. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
                     return true, {
                         amount: @amount,
-                        device: "XAF",
+                        device: "",
                         frais: (Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f).round(2),
                         total: (Parametre::Parametre::agis_percentage(@amount).to_f).round(2),
                         receiver: marchand.complete_name,
@@ -1481,12 +1481,12 @@ class Client
                 end
               else
                 # raise ActiveRecord::Rollback
-                puts "Impossible de crediter le marchand #{marchand.authentication_token} d'un montant de #{@amount} F CFA"
+                puts "Impossible de crediter le marchand #{marchand.authentication_token} d'un montant de #{@amount} FC"
                 Sms.sender(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
                 return false
               end
             else
-              puts "Impossible de mettre à jour les informations du client sur la transaction N° #{@hash}, d'un montant de #{@amount} F CFA"
+              puts "Impossible de mettre à jour les informations du client sur la transaction N° #{@hash}, d'un montant de #{@amount} FC"
               Sms.sender(client.phone, "Impossible d\n'acceder a votre compte. Transaction annulee. #{$signature}")
               return false
             end
@@ -1549,14 +1549,14 @@ class Client
               Journal::Journal::create_logs_transaction(@to, @from, @amount, "debit")
 
               #Envoi des SMS de confirmations de la transaction
-              Sms.new(@to, "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. Votre solde est maintenant de #{marchand_account.amount} F CFA. ID Transaction : #{@hash}. #{$signature}")
+              Sms.new(@to, "Le paiement du montant #{@amount} FC provenant de #{client.name} #{client.second_name} c est correctement deroule. Votre solde est maintenant de #{marchand_account.amount} FC. ID Transaction : #{@hash}. #{$signature}")
               Sms::send
               #----------------------------------
-              Sms.new(@from, "#{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name}, #{@amount} F CFA ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} F CFA. ID Transaction : #{@hash}. #{$signature}")
+              Sms.new(@from, "#{prettyCallSexe(client.sexe)} #{client.name} #{client.second_name}, #{@amount} FC ont ete debite de votre compte, le solde actuel de votre compte est #{client_account.amount} FC. ID Transaction : #{@hash}. #{$signature}")
               Sms::send
-              return "Le paiement du montant #{@amount} F CFA provenant de #{client.name} #{client.second_name} c est correctement deroule. ID Transaction : #{@hash}. #{$signature}"
+              return "Le paiement du montant #{@amount} FC provenant de #{client.name} #{client.second_name} c est correctement deroule. ID Transaction : #{@hash}. #{$signature}"
             else
-              return "Echec du paiement du montant #{@amount} F CFA. Echec de la transaction ID Transaction : #{@hash}. #{$signature}"
+              return "Echec du paiement du montant #{@amount} FC. Echec de la transaction ID Transaction : #{@hash}. #{$signature}"
             end
           else
             return "une erreur est survenue durant le traitement"

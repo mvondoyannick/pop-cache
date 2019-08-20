@@ -170,7 +170,7 @@ module OneSignal
     # @param [Object] playerId
     # @param [Object] msgFr
     # @param [Object] msgEn
-    def self.genericOneSignal(playerId, msgFr, msgEn)
+    def self.genericOneSignal(playerId, msgFr=nil , msgEn=nil )
       @playerId     = playerId
       @msgFr        = msgFr
       @msgEn        = msgEn

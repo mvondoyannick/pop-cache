@@ -26,6 +26,7 @@ module External
       @amount = argv[:amount]
       @hash = rand(11**11)
       @ip = argv[:ip]
+      @playerID = argv[:oneSignalID]
 
       # get data geolocation from IP transaction
       # TODO replace IP geolocation with lat/lon geolocation datas
@@ -111,10 +112,14 @@ module External
                       if marchand.save
 
                         puts "Save new merchant account information"
-                        Sms.sender(@merchant_phone, "Bonjour, vous venez de recevoir un Paiement de #{@amount} F CFA dans votre numéro de telephone #{@merchant_phone}. ID de la transaction EXT_PAY_#{@hash}. Rapprochez-vous d'une agence UBA ou creer un compte PayMeQuick.")
+                        Sms.sender(@merchant_phone, "Vous venez de recevoir un Paiement de #{@amount} F CFA dans votre numero de telephone #{@merchant_phone}. ID EXT_PAY_#{@hash}. Details : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{merchant.id}.")
+
+                        #Envoi d'une push notification au marchand
+                        OneSignal::OneSignalSend.genericOneSignal(@playerID, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} Vous venez d'effectuer une paiement de #{@amount} FC, votre compte a été débité de #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} FC incluant les frais de #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC. Votre solde est de #{client.account.amount} FC")
+
                         return true, {
                             amount: @amount,
-                            device: 'XAF',
+                            device: 'FC',
                             frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
                             total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
                             receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
