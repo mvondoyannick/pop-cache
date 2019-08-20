@@ -9,12 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/client.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/external.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/external.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/logstory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/logstory.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/lorem.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/lorem.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/pay_me_quick.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/pay_me_quick.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/sms.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/sms.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/welcome/webview.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/welcome/webview.html.erb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -353,6 +348,7 @@
       <workItem from="1565268774330" duration="521000" />
       <workItem from="1565349585969" duration="564000" />
       <workItem from="1565471055209" duration="1331000" />
+      <workItem from="1566261811113" duration="192000" />
     </task>
     <servers />
   </component>

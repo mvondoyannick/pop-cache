@@ -3,6 +3,7 @@ class WelcomeController < ApplicationController
   end
 
   def webview
+
     hash = params[:hash]
     token = params[:token]
 
@@ -14,6 +15,7 @@ class WelcomeController < ApplicationController
       }
     else
       @data = data
+      render layout: "layouts/webview"
     end
   end
 end
