@@ -117,6 +117,9 @@ GEM
     geocoder (1.5.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    googl (0.7.1)
+      httparty (~> 0.10)
+      json (>= 1.4.6)
     httparty (0.17.0)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
@@ -126,6 +129,7 @@ GEM
     io-like (0.3.0)
     jbuilder (2.9.1)
       activesupport (>= 4.2.0)
+    json (2.2.0)
     jwt (2.2.1)
     leaflet-rails (1.5.1)
       rails (>= 4.2.0)
@@ -301,6 +305,7 @@ DEPENDENCIES
   faker
   faraday
   geocoder
+  googl
   httparty
   jbuilder (~> 2.5)
   jwt

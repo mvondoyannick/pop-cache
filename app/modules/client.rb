@@ -1413,7 +1413,7 @@ class Client
 
               if marchand_account.save
                 #envoi d'une notification OneSignal
-                Sms.sender(marchand.phone, "Paiement recu. Montant :  #{@amount} F CFA XAF, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. Transaction ID : #{@hash}. Date : #{Time.now}. #{App::PayMeQuick::App::app[:signature]}")
+                Sms.sender(marchand.phone, "Paiement recu. Montant :  #{@amount} F CFA, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} F CFA. ID : #{@hash}. #{App::PayMeQuick::App::app[:signature]}")
 
                 puts "Paiement effectué de #{@amount} F CFA entre #{customer} et #{@to}."
 
@@ -1456,6 +1456,9 @@ class Client
                     #send email to merchant
                     OneSignal::SendEmailAPI.sendEmail(marchand.email, "Paiement recu. Montant :  #{@amount} F CFA XAF, \n Client ayant effectuer le Paiement : #{prettyCallSexe(client.sexe)} #{client.complete_name}. \n Votre nouveau solde:  #{marchand_account.amount} F CFA XAF. \n Transaction ID : #{@hash}. \n Date : #{Time.now}. \n Lien de transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id} \n #{App::PayMeQuick::App::app[:signature]}", message, locale)
 
+                    # send SMS
+                    Sms.sender(marchand.phone, "Paiement recu! montant : #{@amount} F CFA, paiement recu de #{client.complete_name}. Plus d'informations sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
+
                     #return true, "Votre Paiement de #{@amount} F CFA vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F CFA. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F CFA. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
                     return true, {
                         amount: @amount,
@@ -1468,27 +1471,27 @@ class Client
                         status: "DONE"
                     }
                   else
-                    Rails::logger.info "Impossible d'entregistrer les commissions de cette transaction"
+                    puts "Impossible d'entregistrer les commissions de cette transaction"
                   end
 
                 else
 
-                  Rails::logger.info "Impossible d'enregistrer les informations de transation du paiement #{@hash}"
+                  puts "Impossible d'enregistrer les informations de transation du paiement #{@hash}"
 
                 end
               else
                 # raise ActiveRecord::Rollback
-                Rails::logger::info "Impossible de crediter le marchand #{marchand.authentication_token} d'un montant de #{@amount} F CFA"
+                puts "Impossible de crediter le marchand #{marchand.authentication_token} d'un montant de #{@amount} F CFA"
                 Sms.sender(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
                 return false
               end
             else
-              Rails::logger::info "Impossible de mettre à jour les informations du client sur la transaction N° #{@hash}, d'un montant de #{@amount} F CFA"
+              puts "Impossible de mettre à jour les informations du client sur la transaction N° #{@hash}, d'un montant de #{@amount} F CFA"
               Sms.sender(client.phone, "Impossible d\n'acceder a votre compte. Transaction annulee. #{$signature}")
               return false
             end
           else
-            Rails::logger::info "Le solde du compte client #{client.phone} est insuffisant pour effectuer la transaction de paiement d'un montant de #{@amount}. Paiment impossible"
+            puts "Le solde du compte client #{client.phone} est insuffisant pour effectuer la transaction de paiement d'un montant de #{@amount}. Paiment impossible"
             return false, {
                 title: "SOLDE INSUFFISANT",
                 message: "Le solde de votre compte est insuffisant pour effectuer cette transaction! Merci de recharger votre compte!"
@@ -1496,7 +1499,7 @@ class Client
           end
         end
       else
-        Rails::logger::info "Invalid user password authentication"
+        #Rails::logger::info "Invalid user password authentication"
         puts "Invalid user password authentication"
         return false, {
             title: "ECHEC IDENTIFICATION",
