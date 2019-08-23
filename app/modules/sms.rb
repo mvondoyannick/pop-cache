@@ -5,6 +5,9 @@ class Sms
         $message = message.encode("UTF-8", "Windows-1252")
     end
 
+    # Definition des elements de base
+    nexah_url = "https://smsvas.com/bulk/public/index.php/api/v1/sendsms"
+
 
     def self.send
         require 'httparty'
@@ -88,6 +91,32 @@ class Sms
         end
 
       end
+
+    end
+
+    # using nexah SMS plateform
+    def self.nexah(phone, msg)
+      puts "Starting nexah plateform API"
+
+      @msg = msg
+      @phone = phone
+
+      #starting post request
+      result = HTTParty.post("https://smsvas.com/bulk/public/index.php/api/v1/sendsms", 
+        :body => { 
+          user: "info@agis-as.com",
+          password: "agis.as19",
+          senderid: "PAYMEQUICK",
+          sms: @msg,
+          mobiles: @phone
+        }.to_json,
+        :headers => { 
+          'Content-Type' => 'application/json'
+        } 
+      )
+
+      #return response
+      return result
 
     end
 end

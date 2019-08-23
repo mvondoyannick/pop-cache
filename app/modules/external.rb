@@ -112,20 +112,20 @@ module External
                       if marchand.save
 
                         puts "Save new merchant account information"
-                        Sms.sender(@merchant_phone, "Vous venez de recevoir un Paiement de #{@amount} F CFA dans votre numero de telephone #{@merchant_phone}. ID EXT_PAY_#{@hash}. Details : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{merchant.id}.")
+                        Sms.nexah(@merchant_phone, "Vous venez de recevoir un Paiement de #{@amount} F CFA dans votre numero de telephone #{@merchant_phone}. ID EXT_PAY_#{@hash}. Details : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{merchant.id}.")
 
                         #Envoi d'une push notification au marchand
                         OneSignal::OneSignalSend.genericOneSignal(@playerID, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} Vous venez d'effectuer une paiement de #{@amount} FC, votre compte a été débité de #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} FC incluant les frais de #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC. Votre solde est de #{client.account.amount} FC")
 
                         return true, {
-                            amount: @amount,
-                            device: 'FC',
-                            frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
-                            total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
-                            receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
-                            sender: Customer.find_by_authentication_token(@customer_token).complete_name,
-                            date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
-                            status: "PAIEMENT EFFECTUÉ"
+                          amount: @amount,
+                          device: 'FC',
+                          frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
+                          total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
+                          receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
+                          sender: Customer.find_by_authentication_token(@customer_token).complete_name,
+                          date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
+                          status: "PAIEMENT EFFECTUÉ"
                         } #"Paiement effectué d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} à #{@merchant_phone}"
 
                       else
@@ -174,7 +174,7 @@ module External
                         )
   
                         if client.save
-                          Sms.sender(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d etre effectue dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Le solde de votre compte est maintenant de #{m_account.amount} F CFA. Rapprochez-vous d'une agence UBA ou creer un compte PayMeQuick.")
+                          Sms.nexah(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d etre effectue dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Le solde de votre compte est maintenant de #{m_account.amount} F CFA. Rapprochez-vous d'une agence UBA ou creer un compte PayMeQuick.")
                           return true, {
                             amount: @amount,
                             device: 'XAF',

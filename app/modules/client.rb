@@ -98,7 +98,7 @@ class Client
             else
               #notified admin for these errors, customer could not receive SMS confirmation
 
-              Sms.sender(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:confirmation_failed])
+              Sms.nexah(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:confirmation_failed])
 
               return @otp[1], I18n.t("SmsNotSend", locale: @locale) #"Hum!!! c'est vraiment génant, nous sommes dans l'incapacité de vous transmettre le SMS de confirmarion"
 
@@ -107,7 +107,7 @@ class Client
           else
             #Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
 
-            Sms.sender(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:customer_exist])
+            Sms.nexah(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:customer_exist])
 
             return false, "Des erreurs sont survenues : #{customer.errors.full_messages}"
 
@@ -218,7 +218,7 @@ class Client
 
       else
 
-        Sms.sender(@customer.phone, "Une erreur est survenue durant le processus de creation compte virtuel! Merci de patienter, un agent PayMeQuick va vous contacter d'ici peu. #{$signature}")
+        Sms.nexah(@customer.phone, "Une erreur est survenue durant le processus de creation compte virtuel! Merci de patienter, un agent PayMeQuick va vous contacter d'ici peu. #{$signature}")
 
         # envoi du courriel de notification aux administrateurs
         Sms.sms_to_many({yan: 691451189, nana: 698500871, boss: 697970210}, "Une erreur est survenue durant le processus de creation de compte : Impossible de creer le compte viertuel pour #{@customer.photo}")
@@ -240,6 +240,7 @@ class Client
   def self.credit(phone, amount)
     @phone = phone
     @amount = amount
+    @hash = "PR_#{SecureRandom.hex(13).upcase}"
 
     #on rechercher le user pour avoir sont ID
     customer = Customer.find_by_phone(@phone)
@@ -256,9 +257,6 @@ class Client
 
         if @account.update(amount: @account.amount.to_f + @amount.to_f)
 
-          # Generate hash of transaction
-          @hash = "PR_#{SecureRandom.hex(13).upcase}"
-
           transaction = History.new(
               customer_id: customer.id,
               code: @hash,
@@ -270,7 +268,7 @@ class Client
 
           # on enregistre la transaction
           if transaction.save
-            Sms.sender(customer.phone, "#{prettyCallSexe(customer.sexe)} #{customer.complete_name}, votre compte vient d etre crediteé d'un montant de #{@amount} #{App::PayMeQuick::App::devise}. Le solde de votre compte est actuellement de #{customer.account.amount} #{App::PayMeQuick::App::devise}. ID Transaction : #{@hash}. #{App::PayMeQuick::App::app[:signature]}")
+            Sms.nexah(customer.phone, "#{prettyCallSexe(customer.sexe)} #{customer.complete_name}, votre compte vient d 'être credité d'un montant de #{@amount} #{App::PayMeQuick::App::devise}. Le solde de votre compte est actuellement de #{customer.account.amount} #{App::PayMeQuick::App::devise}. ID : #{@hash}. #{App::PayMeQuick::App::app[:signature]}")
             #puts "Le compte a ete credite d\'un montant de #{@amount}"
             return "Le compte a ete credite d\'un montant de #{@amount}."
           else
@@ -280,7 +278,7 @@ class Client
 
         else
 
-          Sms.sender(@phone, "#{prettyCallSexe(customer.sexe)} #{customer.complete_name}, impossible de crediter votre compte. Echec de la Transaction #{@hash}. #{App::PayMeQuick::App::app[:signature]}")
+          Sms.nexah(@phone, "#{prettyCallSexe(customer.sexe)} #{customer.complete_name}, impossible de crediter votre compte. Echec de la Transaction #{@hash}. #{App::PayMeQuick::App::app[:signature]}")
 
           return false, "Impossible de crediter votre le compte #{App::PayMeQuick::App::app[:signature]}. code erreurs : #{@account.errors.full_messages}"
 
@@ -307,13 +305,13 @@ class Client
       if customer.device.nil?
 
         #first time customer login on the plateform
-        Rails::logger.info "Mise à jour de l'uuid du customer avec la valeur #{@device}"
+        puts "Mise à jour de l'uuid du customer avec la valeur #{@device}"
         if customer.customer_datum.update(uuid: @device)
 
           # mise a jour de la valeur de trouvant dans customer.device
           if customer.update(device: @device)
 
-            Rails::logger::info "Mise à jour des données de l'utilisateur reussi"
+            puts "Mise à jour des données de l'utilisateur reussi"
             return true #, "Welcome to first login on PayCore #{customer.name}"
 
           else
@@ -325,26 +323,26 @@ class Client
 
         else
 
-          Rails::logger.info "Impossible de mettre votre device UUID a jour"
+          puts "Impossible de mettre votre device UUID a jour"
           return false #, "send SMS for confirmation authentication on the new device"
 
         end
       else
         if customer.device == @device
 
-          Rails::logger::info "UUID est indentique, authentication continu"
+          puts "UUID est indentique, authentication continu"
           return true
 
         else
           # Update new device to customerDatum.uuid2
           if customer.customer_datum.update(uuid2: @device)
 
-            Rails::logger::info "Mise a jour de l'UUID 2 effectuée avec la value #{@device} pour le nouveau terminal"
+            puts "Mise a jour de l'UUID 2 effectuée avec la value #{@device} pour le nouveau terminal"
             return false #Updated
 
           else
 
-            Rails::logger::info "Impossible de mettre a jour l'UUID 2"
+            puts "Impossible de mettre a jour l'UUID 2"
             return false #Unable to updated
 
           end
@@ -560,7 +558,7 @@ class Client
           Rails::logger::info "Utilisateur #{customer.phone} vient d'etre debloqué"
 
           #envoi du SMS
-          Sms.sender(customer.phone, "Votre compte #{customer.phone} vient d'etre debloqué.")
+          Sms.nexah(customer.phone, "Votre compte #{customer.phone} vient d'etre débloqué, merci de vous reconnecter.")
 
           return true, "Compte #{customer.phone} debloqué avec succes!"
 
@@ -570,7 +568,7 @@ class Client
         end
 
       else
-        Rails::logger::info "Impossible de debloquer  le compte #{customer.phone}"
+        puts "Impossible de debloquer  le compte #{customer.phone}"
         return false, verrou[1]
       end
     end
@@ -595,7 +593,7 @@ class Client
           amount = @customer.account.amount
 
           # send SMS to customer
-          Sms.sender(@customer.phone, "Bonjour #{@customer.complete_name} le solde de votre compte est de #{amount} FC")
+          Sms.nexah(@customer.phone, "Bonjour #{@customer.complete_name} le solde de votre compte est de #{amount} FC")
 
           return true, amount
         else
@@ -644,7 +642,7 @@ class Client
           return false, "Aucun compte utilisateur correcpondant ou compte vide"
         else
           #return OneSignal API
-          Sms.sender(@phone, "#{prettyCallSexe(customer.sexe)} #{customer.complete_name}, le solde de votre compte est : #{account} #{$devise}. #{App::PayMeQuick::App::app[:signature]}")
+          Sms.nexah(@phone, "#{prettyCallSexe(customer.sexe)} #{customer.complete_name}, le solde de votre compte est : #{account} #{$devise}. #{App::PayMeQuick::App::app[:signature]}")
           return true, "#{prettyCallSexe(customer.sexe)} #{customer.complete_name}, le solde de votre compte est : #{account} #{$devise}. #{$signature}"
         end
       else
@@ -826,36 +824,47 @@ class Client
     @phone = phone
     @amount = amount
 
-    customer = Customer.where(phone: @phone).first
+    customer = Customer.find_by_phone(@phone)
     if !customer.blank?
-      account = Account.where(customer_id: customer.id).first
+      account = customer.account
       if !account.blank?
-        a = account.amount.to_i - @amount.to_i
-        Rails::logger::info "Information compte client #{@phone} à #{Time.now} est de #{account.amount} FC."
-        Rails::logger::info "Information compte client #{@phone} à avec le fameux A est de #{account.amount} FC."
-        if account.update(customer_id: customer.id, amount: account.amount)
-          transaction = History.new(
-              customer: customer.id,
+        # on recherche s'il ya des intention de retrait en cours non encore perimé
+        if customer.await.blank?
+          puts "Aucune intention de transaction en cours ... on peut demarrer la procedure"
+          a = account.amount.to_f - @amount.to_f
+          puts "Information compte client #{@phone} à #{Time.now} est de #{account.amount} FC."
+          if customer.account.update(amount: a) #account.update(customer_id: customer.id, amount: account.amount)
+            transaction = History.new(
+              customer_id: customer.id,
               code: @hash,
               flag: "recharge".upcase,
               context: "none",
-              # date: Time.now.strftime("%d-%m-%Y @ %H:%M:%S"),
               amount: @amount
-          )
+            )
 
-          if transaction.save
+            if transaction.save
 
-            Rails::logger::info "Compte debité avec succes"
-            return true, "Compte #{customer.phone} debité avec succes"
+              puts "Compte debité avec succes"
+              return true, "Compte #{customer.phone} debité avec succes du montant #{@amount}"
 
-          else
+            else
 
-            Rails::logger::info "Impossible de mettre a jour les informations client"
-            return false, "Des erreurs sont survenues durant le traitement de ceertaines informations : #{transaction.errors.full_messages}"
+              puts "Impossible de mettre a jour les informations client"
+              return false, "Des erreurs sont survenues durant le traitement de certaines informations : #{transaction.errors.full_messages}"
 
+            end
           end
+        else
+          # une intention de retrait existe deja, annulation de la procedure en cours
+          return false, "impossible d'effectuer un retrait sur ce compte, un autre retrait existe en ce moment"
         end
+      else
+        # le compte du client n'existe pas
+        return false, "Il semble avoir un problème avec le compte de cet utilisateur. Demande annulée!"
       end
+    else
+      #Utilisateur inconnu
+      return false, "Utilisateur inconnu de nos services"
     end
   end
 
@@ -876,7 +885,7 @@ class Client
     # refactoring
 
     if customer.blank?
-      Rails::logger::info "Utilisateur inconnu"
+      puts "Utilisateur inconnu"
       return false, "Utilisateur inconnu"
     else
       if customer.valid_password?(@pwd)
@@ -886,7 +895,7 @@ class Client
         if awaits.blank?
           # Can't continu, not intend await found
 
-          Rails::logger.info "Aucun retrait trouvé pour #{customer.complete_name}"
+          puts "Aucun retrait trouvé pour #{customer.complete_name}"
           return false, "Aucun retrait trouvé pour votre compte #{customer.phone}"
 
         else
@@ -895,12 +904,12 @@ class Client
 
           # On recherche le palier d'abonnement du client et voir le max qu'il peut retirer
           if customer_abonnement[0]
-            Rails::logger::info "#{customer.complete_name} a un palier lui permettant de faire un retrait maximum de #{customer_abonnement[1].to_i} FC"
+            puts "#{customer.complete_name} a un palier lui permettant de faire un retrait maximum de #{customer_abonnement[1].to_i} FC"
 
             # Est ce que le montant a retirer est superieur a ce que le palier autorise?
             if customer.await.amount.to_f > customer_abonnement[1].to_f
               # Cancel retrait and restare fond
-              Rails::logger.info "Plafond de retrait maximum atteint pour cette abonnement"
+              puts "Plafond de retrait maximum atteint pour cette abonnement"
 
               # Starting restauration, and await suppression amount
               restauration = customer.await.amount
@@ -910,7 +919,7 @@ class Client
                 if awaits.update(amount: nil )
                   # delete customer await intend
                   if awaits.destroy
-                    Rails::logger.info "Suppression de l'intention de retrait du customer ...DONE!"
+                    puts "Suppression de l'intention de retrait du customer ...DONE!"
 
                     # send notification
                     return false, "Ce retrait est au dessus de la limite maximum de votre plafond retrait, impossible effectuer le retrait. merci de revoir le montant à la baisse et de réessayer."
@@ -1006,7 +1015,7 @@ class Client
                         Rails::logger::info "Mise a jour du compte de l'agent qui a initialiser le process de retrait ... FAIT!"
 
                         # Notification de l'agent
-                        Sms.sender(agent.phone, "Retrait effectué du compte #{customer.complete_name}. Credit de votre compte : #{agent.complete_name} d'un montant de #{awaits.amount.round(2)} FC. Votre solde total est de #{agent.account.amount.round(2)} FC. Vous pouvez payer !")
+                        Sms.nexah(agent.phone, "Retrait effectué du compte #{customer.complete_name}. Credit de votre compte : #{agent.complete_name} d'un montant de #{awaits.amount.round(2)} FC. Votre solde total est de #{agent.account.amount.round(2)} FC. Vous pouvez payer !")
 
                         # on supprime l'intent de retrait
                         if awaits.destroy
@@ -1312,7 +1321,7 @@ class Client
   # @output       [boolean] [true/false]
   # @author @mvondoyannick
   # @version 1.0.2
-  def self.pay(argv, message=nil, locale="en")
+  def self.pay(argv, message=nil, locale="fr")
     customer = argv[:customer]
     @to = argv[:merchant]
     @amount = argv[:amount].to_f #montant de la transation
@@ -1326,7 +1335,7 @@ class Client
     puts "Demarrage du paiement d'une transaction : #{message}"
 
     if customer == @to
-      Rails::logger::info "Numéro indentique, transaction annuler!"
+      puts "Numéro indentique, transaction annuler!"
       return false, {
           title: I18n.t("errMerchantTitle",locale: @locale),
           message: I18n.t("errMerchantContent", locale: @locale)
@@ -1400,12 +1409,12 @@ class Client
               #on historise la transaction du marche
               #saveHistory(@to, @hash,"ENCAISSEMENT","none",@amount,nil ,nil ,nil )
               marchant_log = History.new(
-                  customer_id: marchand.id,
-                  amount: @amount,
-                  code: @hash,
-                  flag: "encaissement".upcase,
-                  context: "Mobile".upcase,
-                  ip: @ip
+                customer_id: marchand.id,
+                amount: @amount,
+                code: @hash,
+                flag: "encaissement".upcase,
+                context: "Mobile".upcase,
+                ip: @ip
               )
 
               #on enregistre
@@ -1413,18 +1422,18 @@ class Client
 
               if marchand_account.save
                 #envoi d'une notification OneSignal
-                Sms.sender(marchand.phone, "Paiement recu. Montant :  #{@amount} FC, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} FC. ID : #{@hash}. #{App::PayMeQuick::App::app[:signature]}")
+                Sms.nexah(marchand.phone, "Paiement recu. Montant :  #{@amount} FC, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} FC. ID : #{@hash}. #{App::PayMeQuick::App::app[:signature]}")
 
                 puts "Paiement effectué de #{@amount} FC entre #{customer} et #{@to}."
 
                 #on enregistre encore l'historique
                 client_log = History.new(
-                    customer_id: client.id,
-                    amount: Parametre::Parametre::agis_percentage(@amount),
-                    context: "Mobile".upcase,
-                    ip: @ip,
-                    flag: 'paiement'.upcase,
-                    code: @hash
+                  customer_id: client.id,
+                  amount: Parametre::Parametre::agis_percentage(@amount),
+                  context: "Mobile".upcase,
+                  ip: @ip,
+                  flag: 'paiement'.upcase,
+                  code: @hash
                 )
 
                 if client_log.save
@@ -1439,7 +1448,7 @@ class Client
                     a = {
                         amount: @amount,
                         device: 'XAF',
-                        frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
+                        frais: (Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f).round(2),
                         total: Parametre::Parametre::agis_percentage(@amount).to_f,
                         receiver: marchand.complete_name,
                         sender: client.complete_name,
@@ -1457,7 +1466,7 @@ class Client
                     OneSignal::SendEmailAPI.sendEmail(marchand.email, "Paiement recu. Montant :  #{@amount} FC \n Client ayant effectuer le Paiement : #{prettyCallSexe(client.sexe)} #{client.complete_name}. \n Votre nouveau solde:  #{marchand_account.amount} FC . \n Transaction ID : #{@hash}. \n Date : #{Time.now}. \n Lien de transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id} \n #{App::PayMeQuick::App::app[:signature]}", message, locale)
 
                     # send SMS
-                    Sms.sender(marchand.phone, "Paiement recu! montant : #{@amount} FC, paiement recu de #{client.complete_name}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
+                    Sms.nexah(marchand.phone, "Paiement recu! montant : #{@amount} FC, paiement recu de #{client.complete_name}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
 
                     #return true, "Votre Paiement de #{@amount} FC vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F FC. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F FC. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
                     return true, {
@@ -1482,12 +1491,12 @@ class Client
               else
                 # raise ActiveRecord::Rollback
                 puts "Impossible de crediter le marchand #{marchand.authentication_token} d'un montant de #{@amount} FC"
-                Sms.sender(marchand.phone, "Impossible de crediter votre compte de #{amount}. Transaction annulee. #{$signature}")
+                Sms.nexah(marchand.phone, "Impossible de créditer votre compte de #{amount}. Transaction annulée. #{$signature}")
                 return false
               end
             else
               puts "Impossible de mettre à jour les informations du client sur la transaction N° #{@hash}, d'un montant de #{@amount} FC"
-              Sms.sender(client.phone, "Impossible d\n'acceder a votre compte. Transaction annulee. #{$signature}")
+              Sms.nexah(client.phone, "Impossible d\n'acceder à votre compte. Transaction annulee. #{$signature}")
               return false
             end
           else
