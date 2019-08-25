@@ -8,9 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/assets/images/qrcode/YVlrbnNrczNwd3NOV3U1VDV0MzdAMDAwMEAwLjBAMC4wQHBsYXRlZm9ybUAyMDE5LTA4LTIwIDAxOjM2OjI3ICswMTAw.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/client.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/external.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/external.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/sms.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/sms.rb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -230,7 +231,7 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="true" />
+  <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="true" RAKE_SPRING_PRE_LOADER_OPTION="false" RAILS_SPRING_PRE_LOADER_OPTION="false" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -352,6 +353,8 @@
       <workItem from="1566261811113" duration="192000" />
       <workItem from="1566323516667" duration="1530000" />
       <workItem from="1566408553266" duration="3335000" />
+      <workItem from="1566545809390" duration="109000" />
+      <workItem from="1566676403330" duration="2468000" />
     </task>
     <servers />
   </component>

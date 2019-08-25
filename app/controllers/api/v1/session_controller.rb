@@ -23,7 +23,7 @@ class Api::V1::SessionController < ApplicationController
       #données elementaire de base
       if @tel.present? && @cni.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
 
-        query = Client::signup({name: @name, second_name: @second_name, phone: @tel, cni: @cni, password: @password, sexe: @sexe, question: @question_id, answer: @response, ip: @ip}, "create customer account", @locale[0..1])
+        query = Client::signup({name: @name, second_name: @second_name, phone: @tel, password: @password, sexe: @sexe, question: @question_id, answer: @response, ip: @ip}, "create customer account", @locale[0..1])
         render json: {
           status: query
         }
