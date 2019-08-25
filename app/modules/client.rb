@@ -79,7 +79,7 @@ class Client
             email: @email,
             password: @password,
             type_id: 1,
-            cni: @cni,
+            #cni: @cni,
             sexe: @sexe,
             ip: @ip,
             pays: @pays
