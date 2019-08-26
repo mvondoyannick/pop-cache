@@ -11,7 +11,7 @@ class Api::V1::SessionController < ApplicationController
       @name           = params[:nom]
       @second_name    = params[:second_name]
       @tel            = params[:phone]
-      @cni            = params[:cni]
+      #@cni            = params[:cni]
       @password       = params[:password]
       @sexe           = params[:sexe]
       @question_id    = params[:question_id]
@@ -21,7 +21,7 @@ class Api::V1::SessionController < ApplicationController
       @locale         = "en" #request.headers["HTTP_LOCALE"]
 
       #données elementaire de base
-      if @tel.present? && @cni.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
+      if @tel.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
 
         query = Client::signup({name: @name, second_name: @second_name, phone: @tel, password: @password, sexe: @sexe, question: @question_id, answer: @response, ip: @ip}, "create customer account", @locale[0..1])
         render json: {
