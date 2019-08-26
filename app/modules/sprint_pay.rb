@@ -154,10 +154,29 @@ module SprintPay
           puts "updating customer amount information ..."
           account = customer.account.update(amount: new_account)
           if account
-            return true, {
-              title: "Recharge effectuée",
-              message: "Votre compte #{@phone} correspondant à #{@network_name} a été debité d'un montant de #{@amount} FC. Le sole de votre compte PMQ est de #{customer.account.amount} FC"
-            }
+            #update history
+            history = History.new(
+              customer_id: customer.id,
+              amount: @montant.to_f,
+              flag: "RECHARGE",
+              context: "RECHARGE #{@network_name.upcase}",
+              code: @hash
+            )
+
+            if history.save
+              #new entry created
+              Sms.sender(@phone, "Recharge de votre compte via #{@network_name.upcase} d'un montant de #{@montant} FC. Votre solde est maintenant de #{customer.account.amount} FC.")
+              return true, {
+                title: "Recharge effectuée",
+                message: "Votre compte #{@phone} correspondant à #{@network_name.upcase} a été debité d'un montant de #{@montant} FC. Le sole de votre compte PMQ est de #{customer.account.amount} FC"
+              }
+            else
+              puts "Impossible de rsauvegarder les informations"
+              return false, {
+                title: "Erreur survenue",
+                message: "Impossible de terminer la transaction de recharge, annulation de tous les process"
+              }
+            end
           else
             return false, {
               title: "Impossible de recharger",
