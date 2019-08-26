@@ -629,6 +629,17 @@ class Api::V1::SessionController < ApplicationController
       end
     end
 
+    #mise en oeuvre du virtual SprintPayLocalAPI
+    def virtualSP
+      @token = params[:token]
+      @phone = params[:phone]
+      @amount = params[:amount]
+      network_name = params[:network_name]
+
+      puts "Vistual SP activated ..."
+      render json: SprintPay::Pay::Payment.sp(@token, @phone, @amount, network_name)
+    end
+
     #RENDER CUSTOMER PHONE WITH HEADER
     # @deprecated
     def getPhoneNumber

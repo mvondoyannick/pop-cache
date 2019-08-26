@@ -156,7 +156,8 @@ Rails.application.routes.draw do
 
       match 'recharge/extern/provider/sp/new', to: 'session#getSpData', via: [:post, :options]
       match 'recharge/extern/provider/sp', to: 'session#rechargeSprintPay', via: [:post, :options]   # SprintPay OM et MOMO
-
+      post 'recharge/extern/provider/virtual/sp', to: 'session#virtualSP'
+      
       # configuration du compte personnel
 
       match 'security/authorization', to: 'session#authorization', via: [:post, :options]

@@ -134,6 +134,39 @@ module SprintPay
 
       end
 
+      #viartual SprintLocalAPI
+      def self.sp(token, phone, amount, network_name)
+        @token = token
+        @phone = phone
+        @montant = amount
+        @network_name = network_name
+
+        # searching customer
+        puts "Searching customer informations ..."
+        customer = Customer.find_by_authentication_token(@token)
+        if customer.blank?
+          return false, "Utilisateur inconnu"
+        else
+          # starting credit customer account
+          new_account = customer.account.amount + @montant.to_f
+
+          #update customer account
+          puts "updating customer amount information ..."
+          account = customer.account.update(amount: new_account)
+          if account
+            return true, {
+              title: "Recharge effectuée"
+              message: "Votre compte #{@phone} correspondant à #{@network_name} a été debité d'un montant de #{@amount} FC. Le sole de votre compte PMQ est de #{customer.account.amount} FC"
+            }
+          else
+            return false, {
+              title: "Impossible de recharger",
+              message: "Impossible d'effectuer la reccharge, le solde de votre compte est insiffisant."
+            }
+          end
+        end
+      end
+
     end
 
   end
