@@ -845,7 +845,22 @@ class Client
             if transaction.save
 
               puts "Compte debité avec succes"
-              return true, "Compte #{customer.phone} debité avec succes du montant #{@amount}"
+
+              #Creditation de l'await
+              new_await = Await.new(
+                amount: @amount.to_f,
+                customer_id: customer.id,
+                end: 10.minute.from_now,
+                used: false,
+                hashawait: "PR_RETRAIT_#{SecureRandom.hex(13).upcase}",
+                agent: "dev_console"
+              )
+
+              #save await
+              if new_await.save
+                Sms.sender(@phone, "Vous allez effectuer un retrait de #{@amount} FC, merci de valider dans votre application PMQ->retirer.")
+                return true, "Compte #{customer.phone} debité avec succes du montant #{@amount}"
+              end
 
             else
 
