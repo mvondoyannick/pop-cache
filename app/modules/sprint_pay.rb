@@ -155,7 +155,7 @@ module SprintPay
           account = customer.account.update(amount: new_account)
           if account
             return true, {
-              title: "Recharge effectuée"
+              title: "Recharge effectuée",
               message: "Votre compte #{@phone} correspondant à #{@network_name} a été debité d'un montant de #{@amount} FC. Le sole de votre compte PMQ est de #{customer.account.amount} FC"
             }
           else
