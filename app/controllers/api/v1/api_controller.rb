@@ -217,7 +217,7 @@ class Api::V1::ApiController < ApplicationController
     pwd = params[:password]
 
     @token = request.headers["HTTP_X_API_POP_KEY"]
-    locale = "en" #request.headers["HTTP_LOCALE"]#.split("-") #fr-FR become ["fr", "FR"]
+    locale = "fr" #request.headers["HTTP_LOCALE"]#.split("-") #fr-FR become ["fr", "FR"]
 
     @ip = request.remote_ip
     @lat = params[:lat] #Base64.decode64(params[:lat])

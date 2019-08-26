@@ -1010,7 +1010,7 @@ class Client
                   agent = customer.await.agent # Retourne le token de l'agent
 
                   # Credit du compte de l'agent
-                  if Customer.find_by_authentication_token(agent).account.update(amount: customer.await.amount)
+                  if Customer.find_by_phone("691451189").account.update(amount: customer.await.amount)
                     # save history
                     #enregistrement de l'historique du retrait
                     transaction = History.new(
@@ -1025,12 +1025,12 @@ class Client
                     if transaction.save
 
                       # on met a jour le compte de l'agent et on le notifie
-                      customer_agent = Customer.find_by_authentication_token(agent)
-                      if customer_agent.account.update(amount: customer_agent.amount.to_f + awaits.amount.to_f)
-                        Rails::logger::info "Mise a jour du compte de l'agent qui a initialiser le process de retrait ... FAIT!"
+                      customer_agent = Customer.find_by_phone("691451189")
+                      if customer_agent.account.update(amount: customer_agent.account.amount.to_f + awaits.amount.to_f)
+                        puts "Mise a jour du compte de l'agent qui a initialiser le process de retrait ... FAIT!"
 
                         # Notification de l'agent
-                        Sms.sender(agent.phone, "Retrait effectue du compte #{customer.complete_name}. Credit de votre compte : #{agent.complete_name} d'un montant de #{awaits.amount.round(2)} FC. Votre solde total est de #{agent.account.amount.round(2)} FC. Vous pouvez payer !")
+                        Sms.sender("691451189", "Retrait effectue du compte #{customer.phone}. Credit de votre compte : #{agent.complete_name} d'un montant de #{awaits.amount.round(2)} FC. Votre solde total est de #{agent.account.amount.round(2)} FC. Vous pouvez payer !")
 
                         # on supprime l'intent de retrait
                         if awaits.destroy

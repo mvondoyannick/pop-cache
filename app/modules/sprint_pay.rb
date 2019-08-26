@@ -143,7 +143,8 @@ module SprintPay
         @hash = "PR_PROVIDER_#{SecureRandom.hex(13).upcase}"
 
         #set limit
-        if @montant > 500000
+        puts "Verification de la limite de recharge"
+        if @montant.to_f > 500000.to_f
           return false, {
             title: "Erreur montant",
             message: "Impossible de crediter un montant superieur à 500 000 FC"
