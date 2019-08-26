@@ -140,6 +140,7 @@ module SprintPay
         @phone = phone
         @montant = amount
         @network_name = network_name
+        @hash = "PR_PROVIDER_#{SecureRandom.hex(13).upcase}"
 
         #set limit
         if @montant > 500000
