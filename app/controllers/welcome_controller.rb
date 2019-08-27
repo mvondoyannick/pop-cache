@@ -20,6 +20,16 @@ class WelcomeController < ApplicationController
   end
 
   def mppp
-    render layout: "layouts/webview"
+    if params[:commit] == "Envoyer"
+      # commited has been received
+
+      Sms.mppp(params[:application][:notes])
+      render layout: "layouts/webview"
+
+    else
+      @result = "Impossible de terminer la transaction"
+      render layout: "layouts/webview"
+    end
+    #puts "Data receive : #{params[:application][:notes]}"
   end
 end
