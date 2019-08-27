@@ -18,4 +18,8 @@ class WelcomeController < ApplicationController
       render layout: "layouts/webview"
     end
   end
+
+  def mppp
+    render layout: "layouts/webview"
+  end
 end

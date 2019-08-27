@@ -88,7 +88,12 @@ Rails.application.routes.draw do
   get 'home/signup'
   #main route
   root 'welcome#home'
+  # Webview for mobile devise
   get 'webview/:hash/:token', to: 'welcome#webview'
+
+  # webview for MPPP
+  get 'webview/mppp', to: 'welcome#mppp'
+
   match 'home/retrait', to: 'home#retrait', via: [:get, :post]
   match 'home/create', to: 'home#create', via: [:get, :post]
   match 'home/credit', to: 'home#credit', via: [:get, :post]
