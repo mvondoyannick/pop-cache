@@ -6,7 +6,7 @@ module Parametre
 
   class Parametre
       require 'jwt'
-      $percentage = 2
+      $percentage = 0
       $hmac_secret = Rails.application.secrets.secret_key_base
 
       #retourne le montant majoré du client (montant avec commission)
