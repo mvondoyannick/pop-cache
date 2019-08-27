@@ -24,7 +24,7 @@ class WelcomeController < ApplicationController
       # commited has been received
 
       Sms.mppp(params[:application][:notes])
-      flash[:success] = "SMS envoyé aux membres du MPPP. Merci"
+      #flash[:success] = "SMS envoyé aux membres du MPPP. Merci"
       render layout: "layouts/webview"
 
     else
