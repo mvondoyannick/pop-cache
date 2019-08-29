@@ -1096,7 +1096,7 @@ class Client
         return false, "Aucun retrait en attente pour l'Utilisateur #{@phone}"
       else
         #on comparate les dates
-        if await.end >= Time.now && await.used == false
+        if await.end >= Time.now && await.used == fals
           Rails::logger::info "Transacttion #{await.hashawait} est en cours et valide."
           return true, "Transaction #{await.hashawait} valide"
         else
@@ -1344,6 +1344,7 @@ class Client
     @ip = argv[:ip]
     @lat = argv[:lat]
     @lon = argv[:lon]
+    @unite = argv[:unite]
 
     @locale = locale
 
@@ -1462,7 +1463,8 @@ class Client
                     #fin d'enregistrement de la commission
                     a = {
                         amount: @amount,
-                        device: 'XAF',
+                        device: 'FC',
+                        unite: @unite,
                         frais: (Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f).round(2),
                         total: Parametre::Parametre::agis_percentage(@amount).to_f,
                         receiver: marchand.complete_name,
@@ -1486,7 +1488,8 @@ class Client
                     #return true, "Votre Paiement de #{@amount} FC vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F FC. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F FC. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
                     return true, {
                         amount: @amount,
-                        device: "",
+                        device: "FC",
+                        unite: @unite,
                         frais: (Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f).round(2),
                         total: (Parametre::Parametre::agis_percentage(@amount).to_f).round(2),
                         receiver: marchand.complete_name,
