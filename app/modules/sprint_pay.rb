@@ -178,7 +178,7 @@ module SprintPay
 
               if history.save
                 #new entry created
-                Sms.sender(@phone, "Recharge de votre compte via #{@network_name.upcase} d'un montant de #{@montant} FC. Votre solde est maintenant de #{customer.account.amount} FC.")
+                Sms.nexah(@phone, "Recharge de votre compte via #{@network_name.upcase} d'un montant de #{@montant} FC. Votre solde est maintenant de #{customer.account.amount} FC.")
                 return true, {
                   title: "Recharge effectuée",
                   message: "Votre compte #{@phone} correspondant à #{@network_name.upcase} a été debité d'un montant de #{@montant} FC. Le sole de votre compte PMQ est de #{customer.account.amount} FC"

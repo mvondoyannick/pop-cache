@@ -70,7 +70,7 @@ class Customer < ApplicationRecord
 
   def set_cni
     self.cni = "**vide**" if self.cni.nil?
-    Sms::sender(self.phone, "Pensez a renseigner votre Carte Natinale dans les 30 jours, sinon vous serez suspendu!") if self.cni.nil?
+    Sms::nexah(self.phone, "Pensez a renseigner votre Carte Natinale dans les 30 jours, sinon vous serez suspendu!") if self.cni.nil?
   end
 
   # TODO VALIDATE CHECKPHONE

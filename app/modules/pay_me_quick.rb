@@ -73,7 +73,7 @@ module PayMeQuick
           end
           
         rescue => exception
-          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
+          Sms.nexah(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
           return false
         end
 
@@ -102,7 +102,7 @@ module PayMeQuick
           
         rescue => exception
           
-          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
+          Sms.nexah(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
           return false
         end
 
@@ -131,7 +131,7 @@ module PayMeQuick
           
         rescue => exception
 
-          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
+          Sms.nexah(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
           return false
           
         end
@@ -161,7 +161,7 @@ module PayMeQuick
           
         rescue => exception
 
-          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
+          Sms.nexah(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
           return false
           
         end
@@ -193,7 +193,7 @@ module PayMeQuick
           
         rescue => exception
 
-          Sms.sender(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
+          Sms.nexah(691451189, "Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}")
           return false
           
         end
@@ -271,7 +271,7 @@ module PayMeQuick
                 Rails::logger.warn "Limite de transaction atteint pas le marchand, transaction annulée"
 
                 # Send Sms to merchant
-                Sms.sender@merchant.phone, "Votre LIMITE de transaction journaliere a ete atteinte, merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}"
+                Sms.nexah @merchant.phone, "Votre LIMITE de transaction journaliere a ete atteinte, merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}"
                 return false, {
                     title: "Echec transaction",
                     message: "Ce marchant ne peut plus effectuer une transaction, il a atteint son quota journalier de transaction"
@@ -283,7 +283,7 @@ module PayMeQuick
                   Rails::logger.warn "Limite du montant de la transaction maximal journaliere atteinte, transaction annulée"
 
                   # Send Sms to merchant
-                  Sms.sender@merchant.phone, "Votre LIMITE de transaction journaliere a ete atteinte! merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}"
+                  Sms.nexah @merchant.phone, "Votre LIMITE de transaction journaliere a ete atteinte! merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}"
                   return false, {
                       title: "Echec transaction",
                       message: "Ce marchant ne peut plus effectuer une transaction, il a atteint son quota journalier de transaction"
@@ -295,7 +295,7 @@ module PayMeQuick
                     Rails::logger.warn "Limite de transaction mensuelle atteint pas le marchand, transaction annulée"
 
                     # Send Sms to merchant
-                    Sms.sender@merchant.phone, "Votre LIMITE de transaction mensuelle a ete atteinte, merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}"
+                    Sms.nexah @merchant.phone, "Votre LIMITE de transaction mensuelle a ete atteinte, merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}"
                     return false, {
                         title: "Echec transaction",
                         message: "Ce marchant ne peut plus effectuer une transaction, il a atteint son quota journalier de transaction"
@@ -306,7 +306,7 @@ module PayMeQuick
                       Rails::logger.warn "Limite de transaction mensuel du montant max atteint pas le marchand, transaction annulée"
 
                       # Send Sms to merchant
-                      Sms.sender@merchant.phone, "Votre LIMITE de transaction mernsuelle a ete atteinte, merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}"
+                      Sms.nexah @merchant.phone, "Votre LIMITE de transaction mernsuelle a ete atteinte, merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}"
                       return false, {
                           title: "Echec transaction",
                           message: "Ce marchant ne peut plus effectuer une transaction, il a atteint son quota journalier de transaction"
@@ -355,18 +355,18 @@ module PayMeQuick
                                 # verifions si tout cela a été entegistré
                                 if commission
                                   # Send SMS to merchant
-                                  Sms.sender(@merchant.phone, "Paiement recu. Montant: #{amount}, Payeur: #{@customer.complete_name}, ID Transaction: #{code}, Date: #{Time.now.strftime("%d-%m-%Y, %Hh:%M")}")
+                                  Sms.nexah(@merchant.phone, "Paiement recu. Montant: #{amount}, Payeur: #{@customer.complete_name}, ID Transaction: #{code}, Date: #{Time.now.strftime("%d-%m-%Y, %Hh:%M")}")
 
                                   # respond to customer
                                   return true, {
-                                    amount: amount,
-                                    device: "XAF",
-                                    frais: (Parametre::Parametre::agis_percentage(amount).to_f - amount).round(2),
-                                    total: (Parametre::Parametre::agis_percentage(amount).to_f).round(2),
-                                    receiver: @marchand.complete_name,
-                                    sender: customer.complete_name,
-                                    date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
-                                    status: I18n.t("done", locale: locale)
+                                      amount: amount,
+                                      device: "XAF",
+                                      frais: (Parametre::Parametre::agis_percentage(amount).to_f - amount).round(2),
+                                      total: (Parametre::Parametre::agis_percentage(amount).to_f).round(2),
+                                      receiver: @marchand.complete_name,
+                                      nexah: customer.complete_name,
+                                      date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
+                                      status: I18n.t("done", locale: locale)
                                   }
                                 else
                                   # Annuler toute la transaction
@@ -436,7 +436,7 @@ module PayMeQuick
                         # verifions si tout cela a été entegistré
                         if commission
                           # Send SMS to merchant
-                          Sms.sender(@merchant.phone, "Paiement recu. Montant: #{amount}, Payeur: #{@customer.complete_name}, ID Transaction: #{code}, Date: #{Time.now.strftime("%d-%m-%Y, %Hh:%M")}")
+                          Sms.nexah(@merchant.phone, "Paiement recu. Montant: #{amount}, Payeur: #{@customer.complete_name}, ID Transaction: #{code}, Date: #{Time.now.strftime("%d-%m-%Y, %Hh:%M")}")
 
                           # respond to customer
                           return true, {
@@ -445,7 +445,7 @@ module PayMeQuick
                               frais: (Parametre::Parametre::agis_percentage(amount).to_f - amount).round(2),
                               total: (Parametre::Parametre::agis_percentage(amount).to_f).round(2),
                               receiver: @marchand.complete_name,
-                              sender: customer.complete_name,
+                              nexah: customer.complete_name,
                               date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
                               status: I18n.t("done", locale: locale)
                           }

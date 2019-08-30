@@ -53,7 +53,7 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         # send SMS
-        Sms.sender(customer.phone, "Merci de confirmer ce payment en entrant votre mot de passe dans la section <RECEVOIR UN PAIEMENT> de l'application PayMeQuick")
+        Sms.nexah(customer.phone, "Merci de confirmer ce payment en entrant votre mot de passe dans la section <RECEVOIR UN PAIEMENT> de l'application PayMeQuick")
         render json: {
           status: true,
           message: "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} ouvrez l'application PayMeQuick et confirmer le paiement"
@@ -701,7 +701,7 @@ class Api::V1::SessionController < ApplicationController
 
               #on notifie le gar que tout c'est bien passé
               #Notification SMS
-              Sms.sender(@customer.phone, "Votre mot de passe a ete mis a jour, merci de vous reconnecter. PayMeQuick")
+              Sms.nexah(@customer.phone, "Votre mot de passe a ete mis a jour, merci de vous reconnecter. PayMeQuick")
 
               render json: {
                 status: true,
@@ -804,7 +804,7 @@ class Api::V1::SessionController < ApplicationController
                     ip: @ip
                 )
                 if h.save #Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
-                  Sms.sender(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
+                  Sms.nexah(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
 
                   render json: {
                       status:   :success,
@@ -869,7 +869,7 @@ class Api::V1::SessionController < ApplicationController
                     ip: @ip
                 )
                 if h.save #Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
-                  Sms.sender(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
+                  Sms.nexah(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
 
                   render json: {
                       status:   :success,
