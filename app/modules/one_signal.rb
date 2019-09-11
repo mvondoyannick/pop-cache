@@ -24,7 +24,7 @@ module OneSignal
       content = Content.new(type: 'text/plain', value: "Données de transaction : #{argv}, message : #{message}, locale : #{locale}")
       mail = Mail.new(from, subject, to, content)
 
-      sg = SendGrid::API.new(api_key: "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") #ENV['SENDGRID_API_KEY']
+      sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
       response = sg.client.mail._('send').post(request_body: mail.to_json)
       #puts response.status_code
       #puts response.body
