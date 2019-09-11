@@ -1489,7 +1489,7 @@ class Client
                     }
                     puts "Transaction response => #{a}"
 
-                    resume = "#{prettyCallSexe(client.sexe)} #{client.complete_name} votre Paiement a été effectué. \n Montant de la transaction : #{@amount} FC, \n Frais de la transaction : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC \n Total prelevé dans votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} FC, \n Marchant ayant recu le paiement : #{marchand.complete_name}, \n Date de la transaction : #{Time.now.strftime("%d-%m-%Y, %Hh:%M")} \n Statut de la transaction: EFFECTUÉE ET TERMINÉE SANS ERREURS \n Lien transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{client.id}"
+                    # resume = "#{prettyCallSexe(client.sexe)} #{client.complete_name} votre Paiement a été effectué. \n Montant de la transaction : #{@amount} FC, \n Frais de la transaction : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC \n Total prelevé dans votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} FC, \n Marchant ayant recu le paiement : #{marchand.complete_name}, \n Date de la transaction : #{Time.now.strftime("%d-%m-%Y, %Hh:%M")} \n Statut de la transaction: EFFECTUÉE ET TERMINÉE SANS ERREURS \n Lien transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{client.id}"
 
                     #send email to customer
                     # OneSignal::SendEmailAPI.sendEmail(client.email, resume, message, locale)
@@ -1498,11 +1498,11 @@ class Client
                     # OneSignal::SendEmailAPI.sendEmail(marchand.email, "Paiement recu. Montant :  #{@amount} FC \n Client ayant effectuer le Paiement : #{prettyCallSexe(client.sexe)} #{client.complete_name}. \n Votre nouveau solde:  #{marchand_account.amount} FC . \n Transaction ID : #{@hash}. \n Date : #{Time.now}. \n Lien de transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id} \n #{App::PayMeQuick::App::app[:signature]}", message, locale)
 
                     # send SMS
-                    Sms.nexah(marchand.phone, "Paiement recu! montant : #{@amount} FC, paiement recu de #{client.complete_name}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
+                    Sms.sender(marchand.phone, "Paiement recu! montant : #{@amount} FC, paiement recu de #{client.complete_name}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
 
                     # One signal notifications
                     # OneSignal::OneSignalSend.genericOneSignal(@oneSignalID, "Paiement effectué depuis votre compte d'un montant de #{@amount} F CFA, Transaction de paiement Effectuée", "Payment done from your account. Amount of #{@amount} F CFA. Payment Transaction done")
-                    Sms.nexah(client.phone, "Paiement effectué depuis votre compte d'un montant de #{@amount} F CFA, Transaction de paiement Effectuée", "Payment done from your account. Amount of #{@amount} F CFA. Payment Transaction done")
+                    Sms.sender(client.phone, "Paiement effectue depuis votre compte d'un montant de #{@amount} F CFA, Transaction de paiement Effectuee", "Payment done from your account. Amount of #{@amount} F CFA. Payment Transaction done")
 
                     #return true, "Votre Paiement de #{@amount} FC vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F FC. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F FC. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
                     return true, {
