@@ -1453,7 +1453,7 @@ class Client
 
               if marchand_account.save
                 #envoi d'une notification OneSignal
-                Sms.nexah(marchand.phone, "Paiement d'un montant de #{@amount} F CFA, reçu de \t #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde est de :  #{marchand_account.amount} F CFA. ID : #{@hash}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}. #{App::PayMeQuick::App::app[:signature]}")
+                Sms.nexah(marchand.phone, "Paiement d'un montant de #{@amount} F CFA, de \t #{prettyCallSexe(client.sexe)} #{client.complete_name}. Solde :  #{marchand_account.amount} F CFA. ID : #{@hash}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
 
                 puts "Paiement effectué de #{@amount} FC entre #{customer} et #{@to}."
 
