@@ -13,7 +13,7 @@ module Parametre
       # @param [Integer] amount
       def self.agis_percentage(amount)
           @amount = amount.to_f
-          tmp = @amount.to_f * 0 #0.02
+          tmp = @amount.to_f * 0.02
           converted = @amount + tmp
           return converted
       end
