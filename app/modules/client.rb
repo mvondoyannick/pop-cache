@@ -1453,7 +1453,7 @@ class Client
 
               if marchand_account.save
                 #envoi d'une notification OneSignal
-                Sms.nexah(marchand.phone, "Paiement recu. Montant :  #{@amount} FC, \t Payeur : #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde:  #{marchand_account.amount} FC. ID : #{@hash}. #{App::PayMeQuick::App::app[:signature]}")
+                Sms.nexah(marchand.phone, "Paiement d'un montant de #{@amount} F CFA, reçu de \t #{prettyCallSexe(client.sexe)} #{client.complete_name}. Votre nouveau solde est de :  #{marchand_account.amount} F CFA. ID : #{@hash}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}. #{App::PayMeQuick::App::app[:signature]}")
 
                 puts "Paiement effectué de #{@amount} FC entre #{customer} et #{@to}."
 
@@ -1498,7 +1498,7 @@ class Client
                     # OneSignal::SendEmailAPI.sendEmail(marchand.email, "Paiement recu. Montant :  #{@amount} FC \n Client ayant effectuer le Paiement : #{prettyCallSexe(client.sexe)} #{client.complete_name}. \n Votre nouveau solde:  #{marchand_account.amount} FC . \n Transaction ID : #{@hash}. \n Date : #{Time.now}. \n Lien de transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id} \n #{App::PayMeQuick::App::app[:signature]}", message, locale)
 
                     # send SMS
-                    Sms.sender(marchand.phone, "Paiement recu! montant : #{@amount} FC, paiement recu de #{client.complete_name}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
+                    # Sms.sender(marchand.phone, "Paiement recu! montant : #{@amount} FC, paiement recu de #{client.complete_name}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
 
                     # One signal notifications
                     # OneSignal::OneSignalSend.genericOneSignal(@oneSignalID, "Paiement effectué depuis votre compte d'un montant de #{@amount} F CFA, Transaction de paiement Effectuée", "Payment done from your account. Amount of #{@amount} F CFA. Payment Transaction done")
