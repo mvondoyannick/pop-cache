@@ -1355,6 +1355,7 @@ class Client
     @lat = argv[:lat]
     @lon = argv[:lon]
     @unite = argv[:unite]
+    @oneSignalID = argv[:oneSignalID]
 
     @locale = locale
 
@@ -1382,6 +1383,11 @@ class Client
         
         puts "Une erreur est survenue : #{exception}"
         Rails::logger::error "Compte marchand #{@to} voulant recevoir un paiement est inconnu"
+
+        #Transaction annulée
+        OneSignal::OneSignalSend.genericOneSignal(@oneSignalID, "Echec du paiement car le marchand est inconnu, Transaction annulée", "Failed to payment unknow merchant. Transaction canceled")
+
+        # send response
         return false, {
           title: "Echec Transaction",
           content: "Le marchand vers qui la transaction doit se faire est inconnu"
