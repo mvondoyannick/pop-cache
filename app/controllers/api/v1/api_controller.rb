@@ -233,7 +233,7 @@ class Api::V1::ApiController < ApplicationController
       #@marchand = Customer.find_by_authentication_token(to) if Customer.exists?(authentication_token: to)
 
       #OneSignal::OneSignalSend.sendNotification(@player_id, amount, "#{@marchand.name} #{@marchand.second_name}", "#{@customer.name} #{@customer.second_name}")
-      transaction = Client::pay({customer: customer, merchant: merchant, amount: amount, password: pwd, ip: @ip, lat: @lat, lon: @lon, unite: unite, oneSignalID: oneSignalID},"Paiement", locale)
+      transaction = Client::pay({customer: customer, merchant: merchant, amount: amount, password: pwd, ip: @ip, lat: @lat, lon: @lon, unite: unite},"Paiement", locale)
       # transaction = Client::Payment.pay(customer: @customer.id, merchant: @merchant.id, amount: amount, password: pwd, ip: @ip, player_id: @player_id, lat: @lat, lon: @lon)
       render json: {
           message: transaction

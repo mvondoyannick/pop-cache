@@ -1355,7 +1355,6 @@ class Client
     @lat = argv[:lat]
     @lon = argv[:lon]
     @unite = argv[:unite]
-    @oneSignalID = argv[:oneSignalID]
 
     @locale = locale
 
@@ -1503,7 +1502,7 @@ class Client
 
                     # One signal notifications
                     # OneSignal::OneSignalSend.genericOneSignal(@oneSignalID, "Paiement effectué depuis votre compte d'un montant de #{@amount} F CFA, Transaction de paiement Effectuée", "Payment done from your account. Amount of #{@amount} F CFA. Payment Transaction done")
-                    Sms.nexah(client.phone, "Paiement effectué depuis votre compte d'un montant de #{@amount} F CFA, Transaction de paiement Effectuée")
+                    Sms.nexah(client.phone, "Paiement effectué depuis votre compte d'un montant de #{@amount} F CFA, Transaction de paiement Effectuée", "Payment done from your account. Amount of #{@amount} F CFA. Payment Transaction done")
 
                     #return true, "Votre Paiement de #{@amount} FC vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F FC. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F FC. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
                     return true, {
