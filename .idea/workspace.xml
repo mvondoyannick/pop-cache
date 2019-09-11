@@ -7,19 +7,7 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/pop-cash.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pop-cash.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/session_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/customer.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/customer.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/abonnements.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/abonnements.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/client.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/external.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/external.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/parametre.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/parametre.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/pay_me_quick.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/pay_me_quick.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/sprint_pay.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/sprint_pay.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/tasks/scheduler.rake" beforeDir="false" afterPath="$PROJECT_DIR$/lib/tasks/scheduler.rake" afterDir="false" />
-    </list>
+    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -363,7 +351,7 @@
       <workItem from="1566545809390" duration="109000" />
       <workItem from="1566676403330" duration="2468000" />
       <workItem from="1566971737439" duration="601000" />
-      <workItem from="1567163061565" duration="346000" />
+      <workItem from="1567163061565" duration="437000" />
     </task>
     <servers />
   </component>
