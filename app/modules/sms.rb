@@ -134,6 +134,8 @@ class Sms
         } 
       )
 
+      puts "From nexah API : #{result}"
+
       #return response
       return result
 
