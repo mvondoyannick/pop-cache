@@ -10,6 +10,29 @@ module OneSignal
       "Content-Type" => "application/json"
   }
 
+  class SendEmailAPI
+    
+    def self.sendEmail(receiver, argv, message=nil, locale="en")
+      # send email with SendGrid
+
+      require 'sendgrid-ruby'
+      include SendGrid
+
+      from = Email.new(email: 'api@paiemequick.com')
+      to = Email.new(email: receiver)
+      subject = "API PAYMEQUICK"
+      content = Content.new(type: 'text/plain', value: "Données de transaction : #{argv}, message : #{message}, locale : #{locale}")
+      mail = Mail.new(from, subject, to, content)
+
+      sg = SendGrid::API.new(api_key: "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") #ENV['SENDGRID_API_KEY']
+      response = sg.client.mail._('send').post(request_body: mail.to_json)
+      #puts response.status_code
+      #puts response.body
+      #puts response.headers
+    end
+
+  end
+
   class OneSignalSend
 
     # Create new file to storage log of pushes.
@@ -147,7 +170,7 @@ module OneSignal
     # @param [Object] playerId
     # @param [Object] msgFr
     # @param [Object] msgEn
-    def self.genericOneSignal(playerId, msgFr, msgEn)
+    def self.genericOneSignal(playerId, msgFr=nil , msgEn=nil )
       @playerId     = playerId
       @msgFr        = msgFr
       @msgEn        = msgEn

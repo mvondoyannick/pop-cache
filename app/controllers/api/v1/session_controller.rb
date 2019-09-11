@@ -11,19 +11,19 @@ class Api::V1::SessionController < ApplicationController
       @name           = params[:nom]
       @second_name    = params[:second_name]
       @tel            = params[:phone]
-      @cni            = params[:cni]
+      #@cni            = params[:cni]
       @password       = params[:password]
       @sexe           = params[:sexe]
       @question_id    = params[:question_id]
       @response       = params[:reponse]
 
       #adding locale I18n
-      @locale         = request.headers["HTTP_LOCALE"]
+      @locale         = "fr" #request.headers["HTTP_LOCALE"]
 
       #données elementaire de base
-      if @tel.present? && @cni.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
+      if @tel.present? && @question_id.present? && @response.present? && @password.present? && @name.present? && @ip.present? && @sexe.present?
 
-        query = Client::signup({name: @name, second_name: @second_name, phone: @tel, cni: @cni, password: @password, sexe: @sexe, question: @question_id, answer: @response, ip: @ip}, "create customer account", @locale)
+        query = Client::signup({name: @name, second_name: @second_name, phone: @tel, password: @password, sexe: @sexe, question: @question_id, answer: @response, ip: @ip}, "create customer account", @locale[0..1])
         render json: {
           status: query
         }
@@ -32,7 +32,7 @@ class Api::V1::SessionController < ApplicationController
 
         render json: {
           satus: :false,
-          message: I18n.t("DataNotComplete", locale: @locale) #"Centaines informations sont manquantes"
+          message: I18n.t("DataNotComplete", locale: @locale[0..1]) #"Centaines informations sont manquantes"
         }
 
       end
@@ -53,7 +53,7 @@ class Api::V1::SessionController < ApplicationController
         }
       else
         # send SMS
-        Sms.sender(customer.phone, "Merci de confirmer ce payment en entrant votre mot de passe dans la section <RECEVOIR UN PAIEMENT> de l'application PayMeQuick")
+        Sms.nexah(customer.phone, "Merci de confirmer ce payment en entrant votre mot de passe dans la section <RECEVOIR UN PAIEMENT> de l'application PayMeQuick")
         render json: {
           status: true,
           message: "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} ouvrez l'application PayMeQuick et confirmer le paiement"
@@ -94,7 +94,7 @@ class Api::V1::SessionController < ApplicationController
      # Refactoring
     def history
       @token = request.headers['HTTP_X_API_POP_KEY'] #Get the customer header
-      @locale = request.headers["HTTP_LOCALE"] # Get client locale lang between en and fr
+      @locale = "fr" #request.headers["HTTP_LOCALE"] # Get client locale lang between en and fr
       @ip_adresse = request.remote_ip # Get customer remote IP
       Rails::logger::info "receive token : #{@token} from #{@ip_adresse}"
       @period   = params[:period]
@@ -112,7 +112,7 @@ class Api::V1::SessionController < ApplicationController
         else
 
           #starting get customer history
-          request = Logstory::Histo.h_customer(@token, @period, locale)
+          request = Logstory::Histo.h_customer(@token, @period, @locale[0..1])
           render json: {
             status: request[0],
             message: request[1]
@@ -124,7 +124,7 @@ class Api::V1::SessionController < ApplicationController
 
         render json: {
             status:   false,
-            message:  I18n.t("customerNotFound", locale: @locale)
+            message:  I18n.t("customerNotFound", locale: @locale[0..1])
         }
 
       end
@@ -136,7 +136,7 @@ class Api::V1::SessionController < ApplicationController
     # Permet de retourner le'historique en fonction d'une periode bien precise
     def historyByDate
       @token    = request.headers['HTTP_X_API_POP_KEY']
-      @locate   = request.headers["HTTP_LOCALE"]
+      @locate   = "fr" #request.headers["HTTP_LOCALE"]
       @debut    = params[:begin]
       @fin      = params[:end]
 
@@ -147,7 +147,7 @@ class Api::V1::SessionController < ApplicationController
             message: I18n.t("sameDate", locale: @locale) #"Les dates sont identiques!"
           }
         else
-          periode = Logstory::Histo.h_interval({token: @token, begin: @debut, end: @fin}, @locale)
+          periode = Logstory::Histo.h_interval({token: @token, begin: @debut, end: @fin}, @locale[0..1])
           render json: {
               status:   periode[0],
               message:  periode[1]
@@ -241,12 +241,12 @@ class Api::V1::SessionController < ApplicationController
       phone = params[:phone]
       password = params[:password]
       device = params[:uuid]
-      locale = request.headers["HTTP_LOCALE"]
+      locale = "fr" #request.headers["HTTP_LOCALE"]
 
       if phone.present? && password.present?
 
         #query the user
-        signin = Client::signin({phone: phone, password: password, device: device}, locale, "Authentification")
+        signin = Client::signin({phone: phone, password: password, device: device}, locale[0..1], "Authentification")
         puts "Login data response : #{signin}"
         render json: signin
 
@@ -281,7 +281,7 @@ class Api::V1::SessionController < ApplicationController
       @token      = params[:customer]
       @pwd        = params[:password]
       @playerId   = params[:playerId]
-      locale = request.headers["HTTP_LOCALE"]
+      locale = "fr" #request.headers["HTTP_LOCALE"]
 
       #check all datas available
       if @token.present? && @pwd.present? && @playerId.present?
@@ -293,7 +293,7 @@ class Api::V1::SessionController < ApplicationController
               message: "Utilisateur inconnu sur la plateforme"
           }
         else
-          @customer = Client::get_balance({phone: @customer, password: @pwd}, locale)
+          @customer = Client::get_balance({phone: @customer, password: @pwd}, locale[0..1])
           if balance
             render json: {
                 message: @customer
@@ -321,7 +321,7 @@ class Api::V1::SessionController < ApplicationController
       @phone    = params[:customer]
       @pwd      = params[:password]
       @playerId = params[:oneSignalID]
-      locale = request.headers["HTTP_LOCALE"]
+      locale = "fr" #request.headers["HTTP_LOCALE"]
 
       #verificatin du customer
       @customer = Customer.find_by_authentication_token(@phone)
@@ -332,7 +332,7 @@ class Api::V1::SessionController < ApplicationController
           message:  "Utilisateur inconnu"
         }
       else
-        balance = Client::get_balance({phone: @customer.phone, password: @pwd}, "Obtention crédit compte client", locale)
+        balance = Client::get_balance({phone: @customer.phone, password: @pwd}, "Obtention crédit compte client", locale[0..1])
         if balance[0]
           render json: {
             status:   200,
@@ -353,10 +353,10 @@ class Api::V1::SessionController < ApplicationController
     # verification du retrait
     def check_retrait
         header = request.headers['HTTP_X_API_POP_KEY']
-        locale = request.headers["HTTP_LOCALE"]
+        locale = "fr" #request.headers["HTTP_LOCALE"]
         begin
           render json: {
-            status: Client::check_retrait_refactoring(header, locale)
+            status: Client::check_retrait_refactoring(header, locale[0..1])
           }
         rescue => exception
           render json: {
@@ -369,9 +369,9 @@ class Api::V1::SessionController < ApplicationController
     # permet d'annuler le retrait en cours
     def cancel_retrait
       token = request.headers['HTTP_X_API_POP_KEY']
-      locale = locale
+      locale = "fr" #request.headers['HTTP_LOCALE']
       begin
-        cancel = Client.cancelRetrait({token: token}, "Annulation de la procedure de retrait", locale)
+        cancel = Client.cancelRetrait({token: token}, "Annulation de la procedure de retrait", locale[0..1])
         render json: {
             message: cancel
         }
@@ -629,6 +629,17 @@ class Api::V1::SessionController < ApplicationController
       end
     end
 
+    #mise en oeuvre du virtual SprintPayLocalAPI
+    def virtualSP
+      @token = params[:token]
+      @phone = params[:phone]
+      @amount = params[:amount]
+      network_name = params[:network_name]
+
+      puts "Vistual SP activated ..."
+      render json: SprintPay::Pay::Payment.sp(@token, @phone, @amount, network_name)
+    end
+
     #RENDER CUSTOMER PHONE WITH HEADER
     # @deprecated
     def getPhoneNumber
@@ -690,7 +701,7 @@ class Api::V1::SessionController < ApplicationController
 
               #on notifie le gar que tout c'est bien passé
               #Notification SMS
-              Sms.sender(@customer.phone, "Votre mot de passe a ete mis a jour, merci de vous reconnecter. PayMeQuick")
+              Sms.nexah(@customer.phone, "Votre mot de passe a ete mis a jour, merci de vous reconnecter. PayMeQuick")
 
               render json: {
                 status: true,
@@ -793,7 +804,7 @@ class Api::V1::SessionController < ApplicationController
                     ip: @ip
                 )
                 if h.save #Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
-                  Sms.sender(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
+                  Sms.nexah(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
 
                   render json: {
                       status:   :success,
@@ -858,7 +869,7 @@ class Api::V1::SessionController < ApplicationController
                     ip: @ip
                 )
                 if h.save #Parametre::PersonalData.getHistorique(customer.id, @hash, amount, "RECHARGE VIA #{network_name.upcase}") == true
-                  Sms.sender(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
+                  Sms.nexah(customer.phone, "Recharge de votre compte d'un montant de #{amount} F CFA depuis #{network_name}. Nouveau solde : #{account.amount} F CFA")
 
                   render json: {
                       status:   :success,
@@ -1029,7 +1040,12 @@ class Api::V1::SessionController < ApplicationController
       @token = request.headers["HTTP_X_API_POP_KEY"]
       @uuid = request.headers["HTTP_UUID"]
 
-      Rails::logger::info "Header data receive : Token #{@token}, UUID : #{@uuid}"
+      puts "recherche de la langue"
+      @language = "fr"#request.headers["HTTP_LOCALE"]
+
+      puts "La langue recu est #{@language}"
+
+      puts "Header data receive : Token #{@token}, UUID : #{@uuid}"
 
       begin
         customer = Customer.find_by(authentication_token: @token, two_fa: 'authenticate')

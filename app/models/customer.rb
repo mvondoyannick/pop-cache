@@ -40,7 +40,7 @@ class Customer < ApplicationRecord
 
 
   #validations
-  validates :phone,presence:true, uniqueness: {message: "%{value} a deja ete utilisé" }, length: { is: 9, message: "Le numéro doit avoir 9 chiffres" }
+  validates :phone, presence: true, uniqueness: {message: "%{value} a deja ete utilisé" }, length: { is: 9, message: "Le numéro doit avoir 12 chiffres" }
   #validates :cni, presence: {message: "%{value} a deja ete utilisé" } #, length: {in: 12..20}
   validates :name, presence: true #length: { in: 3..50 }#, format: { with: /\A[a-zA-Z]+\z/, message: "only allows letters" }
   #validates :cni, presence: true, uniqueness: {message: "%{value} a deja ete utilisé"}
@@ -70,7 +70,7 @@ class Customer < ApplicationRecord
 
   def set_cni
     self.cni = "**vide**" if self.cni.nil?
-    Sms::sender(self.phone, "Pensez a renseigner votre Carte Natinale dans les 30 jours, sinon vous serez suspendu!") if self.cni.nil?
+    Sms::nexah(self.phone, "Pensez a renseigner votre Carte Natinale dans les 30 jours, sinon vous serez suspendu!") if self.cni.nil?
   end
 
   # TODO VALIDATE CHECKPHONE

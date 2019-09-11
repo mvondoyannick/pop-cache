@@ -7,15 +7,7 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/client.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/external.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/external.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/logstory.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/logstory.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/lorem.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/lorem.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/pay_me_quick.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/pay_me_quick.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/sms.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/sms.rb" afterDir="false" />
-    </list>
+    <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -234,7 +226,7 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="true" />
+  <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="true" RAKE_SPRING_PRE_LOADER_OPTION="false" RAILS_SPRING_PRE_LOADER_OPTION="false" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -353,6 +345,13 @@
       <workItem from="1565268774330" duration="521000" />
       <workItem from="1565349585969" duration="564000" />
       <workItem from="1565471055209" duration="1331000" />
+      <workItem from="1566261811113" duration="192000" />
+      <workItem from="1566323516667" duration="1530000" />
+      <workItem from="1566408553266" duration="3335000" />
+      <workItem from="1566545809390" duration="109000" />
+      <workItem from="1566676403330" duration="2468000" />
+      <workItem from="1566971737439" duration="601000" />
+      <workItem from="1567163061565" duration="437000" />
     </task>
     <servers />
   </component>

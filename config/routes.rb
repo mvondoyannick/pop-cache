@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'welcome/home'
   #gestion des interfaces des clients
   get 'client/signing'
   get 'client/signup'
@@ -86,7 +87,13 @@ Rails.application.routes.draw do
   post 'home/apikey_request'
   get 'home/signup'
   #main route
-  root 'agentcrtl#customer'
+  root 'welcome#home'
+  # Webview for mobile devise
+  get 'webview/:hash/:token', to: 'welcome#webview'
+
+  # webview for MPPP
+  get 'webview/mppp', to: 'welcome#mppp'
+
   match 'home/retrait', to: 'home#retrait', via: [:get, :post]
   match 'home/create', to: 'home#create', via: [:get, :post]
   match 'home/credit', to: 'home#credit', via: [:get, :post]
@@ -154,7 +161,8 @@ Rails.application.routes.draw do
 
       match 'recharge/extern/provider/sp/new', to: 'session#getSpData', via: [:post, :options]
       match 'recharge/extern/provider/sp', to: 'session#rechargeSprintPay', via: [:post, :options]   # SprintPay OM et MOMO
-
+      post 'recharge/extern/provider/virtual/sp', to: 'session#virtualSP'
+      
       # configuration du compte personnel
 
       match 'security/authorization', to: 'session#authorization', via: [:post, :options]

@@ -13,6 +13,8 @@ gem 'puma', '~> 3.11'
 gem 'sass-rails', '~> 5.0'
 #simple_form rails
 gem 'simple_form'
+# for short url
+gem 'googl'
 # For OTP, One Tome Password
 gem 'rotp'
 #country select

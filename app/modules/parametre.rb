@@ -13,7 +13,7 @@ module Parametre
       # @param [Integer] amount
       def self.agis_percentage(amount)
           @amount = amount.to_f
-          tmp = @amount.to_f * 0.02
+          tmp = @amount.to_f * 0 #0.02
           converted = @amount + tmp
           return converted
       end
@@ -487,17 +487,17 @@ module Parametre
         if customer.update(two_fa: @otp_sms.now.to_i, perime_two_fa: 1.hours.from_now)
 
           # Sending SMS to customer with @otp_sms
-          Sms.sender(@phone, "#{@otp_sms.now} est le code permettant de  vous authentifier sur PayMeQuick.")
+          Sms.nexah(@phone, "#{@otp_sms.now} est le code permettant de  vous authentifier sur PayMeQuick.")
 
           #on retourne les informations
           return true, "Identification a deux facteurs envoyé"
         else
 
           # Notify customer
-          Sms.sender(customer.phone, "Nous sommes dans l impossibilité de vous creer un mot de passe, pas de panique, un administrateur PayMeQuick vous contactera sous 1 minute pour vous aider a finaliser la procedure d'inscription. Toutes nos excuses.")
+          Sms.nexah(customer.phone, "Nous sommes dans l impossibilité de vous creer un mot de passe, pas de panique, un administrateur PayMeQuick vous contactera sous 1 minute pour vous aider a finaliser la procedure d'inscription. Toutes nos excuses.")
 
           # Sending SMS to admin
-          Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de d'envoyer le mot de passe a l'utilisateur #{customer.phone}, merci de le contacter d urgence .")
+          Sms.nexah(App::PayMeQuick::App::developer[:phone], "Impossible de d'envoyer le mot de passe a l'utilisateur #{customer.phone}, merci de le contacter d urgence .")
 
           #on retourne les informations
           return false, "Nous sommes dans l impossibilité de vous creer un mot de passe, pas de panique, un administrateur PayMeQuick vous contactera sous 1 minute pour vous aider a finaliser la procedure d'inscription. Toutes nos excuses. errors was : #{customer.errors.messages}"

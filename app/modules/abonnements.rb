@@ -199,7 +199,7 @@ module Abonnements
                   end
 
                   #Notify customer with SMS
-                  Sms.sender(Customer.find(@customer_id).phone, "Vous vener de vous abonner au palier #{Palier.find(@palier_id).name.upcase}, cela vous a coute #{Palier.find(@palier_id).amount} F CFA et vous permet de retirer un montant maximum #{Palier.find(@palier_id).max_retrait } F CFA. Date d'expiration : #{query.date_fin}. #{App::PayMeQuick::App::app[:signature]}")
+                  Sms.nexah(Customer.find(@customer_id).phone, "Vous vener de vous abonner au palier #{Palier.find(@palier_id).name.upcase}, cela vous a coute #{Palier.find(@palier_id).amount} F CFA et vous permet de retirer un montant maximum #{Palier.find(@palier_id).max_retrait } F CFA. Date d'expiration : #{query.date_fin}. #{App::PayMeQuick::App::app[:signature]}")
 
                   return true, "new abonnement added for customer #{customer.name}"
 
@@ -217,7 +217,7 @@ module Abonnements
 
           else
 
-            Sms.sender(customer.phone, "Votre solde est insuffisant pour effectuer cet abonnement, merci de recharger votre compte ! ")
+            Sms.nexah(customer.phone, "Votre solde est insuffisant pour effectuer cet abonnement, merci de recharger votre compte ! ")
             return false, "Solde client insuffisant"
 
           end

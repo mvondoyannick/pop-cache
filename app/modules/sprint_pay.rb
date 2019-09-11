@@ -134,6 +134,72 @@ module SprintPay
 
       end
 
+      #viartual SprintLocalAPI
+      def self.sp(token, phone, amount, network_name)
+        @token = token
+        @phone = phone
+        @montant = amount
+        @network_name = network_name
+        @hash = "PR_PROVIDER_#{SecureRandom.hex(13).upcase}"
+
+        #set limit
+        puts "Verification de la limite de recharge"
+        if @montant.to_f > 500000.to_f
+          return false, {
+            title: "Erreur montant",
+            message: "Impossible de crediter un montant superieur à 500 000 FC"
+          }
+        else
+          #sleep for 5 seconds
+          puts "sleep for 5 seconds ..."
+          sleep 5
+
+          # searching customer
+          puts "Searching customer informations ..."
+          customer = Customer.find_by_authentication_token(@token)
+          if customer.blank?
+            return false, "Utilisateur inconnu"
+          else
+            # starting credit customer account
+            new_account = customer.account.amount + @montant.to_f
+
+            #update customer account
+            puts "updating customer amount information ..."
+            account = customer.account.update(amount: new_account)
+            if account
+              #update history
+              history = History.new(
+                customer_id: customer.id,
+                amount: @montant.to_f,
+                flag: "RECHARGE",
+                context: "RECHARGE #{@network_name.upcase}",
+                code: @hash
+              )
+
+              if history.save
+                #new entry created
+                Sms.nexah(@phone, "Recharge de votre compte via #{@network_name.upcase} d'un montant de #{@montant} FC. Votre solde est maintenant de #{customer.account.amount} FC.")
+                return true, {
+                  title: "Recharge effectuée",
+                  message: "Votre compte #{@phone} correspondant à #{@network_name.upcase} a été debité d'un montant de #{@montant} FC. Le sole de votre compte PMQ est de #{customer.account.amount} FC"
+                }
+              else
+                puts "Impossible de rsauvegarder les informations"
+                return false, {
+                  title: "Erreur survenue",
+                  message: "Impossible de terminer la transaction de recharge, annulation de tous les process"
+                }
+              end
+            else
+              return false, {
+                title: "Impossible de recharger",
+                message: "Impossible d'effectuer la reccharge, le solde de votre compte est insiffisant."
+              }
+            end
+          end
+        end
+      end
+
     end
 
   end

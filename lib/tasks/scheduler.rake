@@ -20,10 +20,10 @@ namespace :customer do
               # deleting customer personal account secondly
               puts "Deleting customer #{customer.phone} ... DONE!"
               # wait 2
-              Sms.sender(customer.phone, "Votre compte vient d etre supprime de la plateforme PayMeQuick")
+              Sms.nexah(customer.phone, "Votre compte vient d etre supprime de la plateforme PayMeQuick")
             else
               puts "Impossible de supprimer le compte #{customer.phone}"
-              Sms.sender(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte #{customer.phone}")
+              Sms.nexah(App::PayMeQuick::App::developer[:phone], "Impossible de supprimer le compte #{customer.phone}")
             end
           #else
           #  Rails::logger::info "Aucune information a supprimer"
@@ -33,7 +33,7 @@ namespace :customer do
       else
 
         puts "This day is not a friday, delection canceled!"
-        Sms.sender(691451189, "Job canceled from Heroku at #{Time.now}: Cause: we are not a friday day.")
+        Sms.nexah(691451189, "Job canceled from Heroku at #{Time.now}: Cause: we are not a friday day.")
 
       end
       puts "DONE!"
@@ -58,7 +58,7 @@ namespace :customer do
           recharge = History.where(customer_id: customer.id, flag: 'RECHARGE').where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).sum(:amount)
     
           # Last step, send SMS to customer.phone
-          Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name}, Nous tenons a vous informer que vous avez recharge votre compte de #{recharge.round(2)} F CFA, effectue des depenses de #{depense.round(2)} F CFA et recu des paiements de #{paiement.round(2)} F CFA cette semaine (#{Date.today.beginning_of_week} a #{Date.today.end_of_week}). Votre solde est actuellement de #{solde.round(2)} F CFA.")
+          Sms.nexah(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name}, Nous tenons a vous informer que vous avez recharge votre compte de #{recharge.round(2)} F CFA, effectue des depenses de #{depense.round(2)} F CFA et recu des paiements de #{paiement.round(2)} F CFA cette semaine (#{Date.today.beginning_of_week} a #{Date.today.end_of_week}). Votre solde est actuellement de #{solde.round(2)} F CFA.")
     
           # Logs sommes informations to Heroku console
           puts "Task has been generate to #{customer.phone} at #{Time.now}"
@@ -75,7 +75,7 @@ namespace :customer do
       Customer.all.each do |customer|
         if customer.two_fa == 'authenticate' && customer.account.amount != '0.0' 
           puts "Dire merci à l'utilisateurs #{customer.complete_name} en lui rappelant son"
-          Sms.sender(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} nous sommes fiert de vous savoir sur PayMeQuick et de vous informer que votre solde est actuellement de #{customer.account.amount} F CFA")
+          Sms.nexah(customer.phone, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} nous sommes fiert de vous savoir sur PayMeQuick et de vous informer que votre solde est actuellement de #{customer.account.amount} F CFA")
         end
       end
     else
@@ -93,7 +93,7 @@ namespace :customer do
         if DateTime.now > intent.end 
           # les intentions de retraits sont deja périmés, elles doivent etre supprimées
           puts "Customer phone number : #{intent.customer.phone}"
-          Sms.sender(intent.customer.phone, "Retrait annulé, delais de la transaction depasse. Paymequick. Link : https://byt.li/pmq/web/2398")
+          Sms.nexah(intent.customer.phone, "Retrait annulé, delais de la transaction depasse. Paymequick. Link : https://byt.li/pmq/web/2398")
           if intent.destroy
             puts "Intent #{intent.id} supprimé. Cause: delais de retrait dépassé"
           else

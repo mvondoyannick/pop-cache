@@ -1,0 +1,41 @@
+<h1>Transctions web details</h1>
+<br>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Titre</th>
+      <th scope="col">Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Action</th>
+      <td><%= @data.flag%></td>
+    </tr>
+    <tr>
+      <th scope="row">Client (vous)</th>
+      <td><%= Customer.find(@data.customer_id).complete_name %></td>
+    </tr>
+    <tr>
+      <th scope="row">Montant</th>
+      <td><%= @data.amount.round(2)%></td>
+    </tr>
+    <tr>
+      <th scope="row">Code</th>
+      <td><%= @data.code%></td>
+    </tr>
+    <tr>
+      <th scope="row">Date</th>
+      <td><%= @data.created_at %></td>
+    </tr>
+    <tr>
+        <th>Région</th>
+        <td>
+            <%= @data.region %>
+        </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3980.612285364134!2d11.546268714737163!3d3.8929687971683817!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x108bc5c21a7bc2fb%3A0x200da9bb816bc99f!2sSanta+Lucia+Ngousso!5e0!3m2!1sfr!2scm!4v1566264191112!5m2!1sfr!2scm" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+<br>
