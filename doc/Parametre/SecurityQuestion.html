@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Parametre::SecurityQuestion - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/darkfish.js"></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="../Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-lockCustomerAccount">::lockCustomerAccount</a>
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-c-setSecurityQuestion">::setSecurityQuestion</a>
+    
+    <li ><a href="#method-c-unlockCustomerAccount">::unlockCustomerAccount</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Parametre::SecurityQuestion">
+  <h1 id="class-Parametre::SecurityQuestion" class="class">
+    class Parametre::SecurityQuestion
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-lockCustomerAccount" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">lockCustomerAccount</span><span
+            class="method-args">(customer_id)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>permet de bloquer un compte client @detail     une fois que l&#39;on
+demande son mot de passe, le compte se verouiller automatiquement, cas du
+MDP oublé</p>
+          
+          
+
+          
+          <div class="method-source-code" id="lockCustomerAccount-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 430</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">lockCustomerAccount</span>(<span class="ruby-identifier">customer_id</span>)
+  <span class="ruby-ivar">@customer</span> = <span class="ruby-identifier">customer_id</span>
+  <span class="ruby-identifier">customer</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find</span>(<span class="ruby-ivar">@customer</span>)
+  <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{customer.two_fa}&quot;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Utilisateur inconnu&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-comment"># update two_fa item on customer</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">update</span>(<span class="ruby-value">two_fa:</span> <span class="ruby-string">&quot;lock&quot;</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, <span class="ruby-string">&quot;compte bloquer&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Impossible de mettre a jour les information de two_fa&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 391</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-setSecurityQuestion" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">setSecurityQuestion</span><span
+            class="method-args">(customer_id, question_id, answer)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>creatrion d&#39;une question de securité</p>
+
+<pre>@name
+@detail
+@param [Object] customer_id
+@param [Object] question_id
+@param [Object] answer</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="setSecurityQuestion-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 400</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">setSecurityQuestion</span>(<span class="ruby-identifier">customer_id</span>, <span class="ruby-identifier">question_id</span>, <span class="ruby-identifier">answer</span>)
+  <span class="ruby-ivar">@customer</span> = <span class="ruby-identifier">customer_id</span>
+  <span class="ruby-ivar">@question</span> = <span class="ruby-identifier">question_id</span>
+  <span class="ruby-ivar">@answer</span>   = <span class="ruby-identifier">answer</span>
+
+  <span class="ruby-comment">#on verifie que ce customer existe</span>
+  <span class="ruby-identifier">customer</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">customer_id</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Utilisateur inconnu&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-comment">#on debute l&#39;enregistrememnt des informations</span>
+    <span class="ruby-ivar">@answer</span> = <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-value">customer_id:</span>  <span class="ruby-ivar">@customer</span>,
+      <span class="ruby-value">question_id:</span>  <span class="ruby-ivar">@question</span>,
+      <span class="ruby-value">content:</span>      <span class="ruby-ivar">@answer</span>
+    )
+
+    <span class="ruby-comment">#on effectue l&#39;enregistrement</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@answer</span>.<span class="ruby-identifier">save</span>
+      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Information de securité enregistrée&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, <span class="ruby-string">&quot;Information de securité enregistrée&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Impossible d&#39;enregistrer les informations de securité&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-node">&quot;#{@answer.errors.full_messages}&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-unlockCustomerAccount" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">unlockCustomerAccount</span><span
+            class="method-args">(customer_id)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>debloquer le compte d&#39;un utilisateur</p>
+          
+          
+
+          
+          <div class="method-source-code" id="unlockCustomerAccount-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 448</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">unlockCustomerAccount</span>(<span class="ruby-identifier">customer_id</span>)
+  <span class="ruby-ivar">@customer</span> = <span class="ruby-identifier">customer_id</span>
+  <span class="ruby-identifier">customer</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find</span>(<span class="ruby-ivar">@customer</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Utilisateur inconnu&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-comment"># tout est bon, on met a jours les informations du two_fa</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">update</span>(<span class="ruby-value">two_fa:</span> <span class="ruby-string">&quot;authenticate&quot;</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, <span class="ruby-string">&quot;Utilisateur authentifie&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Impossible de mettre a jour les information de two_fa&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

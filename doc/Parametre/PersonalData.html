@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Parametre::PersonalData - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/darkfish.js"></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="../Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-cameroun">::cameroun</a>
+    
+    <li ><a href="#method-c-numeroCameroun">::numeroCameroun</a>
+    
+    <li ><a href="#method-c-numeroOperateurMobile">::numeroOperateurMobile</a>
+    
+    <li ><a href="#method-c-payUssd">::payUssd</a>
+    
+    <li ><a href="#method-c-setPersonalData">::setPersonalData</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Parametre::PersonalData">
+  <h1 id="class-Parametre::PersonalData" class="class">
+    class Parametre::PersonalData
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-cameroun" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">cameroun</span><span
+            class="method-args">(phone)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>permet de determiner si c&#39;est un numero du cmr</p>
+          
+          
+
+          
+          <div class="method-source-code" id="cameroun-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 335</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">cameroun</span>(<span class="ruby-identifier">phone</span>)
+  <span class="ruby-identifier">cameroun</span>        = <span class="ruby-node">%w(+237 00237 237)</span>
+  <span class="ruby-identifier">sous_mobile</span>     = <span class="ruby-node">%w(655 656 657 658 659 690 691 692 693 694 695 696 697 698 699 650 651 652 653 654 670 671 672 673 674 675 676 677 678 679 661)</span>
+  <span class="ruby-identifier">sous_fixe</span>       = <span class="ruby-node">%w()</span>
+  <span class="ruby-ivar">@phone</span>          = <span class="ruby-identifier">phone</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-comment">#recherche de la longueur du numero, 9 chiffre pour le cameroun</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@phone</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">9</span>
+    <span class="ruby-comment"># on recheche s&#39;il contien le prefixe +237 ou 00237 ou 237</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@phone</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-identifier">cameroun</span>)
+      <span class="ruby-comment"># on recupere la taille du phone pour savoir exactement ce qu&#39;il faut enlever</span>
+      <span class="ruby-identifier">taille</span> = <span class="ruby-ivar">@phone</span>.<span class="ruby-identifier">length</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">taille</span> <span class="ruby-operator">==</span> <span class="ruby-value">12</span> <span class="ruby-comment"># cas du 237</span>
+        <span class="ruby-ivar">@phone</span> = <span class="ruby-ivar">@phone</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">2</span>)
+        <span class="ruby-keyword">return</span> <span class="ruby-ivar">@phone</span>
+      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">taille</span> <span class="ruby-operator">==</span> <span class="ruby-value">13</span> <span class="ruby-comment"># cas +237</span>
+        <span class="ruby-ivar">@phone</span> = <span class="ruby-ivar">@phone</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">3</span>)
+        <span class="ruby-keyword">return</span> <span class="ruby-ivar">@phone</span>
+      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">taille</span> <span class="ruby-operator">==</span> <span class="ruby-value">14</span> <span class="ruby-comment"># cas 00237</span>
+        <span class="ruby-ivar">@phone</span> = <span class="ruby-ivar">@phone</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">4</span>)
+        <span class="ruby-keyword">return</span> <span class="ruby-ivar">@phone</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-numeroCameroun" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">numeroCameroun</span><span
+            class="method-args">(phone)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>recherche des plages de numeros de telephone @param [Integer] phone @return
+[Object] string</p>
+          
+          
+
+          
+          <div class="method-source-code" id="numeroCameroun-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 305</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">numeroCameroun</span>(<span class="ruby-identifier">phone</span>)
+  <span class="ruby-identifier">orange</span>    = <span class="ruby-node">%w(55 56 57 58 59 90 91 92 93 94 95 96 97 98 99)</span>  <span class="ruby-comment">#tableau des numeros orange</span>
+  <span class="ruby-identifier">mtn</span>       = <span class="ruby-node">%w(50 51 52 53 54 70 71 72 73 74 75 76 77 78 79)</span>  <span class="ruby-comment">#tableau des numeros MTN</span>
+  <span class="ruby-identifier">nexttel</span>   = <span class="ruby-node">%w(60 61 62 63 64 65 66 67 68 69)</span>              <span class="ruby-comment">#tableau des numeros nexttel</span>
+  <span class="ruby-identifier">camtel</span>    = <span class="ruby-node">%w(22 23 24)</span>
+  <span class="ruby-ivar">@phone</span>    = <span class="ruby-identifier">phone</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-comment">#On recherche la longueur des numeros de telephones qui doit etre 9 caracteres</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@phone</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">!=</span> <span class="ruby-value">9</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-comment">#recherche des numero orange en premier</span>
+    <span class="ruby-ivar">@phone_tmp</span> = <span class="ruby-ivar">@phone</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">2</span>]
+
+    <span class="ruby-comment"># on parcours le tableau</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@phone_tmp</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-identifier">orange</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@phone_tmp</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-identifier">mtn</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@phone_tmp</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-identifier">nexttel</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@phone_tmp</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-identifier">camtel</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-numeroOperateurMobile" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">numeroOperateurMobile</span><span
+            class="method-args">(phone)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>recherche des plages de numeros de telephone @param [Integer] phone @return
+[Object] string</p>
+          
+          
+
+          
+          <div class="method-source-code" id="numeroOperateurMobile-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 269</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">numeroOperateurMobile</span>(<span class="ruby-identifier">phone</span>)
+  
+  <span class="ruby-identifier">orange</span>    = <span class="ruby-node">%w(55 56 57 58 59 90 91 92 93 94 95 96 97 98 99)</span>  <span class="ruby-comment">#tableau des numeros orange</span>
+  <span class="ruby-identifier">mtn</span>       = <span class="ruby-node">%w(50 51 52 53 54 70 71 72 73 74 75 76 77 78 79)</span>  <span class="ruby-comment">#tableau des numeros MTN</span>
+  <span class="ruby-identifier">nexttel</span>   = <span class="ruby-node">%w(60 61 62 63 64 65 66 67 68 69)</span>                 <span class="ruby-comment">#tableau des numeros nexttel</span>
+  <span class="ruby-identifier">camtel</span>    = <span class="ruby-node">%w(22 23 24 32 33 34)</span>                             <span class="ruby-comment">#tableau des numero camtel</span>
+  <span class="ruby-ivar">@phone</span>    = <span class="ruby-identifier">phone</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Starting check network operator for #{@phone}...&quot;</span>
+
+  <span class="ruby-comment">#On recherche la longueur des numeros de telephones qui doit etre 9 caracteres</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@phone</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">!=</span> <span class="ruby-value">9</span> <span class="ruby-comment">#&gt; 10 || @phone.length &lt; 9</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-comment">#recherche des numero orange en premier</span>
+    <span class="ruby-ivar">@phone_tmp</span> = <span class="ruby-ivar">@phone</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">2</span>]
+
+    <span class="ruby-comment"># on parcours le tableau</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@phone_tmp</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-identifier">orange</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;orange&quot;</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@phone_tmp</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-identifier">mtn</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;mtn&quot;</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@phone_tmp</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-identifier">nexttel</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;nexttel&quot;</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@phone_tmp</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-identifier">camtel</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;camtel&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;inconnu&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-payUssd" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">payUssd</span><span
+            class="method-args">(token, marchand, amount, pasword)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Paiement via <a href="USSD.html">USSD</a> via
+Parametre::personalData::payUssd</p>
+          
+          
+
+          
+          <div class="method-source-code" id="payUssd-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 364</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">payUssd</span>(<span class="ruby-identifier">token</span>, <span class="ruby-identifier">marchand</span>, <span class="ruby-identifier">amount</span>, <span class="ruby-identifier">pasword</span>)
+  <span class="ruby-ivar">@client</span>     = <span class="ruby-identifier">token</span>
+  <span class="ruby-ivar">@marchand</span>   = <span class="ruby-identifier">marchand</span>
+  <span class="ruby-ivar">@amount</span>     = <span class="ruby-identifier">amount</span>.<span class="ruby-identifier">to_f</span>
+  <span class="ruby-ivar">@password</span>   = <span class="ruby-identifier">pasword</span>
+
+  <span class="ruby-comment"># on verifie l&#39;authenticité tu token recu</span>
+  <span class="ruby-identifier">customer</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authenticate_token</span>(<span class="ruby-ivar">@client</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Utilisateur inconnu&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-comment"># le customer existe, on cherche egalement a verifier le marchand</span>
+    <span class="ruby-identifier">merchant</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_phone</span>(<span class="ruby-ivar">@marchand</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">merchant</span>.<span class="ruby-identifier">blank?</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Impossible de trouver le marchand&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-comment"># on connais maintenant le marchand et le client, on peut effectuer les paiements</span>
+      <span class="ruby-comment"># on appel la fonction de paiement</span>
+      <span class="ruby-identifier">result</span> = <span class="ruby-constant">Client</span>.<span class="ruby-identifier">pay</span>(<span class="ruby-identifier">customer</span>.<span class="ruby-identifier">phone</span>, <span class="ruby-identifier">merchant</span>.<span class="ruby-identifier">phone</span>, <span class="ruby-ivar">@amount</span>, <span class="ruby-ivar">@password</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-setPersonalData" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">setPersonalData</span><span
+            class="method-args">(customer, phone, phone_sim, network_operator, uuid, imei, latitude, longitude, ip)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>@param [Object] customer @param [Object] phone @param [Object] phone_sim
+@param [Object] network_operator @param [Object] uuid @param [Object] imei
+@param [Object] latitude @param [Object] longitude @param [Object] ip</p>
+          
+          
+
+          
+          <div class="method-source-code" id="setPersonalData-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 233</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">setPersonalData</span>(<span class="ruby-identifier">customer</span>, <span class="ruby-identifier">phone</span>, <span class="ruby-identifier">phone_sim</span>, <span class="ruby-identifier">network_operator</span>, <span class="ruby-identifier">uuid</span>, <span class="ruby-identifier">imei</span>, <span class="ruby-identifier">latitude</span>, <span class="ruby-identifier">longitude</span>, <span class="ruby-identifier">ip</span>)
+  <span class="ruby-ivar">@customer</span>         = <span class="ruby-identifier">customer</span>
+  <span class="ruby-ivar">@phone</span>            = <span class="ruby-identifier">phone</span>
+  <span class="ruby-ivar">@phone_sim</span>        = <span class="ruby-identifier">phone_sim</span>
+  <span class="ruby-ivar">@network_operator</span> = <span class="ruby-identifier">network_operator</span>
+  <span class="ruby-ivar">@uuid</span>             = <span class="ruby-identifier">uuid</span>
+  <span class="ruby-ivar">@imei</span>             = <span class="ruby-identifier">imei</span>
+  <span class="ruby-ivar">@latitude</span>         = <span class="ruby-identifier">latitude</span>
+  <span class="ruby-ivar">@longitude</span>        = <span class="ruby-identifier">longitude</span>
+  <span class="ruby-ivar">@ip</span>               = <span class="ruby-identifier">ip</span>
+
+  <span class="ruby-comment"># on debute l&#39;enregistrement des informations personnelles</span>
+  <span class="ruby-identifier">personal</span> = <span class="ruby-constant">CustomerDatum</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-value">customer:</span>         <span class="ruby-ivar">@customer</span>,
+    <span class="ruby-value">phone:</span>            <span class="ruby-ivar">@phone</span>,
+    <span class="ruby-value">phone_sim:</span>        <span class="ruby-ivar">@phone_sim</span>,
+    <span class="ruby-value">network_operator:</span> <span class="ruby-ivar">@network_operator</span>,
+    <span class="ruby-value">uuid:</span>             <span class="ruby-ivar">@uuid</span>,
+    <span class="ruby-value">imei:</span>             <span class="ruby-ivar">@imei</span>,
+    <span class="ruby-value">latitude:</span>         <span class="ruby-ivar">@latitude</span>,
+    <span class="ruby-value">longitude:</span>        <span class="ruby-ivar">@longitude</span>,
+    <span class="ruby-value">customer_ip:</span>      <span class="ruby-ivar">@ip</span>
+    )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">personal</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Information peronnelle sauvegardée&quot;</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, <span class="ruby-string">&quot;Success&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Impossible de sauvegarder les informations peronnelles&quot;</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, <span class="ruby-node">&quot;Failed : #{personel.errors.full_messages}&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

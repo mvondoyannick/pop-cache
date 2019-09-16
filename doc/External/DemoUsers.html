@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class External::DemoUsers - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/darkfish.js"></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="../Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-Payment">::Payment</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-External::DemoUsers">
+  <h1 id="class-External::DemoUsers" class="class">
+    class External::DemoUsers
+  </h1>
+
+  <section class="description">
+    
+<p>permet de gerer l&#39;utilisateur demo, n&#39;ayant pas de compte</p>
+
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-Payment" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">Payment</span><span
+            class="method-args">(argv)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>@api <a href="DemoUsers.html">External::DemoUsers</a>.Payment(argv) @author
+mvondoyannick@gmail.com @param [Object] argv</p>
+          
+          
+
+          
+          <div class="method-source-code" id="Payment-source">
+            <pre><span class="ruby-comment"># File app/modules/external.rb, line 22</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-constant">Payment</span>(<span class="ruby-identifier ruby-title">argv</span>)
+  <span class="ruby-ivar">@customer_token</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:token</span>]
+  <span class="ruby-ivar">@customer_password</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:password</span>]
+  <span class="ruby-ivar">@merchant_phone</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:phone</span>]
+  <span class="ruby-ivar">@amount</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:amount</span>]
+  <span class="ruby-ivar">@hash</span> = <span class="ruby-identifier">rand</span>(<span class="ruby-value">11</span><span class="ruby-operator">**</span><span class="ruby-value">11</span>)
+  <span class="ruby-ivar">@ip</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:ip</span>]
+  <span class="ruby-ivar">@playerID</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:oneSignalID</span>]
+
+  <span class="ruby-comment"># get data geolocation from IP transaction</span>
+  <span class="ruby-comment"># TODO replace IP geolocation with lat/lon geolocation datas</span>
+  <span class="ruby-identifier">adress</span> = <span class="ruby-constant">DistanceMatrix</span><span class="ruby-operator">::</span><span class="ruby-constant">DistanceMatrix</span><span class="ruby-operator">::</span><span class="ruby-identifier">pays</span>(<span class="ruby-ivar">@ip</span>)
+
+  <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Starting phone payement ...&quot;</span>
+
+  <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Verifiying Account customer #{@customer_token} amount ...&quot;</span>
+
+  <span class="ruby-comment"># Recherche le customer pour authentification</span>
+  <span class="ruby-identifier">customer</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-ivar">@customer_token</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">valid_password?</span>(<span class="ruby-ivar">@customer_password</span>)
+
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Customer/Payer found and all his data are ok ...&quot;</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">amount</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">&lt;</span> <span class="ruby-ivar">@amount</span>.<span class="ruby-identifier">to_f</span>
+
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-node">&quot;#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} le solde de votre compte est insuffisant pour effectuer la transaction. Merci de le recharger et de réessayer.&quot;</span>
+
+    <span class="ruby-keyword">else</span>
+
+      <span class="ruby-comment"># Verifier que le client ne se paye pas a lui même</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">phone</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@merchant_phone</span>
+
+        <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-node">&quot;#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} vous ne pouvez pas vous payer à vous même. Merci de changer le numéro du marchand et de réessayer.&quot;</span>
+
+      <span class="ruby-keyword">else</span>
+
+        <span class="ruby-comment"># verifier qu&#39;il s&#39;agisse bien d&#39;un numero du Cameroun...pour le moment</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">PersonalData</span><span class="ruby-operator">::</span><span class="ruby-identifier">numeroCameroun</span>(<span class="ruby-ivar">@merchant_phone</span>)
+
+          <span class="ruby-comment"># Ce numéro est un numéro camerounais, we can process</span>
+          <span class="ruby-comment">#searching for merchant</span>
+          <span class="ruby-identifier">merchant</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_phone</span>(<span class="ruby-ivar">@merchant_phone</span>)
+          <span class="ruby-keyword">if</span> <span class="ruby-identifier">merchant</span>.<span class="ruby-identifier">blank?</span>
+            <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Merchant phone don&#39;t found inside the plateforme...&quot;</span>
+            <span class="ruby-comment"># on n&#39;a pas trouver le marchand, on le cree directement et on credit son compte puis le le notifie par SMS</span>
+            <span class="ruby-identifier">new_merchant</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">new</span>(
+              <span class="ruby-value">email:</span> <span class="ruby-constant">Faker</span><span class="ruby-operator">::</span><span class="ruby-constant">Internet</span>.<span class="ruby-identifier">email</span>,
+              <span class="ruby-value">password:</span> <span class="ruby-value">123456</span>, <span class="ruby-comment">#Faker::Internet.password,</span>
+              <span class="ruby-value">name:</span> <span class="ruby-constant">Faker</span><span class="ruby-operator">::</span><span class="ruby-constant">Name</span>.<span class="ruby-identifier">first_name</span>,
+              <span class="ruby-value">second_name:</span> <span class="ruby-constant">Faker</span><span class="ruby-operator">::</span><span class="ruby-constant">Name</span>.<span class="ruby-identifier">last_name</span>,
+              <span class="ruby-value">phone:</span> <span class="ruby-ivar">@merchant_phone</span>,
+              <span class="ruby-value">cni:</span> <span class="ruby-constant">Faker</span><span class="ruby-operator">::</span><span class="ruby-constant">Code</span>.<span class="ruby-identifier">imei</span>,
+              <span class="ruby-value">type_id:</span> <span class="ruby-value">2</span>,
+              <span class="ruby-value">sexe:</span> <span class="ruby-constant">Faker</span><span class="ruby-operator">::</span><span class="ruby-constant">Gender</span>.<span class="ruby-identifier">binary_type</span>
+            )
+
+            <span class="ruby-comment">#trying to save new demo customer</span>
+            <span class="ruby-keyword">if</span> <span class="ruby-identifier">new_merchant</span>.<span class="ruby-identifier">save</span>
+              <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Save new merchant informations DB.&quot;</span>
+              <span class="ruby-comment">#trying to create new_merchant account and store data amount</span>
+              <span class="ruby-identifier">new_merchant_account</span> = <span class="ruby-constant">Account</span>.<span class="ruby-identifier">new</span>(
+                <span class="ruby-value">customer_id:</span> <span class="ruby-identifier">new_merchant</span>.<span class="ruby-identifier">id</span>,
+                <span class="ruby-value">amount:</span> <span class="ruby-ivar">@amount</span>
+              )
+
+              <span class="ruby-comment"># creating account</span>
+              <span class="ruby-keyword">if</span> <span class="ruby-identifier">new_merchant_account</span>.<span class="ruby-identifier">save</span>
+
+                <span class="ruby-identifier">client</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">new</span>(
+                  <span class="ruby-value">customer_id:</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">id</span>,
+                  <span class="ruby-value">amount:</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-ivar">@amount</span>),
+                  <span class="ruby-value">context:</span> <span class="ruby-string">&#39;phone&#39;</span>,
+                  <span class="ruby-value">flag:</span> <span class="ruby-string">&#39;paiement&#39;</span>.<span class="ruby-identifier">upcase</span>,
+                  <span class="ruby-value">code:</span> <span class="ruby-node">&quot;EXT_PAY_#{@hash}&quot;</span>,
+                  <span class="ruby-value">region:</span> <span class="ruby-identifier">adress</span>
+                )
+
+                <span class="ruby-comment"># Historique du client</span>
+                <span class="ruby-keyword">if</span> <span class="ruby-identifier">client</span>.<span class="ruby-identifier">save</span>
+
+                  <span class="ruby-comment"># Historique du marchand virtuel pour le moment</span>
+                  <span class="ruby-identifier">marchand</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">new</span>(
+                    <span class="ruby-value">customer_id:</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">id</span>,
+                    <span class="ruby-value">amount:</span> <span class="ruby-ivar">@amount</span>,
+                    <span class="ruby-value">context:</span> <span class="ruby-string">&#39;phone&#39;</span>,
+                    <span class="ruby-value">flag:</span> <span class="ruby-string">&#39;paiement&#39;</span>.<span class="ruby-identifier">upcase</span>,
+                    <span class="ruby-value">code:</span> <span class="ruby-node">&quot;EXT_PAY_#{@hash}&quot;</span>,
+                    <span class="ruby-value">region:</span> <span class="ruby-identifier">adress</span>
+                  )
+
+                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">marchand</span>.<span class="ruby-identifier">save</span>
+
+                    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Save new merchant account information&quot;</span>
+                    <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span>(<span class="ruby-ivar">@merchant_phone</span>, <span class="ruby-node">&quot;Vous venez de recevoir un Paiement de #{@amount} F CFA dans votre numéro de telephone #{@merchant_phone}. ID EXT_PAY_#{@hash}. Details : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}.&quot;</span>)
+
+                    <span class="ruby-comment">#Envoi d&#39;une push notification au marchand</span>
+                    <span class="ruby-constant">OneSignal</span><span class="ruby-operator">::</span><span class="ruby-constant">OneSignalSend</span>.<span class="ruby-identifier">genericOneSignal</span>(<span class="ruby-ivar">@playerID</span>, <span class="ruby-node">&quot;#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} Vous venez d&#39;effectuer une paiement de #{@amount} FC, votre compte a été débité de #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} FC incluant les frais de #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC. Votre solde est de #{customer.account.amount} FC&quot;</span>)
+
+                    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, {
+                      <span class="ruby-value">amount:</span> <span class="ruby-ivar">@amount</span>,
+                      <span class="ruby-value">device:</span> <span class="ruby-string">&#39;FC&#39;</span>,
+                      <span class="ruby-value">frais:</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-ivar">@amount</span>).<span class="ruby-identifier">to_f</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@amount</span>.<span class="ruby-identifier">to_f</span>,
+                      <span class="ruby-value">total:</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-ivar">@amount</span>).<span class="ruby-identifier">to_f</span>.<span class="ruby-identifier">round</span>(<span class="ruby-value">2</span>),
+                      <span class="ruby-value">receiver:</span> <span class="ruby-ivar">@merchant_phone</span>, <span class="ruby-comment"># retourne ne numero de l&#39;utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,</span>
+                      <span class="ruby-value">sender:</span> <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-ivar">@customer_token</span>).<span class="ruby-identifier">complete_name</span>,
+                      <span class="ruby-value">date:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d-%m-%Y, %Hh:%M&quot;</span>),
+                      <span class="ruby-value">status:</span> <span class="ruby-string">&quot;PAIEMENT EFFECTUÉ&quot;</span>
+                    } <span class="ruby-comment">#&quot;Paiement effectué d&#39;un montant de #{Parametre::Parametre::agis_percentage(@amount)} à #{@merchant_phone}&quot;</span>
+
+                  <span class="ruby-keyword">else</span>
+
+                    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-node">&quot;Impossible de mettre à jour l&#39;historique du marchand virtuel : #{marchand.errors.full_messages}&quot;</span>
+
+                  <span class="ruby-keyword">end</span>
+                <span class="ruby-keyword">else</span>
+
+                  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-node">&quot;Impossible de mettre a jour l&#39;historique du payeur/Client : #{client.errors.full_messages}&quot;</span>
+
+                <span class="ruby-keyword">end</span>
+              <span class="ruby-keyword">end</span>
+            <span class="ruby-keyword">end</span>
+
+          <span class="ruby-keyword">else</span>
+            <span class="ruby-comment">#merchant exist in DB, juste update his account</span>
+            <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;This merchant phone exist in the DB ... and data are #{customer.as_json}&quot;</span>
+            <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">update</span>(<span class="ruby-value">amount:</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">amount</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@amount</span>.<span class="ruby-identifier">to_f</span>)
+
+              <span class="ruby-identifier">m_account</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_phone</span>(<span class="ruby-ivar">@merchant_phone</span>).<span class="ruby-identifier">account</span>
+
+              <span class="ruby-comment"># trigger result for merchant</span>
+              <span class="ruby-keyword">if</span> <span class="ruby-identifier">m_account</span>.<span class="ruby-identifier">blank?</span>
+                <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Compte inexistant&quot;</span>
+              <span class="ruby-keyword">else</span>
+                <span class="ruby-keyword">if</span> <span class="ruby-identifier">m_account</span>.<span class="ruby-identifier">update</span>(<span class="ruby-value">amount:</span> <span class="ruby-identifier">m_account</span>.<span class="ruby-identifier">amount</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@amount</span>.<span class="ruby-identifier">to_f</span>)
+                  <span class="ruby-identifier">marchant</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">new</span>(
+                    <span class="ruby-value">customer_id:</span> <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_phone</span>(<span class="ruby-ivar">@merchant_phone</span>).<span class="ruby-identifier">id</span>,
+                    <span class="ruby-value">amount:</span> <span class="ruby-ivar">@amount</span>,
+                    <span class="ruby-value">context:</span> <span class="ruby-string">&#39;phone&#39;</span>,
+                    <span class="ruby-value">flag:</span> <span class="ruby-string">&#39;encaissement&#39;</span>.<span class="ruby-identifier">upcase</span>,
+                    <span class="ruby-value">code:</span> <span class="ruby-node">&quot;EXT_PAY_#{@hash}&quot;</span>,
+                    <span class="ruby-value">region:</span> <span class="ruby-identifier">adress</span>
+                  )
+  
+                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">marchant</span>.<span class="ruby-identifier">save</span>
+  
+                    <span class="ruby-identifier">client</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">new</span>(
+                      <span class="ruby-value">customer_id:</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">id</span>,
+                      <span class="ruby-value">amount:</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-ivar">@amount</span>),
+                      <span class="ruby-value">context:</span> <span class="ruby-string">&#39;phone&#39;</span>,
+                      <span class="ruby-value">flag:</span> <span class="ruby-string">&#39;paiement&#39;</span>.<span class="ruby-identifier">upcase</span>,
+                      <span class="ruby-value">code:</span> <span class="ruby-node">&quot;EXT_PAY_#{@hash}&quot;</span>,
+                      <span class="ruby-value">region:</span> <span class="ruby-identifier">adress</span>
+                    )
+  
+                    <span class="ruby-keyword">if</span> <span class="ruby-identifier">client</span>.<span class="ruby-identifier">save</span>
+                      <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span>(<span class="ruby-ivar">@merchant_phone</span>, <span class="ruby-node">&quot;Bonjour, un Paiement d&#39;un montant de #{@amount} F CFA vient d etre effectue dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Le solde de votre compte est maintenant de #{m_account.amount} F CFA. Rapprochez-vous d&#39;une agence UBA ou creer un compte PayMeQuick.&quot;</span>)
+                      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, {
+                        <span class="ruby-value">amount:</span> <span class="ruby-ivar">@amount</span>,
+                        <span class="ruby-value">device:</span> <span class="ruby-string">&#39;XAF&#39;</span>,
+                        <span class="ruby-value">frais:</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-ivar">@amount</span>).<span class="ruby-identifier">to_f</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@amount</span>.<span class="ruby-identifier">to_f</span>,
+                        <span class="ruby-value">total:</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-ivar">@amount</span>).<span class="ruby-identifier">to_f</span>.<span class="ruby-identifier">round</span>(<span class="ruby-value">2</span>),
+                        <span class="ruby-value">receiver:</span> <span class="ruby-ivar">@merchant_phone</span>, <span class="ruby-comment"># retourne ne numero de l&#39;utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,</span>
+                        <span class="ruby-value">sender:</span> <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-ivar">@customer_token</span>).<span class="ruby-identifier">complete_name</span>,
+                        <span class="ruby-value">date:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d-%m-%Y, %Hh:%M&quot;</span>),
+                        <span class="ruby-value">status:</span> <span class="ruby-string">&quot;PAIEMENT EFFECTUÉ&quot;</span>
+                      }<span class="ruby-comment">#,&quot;Paiement d&#39;un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué au  #{@merchant_phone}.&quot;</span>
+                    <span class="ruby-keyword">else</span>
+  
+                      <span class="ruby-comment"># Notify admin for this errors</span>
+                      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-node">&quot;Impossible de sauver l&#39;historique : #{client.errors.full_messages}&quot;</span>
+                    <span class="ruby-keyword">end</span>
+  
+                  <span class="ruby-keyword">else</span>
+  
+                    <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Failed to save history on the plateforme&quot;</span>
+                    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-node">&quot;Impossible de sauver l&#39;historique : #{marchand.errors.full_messages}&quot;</span>
+  
+                  <span class="ruby-keyword">end</span>
+  
+                <span class="ruby-keyword">else</span>
+  
+                  <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Transaction failed during process&quot;</span>
+                  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-node">&quot;Une erreur est survenue durant la transaction de paiement : #{m_account.errors.full_messages}&quot;</span>
+  
+                <span class="ruby-keyword">end</span>
+              <span class="ruby-keyword">end</span>
+
+            <span class="ruby-keyword">else</span>
+
+              <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Impossible de mettre a jour les informations du client&quot;</span>
+              <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Impossible de mettre à jour les informations du client&quot;</span>
+
+            <span class="ruby-keyword">end</span>
+
+          <span class="ruby-keyword">end</span>
+
+        <span class="ruby-keyword">else</span>
+
+          <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-node">&quot;Ce numéro #{@merchant_phone} ne semble pas etre un numéro appartenant au Cameroun. Merci de vérifier ce numéro et recommencer.&quot;</span>
+
+        <span class="ruby-keyword">end</span>
+
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-string">&quot;User password invalid&quot;</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Mot de passe invalid&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

@@ -1,1 +1,61 @@
-lorem home
+<h4>Historique de transaction</h4>
+<br>
+
+<div class="row">
+    <div class="col-12">
+
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col"><i class="fa fa-users"></i>&nbsp;Client</th>
+                <th scope="col"><i class="fa fa-credit-card"></i>&nbsp;Montant reçu</th>
+                <th scope="col"><i class="fa fa-calendar"></i>&nbsp;Date</th>
+                <th scope="col"><i class="fa fa-times"></i>&nbsp;Code transaction</th>
+                <th scope="col"><i class="fa fa-archive"></i>&nbsp;Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% History.last(10).each do |history| %>
+                    <tr>
+                        <th scope="row"><%= history.id %></th>
+                        <td><%= Customer.find(history.customer_id).complete_name %></td>
+                        <td><%= history.amount %> F CFA</td>
+                        <td><%= history.created_at %> au <%= history.region %></td>
+                        <td>
+                            <%= link_to history.code, nil %>
+                        </td>
+                        <td>
+                            <%= link_to nil, class: 'btn btn-outline-secondary' do %>
+                                <i class="fa fa-archive"></i>
+                                Archiver
+                            <% end %>
+                        </td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Partager cette vue</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary">Partager</button>
+      </div>
+    </div>
+  </div>
+</div>

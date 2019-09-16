@@ -288,7 +288,7 @@ class Client
   end
 
 
-  #CHECK CUSTOMER DEVICE ID
+  # CHECK CUSTOMER DEVICE ID
   # detail verify if customer Device has been change on new login
   # param [Object] argc
   # TODO update customer locale for translation

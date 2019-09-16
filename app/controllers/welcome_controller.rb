@@ -1,5 +1,12 @@
 class WelcomeController < ApplicationController
   def home
+    render layout: "layouts/dashboard/application"
+  end
+
+  def enterprise
+  end
+
+  def particulier
   end
 
   def webview

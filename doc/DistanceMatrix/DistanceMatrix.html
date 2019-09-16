@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class DistanceMatrix::DistanceMatrix - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/darkfish.js"></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="../Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-duration">::duration</a>
+    
+    <li ><a href="#method-c-geocoder_search">::geocoder_search</a>
+    
+    <li ><a href="#method-c-get_distance">::get_distance</a>
+    
+    <li ><a href="#method-c-pays">::pays</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-DistanceMatrix::DistanceMatrix">
+  <h1 id="class-DistanceMatrix::DistanceMatrix" class="class">
+    class DistanceMatrix::DistanceMatrix
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-duration" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">duration</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>temps de duree du&#39;un procedure</p>
+          
+          
+
+          
+          <div class="method-source-code" id="duration-source">
+            <pre><span class="ruby-comment"># File app/modules/distance_matrix.rb, line 24</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">duration</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-geocoder_search" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">geocoder_search</span><span
+            class="method-args">(lat, lon)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>retourn l&#39;adresse en fonction de la latitude et de la longitude</p>
+
+<pre>@param [Object] lat
+@param [Object] lon</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="geocoder_search-source">
+            <pre><span class="ruby-comment"># File app/modules/distance_matrix.rb, line 32</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">geocoder_search</span>(<span class="ruby-identifier">lat</span>, <span class="ruby-identifier">lon</span>)
+    <span class="ruby-ivar">@lat</span> = <span class="ruby-identifier">lat</span>.<span class="ruby-identifier">to_i</span>
+    <span class="ruby-ivar">@lon</span> = <span class="ruby-identifier">lon</span>.<span class="ruby-identifier">to_i</span>
+    <span class="ruby-identifier">results</span> = <span class="ruby-constant">Geocoder</span>.<span class="ruby-identifier">search</span>([<span class="ruby-identifier">lat</span>, <span class="ruby-identifier">lon</span>])
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">address</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-get_distance" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">get_distance</span><span
+            class="method-args">(lat1, long1, lat2, long2)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="get_distance-source">
+            <pre><span class="ruby-comment"># File app/modules/distance_matrix.rb, line 4</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">get_distance</span>(<span class="ruby-identifier">lat1</span>, <span class="ruby-identifier">long1</span>, <span class="ruby-identifier">lat2</span>, <span class="ruby-identifier">long2</span>)
+  <span class="ruby-ivar">@lat1</span> = <span class="ruby-identifier">lat1</span>
+  <span class="ruby-ivar">@lon1</span> = <span class="ruby-identifier">long1</span>
+  <span class="ruby-ivar">@lat2</span> = <span class="ruby-identifier">lat2</span>
+  <span class="ruby-ivar">@lon2</span> = <span class="ruby-identifier">long2</span>
+
+  <span class="ruby-comment">#calcul de la distance</span>
+  <span class="ruby-identifier">distance</span> = <span class="ruby-constant">Geocoder</span><span class="ruby-operator">::</span><span class="ruby-constant">Calculations</span>.<span class="ruby-identifier">distance_between</span>([<span class="ruby-ivar">@lat1</span>,<span class="ruby-ivar">@lon1</span>], [<span class="ruby-ivar">@lat2</span>,<span class="ruby-ivar">@lon2</span>], <span class="ruby-value">units:</span> <span class="ruby-value">:km</span>)<span class="ruby-operator">*</span><span class="ruby-value">1000</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">distance</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">200000</span> <span class="ruby-comment">#desactivation temporaire de la geolocalisation</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Distance reelle (en metre) : #{distance} m&quot;</span>
+      <span class="ruby-constant">OneSignal</span><span class="ruby-operator">::</span><span class="ruby-constant">OneSignalSend</span>.<span class="ruby-identifier">genericOneSignal</span>(<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;Vous etes trop loin de votre marchand pour effectuer cette opération&quot;</span>, <span class="ruby-string">&quot;You are far from your merchant to finalize this transaction&quot;</span>)
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, <span class="ruby-identifier">distance</span>
+  <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Distance reelle (en metre): #{distance} m&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, <span class="ruby-string">&quot;Vous etes trop eloigné de votre vendeur!&quot;</span>, <span class="ruby-identifier">distance</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-pays" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">pays</span><span
+            class="method-args">(ip)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Permet de rechercher via l&#39;adresse IP</p>
+
+<pre>@param [Object] ip</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="pays-source">
+            <pre><span class="ruby-comment"># File app/modules/distance_matrix.rb, line 41</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">pays</span>(<span class="ruby-identifier">ip</span>)
+  <span class="ruby-ivar">@ip</span>   = <span class="ruby-identifier">ip</span>
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">results</span> = <span class="ruby-constant">Geocoder</span>.<span class="ruby-identifier">search</span>(<span class="ruby-ivar">@ip</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">region</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Geocoder</span><span class="ruby-operator">::</span><span class="ruby-constant">NetworkError</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;Une erreur reseau est survenu durant l&#39;obtention des information sur l&#39;adresse IP&quot;</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">NoMethodError</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;Impossible de continuer, une erreur FATAL est survenue&quot;</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">StandardError</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-node">&quot;Une erreur est survenue : #{e}&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

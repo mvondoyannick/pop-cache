@@ -11,11 +11,11 @@ class Customer < ApplicationRecord
   has_one :abonnement, dependent: :destroy       # supprimer les abonnements si le customer est supprimé
 
 
-  before_save :generate_apikey, on: :create
-  before_save :generate_code, on: :create
-  before_save :set_hand, on: :create
-  before_save :setName, on: :create
-  before_save :set_cni, on: :create
+  before_save :generate_apikey, unless: :create
+  before_save :generate_code, unless: :create
+  before_save :set_hand, unless: :create
+  before_save :setName, unless: :create
+  before_save :set_cni, unless: :create
 
   # Create CustomerDatum after new Customer creation
   after_create :set_customer_datum

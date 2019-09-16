@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Sms - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-mppp">::mppp</a>
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-c-nexah">::nexah</a>
+    
+    <li ><a href="#method-c-resend">::resend</a>
+    
+    <li ><a href="#method-c-send">::send</a>
+    
+    <li ><a href="#method-c-sender">::sender</a>
+    
+    <li ><a href="#method-c-sms_to_many">::sms_to_many</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Sms">
+  <h1 id="class-Sms" class="class">
+    class Sms
+  </h1>
+
+  <section class="description">
+    
+<p>SEND SMS FROM EVERYWHERE INSIDE THE APP</p>
+
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-mppp" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">mppp</span><span
+            class="method-args">(msg)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="mppp-source">
+            <pre><span class="ruby-comment"># File app/modules/sms.rb, line 30</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">mppp</span>(<span class="ruby-identifier">msg</span>)
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">require</span> <span class="ruby-string">&#39;httparty&#39;</span>
+    <span class="ruby-identifier">moussi</span> = <span class="ruby-string">&quot;697085701&quot;</span>
+    <span class="ruby-ivar">@msg</span> = <span class="ruby-identifier">msg</span>
+    <span class="ruby-comment">#@sunday_message_fr = &quot;Suivez-nous sur Facebook https://web.facebook.com/ministereparlaparoleprophetique/ et Youtube : https://www.youtube.com/channel/UCU3kgsHKEXaeGe0BkTWAT2Q . Ministere Par la Parole Prophetique MPPP&quot;</span>
+    <span class="ruby-comment">#@sunday_message_en = &quot;Follow us on Facebook https://web.facebook.com/ministereparlaparoleprophetique/ and Youtube https://www.youtube.com/channel/UCU3kgsHKEXaeGe0BkTWAT2Q . Ministry By the Prophetic Word MPPP&quot;</span>
+    <span class="ruby-comment">#@message = &quot;Bonjour freres dans le Seigneur Jesus Christ, comme information nous sommes deja au nombre de 27 memebres pret a soutenir/combattre/mediter/prier/jeuner dans l&#39;eglise pour l&#39;oeuvre de Dieu. Notre groupe Whatsapp est https://chat.whatsapp.com/KFiT1BWtYIVDdNjXNy9v0S pour venir partager et discuter. Be bless&quot;</span>
+    <span class="ruby-comment">#@message_en = &quot;Hello brothers in Jesus Christ. Do not forget the MPPP MEN&#39;S MOVEMENT MEETING tonight, Tuesday, June 18, 2019 at 7PM, within the MPPP Ndokoti. In case of difficulties, thank you to inform Brother MOUSSI Emmanuel at #{moussi}. Be Blessed.&quot;</span>
+    <span class="ruby-comment">#@message_fr = &quot;Bonjour, nous n&#39;avons pas encore fini de parler a Dieu pour notre Nation, notre situation, notre Ministere, nos freres/soeurs, nos projets, notre communaute ..., venez ce soir au MPPP a 19h crier a Dieu dans une priere de feu au sein du MOUVEMENT DES HOMMES. Be Blessed&quot;</span>
+    <span class="ruby-ivar">@phone</span> = <span class="ruby-node">%w(667720795 696128100 691905894 697335061 655513783 679161650 696207656 699554516 678875817 699554516 678875817 697386043 651865147 691451189 699627020 690349993 699354847 680300412 658768305 697823712 650669486 694662860 696444886 671483629 697085701 676114212 676667626 694168288 695961216 655047888 678681246 693640832 676690300 676114212 697823712 650669486 694349349 699554516)</span>
+    <span class="ruby-comment">#@phone = %w(697335061 691451189)</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;#{@phone.count} numéro(s) recevront le message de #{@msg.length} caractere(s) via SMS!&quot;</span>
+    <span class="ruby-ivar">@phone</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">data</span><span class="ruby-operator">|</span>
+      <span class="ruby-constant">HTTParty</span>.<span class="ruby-identifier">get</span>(<span class="ruby-node">&quot;https://www.agis-as.com/epolice/index.php?telephone=#{data}&amp;message=#{@msg}&quot;</span>)
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;message send to #{data}&quot;</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, <span class="ruby-node">&quot;envoyé à #{@phone.count} personnes à #{Time.now}&quot;</span>
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">StandardError</span>, <span class="ruby-constant">Timeout</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>, <span class="ruby-constant">NetworkError</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>
+
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Une error est survenue! La connexion internet semble etre instable&quot;</span>
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Une erreur est survenue : #{exception}&quot;</span>
+
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(phone, message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File app/modules/sms.rb, line 3</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">phone</span>, <span class="ruby-identifier">message</span>)
+    <span class="ruby-identifier">$phone</span> = <span class="ruby-identifier">phone</span>
+    <span class="ruby-identifier">$message</span> = <span class="ruby-identifier">message</span>.<span class="ruby-identifier">encode</span>(<span class="ruby-string">&quot;UTF-8&quot;</span>, <span class="ruby-string">&quot;Windows-1252&quot;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-nexah" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">nexah</span><span
+            class="method-args">(phone, msg)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>using nexah SMS plateform</p>
+          
+          
+
+          
+          <div class="method-source-code" id="nexah-source">
+            <pre><span class="ruby-comment"># File app/modules/sms.rb, line 98</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">nexah</span>(<span class="ruby-identifier">phone</span>, <span class="ruby-identifier">msg</span>)
+  <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Starting nexah plateform API&quot;</span>
+
+  <span class="ruby-ivar">@msg</span> = <span class="ruby-identifier">msg</span>
+  <span class="ruby-ivar">@phone</span> = <span class="ruby-identifier">phone</span>
+
+  <span class="ruby-comment">#starting post request</span>
+  <span class="ruby-identifier">result</span> = <span class="ruby-constant">HTTParty</span>.<span class="ruby-identifier">post</span>(<span class="ruby-string">&quot;https://smsvas.com/bulk/public/index.php/api/v1/sendsms&quot;</span>, 
+    <span class="ruby-value">:body</span> <span class="ruby-operator">=&gt;</span> { 
+      <span class="ruby-value">user:</span> <span class="ruby-string">&quot;info@agis-as.com&quot;</span>,
+      <span class="ruby-value">password:</span> <span class="ruby-string">&quot;agis.as19&quot;</span>,
+      <span class="ruby-value">senderid:</span> <span class="ruby-string">&quot;PAYMEQUICK&quot;</span>,
+      <span class="ruby-value">sms:</span> <span class="ruby-ivar">@msg</span>,
+      <span class="ruby-value">mobiles:</span> <span class="ruby-ivar">@phone</span>
+    }.<span class="ruby-identifier">to_json</span>,
+    <span class="ruby-value">:headers</span> <span class="ruby-operator">=&gt;</span> { 
+      <span class="ruby-string">&#39;Content-Type&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;application/json&#39;</span>
+    } 
+  )
+
+  <span class="ruby-comment">#return response</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-resend" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">resend</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="resend-source">
+            <pre><span class="ruby-comment"># File app/modules/sms.rb, line 21</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">resend</span>
+    <span class="ruby-identifier">require</span> <span class="ruby-string">&#39;httparty&#39;</span>
+
+    <span class="ruby-constant">HTTParty</span>.<span class="ruby-identifier">get</span>(<span class="ruby-node">&quot;https://www.agis-as.com/epolice/index.php?telephone=#{$phone}&amp;message=#{$message}&quot;</span>)
+    <span class="ruby-comment">#envoi du SMS via HTTPatrty</span>
+
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-send" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">send</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="send-source">
+            <pre><span class="ruby-comment"># File app/modules/sms.rb, line 12</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">send</span>
+    <span class="ruby-identifier">require</span> <span class="ruby-string">&#39;httparty&#39;</span>
+
+    <span class="ruby-identifier">status</span> = <span class="ruby-constant">HTTParty</span>.<span class="ruby-identifier">get</span>(<span class="ruby-node">&quot;https://www.agis-as.com/epolice/index.php?telephone=#{$phone}&amp;message=#{$message}&quot;</span>)
+    <span class="ruby-comment">#envoi du SMS via HTTPatrty</span>
+
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, <span class="ruby-identifier">status</span>.<span class="ruby-identifier">as_json</span>(<span class="ruby-value">only:</span> [<span class="ruby-string">&quot;date&quot;</span>, <span class="ruby-string">&quot;connection&quot;</span>])
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-sender" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">sender</span><span
+            class="method-args">(phone, message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="sender-source">
+            <pre><span class="ruby-comment"># File app/modules/sms.rb, line 61</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">sender</span>(<span class="ruby-identifier">phone</span>, <span class="ruby-identifier">message</span>)
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-ivar">@phone</span>    = <span class="ruby-identifier">phone</span>
+    <span class="ruby-ivar">@message</span>  = <span class="ruby-identifier">message</span>
+
+    <span class="ruby-constant">HTTParty</span>.<span class="ruby-identifier">get</span>(<span class="ruby-node">&quot;https://www.agis-as.com/epolice/index.php?telephone=#{@phone}&amp;message=#{@message}&quot;</span>)
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Une erreur est survenue : #{exception}&quot;</span>
+
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-sms_to_many" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">sms_to_many</span><span
+            class="method-args">(argv, message=&quot;empty SMS&quot;)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Send notification to many users @param [Object] argv</p>
+          
+          
+
+          
+          <div class="method-source-code" id="sms_to_many-source">
+            <pre><span class="ruby-comment"># File app/modules/sms.rb, line 79</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">sms_to_many</span>(<span class="ruby-identifier">argv</span>, <span class="ruby-identifier">message</span>=<span class="ruby-string">&quot;empty SMS&quot;</span>)
+
+  <span class="ruby-identifier">argv</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword">begin</span>
+
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Starting sending sms to ... #{value}, with message #{message}&quot;</span>
+      <span class="ruby-identifier">request</span> = <span class="ruby-constant">HTTParty</span>.<span class="ruby-identifier">get</span>(<span class="ruby-node">&quot;https://www.agis-as.com/epolice/index.php?telephone=#{value}&amp;message=#{message}&quot;</span>)
+
+    <span class="ruby-keyword">rescue</span> <span class="ruby-constant">StandardError</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>
+
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Une erreur est survenue : #{e}&quot;</span>
+
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

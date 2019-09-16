@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Parametre::Profiles - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/darkfish.js"></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="../Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-create">::create</a>
+    
+    <li ><a href="#method-c-delete">::delete</a>
+    
+    <li ><a href="#method-c-read">::read</a>
+    
+    <li ><a href="#method-c-search">::search</a>
+    
+    <li ><a href="#method-c-update">::update</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Parametre::Profiles">
+  <h1 id="class-Parametre::Profiles" class="class">
+    class Parametre::Profiles
+  </h1>
+
+  <section class="description">
+    
+<p>Parametres d&#39;informations de l&#39;utilisateur</p>
+
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-create" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">create</span><span
+            class="method-args">(argv, message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>CREATE NEW USER PROFILE ON THE PLATEFORM</p>
+
+<pre>@param [Object] argv
+@param [String] message</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="create-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 594</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">create</span>(<span class="ruby-identifier">argv</span>, <span class="ruby-identifier">message</span>)
+  <span class="ruby-comment"># Transaction datas</span>
+  <span class="ruby-identifier">token</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:token</span>]
+  <span class="ruby-identifier">amount</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:amount</span>]
+
+  <span class="ruby-comment"># Localisationo Datas</span>
+  <span class="ruby-identifier">ip</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:ip</span>]
+  <span class="ruby-identifier">lat</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:latitude</span>]
+  <span class="ruby-identifier">long</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:longitude</span>]
+
+  <span class="ruby-comment">#devise datas</span>
+  <span class="ruby-identifier">imei</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:imei</span>]
+  <span class="ruby-identifier">uuid</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:uuid</span>]
+
+
+  <span class="ruby-identifier">date</span> = <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">now</span>   <span class="ruby-comment"># Current date transaction profile</span>
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>
+
+  <span class="ruby-comment"># find customer on the plateforme, raise ActiveRecord::RecordNotFound once failed</span>
+  <span class="ruby-identifier">customer</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-identifier">token</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-comment">#raise ActiveRecord::RecordNotFound I18n.t(&quot;customerNotFound&quot;, locale: locale)</span>
+    <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span><span class="ruby-operator">::</span><span class="ruby-identifier">info</span> <span class="ruby-string">&quot;customer not found, no profile!&quot;</span>
+    <span class="ruby-identifier">exit</span>(<span class="ruby-value">:ok</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-comment"># Find potential existing customer profile</span>
+    <span class="ruby-identifier">profile</span> = <span class="ruby-constant">Profile</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">customer_id:</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">id</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">profile</span>.<span class="ruby-identifier">blank?</span>
+      <span class="ruby-comment"># Not found existing customer profile so we can create new profile information</span>
+      <span class="ruby-identifier">new_profile</span> = <span class="ruby-constant">Profile</span>.<span class="ruby-identifier">new</span>(
+        <span class="ruby-value">customer_id:</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">id</span>,
+        <span class="ruby-value">amount:</span> <span class="ruby-identifier">amount</span>,
+        <span class="ruby-value">ip:</span> <span class="ruby-identifier">ip</span>,
+        <span class="ruby-value">lat:</span> <span class="ruby-identifier">lat</span>,
+        <span class="ruby-value">long:</span> <span class="ruby-identifier">long</span>,
+      )
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-comment"># call method that update profile for customer Data</span>
+      <span class="ruby-identifier">update</span>({<span class="ruby-value">token:</span> <span class="ruby-identifier">token</span>, <span class="ruby-value">amount:</span> <span class="ruby-identifier">amount</span>, <span class="ruby-value">ip:</span> <span class="ruby-identifier">ip</span>, <span class="ruby-value">lat:</span> <span class="ruby-identifier">lat</span>, <span class="ruby-value">long:</span> <span class="ruby-identifier">long</span>, <span class="ruby-value">imei:</span> <span class="ruby-identifier">imei</span>, <span class="ruby-value">uuid:</span> <span class="ruby-identifier">uuid</span>}, <span class="ruby-string">&quot;update customer profile&quot;</span>)
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-comment">#Get all customer data from transaction</span>
+
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-delete" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">delete</span><span
+            class="method-args">(argv, message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>@param [Object] argv @param [String] message</p>
+          
+          
+
+          
+          <div class="method-source-code" id="delete-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 662</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">delete</span>(<span class="ruby-identifier">argv</span>, <span class="ruby-identifier">message</span>)
+  
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-read" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">read</span><span
+            class="method-args">(argv, message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Read profile content for this customer @param [Object] argv @param [String]
+message</p>
+          
+          
+
+          
+          <div class="method-source-code" id="read-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 656</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">read</span>(<span class="ruby-identifier">argv</span>, <span class="ruby-identifier">message</span>)
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-search" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">search</span><span
+            class="method-args">(argv, message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Search if profile existe for this user @param [Object] argv @param [String]
+message</p>
+          
+          
+
+          
+          <div class="method-source-code" id="search-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 644</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">search</span>(<span class="ruby-identifier">argv</span>, <span class="ruby-identifier">message</span>)
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-update" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">update</span><span
+            class="method-args">(argv, message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>UPDATE CUSTOMER PROFILE</p>
+          
+          
+
+          
+          <div class="method-source-code" id="update-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 649</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">update</span>(<span class="ruby-identifier">argv</span>, <span class="ruby-identifier">message</span>)
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

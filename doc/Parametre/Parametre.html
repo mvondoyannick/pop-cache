@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Parametre::Parametre - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/darkfish.js"></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="../Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-agis_percentage">::agis_percentage</a>
+    
+    <li ><a href="#method-c-commission">::commission</a>
+    
+    <li ><a href="#method-c-get_account">::get_account</a>
+    
+    <li ><a href="#method-c-get_customer">::get_customer</a>
+    
+    <li ><a href="#method-c-setCommission">::setCommission</a>
+    
+    <li ><a href="#method-c-setMontantARetirer">::setMontantARetirer</a>
+    
+    <li ><a href="#method-c-soldeFinale">::soldeFinale</a>
+    
+    <li ><a href="#method-c-soldeTest">::soldeTest</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Parametre::Parametre">
+  <h1 id="class-Parametre::Parametre" class="class">
+    class Parametre::Parametre
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-agis_percentage" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">agis_percentage</span><span
+            class="method-args">(amount)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>retourne le montant majoré du client (montant avec commission)</p>
+
+<pre>@param [Integer] amount</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="agis_percentage-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 14</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">agis_percentage</span>(<span class="ruby-identifier">amount</span>)
+    <span class="ruby-ivar">@amount</span> = <span class="ruby-identifier">amount</span>.<span class="ruby-identifier">to_f</span>
+    <span class="ruby-identifier">tmp</span> = <span class="ruby-ivar">@amount</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">*</span> <span class="ruby-value">0.02</span>
+    <span class="ruby-identifier">converted</span> = <span class="ruby-ivar">@amount</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">tmp</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">converted</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-commission" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">commission</span><span
+            class="method-args">(transaction_id, amount, total, commission)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>ENREGISTREMENT DE LA COMMISSION SUR UNE TRANSACTION</p>
+
+<pre>@param [Object] transaction_id
+@param [Object] amount
+@param [Object] total
+@param [Object] commission</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="commission-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 62</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">commission</span>(<span class="ruby-identifier">transaction_id</span>, <span class="ruby-identifier">amount</span>, <span class="ruby-identifier">total</span>, <span class="ruby-identifier">commission</span>)
+  <span class="ruby-comment">#debut de l&#39;enregistrement de la commission sur une transaction</span>
+  <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Enregistrement de la commission de #{commission} sur la transaction N° #{transaction_id} ...&quot;</span>
+  <span class="ruby-identifier">query</span> = <span class="ruby-constant">Commission</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-value">code:</span> <span class="ruby-identifier">transaction_id</span>,
+    <span class="ruby-value">amount_brut:</span> <span class="ruby-identifier">amount</span>,
+    <span class="ruby-value">amount_commission:</span> <span class="ruby-identifier">total</span>,
+    <span class="ruby-value">commission:</span> <span class="ruby-identifier">commission</span>.<span class="ruby-identifier">round</span>(<span class="ruby-value">2</span>)
+  )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-get_account" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">get_account</span><span
+            class="method-args">(id)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>INFORMATION DU CONSOMMATEUR</p>
+
+<pre>@param [Object] id</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="get_account-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 116</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">get_account</span>(<span class="ruby-identifier">id</span>)
+  <span class="ruby-ivar">@customer_id</span> = <span class="ruby-identifier">id</span>
+  <span class="ruby-identifier">query</span> = <span class="ruby-constant">Account</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">customer_id:</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">id</span>).<span class="ruby-identifier">first</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, <span class="ruby-identifier">query</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-get_customer" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">get_customer</span><span
+            class="method-args">(phone)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>RETOURN LES INFORMATIONS SUR UN CUSTOMER</p>
+
+<pre>@param [Object] phone</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="get_customer-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 104</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">get_customer</span>(<span class="ruby-identifier">phone</span>)
+  <span class="ruby-ivar">@phone</span> = <span class="ruby-identifier">phone</span>
+  <span class="ruby-identifier">query</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">phone:</span> <span class="ruby-ivar">@phone</span>).<span class="ruby-identifier">first</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, <span class="ruby-identifier">query</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-setCommission" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">setCommission</span><span
+            class="method-args">(montant_vente)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>CALCUL DE LA COMMISSION</p>
+
+<pre>@param [Object] montant_vente</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="setCommission-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 23</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">setCommission</span>(<span class="ruby-identifier">montant_vente</span>)
+  <span class="ruby-ivar">@vente</span> = <span class="ruby-identifier">montant_vente</span>.<span class="ruby-identifier">to_f</span>
+  <span class="ruby-keyword">return</span> (<span class="ruby-ivar">@vente</span> <span class="ruby-operator">*</span> <span class="ruby-value">0.22</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-setMontantARetirer" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">setMontantARetirer</span><span
+            class="method-args">(montant_vente)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>CALCUL DU MONTANT A RETIRER</p>
+
+<pre>@param [Object] montant_vente</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="setMontantARetirer-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 30</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">setMontantARetirer</span>(<span class="ruby-identifier">montant_vente</span>)
+  <span class="ruby-ivar">@vente</span> = <span class="ruby-identifier">montant_vente</span>.<span class="ruby-identifier">to_f</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@vente</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">setCommission</span>(<span class="ruby-ivar">@vente</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-soldeFinale" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">soldeFinale</span><span
+            class="method-args">(solde_initial, montant_a_retirer, montant_vente)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>OBTION DU SOLDE FINAL</p>
+
+<pre>@param [Object] solde_initial
+@param [Object] montant_a_retirer
+@param [Object] montant_vente</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="soldeFinale-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 39</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">soldeFinale</span>(<span class="ruby-identifier">solde_initial</span>, <span class="ruby-identifier">montant_a_retirer</span>, <span class="ruby-identifier">montant_vente</span>)
+  <span class="ruby-ivar">@solde_initial</span> = <span class="ruby-identifier">solde_initial</span>
+  <span class="ruby-ivar">@montan</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@solde_initial</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-soldeTest" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">soldeTest</span><span
+            class="method-args">(solde_initial, montant_vente)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>SOLDE TEST</p>
+
+<pre>@param [Object] solde_initial
+@param [Object] montant_vente</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="soldeTest-source">
+            <pre><span class="ruby-comment"># File app/modules/parametre.rb, line 49</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">soldeTest</span>(<span class="ruby-identifier">solde_initial</span>, <span class="ruby-identifier">montant_vente</span>)
+  <span class="ruby-ivar">@solde</span> = <span class="ruby-identifier">solde_initial</span>.<span class="ruby-identifier">to_f</span>
+  <span class="ruby-ivar">@vente</span> = <span class="ruby-identifier">montant_vente</span>.<span class="ruby-identifier">to_f</span>
+  <span class="ruby-identifier">solde</span> = <span class="ruby-ivar">@solde</span> <span class="ruby-operator">-</span> (<span class="ruby-ivar">@vente</span> <span class="ruby-operator">*</span> <span class="ruby-value">1.02</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">solde</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

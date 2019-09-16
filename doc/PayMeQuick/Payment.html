@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class PayMeQuick::Payment - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/darkfish.js"></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="../Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-customer_can_pay-3F">::customer_can_pay?</a>
+    
+    <li ><a href="#method-c-customer_has_money_for_transaction-3F">::customer_has_money_for_transaction?</a>
+    
+    <li ><a href="#method-c-demo_merchant_reached_daily_amount_limit-3F">::demo_merchant_reached_daily_amount_limit?</a>
+    
+    <li ><a href="#method-c-demo_merchant_reached_dayly_transaction_count_limit-3F">::demo_merchant_reached_dayly_transaction_count_limit?</a>
+    
+    <li ><a href="#method-c-demo_merchant_reached_monthly_amount_limit-3F">::demo_merchant_reached_monthly_amount_limit?</a>
+    
+    <li ><a href="#method-c-demo_merchant_reached_monthly_transaction_count_limit-3F">::demo_merchant_reached_monthly_transaction_count_limit?</a>
+    
+    <li ><a href="#method-c-merchant_can_receive-3F">::merchant_can_receive?</a>
+    
+    <li ><a href="#method-c-merchant_is_demo_user-3F">::merchant_is_demo_user?</a>
+    
+    <li ><a href="#method-c-payment">::payment</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-PayMeQuick::Payment">
+  <h1 id="class-PayMeQuick::Payment" class="class">
+    class PayMeQuick::Payment
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-customer_can_pay-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">customer_can_pay?</span><span
+            class="method-args">(argv, message=nil )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>VERIFY IF CUSTOMER CAN PAY A TRANSACTION</p>
+
+<pre>@param [Object] argv
+@param [String] message
+@todo I have to verify customer account</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="customer_can_pay-3F-source">
+            <pre><span class="ruby-comment"># File app/modules/pay_me_quick.rb, line 207</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">customer_can_pay?</span>(<span class="ruby-identifier">argv</span>, <span class="ruby-identifier">message</span>=<span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">customer</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:customer</span>]
+  <span class="ruby-identifier">amount</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:amount</span>]
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>
+
+  <span class="ruby-comment"># searching if that customer is not lock</span>
+  <span class="ruby-ivar">@customer</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">authentication_token:</span> <span class="ruby-identifier">customer</span>, <span class="ruby-value">two_fa:</span> <span class="ruby-string">&#39;authenticate&#39;</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">amount</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">amount</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-customer_has_money_for_transaction-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">customer_has_money_for_transaction?</span><span
+            class="method-args">(customer, amount, message=nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>CHECK IF CUSTOMER HAS MONEY TO DO TRANSACTION</p>
+
+<pre>@param [String] customer
+@param [String] amount
+@param [String] message</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="customer_has_money_for_transaction-3F-source">
+            <pre><span class="ruby-comment"># File app/modules/pay_me_quick.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">customer_has_money_for_transaction?</span>(<span class="ruby-identifier">customer</span>, <span class="ruby-identifier">amount</span>, <span class="ruby-identifier">message</span>=<span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">customer</span> = <span class="ruby-identifier">customer</span>
+  <span class="ruby-identifier">amount</span> = <span class="ruby-identifier">amount</span>.<span class="ruby-identifier">to_f</span>
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>
+
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-comment"># get customer Data</span>
+    <span class="ruby-ivar">@customer</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-identifier">customer</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">amount</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">amount</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-comment"># customer have amount, we can do transaction</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-comment"># he don&#39;t have enough amount, cancel transaction</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">RecordNotFound</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+
+    <span class="ruby-keyword">rescue</span> <span class="ruby-constant">NoMethodError</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">e</span>
+        <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-demo_merchant_reached_daily_amount_limit-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">demo_merchant_reached_daily_amount_limit?</span><span
+            class="method-args">(merchant, message=nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>CHECK IF DEMO MERCHANT HAS REACHED DAYLY AMOUNT LIMIT</p>
+
+<pre>@param [String] merchant
+@param [String] message
+@return [Boolean] True/false</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="demo_merchant_reached_daily_amount_limit-3F-source">
+            <pre><span class="ruby-comment"># File app/modules/pay_me_quick.rb, line 145</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">demo_merchant_reached_daily_amount_limit?</span>(<span class="ruby-identifier">merchant</span>, <span class="ruby-identifier">message</span>=<span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">merchant</span> = <span class="ruby-identifier">merchant</span>
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>
+
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-comment">#search in History and sum transaction for this day</span>
+    <span class="ruby-ivar">@merchant</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-identifier">merchant</span>)
+    <span class="ruby-ivar">@transactions</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">customer_id:</span> <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">created_at:</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">today</span>.<span class="ruby-identifier">beginning_of_day</span><span class="ruby-operator">..</span><span class="ruby-constant">Date</span>.<span class="ruby-identifier">today</span>.<span class="ruby-identifier">end_of_day</span>).<span class="ruby-identifier">sum</span>(<span class="ruby-value">:amount</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@transactions</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-constant">App</span><span class="ruby-operator">::</span><span class="ruby-constant">PayMeQuick</span><span class="ruby-operator">::</span><span class="ruby-constant">App</span>.<span class="ruby-identifier">limit</span>[<span class="ruby-value">:limit_account_amount_month</span>] <span class="ruby-comment">#10000 F</span>
+      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Limit du montant de transaction journalier deja dépassé&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>  <span class="ruby-comment"># A deja dépassé la limite de transaction journaliere</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Limit du montant de transaction journaliere pas encore dépassé&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-comment"># Pas  encore dépassé la limite de transaction jorunaliere</span>
+    <span class="ruby-keyword">end</span>
+    
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span>(<span class="ruby-value">691451189</span>, <span class="ruby-node">&quot;Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}&quot;</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+    
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-demo_merchant_reached_dayly_transaction_count_limit-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">demo_merchant_reached_dayly_transaction_count_limit?</span><span
+            class="method-args">(merchant, message=nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>CHECK IF MERCHANT HAS REACHED DALY TRANSACTION COUNT LIMIT</p>
+
+<pre>@param [String] merchant
+@param [String] message
+@return [Boolean] True/false</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="demo_merchant_reached_dayly_transaction_count_limit-3F-source">
+            <pre><span class="ruby-comment"># File app/modules/pay_me_quick.rb, line 86</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">demo_merchant_reached_dayly_transaction_count_limit?</span>(<span class="ruby-identifier">merchant</span>, <span class="ruby-identifier">message</span>=<span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">merchant</span> = <span class="ruby-identifier">merchant</span>
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>
+
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-comment">#search in History and sum transaction for this day</span>
+    <span class="ruby-ivar">@merchant</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-identifier">merchant</span>)
+    <span class="ruby-ivar">@transactions</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">customer_id:</span> <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">created_at:</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">today</span>.<span class="ruby-identifier">beginning_of_day</span><span class="ruby-operator">..</span><span class="ruby-constant">Date</span>.<span class="ruby-identifier">today</span>.<span class="ruby-identifier">end_of_day</span>).<span class="ruby-identifier">count</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@transactions</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">App</span><span class="ruby-operator">::</span><span class="ruby-constant">PayMeQuick</span><span class="ruby-operator">::</span><span class="ruby-constant">App</span>.<span class="ruby-identifier">limit</span>[<span class="ruby-value">:limit_day_transaction</span>]
+      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Limit de transaction journaliere deja dépassée&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>  <span class="ruby-comment"># A deja dépassé la limite de transaction journaliere</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Limit de transaction journaliere pas encore dépassée&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-comment"># Pas  encore dépassé la limite de transaction jorunaliere</span>
+    <span class="ruby-keyword">end</span>
+    
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
+    
+    <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span>(<span class="ruby-value">691451189</span>, <span class="ruby-node">&quot;Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}&quot;</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-demo_merchant_reached_monthly_amount_limit-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">demo_merchant_reached_monthly_amount_limit?</span><span
+            class="method-args">(merchant, message=nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>CHECK IF DEMO MERCHANT HAS REACHED MONTHLY AMOUNT LIMIT</p>
+
+<pre>@param [String] merchant
+@param [String] message
+@return [Boolean] True/false</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="demo_merchant_reached_monthly_amount_limit-3F-source">
+            <pre><span class="ruby-comment"># File app/modules/pay_me_quick.rb, line 115</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">demo_merchant_reached_monthly_amount_limit?</span>(<span class="ruby-identifier">merchant</span>, <span class="ruby-identifier">message</span>=<span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">merchant</span> = <span class="ruby-identifier">merchant</span>
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>
+
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-comment">#search in History and sum transaction for this day</span>
+    <span class="ruby-ivar">@merchant</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-identifier">merchant</span>)
+    <span class="ruby-ivar">@transactions</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">customer_id:</span> <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">created_at:</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">today</span>.<span class="ruby-identifier">beginning_of_month</span><span class="ruby-operator">..</span><span class="ruby-constant">Date</span>.<span class="ruby-identifier">today</span>.<span class="ruby-identifier">end_of_month</span>).<span class="ruby-identifier">sum</span>(<span class="ruby-value">:amount</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@transactions</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-constant">App</span><span class="ruby-operator">::</span><span class="ruby-constant">PayMeQuick</span><span class="ruby-operator">::</span><span class="ruby-constant">App</span>.<span class="ruby-identifier">limit</span>[<span class="ruby-value">:limit_account_amount_month</span>] <span class="ruby-comment">#300000 F</span>
+      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Limit du montant de transaction mensuel deja dépassé&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>  <span class="ruby-comment"># A deja dépassé la limite de transaction journaliere</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Limit du montant de transaction mensuel pas encore dépassé&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-comment"># Pas  encore dépassé la limite de transaction jorunaliere</span>
+    <span class="ruby-keyword">end</span>
+    
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span>(<span class="ruby-value">691451189</span>, <span class="ruby-node">&quot;Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}&quot;</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+    
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-demo_merchant_reached_monthly_transaction_count_limit-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">demo_merchant_reached_monthly_transaction_count_limit?</span><span
+            class="method-args">(merchant, message=nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>CHECK IF MERCHANT HAS REACHED MONTHLY TRANSACTION COUNT LIMIT</p>
+
+<pre>@param [String] merchant
+@param [String] message
+@return [Boolean] True/false</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="demo_merchant_reached_monthly_transaction_count_limit-3F-source">
+            <pre><span class="ruby-comment"># File app/modules/pay_me_quick.rb, line 58</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">demo_merchant_reached_monthly_transaction_count_limit?</span>(<span class="ruby-identifier">merchant</span>, <span class="ruby-identifier">message</span>=<span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">merchant</span> = <span class="ruby-identifier">merchant</span>
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>
+
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-comment">#search in History and sum transaction for this day</span>
+    <span class="ruby-ivar">@merchant</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-identifier">merchant</span>)
+    <span class="ruby-ivar">@transactions</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">customer_id:</span> <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">created_at:</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">today</span>.<span class="ruby-identifier">beginning_of_month</span><span class="ruby-operator">..</span><span class="ruby-constant">Date</span>.<span class="ruby-identifier">today</span>.<span class="ruby-identifier">end_of_month</span>).<span class="ruby-identifier">count</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@transactions</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">App</span><span class="ruby-operator">::</span><span class="ruby-constant">PayMeQuick</span><span class="ruby-operator">::</span><span class="ruby-constant">App</span>.<span class="ruby-identifier">limit</span>[<span class="ruby-value">:limit_month_transaction</span>]
+      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Limit de transaction journaliere deja dépassée&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>  <span class="ruby-comment"># A deja dépassé la limite de transaction mensuelle</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Limit de transaction journaliere pas encore dépassée&quot;</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-comment"># Pas  encore dépassé la limite de transaction mensuelle</span>
+    <span class="ruby-keyword">end</span>
+    
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
+    <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span>(<span class="ruby-value">691451189</span>, <span class="ruby-node">&quot;Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}&quot;</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-merchant_can_receive-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">merchant_can_receive?</span><span
+            class="method-args">(argv, message=nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>VERIFY IF MERCHANT CAN RECEIVE PAYMENT TRANSACTION</p>
+
+<pre>@param [Object] argv
+@param [String] message
+@return [Boolean] true/false</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="merchant_can_receive-3F-source">
+            <pre><span class="ruby-comment"># File app/modules/pay_me_quick.rb, line 11</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">merchant_can_receive?</span>(<span class="ruby-identifier">argv</span>, <span class="ruby-identifier">message</span>=<span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">merchant</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:merchant</span>]
+  <span class="ruby-identifier">amount</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:amount</span>]
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>
+
+  <span class="ruby-ivar">@merchant</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">authentication_token:</span> <span class="ruby-identifier">merchant</span>, <span class="ruby-value">two_fa:</span> <span class="ruby-string">&#39;authenticate&#39;</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">error</span> <span class="ruby-node">&quot;Merchant Token #{merchant} canot be found : CustomerNotFound&quot;</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-merchant_is_demo_user-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">merchant_is_demo_user?</span><span
+            class="method-args">(merchant, message=nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>CHECK IF MERCHANT IS A DEMO ACCOUNT, ACCOUNT WITH TYPE ID=2</p>
+
+<pre>@param [String] merchant
+@param [String] message
+@return [Boolean] True/false</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="merchant_is_demo_user-3F-source">
+            <pre><span class="ruby-comment"># File app/modules/pay_me_quick.rb, line 175</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">merchant_is_demo_user?</span>(<span class="ruby-identifier">merchant</span>, <span class="ruby-identifier">message</span>=<span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">merchant</span> = <span class="ruby-identifier">merchant</span>
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>
+
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">exists?</span>(<span class="ruby-value">authentication_token:</span> <span class="ruby-identifier">merchant</span>)
+
+      <span class="ruby-ivar">@merchant</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-identifier">merchant</span>)
+      <span class="ruby-keyword">if</span> <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">type</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;demo&quot;</span>
+        <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+    <span class="ruby-keyword">end</span>
+    
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span>(<span class="ruby-value">691451189</span>, <span class="ruby-node">&quot;Exeption reached : #{exception}, from #{self.class.name}. customer ID : #{merchant}&quot;</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+    
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-payment" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">payment</span><span
+            class="method-args">(argv, message=nil, locale=&quot;en&quot;)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>@param [Object] argv @param [String] message @param [String] locale</p>
+          
+          
+
+          
+          <div class="method-source-code" id="payment-source">
+            <pre><span class="ruby-comment"># File app/modules/pay_me_quick.rb, line 228</span>
+      <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">payment</span>(<span class="ruby-identifier">argv</span>, <span class="ruby-identifier">message</span>=<span class="ruby-keyword">nil</span>, <span class="ruby-identifier">locale</span>=<span class="ruby-string">&quot;en&quot;</span>)
+        <span class="ruby-identifier">customer</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:customer</span>]
+        <span class="ruby-identifier">merchant</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:merchant</span>]
+        <span class="ruby-identifier">amount</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:amount</span>]
+        <span class="ruby-identifier">password</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:password</span>]
+        <span class="ruby-identifier">ip</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:ip</span>]
+        <span class="ruby-identifier">lat</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:lat</span>]
+        <span class="ruby-identifier">lon</span> = <span class="ruby-identifier">argv</span>[<span class="ruby-value">:lon</span>]
+
+        <span class="ruby-comment"># extra parameters</span>
+        <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>
+        <span class="ruby-identifier">locale</span> = <span class="ruby-identifier">locale</span>
+        <span class="ruby-identifier">code</span> = <span class="ruby-node">&quot;PAY_#{SecureRandom.uuid}&quot;</span>
+
+        <span class="ruby-comment"># check difference if customer is different from merchant</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">merchant</span>
+          <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">error</span> <span class="ruby-node">&quot;Le customer #{customer} et le merchant #{merchant} sont indentiques, transaction annulée ...&quot;</span>
+          <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, {
+              <span class="ruby-value">title:</span> <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-string">&quot;errMerchantTitle&quot;</span>, <span class="ruby-value">locale:</span> <span class="ruby-identifier">locale</span>),
+              <span class="ruby-value">message:</span> <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-string">&quot;errMerchantContent&quot;</span>, <span class="ruby-value">locale:</span> <span class="ruby-identifier">locale</span>),
+              <span class="ruby-value">ray:</span> <span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">uuid</span>
+          }
+        <span class="ruby-keyword">else</span>
+          <span class="ruby-comment"># verify if limits do not reach</span>
+          <span class="ruby-keyword">if</span> <span class="ruby-identifier">amount</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">App</span><span class="ruby-operator">::</span><span class="ruby-constant">PayMeQuick</span><span class="ruby-operator">::</span><span class="ruby-constant">App</span>.<span class="ruby-identifier">limit</span>[<span class="ruby-value">:limit_amount</span>]
+            <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">error</span> <span class="ruby-node">&quot;Limite maximal de paiement atteinte, le montant de #{amount} F CFA est superieur a la limite maximale, transaction annulée ...&quot;</span>
+            <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, {
+                <span class="ruby-value">title:</span> <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-string">&quot;transactionLimitTitle&quot;</span>, <span class="ruby-value">locale:</span> <span class="ruby-identifier">locale</span>),
+                <span class="ruby-value">message:</span> <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-string">&quot;transactionLimitContent&quot;</span>, <span class="ruby-value">locale:</span> <span class="ruby-identifier">locale</span>)
+            }
+          <span class="ruby-keyword">else</span>
+            <span class="ruby-comment"># Queriying customer information from AR</span>
+            <span class="ruby-ivar">@customer</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-identifier">customer</span>)
+            <span class="ruby-ivar">@merchant</span> = <span class="ruby-constant">Customer</span>.<span class="ruby-identifier">find_by_authentication_token</span>(<span class="ruby-identifier">merchant</span>)
+
+            <span class="ruby-comment"># Searching if merchant have a demo account</span>
+            <span class="ruby-keyword">if</span> <span class="ruby-identifier">merchant_is_demo_user?</span>(<span class="ruby-identifier">merchant</span>)
+              <span class="ruby-comment">#Check the sum of the amount of his account for this day and this mount</span>
+              <span class="ruby-comment"># to see if he has no reach dayly limit and montly limit</span>
+
+              <span class="ruby-comment"># s&#39;il n&#39;a pas encore depassé le nombre de transaction journaliere</span>
+              <span class="ruby-comment"># qui lui est autorisé!</span>
+              <span class="ruby-keyword">if</span> <span class="ruby-identifier">demo_merchant_reached_dayly_transaction_count_limit?</span>(<span class="ruby-identifier">merchant</span>)
+                <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Limite de transaction atteint pas le marchand, transaction annulée&quot;</span>
+
+                <span class="ruby-comment"># Send Sms to merchant</span>
+                <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span><span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">phone</span>, <span class="ruby-node">&quot;Votre LIMITE de transaction journaliere a ete atteinte, merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}&quot;</span>
+                <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, {
+                    <span class="ruby-value">title:</span> <span class="ruby-string">&quot;Echec transaction&quot;</span>,
+                    <span class="ruby-value">message:</span> <span class="ruby-string">&quot;Ce marchant ne peut plus effectuer une transaction, il a atteint son quota journalier de transaction&quot;</span>
+                }
+              <span class="ruby-keyword">else</span>
+                <span class="ruby-comment"># Il n&#39;a pas encore atteint sa limite de 100 paiements par jour,</span>
+                <span class="ruby-comment"># verifions s&#39;il a atteint le montant de paiement journalier</span>
+                <span class="ruby-keyword">if</span> <span class="ruby-identifier">demo_merchant_reached_daily_amount_limit?</span>(<span class="ruby-identifier">merchant</span>)
+                  <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Limite du montant de la transaction maximal journaliere atteinte, transaction annulée&quot;</span>
+
+                  <span class="ruby-comment"># Send Sms to merchant</span>
+                  <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span><span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">phone</span>, <span class="ruby-node">&quot;Votre LIMITE de transaction journaliere a ete atteinte! merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}&quot;</span>
+                  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, {
+                      <span class="ruby-value">title:</span> <span class="ruby-string">&quot;Echec transaction&quot;</span>,
+                      <span class="ruby-value">message:</span> <span class="ruby-string">&quot;Ce marchant ne peut plus effectuer une transaction, il a atteint son quota journalier de transaction&quot;</span>
+                  }
+                <span class="ruby-keyword">else</span>
+                  <span class="ruby-comment"># verification de la limite mensuelle du nombre de transaction du marchand</span>
+                  <span class="ruby-comment"># ce plafond n&#39;a pas encore été atteint, on peut continuer a verifier pour les mois</span>
+                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">demo_merchant_reached_monthly_transaction_count_limit?</span>(<span class="ruby-identifier">merchant</span>)
+                    <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Limite de transaction mensuelle atteint pas le marchand, transaction annulée&quot;</span>
+
+                    <span class="ruby-comment"># Send Sms to merchant</span>
+                    <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span><span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">phone</span>, <span class="ruby-node">&quot;Votre LIMITE de transaction mensuelle a ete atteinte, merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}&quot;</span>
+                    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, {
+                        <span class="ruby-value">title:</span> <span class="ruby-string">&quot;Echec transaction&quot;</span>,
+                        <span class="ruby-value">message:</span> <span class="ruby-string">&quot;Ce marchant ne peut plus effectuer une transaction, il a atteint son quota journalier de transaction&quot;</span>
+                    }
+                  <span class="ruby-keyword">else</span>
+                    <span class="ruby-comment"># verification de la limite mensuelle de paiement du marchand</span>
+                    <span class="ruby-keyword">if</span> <span class="ruby-identifier">demo_merchant_reached_monthly_amount_limit?</span>(<span class="ruby-identifier">merchant</span>)
+                      <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Limite de transaction mensuel du montant max atteint pas le marchand, transaction annulée&quot;</span>
+
+                      <span class="ruby-comment"># Send Sms to merchant</span>
+                      <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span><span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">phone</span>, <span class="ruby-node">&quot;Votre LIMITE de transaction mernsuelle a ete atteinte, merci de creer un compte pour beneficier des paiements sans limite. #{App::PayMeQuick::App.app[:signature]}&quot;</span>
+                      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>, {
+                          <span class="ruby-value">title:</span> <span class="ruby-string">&quot;Echec transaction&quot;</span>,
+                          <span class="ruby-value">message:</span> <span class="ruby-string">&quot;Ce marchant ne peut plus effectuer une transaction, il a atteint son quota journalier de transaction&quot;</span>
+                      }
+                    <span class="ruby-keyword">else</span>
+                      <span class="ruby-comment"># Commencons la transaction</span>
+                      <span class="ruby-comment"># Authenticating customer with password</span>
+                      <span class="ruby-keyword">if</span> <span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">valid_password?</span>(<span class="ruby-identifier">password</span>)
+
+                        <span class="ruby-comment">#debit customer account with amount + commission</span>
+                        <span class="ruby-keyword">if</span> <span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">update</span>(<span class="ruby-value">amount:</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">soldeTest</span>(<span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">amount</span>, <span class="ruby-identifier">amount</span>))
+
+                          <span class="ruby-comment"># Save this first customer transaction to history</span>
+                          <span class="ruby-identifier">customer_logs</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">new</span>(
+                              <span class="ruby-value">customer_id:</span> <span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">id</span>,
+                              <span class="ruby-value">amount:</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-ivar">@amount</span>),
+                              <span class="ruby-value">context:</span> <span class="ruby-string">&quot;Mobile&quot;</span>.<span class="ruby-identifier">upcase</span>,
+                              <span class="ruby-value">ip:</span> <span class="ruby-ivar">@ip</span>,
+                              <span class="ruby-value">flag:</span> <span class="ruby-string">&#39;paiement&#39;</span>.<span class="ruby-identifier">upcase</span>,
+                              <span class="ruby-value">code:</span> <span class="ruby-identifier">code</span>
+                          )
+
+                          <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer_logs</span>.<span class="ruby-identifier">save</span>
+                            <span class="ruby-comment"># Yes, customer transaction has been saved</span>
+                            <span class="ruby-comment"># Credit merchant account with amount of transaction</span>
+
+                            <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Debit du compte client #{customer} effectué avec succes!&quot;</span>
+
+                            <span class="ruby-identifier">merchant_amount</span> = <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">amount</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">amount</span>.<span class="ruby-identifier">to_f</span>
+                            <span class="ruby-keyword">if</span> <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">update</span>(<span class="ruby-value">amount:</span> <span class="ruby-identifier">merchant_amount</span>)
+
+                              <span class="ruby-comment"># save this second merchant transaction to history</span>
+                              <span class="ruby-identifier">merchant_logs</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">new</span>(
+                                <span class="ruby-value">customer_id:</span> <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">id</span>,
+                                <span class="ruby-value">amount:</span> <span class="ruby-ivar">@amount</span>,
+                                <span class="ruby-value">code:</span> <span class="ruby-identifier">code</span>,
+                                <span class="ruby-value">flag:</span> <span class="ruby-string">&quot;encaissement&quot;</span>.<span class="ruby-identifier">upcase</span>,
+                                <span class="ruby-value">context:</span> <span class="ruby-string">&quot;Mobile&quot;</span>.<span class="ruby-identifier">upcase</span>,
+                                <span class="ruby-value">ip:</span> <span class="ruby-ivar">@ip</span>
+                              )
+
+                              <span class="ruby-keyword">if</span> <span class="ruby-identifier">merchant_logs</span>.<span class="ruby-identifier">save</span>
+                                <span class="ruby-comment"># creation des commissions de transaction</span>
+                                <span class="ruby-identifier">commission</span> = <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">commission</span>(<span class="ruby-identifier">code</span>, <span class="ruby-identifier">amount</span>, <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-identifier">amount</span>).<span class="ruby-identifier">to_f</span>, (<span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-identifier">amount</span>).<span class="ruby-identifier">to_f</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">amount</span>))
+
+                                <span class="ruby-comment"># verifions si tout cela a été entegistré</span>
+                                <span class="ruby-keyword">if</span> <span class="ruby-identifier">commission</span>
+                                  <span class="ruby-comment"># Send SMS to merchant</span>
+                                  <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span>(<span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">phone</span>, <span class="ruby-node">&quot;Paiement recu. Montant: #{amount}, Payeur: #{@customer.complete_name}, ID Transaction: #{code}, Date: #{Time.now.strftime(&quot;%d-%m-%Y, %Hh:%M&quot;)}&quot;</span>)
+
+                                  <span class="ruby-comment"># respond to customer</span>
+                                  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, {
+                                    <span class="ruby-value">amount:</span> <span class="ruby-identifier">amount</span>,
+                                    <span class="ruby-value">device:</span> <span class="ruby-string">&quot;XAF&quot;</span>,
+                                    <span class="ruby-value">frais:</span> (<span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-identifier">amount</span>).<span class="ruby-identifier">to_f</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">amount</span>).<span class="ruby-identifier">round</span>(<span class="ruby-value">2</span>),
+                                    <span class="ruby-value">total:</span> (<span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-identifier">amount</span>).<span class="ruby-identifier">to_f</span>).<span class="ruby-identifier">round</span>(<span class="ruby-value">2</span>),
+                                    <span class="ruby-value">receiver:</span> <span class="ruby-ivar">@marchand</span>.<span class="ruby-identifier">complete_name</span>,
+                                    <span class="ruby-value">sender:</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">complete_name</span>,
+                                    <span class="ruby-value">date:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d-%m-%Y, %Hh:%M&quot;</span>),
+                                    <span class="ruby-value">status:</span> <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-string">&quot;done&quot;</span>, <span class="ruby-value">locale:</span> <span class="ruby-identifier">locale</span>)
+                                  }
+                                <span class="ruby-keyword">else</span>
+                                  <span class="ruby-comment"># Annuler toute la transaction</span>
+                                  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-string">&quot;Des erreur sont survenues durant l&#39;enregistrement de la commission, annulation de la transaction&quot;</span>
+                                <span class="ruby-keyword">end</span>
+                              <span class="ruby-keyword">else</span>
+                                <span class="ruby-comment"># Annulation de la transaction</span>
+                                <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-string">&quot;Des erreur sont survenues durant la sauvegarde de l&#39;historique. Annulation ...&quot;</span>
+                              <span class="ruby-keyword">end</span>
+                            <span class="ruby-keyword">else</span>
+                              <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-string">&quot;Des erreur sont survenues durant la mise a jour du compte marchand. Annulation ...&quot;</span>
+                            <span class="ruby-keyword">end</span>
+                          <span class="ruby-keyword">else</span>
+                            <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-string">&quot;Des erreur sont survenues durant la journalisation du compte client. Annulation ...&quot;</span>
+                          <span class="ruby-keyword">end</span>
+                        <span class="ruby-keyword">else</span>
+                          <span class="ruby-comment">#Raise ActiveRecord::RollBack transaction and history</span>
+                          <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Impossible de credite le compte du customer ... Annulation&quot;</span>
+                          <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-string">&quot;Annulation de la transaction, des erreurs sont survenue durant la mise a jour du compte client...&quot;</span>
+                        <span class="ruby-keyword">end</span>
+                      <span class="ruby-keyword">end</span>
+                    <span class="ruby-keyword">end</span>
+                  <span class="ruby-keyword">end</span>
+                <span class="ruby-keyword">end</span>
+              <span class="ruby-keyword">end</span>
+            <span class="ruby-keyword">else</span>
+              <span class="ruby-comment"># merchant is not demo user account</span>
+              <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Merchant is not demo user, He have a normal account
+&quot;</span>
+              <span class="ruby-comment"># Commencons la transaction pour un marchand normal</span>
+              <span class="ruby-comment"># Authenticating customer with password</span>
+              <span class="ruby-keyword">if</span> <span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">valid_password?</span>(<span class="ruby-identifier">password</span>)
+
+                <span class="ruby-comment">#debit customer account with amount + commission</span>
+                <span class="ruby-keyword">if</span> <span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">update</span>(<span class="ruby-value">amount:</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">soldeTest</span>(<span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">amount</span>, <span class="ruby-identifier">amount</span>))
+
+                  <span class="ruby-comment"># Save this first customer transaction to history</span>
+                  <span class="ruby-identifier">customer_logs</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">new</span>(
+                      <span class="ruby-value">customer_id:</span> <span class="ruby-ivar">@customer</span>.<span class="ruby-identifier">id</span>,
+                      <span class="ruby-value">amount:</span> <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-ivar">@amount</span>),
+                      <span class="ruby-value">context:</span> <span class="ruby-string">&quot;Mobile&quot;</span>.<span class="ruby-identifier">upcase</span>,
+                      <span class="ruby-value">ip:</span> <span class="ruby-identifier">ip</span>,
+                      <span class="ruby-value">flag:</span> <span class="ruby-string">&#39;paiement&#39;</span>.<span class="ruby-identifier">upcase</span>,
+                      <span class="ruby-value">code:</span> <span class="ruby-identifier">code</span>
+                  )
+
+                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">customer_logs</span>.<span class="ruby-identifier">save</span>
+                    <span class="ruby-comment"># Yes, customer transaction has been saved</span>
+                    <span class="ruby-comment"># Credit merchant account with amount of transaction</span>
+                    <span class="ruby-identifier">merchant_amount</span> = <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">amount</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">amount</span>.<span class="ruby-identifier">to_f</span>
+                    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">account</span>.<span class="ruby-identifier">update</span>(<span class="ruby-value">amount:</span> <span class="ruby-identifier">merchant_amount</span>)
+
+                      <span class="ruby-comment"># save this second merchant transaction to history</span>
+                      <span class="ruby-identifier">merchant_logs</span> = <span class="ruby-constant">History</span>.<span class="ruby-identifier">new</span>(
+                          <span class="ruby-value">customer_id:</span> <span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">id</span>,
+                          <span class="ruby-value">amount:</span> <span class="ruby-ivar">@amount</span>,
+                          <span class="ruby-value">code:</span> <span class="ruby-identifier">code</span>,
+                          <span class="ruby-value">flag:</span> <span class="ruby-string">&quot;encaissement&quot;</span>.<span class="ruby-identifier">upcase</span>,
+                          <span class="ruby-value">context:</span> <span class="ruby-string">&quot;Mobile&quot;</span>.<span class="ruby-identifier">upcase</span>,
+                          <span class="ruby-value">ip:</span> <span class="ruby-identifier">ip</span>
+                      )
+
+                      <span class="ruby-keyword">if</span> <span class="ruby-identifier">merchant_logs</span>.<span class="ruby-identifier">save</span>
+                        <span class="ruby-comment"># creation des commissions de transaction</span>
+                        <span class="ruby-identifier">commission</span> = <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">commission</span>(<span class="ruby-identifier">code</span>, <span class="ruby-identifier">amount</span>, <span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-identifier">amount</span>).<span class="ruby-identifier">to_f</span>, (<span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-identifier">amount</span>).<span class="ruby-identifier">to_f</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">amount</span>))
+
+                        <span class="ruby-comment"># verifions si tout cela a été entegistré</span>
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">commission</span>
+                          <span class="ruby-comment"># Send SMS to merchant</span>
+                          <span class="ruby-constant">Sms</span>.<span class="ruby-identifier">sender</span>(<span class="ruby-ivar">@merchant</span>.<span class="ruby-identifier">phone</span>, <span class="ruby-node">&quot;Paiement recu. Montant: #{amount}, Payeur: #{@customer.complete_name}, ID Transaction: #{code}, Date: #{Time.now.strftime(&quot;%d-%m-%Y, %Hh:%M&quot;)}&quot;</span>)
+
+                          <span class="ruby-comment"># respond to customer</span>
+                          <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>, {
+                              <span class="ruby-value">amount:</span> <span class="ruby-identifier">amount</span>,
+                              <span class="ruby-value">device:</span> <span class="ruby-string">&quot;XAF&quot;</span>,
+                              <span class="ruby-value">frais:</span> (<span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-identifier">amount</span>).<span class="ruby-identifier">to_f</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">amount</span>).<span class="ruby-identifier">round</span>(<span class="ruby-value">2</span>),
+                              <span class="ruby-value">total:</span> (<span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-constant">Parametre</span><span class="ruby-operator">::</span><span class="ruby-identifier">agis_percentage</span>(<span class="ruby-identifier">amount</span>).<span class="ruby-identifier">to_f</span>).<span class="ruby-identifier">round</span>(<span class="ruby-value">2</span>),
+                              <span class="ruby-value">receiver:</span> <span class="ruby-ivar">@marchand</span>.<span class="ruby-identifier">complete_name</span>,
+                              <span class="ruby-value">sender:</span> <span class="ruby-identifier">customer</span>.<span class="ruby-identifier">complete_name</span>,
+                              <span class="ruby-value">date:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d-%m-%Y, %Hh:%M&quot;</span>),
+                              <span class="ruby-value">status:</span> <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-string">&quot;done&quot;</span>, <span class="ruby-value">locale:</span> <span class="ruby-identifier">locale</span>)
+                          }
+                        <span class="ruby-keyword">else</span>
+                          <span class="ruby-comment"># Annuler toute la transaction</span>
+                          <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-string">&quot;Des erreur sont survenues durant l&#39;enregistrement de la commission, annulation de la transaction&quot;</span>
+                        <span class="ruby-keyword">end</span>
+                      <span class="ruby-keyword">else</span>
+                        <span class="ruby-comment"># Annulation de la transaction</span>
+                        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-string">&quot;Des erreur sont survenues durant la sauvegarde de l&#39;historique. Annulation ...&quot;</span>
+                      <span class="ruby-keyword">end</span>
+                    <span class="ruby-keyword">else</span>
+                      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-string">&quot;Des erreur sont survenues durant la mise a jour du compte marchand. Annulation ...&quot;</span>
+                    <span class="ruby-keyword">end</span>
+                  <span class="ruby-keyword">else</span>
+                    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-string">&quot;Des erreur sont survenues durant la journalisation du compte client. Annulation ...&quot;</span>
+                  <span class="ruby-keyword">end</span>
+                <span class="ruby-keyword">else</span>
+                  <span class="ruby-comment">#Raise ActiveRecord::RollBack transaction and history</span>
+                  <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Impossible de credite le compte du customer ... Annulation&quot;</span>
+                  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-string">&quot;Annulation de la transaction, des erreurs sont survenue durant la mise a jour du compte client...&quot;</span>
+                <span class="ruby-keyword">end</span>
+              <span class="ruby-keyword">end</span>
+            <span class="ruby-keyword">end</span>
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
