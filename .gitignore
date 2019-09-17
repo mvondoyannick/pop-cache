@@ -23,6 +23,8 @@ brouillon.rb
 !/storage/.keep
 
 /node_modules
+/vendor
+/.vscode
 /yarn-error.log
 
 /public/assets
