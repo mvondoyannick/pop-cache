@@ -129,7 +129,7 @@ GEM
     duktape (2.3.0.0)
     erubi (1.8.0)
     execjs (2.7.0)
-    faker (2.3.0)
+    faker (2.4.0)
       i18n (~> 1.6.0)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
@@ -241,7 +241,7 @@ GEM
       railties (>= 5.0)
     rotp (5.1.0)
       addressable (~> 2.5)
-    rqrcode (1.0.1)
+    rqrcode (1.1.1)
       chunky_png (~> 1.0)
       rqrcode_core (~> 0.1.0)
     rqrcode_core (0.1.0)
@@ -379,7 +379,7 @@ DEPENDENCIES
   wit
 
 RUBY VERSION
-   ruby 2.6.5p105
+   ruby 2.6.3
 
 BUNDLED WITH
    1.17.3
