@@ -2,8 +2,6 @@
 <html>
   <head>
     <title>PAYMEQUICK</title>
-    <%= csrf_meta_tags %>
-
     <%= stylesheet_link_tag 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= stylesheet_link_tag 'https://getbootstrap.com/docs/4.3/examples/dashboard/dashboard.css', media: 'all' %>
     <%= stylesheet_link_tag 'https://use.fontawesome.com/releases/v5.7.2/css/all.css' %>
@@ -11,7 +9,6 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <%= javascript_include_tag 'https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js' %>
     
   </head>
 
@@ -32,41 +29,50 @@
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4"><div style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;" class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Dashboard</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group mr-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#exampleModal">Partager</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Exporter</button>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-calendar-o"></i>
-                            Aujourd'hui
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">
-                                <i class="fa fa-calendar-o"></i>
-                                Hier
-                            </a>
-                            <a class="dropdown-item" href="#">
-                                <i class="fa fa-calendar"></i>
-                                Il ya deux jours
-                            </a>
-                            <a class="dropdown-item" href="#">
-                                <i class="fa fa-podcast"></i>
-                                Cette semaine
-                            </a>
-                            <a class="dropdown-item" href="#">
-                                <i class="fa fa-calendar-times-o"></i>
-                                Ce mois
-                            </a>
-                            <a class="dropdown-item" href="#">
-                                <i class="fa fa-microchip"></i>
-                                Période
-                            </a>
+                    <h1 class="h2">
+                        <% case params[:action] %>
+                        <% when 'accounts' %>
+                            <i class="fa fa-credit-card-alt" style='opacity: .5;'></i> Comptes
+                        <% when 'home' %>
+                            <i class="fa fa-home"></i> Dashboards
+                        <% end %>
+                    </h1>
+                    <% if params[:action] == 'home' %>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="btn-group mr-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#exampleModal">Partager</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary">Exporter</button>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-calendar-o"></i>
+                                    Aujourd'hui
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fa fa-calendar-o"></i>
+                                        Hier
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fa fa-calendar"></i>
+                                        Il ya deux jours
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fa fa-podcast"></i>
+                                        Cette semaine
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fa fa-calendar-times-o"></i>
+                                        Ce mois
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fa fa-microchip"></i>
+                                        Période
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    </div>
+                    <% end %>
                 </div>
 
             <%= yield %>  

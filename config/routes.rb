@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get 'welcome/home'
+  get 'p/parameters/accounts', to: 'welcome#accounts'
   #gestion des interfaces des clients
   get 'client/signing'
   get 'client/signup'
@@ -173,7 +174,7 @@ Rails.application.routes.draw do
 
       match 'payment/extern/ussd/:data', to: 'api#paymentUssdExt', via: [:get, :options]
 
-      #gestion des agents
+      #gestion des agents et de leur comptes
 
       get 'agents/signin/:email/:password', to: 'agent#signin'
       post 'agents/signin', to: 'agent#signin'
@@ -201,6 +202,10 @@ Rails.application.routes.draw do
 
       #paiement sans compte sur la plateforme, simplement avec un numero de telephone
       post 'external/request/intent', to: 'api#phonePayment'
+
+      # routes for mrechargement
+      post 'mrecharge/all', to: 'session#mrecharge'
+
     end
   end
 end

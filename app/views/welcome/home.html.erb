@@ -3,38 +3,48 @@
 
 <div class="row">
     <div class="col-12">
-
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                <th scope="col">#</th>
-                <th scope="col"><i class="fa fa-users"></i>&nbsp;Client</th>
-                <th scope="col"><i class="fa fa-credit-card"></i>&nbsp;Montant reçu</th>
-                <th scope="col"><i class="fa fa-calendar"></i>&nbsp;Date</th>
-                <th scope="col"><i class="fa fa-times"></i>&nbsp;Code transaction</th>
-                <th scope="col"><i class="fa fa-archive"></i>&nbsp;Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% History.last(10).each do |history| %>
-                    <tr>
-                        <th scope="row"><%= history.id %></th>
-                        <td><%= Customer.find(history.customer_id).complete_name %></td>
-                        <td><%= history.amount %> F CFA</td>
-                        <td><%= history.created_at %> au <%= history.region %></td>
-                        <td>
-                            <%= link_to history.code, nil %>
-                        </td>
-                        <td>
-                            <%= link_to nil, class: 'btn btn-outline-secondary' do %>
-                                <i class="fa fa-archive"></i>
-                                Archiver
-                            <% end %>
-                        </td>
-                    </tr>
+        <% if !History.nil? %>
+            <p class="text-center">
+                Aucune transaction trouvée pour le moment
+                <br > <br > <br >
+                <%= link_to p_parameters_accounts_path, class: 'btn btn-outline-secondary' do %>
+                    <i class="fa fa-credit-card"></i>
+                    Configurer vos comptes de transferts
                 <% end %>
-            </tbody>
-        </table>
+            </p>
+        <% else %>
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col"><i class="fa fa-users"></i>&nbsp;Client</th>
+                    <th scope="col"><i class="fa fa-credit-card"></i>&nbsp;Montant reçu</th>
+                    <th scope="col"><i class="fa fa-calendar"></i>&nbsp;Date</th>
+                    <th scope="col"><i class="fa fa-times"></i>&nbsp;Code transaction</th>
+                    <th scope="col"><i class="fa fa-archive"></i>&nbsp;Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% History.last(10).each do |history| %>
+                        <tr>
+                            <th scope="row"><%= history.id %></th>
+                            <td><%= Customer.find(history.customer_id).complete_name %></td>
+                            <td><%= history.amount %> F CFA</td>
+                            <td><%= history.created_at %> au <%= history.region %></td>
+                            <td>
+                                <%= link_to history.code, nil %>
+                            </td>
+                            <td>
+                                <%= link_to nil, class: 'btn btn-outline-secondary' do %>
+                                    <i class="fa fa-archive"></i>
+                                    Archiver
+                                <% end %>
+                            </td>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        <% end %>
     </div>
     </div>
 </div>

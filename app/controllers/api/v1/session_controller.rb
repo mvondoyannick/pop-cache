@@ -1,7 +1,7 @@
 class Api::V1::SessionController < ApplicationController
     #skip_before_action :verify_authenticity_token, only: [:signup, :signin, :validate_retrait, :signup_authentication, :service, :check_retrait, :histo, :retrivePassword, :resetPassword, :rechargeSprintPay, :getPhoneNumber, :getSpData, :updateAccount, :updatePassword, :testNetwork]
 
-    before_action :check_customer, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice, :question, :signup_authentication, :rechargeSprintPay, :getSpData, :checkToken]
+    before_action :check_customer, except: [:mrecharge, :signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice, :question, :signup_authentication, :rechargeSprintPay, :getSpData, :checkToken]
     #before_action :check_phone, except: [:signup, :signin, :checkPhone, :resetPassword, :retrivePassword, :authNewUuidDevice]
 
     #CREATE CUSTOMER ACCOUNTpassword 
@@ -579,6 +579,7 @@ class Api::V1::SessionController < ApplicationController
           @status = Parametre::PersonalData::numeroOperateurMobile(@phone)
           if @status == "orange"
             #on formate la nouvelle image
+            puts "#{request.base_url}#{ActionController::Base.helpers.asset_path("orange.png")}"
             render json: {
                 status:         200,
                 flag:           :success,
@@ -587,7 +588,7 @@ class Api::V1::SessionController < ApplicationController
                 network:        @status,
                 operator:       "ORANGE MONEY",
                 amount_total:   Parametre::Parametre::agis_percentage(@amount),
-                logo:           "#{request.base_url}#{ActionController::Base.helpers.asset_path("orange.png")}"
+                #logo:           "#{request.base_url}#{ActionController::Base.helpers.asset_path("orange.png")}"
             }
           elsif @status == "mtn"
             render json: {
@@ -1026,6 +1027,21 @@ class Api::V1::SessionController < ApplicationController
           }
         end
       end
+    end
+
+    # permet de retourner les partenaires pour le mrechargement
+    def mrecharge
+      render json: {
+        result: SolutionRecharge.all.map do |data|
+          {
+            id: data.id,  
+            name: data.name,
+            type: data.type_recharge.name,
+            description: data.type_recharge.description,
+            logo: "#{request.base_url}"
+          }
+        end
+      }
     end
 
     # gestion des transaction

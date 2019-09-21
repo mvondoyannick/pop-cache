@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_23_122908) do
+ActiveRecord::Schema.define(version: 2019_09_17_140239) do
 
   create_table "abonnements", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.bigint "palier_id"
@@ -207,6 +207,13 @@ ActiveRecord::Schema.define(version: 2019_07_23_122908) do
     t.index ["customer_id"], name: "index_histories_on_customer_id"
   end
 
+  create_table "mrechargetypes", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "paliers", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "amount"
     t.string "max_retrait"
@@ -277,6 +284,16 @@ ActiveRecord::Schema.define(version: 2019_07_23_122908) do
     t.index ["customer_id"], name: "index_sms_passwords_on_customer_id"
   end
 
+  create_table "solution_recharges", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "name"
+    t.bigint "type_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "type_recharge_id"
+    t.index ["type_id"], name: "index_solution_recharges_on_type_id"
+    t.index ["type_recharge_id"], name: "index_solution_recharges_on_type_recharge_id"
+  end
+
   create_table "transactions", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "date"
     t.string "amount"
@@ -291,6 +308,13 @@ ActiveRecord::Schema.define(version: 2019_07_23_122908) do
     t.string "lat"
     t.string "long"
     t.string "color"
+  end
+
+  create_table "type_recharges", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "types", options: "ENGINE=MyISAM DEFAULT CHARSET=latin1", force: :cascade do |t|

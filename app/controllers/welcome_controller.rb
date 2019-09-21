@@ -1,5 +1,11 @@
 class WelcomeController < ApplicationController
+  # before_action :authenticate_agent!
+
   def home
+    render layout: "layouts/dashboard/application"
+  end
+
+  def accounts
     render layout: "layouts/dashboard/application"
   end
 

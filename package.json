@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "admin-lte": "^3.0.0-alpha.2",
+    "chart.js": "^2.8.0",
     "foundation-sites": "6.5.3",
     "jquery": "^3.4.0",
     "startbootstrap-sb-admin-2": "^4.0.3",
