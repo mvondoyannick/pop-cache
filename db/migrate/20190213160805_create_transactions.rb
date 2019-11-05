@@ -8,7 +8,7 @@ class CreateTransactions < ActiveRecord::Migration[5.2]
       t.string :marchand_name
       t.string :amount
       t.string :hash
-      t.string :date
+      #t.string :date
 
       t.timestamps
     end
