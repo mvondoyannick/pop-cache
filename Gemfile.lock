@@ -188,6 +188,8 @@ GEM
       mini_portile2 (~> 2.4.0)
     orm_adapter (0.5.0)
     parallel (1.17.0)
+    pg (1.1.4)
+    pg (1.1.4-x64-mingw32)
     popper_js (1.14.5)
     public_suffix (4.0.1)
     puma (3.12.1)
@@ -355,6 +357,7 @@ DEPENDENCIES
   leaflet-rails
   mail_form
   parallel
+  pg
   puma (~> 3.11)
   qrcodeable
   rack-cors
@@ -368,7 +371,7 @@ DEPENDENCIES
   sendgrid-ruby
   simple_form
   simple_token_authentication (~> 1.0)
-  sqlite3 (~> 1.4)
+  sqlite3
   table_print
   turbolinks (~> 5)
   tzinfo-data
