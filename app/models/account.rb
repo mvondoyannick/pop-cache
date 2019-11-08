@@ -1,7 +1,7 @@
 class Account < ApplicationRecord
   belongs_to :customer
 
-  before_save :sign_amount, on: [:create, :update]
+  before_save :sign_amount #, on: [:create, :update]
 
   # action apres la creation du compte
   after_create :add_abonnement
