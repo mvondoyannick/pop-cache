@@ -56,11 +56,11 @@ heroku: &heroku
   adatpter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: XTNXO0LbN2 #restoafr_mvondoyannick
+  username: sql2311257 #restoafr_mvondoyannick
   password: kLEL2AkHik #Bl@ckberry18
-  host: 	  remotemysql.com #167.114.17.32
+  host: 	  sql2.freemysqlhosting.net #167.114.17.32
   port: 3306
-  database: XTNXO0LbN2 #restoafr_payquick-develop
+  database: sql2311257 #restoafr_payquick-develop
 
 
 developments:
@@ -101,19 +101,19 @@ production:
   adapter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: XTNXO0LbN2 #restoafr_mvondoyannick
-  password: kLEL2AkHik #Bl@ckberry18
-  host: 	  remotemysql.com #167.114.17.32
+  username: sql2311257 #restoafr_mvondoyannick
+  password: sK1*wK4* #Bl@ckberry18
+  host: 	  sql2.freemysqlhosting.net #167.114.17.32
   port: 3306
-  database: XTNXO0LbN2 #restoafr_payquick-develop
+  database: sql2311257 #restoafr_payquick-develop
 
 
 development:
   adapter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: XTNXO0LbN2 #restoafr_mvondoyannick
-  password: kLEL2AkHik #Bl@ckberry18
-  host: 	  remotemysql.com #167.114.17.32
+  username: sql2311257 #restoafr_mvondoyannick
+  password: sK1*wK4*
+  host: 	  sql2.freemysqlhosting.net #167.114.17.32
   port: 3306
-  database: XTNXO0LbN2 #restoafr_payquick-develop
+  database: sql2311257 #restoafr_payquick-develop

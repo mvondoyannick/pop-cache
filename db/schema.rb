@@ -12,9 +12,9 @@
 
 ActiveRecord::Schema.define(version: 2019_09_17_140239) do
 
-  create_table "abonnements", force: :cascade do |t|
-    t.integer "palier_id"
-    t.integer "customer_id"
+  create_table "abonnements", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "palier_id"
+    t.bigint "customer_id"
     t.date "date_debut"
     t.date "date_fin"
     t.datetime "created_at", null: false
@@ -23,27 +23,27 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["palier_id"], name: "index_abonnements_on_palier_id"
   end
 
-  create_table "accounts", force: :cascade do |t|
-    t.integer "user_id"
+  create_table "accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "customer_id"
+    t.bigint "customer_id"
     t.float "amount"
     t.index ["customer_id"], name: "index_accounts_on_customer_id"
     t.index ["user_id"], name: "index_accounts_on_user_id"
   end
 
-  create_table "active_storage_attachments", force: :cascade do |t|
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.integer "record_id", null: false
-    t.integer "blob_id", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", force: :cascade do |t|
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "agents", force: :cascade do |t|
+  create_table "agents", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -65,7 +65,7 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.string "name"
     t.string "prenom"
     t.string "phone"
-    t.integer "role_id"
+    t.bigint "role_id"
     t.string "raison"
     t.string "password"
     t.string "authentication_token", limit: 30
@@ -75,9 +75,9 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["role_id"], name: "index_agents_on_role_id"
   end
 
-  create_table "answers", force: :cascade do |t|
-    t.integer "customer_id"
-    t.integer "question_id"
+  create_table "answers", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "customer_id"
+    t.bigint "question_id"
     t.string "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -85,9 +85,9 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["question_id"], name: "index_answers_on_question_id"
   end
 
-  create_table "awaits", force: :cascade do |t|
+  create_table "awaits", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "amount"
-    t.integer "customer_id"
+    t.bigint "customer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "end"
@@ -97,8 +97,8 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["customer_id"], name: "index_awaits_on_customer_id"
   end
 
-  create_table "badges", force: :cascade do |t|
-    t.integer "customer_id"
+  create_table "badges", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "customer_id"
     t.boolean "activate"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -106,21 +106,21 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["customer_id"], name: "index_badges_on_customer_id"
   end
 
-  create_table "categorie_services", force: :cascade do |t|
+  create_table "categorie_services", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name"
     t.string "detail"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "cats", force: :cascade do |t|
+  create_table "cats", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name"
     t.string "detail"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "commissions", force: :cascade do |t|
+  create_table "commissions", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "code"
     t.string "amount_brut"
     t.string "amount_commission"
@@ -129,8 +129,8 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "customer_data", force: :cascade do |t|
-    t.integer "customer_id"
+  create_table "customer_data", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "customer_id"
     t.string "phone"
     t.string "uuid"
     t.datetime "created_at", null: false
@@ -141,7 +141,7 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["customer_id"], name: "index_customer_data_on_customer_id"
   end
 
-  create_table "customers", force: :cascade do |t|
+  create_table "customers", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -156,7 +156,7 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.string "two_fa"
     t.string "perime_two_fa"
     t.string "apikey"
-    t.integer "type_id"
+    t.bigint "type_id"
     t.string "tokenauthentication"
     t.string "hand"
     t.string "authentication_token", limit: 30
@@ -171,15 +171,15 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["type_id"], name: "index_customers_on_type_id"
   end
 
-  create_table "demo_user_accounts", force: :cascade do |t|
-    t.integer "demo_user_id"
+  create_table "demo_user_accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "demo_user_id"
     t.float "amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["demo_user_id"], name: "index_demo_user_accounts_on_demo_user_id"
   end
 
-  create_table "demo_users", force: :cascade do |t|
+  create_table "demo_users", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "phone"
     t.string "date_debut"
     t.string "date_fin"
@@ -191,8 +191,8 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.string "key"
   end
 
-  create_table "histories", force: :cascade do |t|
-    t.integer "customer_id"
+  create_table "histories", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "customer_id"
     t.float "amount"
     t.string "context"
     t.string "flag"
@@ -207,7 +207,7 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["customer_id"], name: "index_histories_on_customer_id"
   end
 
-  create_table "paliers", force: :cascade do |t|
+  create_table "paliers", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "amount"
     t.string "max_retrait"
     t.datetime "created_at", null: false
@@ -215,7 +215,7 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.string "name"
   end
 
-  create_table "partners", force: :cascade do |t|
+  create_table "partners", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -231,26 +231,26 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["reset_password_token"], name: "index_partners_on_reset_password_token", unique: true
   end
 
-  create_table "qrmodels", force: :cascade do |t|
+  create_table "qrmodels", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "context"
     t.string "montant"
     t.string "lat"
     t.string "lon"
     t.string "depart"
     t.string "arrive"
-    t.integer "service_id"
+    t.bigint "service_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["service_id"], name: "index_qrmodels_on_service_id"
   end
 
-  create_table "questions", force: :cascade do |t|
+  create_table "questions", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "roles", force: :cascade do |t|
+  create_table "roles", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name"
     t.string "description"
     t.datetime "created_at", null: false
@@ -258,18 +258,18 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.string "slug"
   end
 
-  create_table "services", force: :cascade do |t|
+  create_table "services", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name"
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "key"
-    t.integer "cat_id"
+    t.bigint "cat_id"
     t.index ["cat_id"], name: "index_services_on_cat_id"
   end
 
-  create_table "sms_passwords", force: :cascade do |t|
-    t.integer "customer_id"
+  create_table "sms_passwords", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "customer_id"
     t.string "code"
     t.string "status"
     t.datetime "created_at", null: false
@@ -277,17 +277,17 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.index ["customer_id"], name: "index_sms_passwords_on_customer_id"
   end
 
-  create_table "solution_recharges", force: :cascade do |t|
+  create_table "solution_recharges", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name"
-    t.integer "type_id"
+    t.bigint "type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "type_recharge_id"
+    t.bigint "type_recharge_id"
     t.index ["type_id"], name: "index_solution_recharges_on_type_id"
     t.index ["type_recharge_id"], name: "index_solution_recharges_on_type_recharge_id"
   end
 
-  create_table "transactions", force: :cascade do |t|
+  create_table "transactions", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "date"
     t.string "amount"
     t.datetime "created_at", null: false
@@ -303,21 +303,21 @@ ActiveRecord::Schema.define(version: 2019_09_17_140239) do
     t.string "color"
   end
 
-  create_table "type_recharges", force: :cascade do |t|
+  create_table "type_recharges", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name"
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "types", force: :cascade do |t|
+  create_table "types", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name"
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name"
     t.string "second_name"
     t.string "phone"
