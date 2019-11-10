@@ -102,7 +102,7 @@ production:
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: sql2311257 #restoafr_mvondoyannick
-  password: <%= ENV['MYSQL_PASSWORD_ENV'] %> #Bl@ckberry18
+  password: sK1*wK4* #Bl@ckberry18
   host: 	  sql2.freemysqlhosting.net #167.114.17.32
   port: 3306
   database: sql2311257 #restoafr_payquick-develop
