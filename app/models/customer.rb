@@ -22,7 +22,7 @@ class Customer < ApplicationRecord
   #after_create :add_abonnement
 
   # before_delete customer account
-  before_destroy :verify_amount_before_destroy if 
+  #before_destroy :verify_amount_before_destroy if 
 
 
   # Include default devise modules. Others available are:
