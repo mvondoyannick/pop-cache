@@ -164,7 +164,8 @@ class Customer < ApplicationRecord
       end
     else
       puts "Cet utilisateur ne dispose pas de compte financier."
-      raise ActiveRecord::Rollback
+      # raise ActiveRecord::Rollback
+      puts "Compte supprimé"
     end
   end
 end
