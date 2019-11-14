@@ -165,7 +165,12 @@ class Customer < ApplicationRecord
     else
       puts "Cet utilisateur ne dispose pas de compte financier."
       # raise ActiveRecord::Rollback
-      puts "Compte supprimé"
+      supp = Customer.find(self.id).destroy!
+      if supp
+        puts "Compte supprimé"
+      else
+        puts "Une erreur est survenue durant le processus de suppression : #{supp.error.messages}"
+      end
     end
   end
 end
