@@ -4,7 +4,7 @@ class Customer < ApplicationRecord
   belongs_to :type                                      # le type d'un customer, customer | demo
   has_one :badge                                 # Classification d'un customer en fonction de ses activités
   has_one :customer_datum, dependent: :destroy   # Les informations du client
-  has_one :account, dependent: :destroy          # Le compte du client, qui sera supprimé si le client est supprimé
+  has_one :account #, dependent: :destroy          # Le compte du client, qui sera supprimé si le client est supprimé
   has_one :history, dependent: :destroy          # L'historique du client
   has_one :await, dependent: :destroy            # L'intention de retrait du customer
   has_one :answer, dependent: :destroy           # Supprime les reponses aux question si le customer est supprimé
@@ -22,7 +22,7 @@ class Customer < ApplicationRecord
   #after_create :add_abonnement
 
   # before_delete customer account
-  before_destroy :verify_amount_before_destroy
+  before_destroy :verify_amount_before_destroy if 
 
 
   # Include default devise modules. Others available are:
@@ -54,6 +54,41 @@ class Customer < ApplicationRecord
   # Experiment
   def complete_name
     self.name + " " + self.second_name
+  end
+
+  #get de path of customer qrcode
+  def path_my_qrcode
+    #require 'ActionDispatch'
+    file = File.join(Rails.root.join, "app", "assets", "images", "#{self.phone}.svg")
+    # puts "#{request.host}file" request.host | request.domaine | request.base_url
+    # read de file
+    if File.exists?(file)
+      return file
+    else
+      return false, "Fichier inexistant"
+      puts false
+    end
+  end
+
+  #print customer qrcode to assets images folder
+  def print_my_qrcode
+    require 'rqrcode'
+
+      qrcode = RQRCode::QRCode.new("http://api.paiemequick.com/u/p/#{self.authentication_token}/")
+
+      # NOTE: showing with default options specified explicitly
+      svg = qrcode.as_svg(
+          offset: 5,
+          color: '000',
+          shape_rendering: 'crispEdges',
+          module_size: 6,
+          standalone: true
+        )
+
+      # save SVG file to folder
+      File.open("app/assets/images/#{self.phone}", "w") do |line|
+        line.puts svg
+      end
   end
 
   private
@@ -107,9 +142,29 @@ class Customer < ApplicationRecord
 
   # Verifier q'un compte est vide avant de le supprimer
   def verify_amount_before_destroy
-    amount = Account.find(self.id).amount
-    raise ActiveRecord::Rollback unless amount != 0
+    if Account.exists?(customer_id: self.id)
+      amount = Account.find_by_customer_id(self.id).amount
+      if amount > 0
+        puts "Impossible de supprimer le compte de cet utilisateur, son compte n'est pas vide"
+        # send SMS to user
+        Sms.nexah(self.phone, "#{self.complete_name}, votre compte n'est pas vide! Merci de transferer les fonds vers Orange/MTN/Compte bancaire avant de supprimer votre compte") 
+
+        # wait job for 3 seconds
+        sleep(3)
+
+        raise ActiveRecord::Rollback
+      else
+        #delete customer account
+        suppression = self.account.destroy!
+        if suppression
+          puts "Compte supprimé avec succes!"
+        else
+          puts "Impossible de supprimer ce compte : #{suppression.error.messages}"
+        end
+      end
+    else
+      puts "Cet utilisateur ne dispose pas de compte financier."
+      raise ActiveRecord::Rollback
+    end
   end
-
-
 end
