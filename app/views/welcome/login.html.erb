@@ -1,0 +1,39 @@
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="https://getbootstrap.com/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Se connecter | PAYMEQUICK</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="https://getbootstrap.com/docs/4.0/examples/sign-in/signin.css" rel="stylesheet">
+  </head>
+
+  <body class="text-center">
+    <form class="form-signin" action="/home" method="post">
+      <%= image_tag("pmq.png", class: "mb-5", size: "200x120", alt: "") %>
+      <h1 class="h3 mb-3 font-weight-normal">Connectez-vous</h1>
+      <label for="inputEmail" class="sr-only">Numéro de téléphone</label>
+      <input type="tel" name="phone" id="inputEmail" class="form-control" placeholder="Numéro de téléphone" required autofocus>
+      <label for="inputPassword" class="sr-only">Mot de passe</label>
+      <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>
+      <div class="checkbox mb-3">
+        <label>
+          <input type="checkbox" name="souvenir" value="remember-me"> se souvenir de moi
+        </label>
+      </div>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Se connecter</button>
+      <p class="mt-5 mb-3 text-muted">&copy; <%= Date.today.year - 1 %>-<%= Date.today.year %> | <%= link_to request.host, request.base_url %></p>
+    </form>
+  </body>
+</html>

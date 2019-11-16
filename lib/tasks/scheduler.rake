@@ -71,7 +71,7 @@ namespace :customer do
 
   desc "Remercier l'utilisateur pour sa presence sur la plateforme PayMeQuick"
   task :thanks => :environment do 
-    if Date.today.monday?
+    if Date.today.saturday?
       Customer.all.each do |customer|
         if customer.two_fa == 'authenticate' && customer.account.amount != '0.0' 
           puts "Dire merci à l'utilisateurs #{customer.complete_name} en lui rappelant son"

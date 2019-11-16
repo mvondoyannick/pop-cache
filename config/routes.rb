@@ -16,15 +16,12 @@ Rails.application.routes.draw do
   get 'parametres/utilisateur'
   get 'parametres/journal'
 
-  #gestion des partenaires
-  #
-  # fin de gestion des partenaires
+  #authentification des utilisateurs pmq
 
-  # creation d'un scope
-  resources :parametres do
+  get 'auth/log_in', to: "welcome#login"
+  post 'home', to: "welcome#auth"
+  get 'dashboard', to: "welcome#home" 
 
-  end
-  # fin
   resources :roles
 
   #gestion des agents partenaire de la plateforme
@@ -72,10 +69,14 @@ Rails.application.routes.draw do
   resources :services
 
   devise_for :partners
-  devise_for :agents, controllers: {
-    sessions: 'agents/sessions'
+  # devise_for :agents, controllers: {
+  #   sessions: 'agents/sessions'
+  # }
+  devise_for :customers, controllers: { 
+    sessions: 'customer/sessions',
+    passwords: 'customer/passwords',
+    registrations: 'customer/registrations' 
   }
-  #devise_for :customers
   get 'verify/query'
   get 'verify/verify'
   resources :accounts
@@ -88,7 +89,7 @@ Rails.application.routes.draw do
   post 'home/apikey_request'
   get 'home/signup'
   #main route
-  root 'welcome#home'
+  root 'welcome#login'
   # Webview for mobile devise
   get 'webview/:hash/:token', to: 'welcome#webview'
 

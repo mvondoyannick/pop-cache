@@ -8,7 +8,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/assets/images/556.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/assets/images/691451189" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/assets/images/698500871" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/assets/images/pmq.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.generators" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.generators" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/bae50ba6-0593-47c9-aa12-c37ccbe3760f.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/bae50ba6-0593-47c9-aa12-c37ccbe3760f.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/pop-cash.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pop-cash.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gemfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/welcome_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/welcome_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/customer.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/customer.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/client.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/one_signal.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/one_signal.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/devise/sessions/new.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/devise/sessions/new.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/layouts/dashboard/application.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/layouts/dashboard/application.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/welcome/login.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/welcome/login.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/mime_types.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/mime_types.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/tasks/scheduler.rake" beforeDir="false" afterPath="$PROJECT_DIR$/lib/tasks/scheduler.rake" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -378,6 +398,11 @@
       <workItem from="1568731785063" duration="752000" />
       <workItem from="1568733155108" duration="227000" />
       <workItem from="1569176503704" duration="11000" />
+      <workItem from="1573299744060" duration="452000" />
+      <workItem from="1573316800518" duration="227000" />
+      <workItem from="1573319079698" duration="605000" />
+      <workItem from="1573567706439" duration="388000" />
+      <workItem from="1573573904552" duration="241000" />
     </task>
     <servers />
   </component>
@@ -413,6 +438,6 @@
     </ignored-roots>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/pop_cache@Development__pop_cash.rcov" NAME="Development: pop-cash Coverage Results" MODIFIED="1568195367391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="pop-cash" />
+    <SUITE FILE_PATH="coverage/pop_cache@Development__pop_cash.rcov" NAME="Development: pop-cash Coverage Results" MODIFIED="1573567739092" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="pop-cash" />
   </component>
 </project>

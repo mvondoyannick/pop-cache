@@ -1,8 +1,30 @@
 class WelcomeController < ApplicationController
-  # before_action :authenticate_agent!
+  #before_action :authenticate_customer!
+  # before_action :check_auth, only: [:home]
 
   def home
+    puts "session id: #{session[:user_id]}"
     render layout: "layouts/dashboard/application"
+  end
+
+  " login pmq customer"
+  def login
+    
+  end
+
+  def auth
+    puts "lorem loading ...s"
+    phone = params[:phone]
+    password = params[:password]
+    user = Customer.find_by_phone(phone)
+    puts "Password valid? : #{user.valid_password?(password)}"
+    if user && user.valid_password?(password)
+      puts "found #{user.complete_name}."
+      session[:token] = {value: user.authentication_token, expires_in: 1.hour}
+      redirect_to dashboard_path, session[:token]
+    else
+      render "login"
+    end
   end
 
   def accounts
@@ -45,5 +67,20 @@ class WelcomeController < ApplicationController
       render layout: "layouts/webview"
     end
     #puts "Data receive : #{params[:application][:notes]}"
+  end
+
+  private
+  def check_auth
+    if session[:user_id]
+      user = Customer.find_by_authentication_token(session[:user_id])
+      if user
+        redirect_to root_path
+      else
+        render "login"
+      end
+    else
+      puts "not logged in"
+      render "login" #new_customer_session_path
+    end
   end
 end

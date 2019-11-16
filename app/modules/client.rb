@@ -1492,10 +1492,10 @@ class Client
                     # resume = "#{prettyCallSexe(client.sexe)} #{client.complete_name} votre Paiement a été effectué. \n Montant de la transaction : #{@amount} FC, \n Frais de la transaction : #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC \n Total prelevé dans votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f} FC, \n Marchant ayant recu le paiement : #{marchand.complete_name}, \n Date de la transaction : #{Time.now.strftime("%d-%m-%Y, %Hh:%M")} \n Statut de la transaction: EFFECTUÉE ET TERMINÉE SANS ERREURS \n Lien transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{client.id}"
 
                     #send email to customer
-                    # OneSignal::SendEmailAPI.sendEmail(client.email, resume, message, locale)
+                    OneSignal::SendEmailAPI.sendEmail(client.email, resume, message, locale)
 
                     #send email to merchant
-                    # OneSignal::SendEmailAPI.sendEmail(marchand.email, "Paiement recu. Montant :  #{@amount} FC \n Client ayant effectuer le Paiement : #{prettyCallSexe(client.sexe)} #{client.complete_name}. \n Votre nouveau solde:  #{marchand_account.amount} FC . \n Transaction ID : #{@hash}. \n Date : #{Time.now}. \n Lien de transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id} \n #{App::PayMeQuick::App::app[:signature]}", message, locale)
+                    OneSignal::SendEmailAPI.sendEmail(marchand.email, "Paiement recu. Montant :  #{@amount} FC \n Client ayant effectuer le Paiement : #{prettyCallSexe(client.sexe)} #{client.complete_name}. \n Votre nouveau solde:  #{marchand_account.amount} FC . \n Transaction ID : #{@hash}. \n Date : #{Time.now}. \n Lien de transaction : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id} \n #{App::PayMeQuick::App::app[:signature]}", message, locale)
 
                     # send SMS
                     # Sms.sender(marchand.phone, "Paiement recu! montant : #{@amount} FC, paiement recu de #{client.complete_name}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
