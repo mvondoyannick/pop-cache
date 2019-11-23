@@ -1378,7 +1378,7 @@ class Client
       rescue => exception
 
         #sending email to admin
-        OneSignal::SendEmailAPI.sendEmail(App::PayMeQuick::App::developer[:email], argv, exception, locale)
+        # OneSignal::SendEmailAPI.sendEmail(App::PayMeQuick::App::developer[:email], argv, exception, locale)
         
         puts "Une erreur est survenue : #{exception}"
         Rails::logger::error "Compte marchand #{@to} voulant recevoir un paiement est inconnu"
@@ -1406,7 +1406,7 @@ class Client
       rescue => exception
 
         #sending email to admin
-        OneSignal::SendEmailAPI.sendEmail(App::PayMeQuick::App::developer[:email], argv, exception, locale)
+        # OneSignal::SendEmailAPI.sendEmail(App::PayMeQuick::App::developer[:email], argv, exception, locale)
         
         puts "Une erreur est survenue : #{exception}"
         Rails::logger::error "Compte client #{customer} voulant effectuer un paiement est inconnu : Données complementaires =>"
