@@ -139,7 +139,7 @@ module External
                       
                       # Historique du marchand virtuel pour le moment
                       marchand = History.new(
-                        customer_id: customer.id,
+                        customer_id: new_merchant.id,
                         amount: @amount,
                         context: 'phone',
                         flag: 'paiement'.upcase,
