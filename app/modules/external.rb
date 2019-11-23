@@ -157,7 +157,7 @@ module External
                         OneSignal::OneSignalSend.genericOneSignal(@playerID, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} Vous venez d'effectuer une paiement de #{@amount} FC, votre compte a été débité de #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} FC incluant les frais de #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC. Votre solde est de #{customer.account.amount} FC")
 
                         return true, {
-                            amount: @amount,
+                            amount: Parametre::Parametre::agis_percentage(@amount).to_f.round(2), #@amount,
                             device: 'CFA',
                             frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
                             total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
