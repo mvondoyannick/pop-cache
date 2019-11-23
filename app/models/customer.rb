@@ -40,8 +40,8 @@ class Customer < ApplicationRecord
 
 
   #validations
-  validates :phone, presence: true, length: { is: 9, message: "Le numéro doit avoir 12 chiffres" }
-  #validates :cni, presence: {message: "%{value} a deja ete utilisé" } #, length: {in: 12..20} | uniqueness: {message: "%{value} a deja ete utilisé" },
+  validates :phone, presence: true, uniqueness: {message: "%{value} a deja ete utilisé" }, length: { is: 9, message: "Le numéro doit avoir 12 chiffres" }
+  #validates :cni, presence: {message: "%{value} a deja ete utilisé" } #, length: {in: 12..20}
   validates :name, presence: true #length: { in: 3..50 }#, format: { with: /\A[a-zA-Z]+\z/, message: "only allows letters" }
   #validates :cni, presence: true, uniqueness: {message: "%{value} a deja ete utilisé"}
   validates :email, presence: true, uniqueness: {message: "%{value} a deja ete utilisé."}

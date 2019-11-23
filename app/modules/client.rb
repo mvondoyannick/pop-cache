@@ -8,7 +8,7 @@ class Client
   $limit_transaction_recharge = 500000
   $limit_transaction_recharge_jour = 2500000 # soit 5 recharges par jour
   $limit_day_transaction = 100
-  $devise = "F CFA"
+  $devise = "CFA"
   $status = {
       false: :false
   }
@@ -67,71 +67,56 @@ class Client
 
       Rails::logger::info "Requete provenant de l'IP #{@ip}, du pays : #{@pays}"
 
-      if !phone_exists?(@phone)
+      # Check if password is don't rejected ::  FRAUD inclusion
+      if Fraud::Customer.passwordValidation(@password)[0]
 
-        # Check if password is don't rejected ::  FRAUD inclusion
-        if Fraud::Customer.passwordValidation(@password)[0]
+        # password is OK and don't have restricted informations
+        #initi customer creation
+        customer = Customer.new(
+            name: @name,
+            second_name: @second_name,
+            phone: @phone,
+            email: @email,
+            password: @password,
+            type_id: 1,
+            #cni: @cni,
+            sexe: @sexe,
+            ip: @ip,
+            pays: @pays
+        )
 
-          # password is OK and don't have restricted informations
-          #initi customer creation
-          customer = Customer.new(
-              name: @name,
-              second_name: @second_name,
-              phone: @phone,
-              email: @email,
-              password: @password,
-              type_id: 1,
-              #cni: @cni,
-              sexe: @sexe,
-              ip: @ip,
-              pays: @pays
-          )
+          if customer.save
 
-            if customer.save
+            # on enregistre la question de securité
+            pSecurityQuestion = Parametre::SecurityQuestion::setSecurityQuestion(customer.id, @question, @answer)
+            Rails::logger::info "Sauvegarder des données personnelles : #{pSecurityQuestion}"
 
-              # on enregistre la question de securité
-              pSecurityQuestion = Parametre::SecurityQuestion::setSecurityQuestion(customer.id, @question, @answer)
-              Rails::logger::info "Sauvegarder des données personnelles : #{pSecurityQuestion}"
-
-              @otp = Parametre::Authentication::auth_top(@phone)
-              if @otp[0]
-                Rails::logger::info "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
-                return true, customer.as_json(only: :phone)
-              else
-                #notified admin for these errors, customer could not receive SMS confirmation
-
-                Sms.nexah(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:confirmation_failed])
-
-                return @otp[1], I18n.t("SmsNotSend", locale: @locale) #"Hum!!! c'est vraiment génant, nous sommes dans l'incapacité de vous transmettre le SMS de confirmarion"
-
-              end
-
+            @otp = Parametre::Authentication::auth_top(@phone)
+            if @otp[0]
+              Rails::logger::info "Le compte #{@phone} vient de se faire envoyer le SMS de confirmation"
+              return true, customer.as_json(only: :phone)
             else
-              #Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
+              #notified admin for these errors, customer could not receive SMS confirmation
 
-              Sms.nexah(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:customer_exist])
+              Sms.nexah(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:confirmation_failed])
 
-              return false, "Des erreurs sont survenues : #{customer.errors.full_messages}"
+              return @otp[1], I18n.t("SmsNotSend", locale: @locale) #"Hum!!! c'est vraiment génant, nous sommes dans l'incapacité de vous transmettre le SMS de confirmarion"
 
             end
 
-        else
+          else
+            #Rails::logger::info {"Creation de de l'utiliateur #{@phone} impossible : #{customer.errors.full_messages}"}
 
-          #this password is restricted
-          return false, I18n.t("PasswordNotSecure", locale: @locale) #"Le mot de passe que vous avez choisis est non seulement faible, mais pour des raisons de securité est interndit. Merci de le modifier et de réessayer"
+            Sms.nexah(App::PayMeQuick::App::developer[:phone], App::Messages::Signup::confirmation[:sms][:customer_exist])
 
-        end
+            return false, "Des erreurs sont survenues : #{customer.errors.full_messages}"
+
+          end
 
       else
 
-        #raise ActiveRecord::RecordNotUnique
-        #verifier le status du telephone et de ce compte
-        tmp_phone = Customer.find_by_phone(@phone)
-        if tmp_phone.two_fa.nil?
-          return false, "Ce compte n'est pas complet, merci de completer les information supplementaires."
-        else
-          return false, "Ce numero à deja été utilisé!"
-        end
+        #this password is restricted
+        return false, I18n.t("PasswordNotSecure", locale: @locale) #"Le mot de passe que vous avez choisis est non seulement faible, mais pour des raisons de securité est interndit. Merci de le modifier et de réessayer"
 
       end
     rescue ArgumentError => e
