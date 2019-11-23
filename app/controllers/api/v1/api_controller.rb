@@ -94,26 +94,26 @@ class Api::V1::ApiController < ApplicationController
         else
           #tout va bien, l'utilisateur payeur est connu, check the phone number
           #find if this number is not registrated to the plateforme
-          payment = External::DemoUsers.Payment(token: @token, password: @password, phone: @phone, amount: @amount, ip: @ip, oneSignalID: @playerID)
+          payment = External::DemoUsers.Pay(token: @token, password: @password, phone: @phone, amount: @amount, ip: @ip, oneSignalID: @playerID)
           puts "From Payment : #{payment}"
           render json: {
-            status: payment,
-            message: payment
+            status: payment[0],
+            message: payment[1]
           }
 
         end
       else
         render json: {
-            status: false,
-            message: "Certaines informations sont absentes."
+          status: false,
+          message: "Certaines informations sont absentes."
         }
       end
 
     rescue ActiveRecord::RecordNotFound
 
       render json: {
-          status: false,
-          message: "Utilisateur inconnu de la plateforme"
+        status: false,
+        message: "Utilisateur inconnu de la plateforme"
       }
 
     end
