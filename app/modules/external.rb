@@ -16,6 +16,24 @@ module External
   # GESTION DES UTILISATEUR N AYANT PAS DE COMPTE SUR LA PLATEFORME
   class DemoUsers
 
+    # DEBIT LE COMPTE DU PAYEUR ET MET À JOUR SON SOLDE
+    # @params [Integer] customer_id
+    def self.debit_customer_account(customer_id, amount)
+      @id = customer_id
+      @amount = amount.to_f
+
+      #get customer Datas
+      customer = Customer.find(@id)
+
+      if customer.account.amount >= @amount
+        current_amount = customer.account.amount
+        account_update = customer.account.update(amount: current_amount - Parametre::Parametre::agis_percentage(@amount))
+        return true, account_update
+      else
+        return false, "solde insuffisant"
+      end
+    end
+
     def self.valid_customer_by_phone(phone, password)
       @phone = phone
       @password = password
@@ -41,6 +59,8 @@ module External
       end
     end
 
+    # PAYER UN NUMERO EXTERNE
+    # @params [Object] argv
     def self.Pay(argv)
       @customer_token = argv[:token]
       @customer_password = argv[:password]
@@ -89,71 +109,77 @@ module External
 
               #trying to save new demo customer
               if new_merchant.save
+                #update payer account amount
+                @current_amount = debit_customer_account(customer.id, @amount)
 
-                puts "Save new merchant informations with informations : #{new_merchant}"
-                #trying to create new_merchant account and store data amount
-                new_merchant_account = Account.new(
-                  customer_id: new_merchant.id,
-                  amount: @amount
-                )
-
-                # creating account
-                if new_merchant_account.save
-                  puts "Creation du compte financier du nouveau marchand effectué avec pour données : #{new_merchant_account}"
-
-                  client = History.new(
-                    customer_id: customer.id,
-                    amount: Parametre::Parametre::agis_percentage(@amount),
-                    context: 'phone',
-                    flag: 'paiement'.upcase,
-                    code: "EXT_PAY_#{@hash}",
-                    region: localisation
+                if @current_amount[0]
+                  puts "Save new merchant informations with informations : #{new_merchant.as_json}"
+                  #trying to create new_merchant account and store data amount
+                  new_merchant_account = Account.new(
+                    customer_id: new_merchant.id,
+                    amount: @amount
                   )
 
-                  # Historique du client
-                  if client.save
-                    puts "Creation de l'historique du payeur : #{client}"
-                    
-                    # Historique du marchand virtuel pour le moment
-                    marchand = History.new(
+                  # creating account
+                  if new_merchant_account.save
+                    puts "Creation du compte financier du nouveau marchand effectué avec pour données : #{new_merchant_account}"
+
+                    client = History.new(
                       customer_id: customer.id,
-                      amount: @amount,
+                      amount: Parametre::Parametre::agis_percentage(@amount),
                       context: 'phone',
                       flag: 'paiement'.upcase,
                       code: "EXT_PAY_#{@hash}",
                       region: localisation
                     )
 
-                    if marchand.save
-                      puts "Journalisation des informations du nouveau marchand avec pour données : #{marchand.as_json}"
+                    # Historique du client
+                    if client.save
+                      puts "Creation de l'historique du payeur : #{client}"
+                      
+                      # Historique du marchand virtuel pour le moment
+                      marchand = History.new(
+                        customer_id: customer.id,
+                        amount: @amount,
+                        context: 'phone',
+                        flag: 'paiement'.upcase,
+                        code: "EXT_PAY_#{@hash}",
+                        region: localisation
+                      )
 
-                      puts "Save new merchant account information"
-                      Sms.nexah(@merchant_phone, "Bonjour, ca y est votre compte est crée, #{new_merchant.code} est votre code. Paiement reçu de #{@amount} F CFA dans votre numéro de telephone #{@merchant_phone}. ID EXT_PAY_#{@hash}. Details : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}.")
+                      if marchand.save
+                        puts "Journalisation des informations du nouveau marchand avec pour données : #{marchand.as_json}"
 
-                      #Envoi d'une push notification au marchand
-                      OneSignal::OneSignalSend.genericOneSignal(@playerID, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} Vous venez d'effectuer une paiement de #{@amount} FC, votre compte a été débité de #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} FC incluant les frais de #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC. Votre solde est de #{customer.account.amount} FC")
+                        puts "Save new merchant account information"
+                        Sms.nexah(@merchant_phone, "Bonjour, ca y est votre compte est crée, #{new_merchant.code} est votre code. Paiement reçu de #{@amount} F CFA dans votre numéro de telephone #{@merchant_phone}. ID EXT_PAY_#{@hash}. Details : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}.")
 
-                      return true, {
-                          amount: @amount,
-                          device: 'CFA',
-                          frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
-                          total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
-                          receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
-                          payeur: Customer.find_by_authentication_token(@customer_token).complete_name,
-                          date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
-                          status: "PAIEMENT EFFECTUÉ"
-                      } #"Paiement effectué d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} à #{@merchant_phone}"
+                        #Envoi d'une push notification au marchand
+                        OneSignal::OneSignalSend.genericOneSignal(@playerID, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} Vous venez d'effectuer une paiement de #{@amount} FC, votre compte a été débité de #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} FC incluant les frais de #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC. Votre solde est de #{customer.account.amount} FC")
 
+                        return true, {
+                            amount: @amount,
+                            device: 'CFA',
+                            frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
+                            total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
+                            receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
+                            payeur: Customer.find_by_authentication_token(@customer_token).complete_name,
+                            date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
+                            status: "PAIEMENT EFFECTUÉ"
+                        } #"Paiement effectué d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} à #{@merchant_phone}"
+
+                      else
+
+                        return false, "Impossible de mettre à jour l'historique du marchand virtuel : #{marchand.errors.full_messages}"
+
+                      end
                     else
 
-                      return false, "Impossible de mettre à jour l'historique du marchand virtuel : #{marchand.errors.full_messages}"
+                      return false, "Impossible de mettre a jour l'historique du payeur/Client : #{client.errors.full_messages}"
 
                     end
-                  else
-
-                    return false, "Impossible de mettre a jour l'historique du payeur/Client : #{client.errors.full_messages}"
-
                   end
+                else
+                  return @current_amount[1]
                 end
               else
                 puts new_merchant.errors.full_messages
