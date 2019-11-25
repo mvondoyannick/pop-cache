@@ -151,6 +151,8 @@ module External
                         )
     
                         if marchant.save
+
+                          puts "Enregistrement de l'historique du marchand ..."
     
                           client = History.new(
                             customer_id: customer.id,
@@ -162,6 +164,8 @@ module External
                           )
     
                           if client.save
+                            puts "Enregistrement de l'historique du client ..."
+
                             Sms.nexah(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d'etre effectué dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Vous avez maintenant #{m_account.amount} F CFA dans votre compte. Rapprochez-vous d'un partenaire Afriland First Bank ou creer un compte PAYMEQUICK.")
                             return true, {
                                 amount: @amount,
@@ -281,7 +285,7 @@ module External
                             return true, {
                                 amount: Parametre::Parametre::agis_percentage(@amount).to_f.round(2), #@amount,
                                 device: 'CFA',
-                                frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
+                                frais: (Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f).round(2),
                                 total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
                                 receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
                                 payeur: Customer.find_by_authentication_token(@customer_token).complete_name,
@@ -304,6 +308,7 @@ module External
                       return @current_amount[1]
                     end
                   else
+                    # retourne des erreurs s'ils en existe
                     puts new_merchant.errors.full_messages
                   end
 
@@ -316,14 +321,14 @@ module External
 
             else
 
-              return false, "Ce numéro #{@merchant_phone} est invalide, il n'est pas au format du Cameroun. Merci de de le corriger et de réessayer!"
+              return false, "Ce numéro #{@merchant_phone} est invalide, il n'est pas au format du Cameroun. Merci de le corriger et de réessayer!"
 
             end
           end
         else
           # customerhas not be authenticate
           puts "Impossible d'authentifier cet utilisateur pour cette transaction"
-          return false, "Echec d'authentification"
+          return false, "Echec d'authentification, Numéro de téléphone ou mot de passe invalide."
         end
       end
 
