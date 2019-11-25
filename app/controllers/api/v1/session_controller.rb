@@ -43,7 +43,7 @@ class Api::V1::SessionController < ApplicationController
     def fingerprint
       #get all params
       action = params[:action]
-      password = Base64.strinct_decode64(params[:password])
+      password = Base64.strict_decode64(params[:password])
       token = request.headers['HTTP_X_API_POP_KEY']
 
       if action == "fingerprint"
@@ -54,7 +54,8 @@ class Api::V1::SessionController < ApplicationController
               status: true,
               message: "Authentifié",
               validity: 1.year.from_now,
-              user: customer.complete_name
+              user: customer.complete_name,
+              action: action_name
             }
           else
             render json: {
