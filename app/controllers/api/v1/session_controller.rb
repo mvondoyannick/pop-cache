@@ -39,6 +39,32 @@ class Api::V1::SessionController < ApplicationController
 
     end
 
+    # VALIDATE FINGER PRINT ACTIVATION
+    def fingerprint
+      #get all params
+      action = params[:action]
+      password = params[:password]
+      token = request.headers['HTTP_X_API_POP_KEY']
+
+      if action == "fingerprint"
+        if token.present?
+        else
+          render json: {
+            
+          }
+        end
+      else
+        render json: {
+          status: false,
+          message: "Impossible de traiter cette action"
+        }
+      end
+      render json: {
+        status: :nothing,
+        message: :nothing
+      }
+    end
+
 
 
     #CHECK WEB

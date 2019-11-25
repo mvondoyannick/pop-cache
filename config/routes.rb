@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  # managing action cable
+  mount ActionCable.server => "/cable"
   get 'welcome/home'
   get 'p/parameters/accounts', to: 'welcome#accounts'
   #gestion des interfaces des clients
@@ -21,6 +23,11 @@ Rails.application.routes.draw do
   get 'auth/log_in', to: "welcome#login"
   post 'home', to: "welcome#auth"
   get 'dashboard', to: "welcome#home" 
+  namespace :dashboard do
+    namespace :users do
+      get "credit", to: "welcome#credit"
+    end
+  end
 
   resources :roles
 
@@ -73,9 +80,7 @@ Rails.application.routes.draw do
   #   sessions: 'agents/sessions'
   # }
   devise_for :customers, controllers: { 
-    sessions: 'customer/sessions',
-    passwords: 'customer/passwords',
-    registrations: 'customer/registrations' 
+    sessions: 'customer/sessions'
   }
   get 'verify/query'
   get 'verify/verify'
@@ -89,7 +94,7 @@ Rails.application.routes.draw do
   post 'home/apikey_request'
   get 'home/signup'
   #main route
-  root 'welcome#login'
+  root 'welcome#home'
   # Webview for mobile devise
   get 'webview/:hash/:token', to: 'welcome#webview'
 
@@ -140,7 +145,7 @@ Rails.application.routes.draw do
       match 'security/retrive/password', to: 'session#retrivePassword', via: [:post, :options]
       match 'security/reset/password', to: 'session#resetPassword', via: [:post, :options]
       match 'session/phone', to: 'session#getPhoneNumber', via: [:post, :options]
-
+      post 'security/fingerprint/validate', to: "session#fingerprint"
       # Web Test
       post 'web/check', to: 'session#checkToken'
 

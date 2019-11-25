@@ -57,6 +57,8 @@ gem 'aes'
 gem 'bootstrap', '~> 4.3.1'
 # Jquery-rails
 gem 'jquery-rails'
+# adding fontawesome
+gem "font-awesome-rails"
 #gestion des email
 gem 'mail_form'
 #installing faraday http gem
