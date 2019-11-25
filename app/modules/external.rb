@@ -16,6 +16,20 @@ module External
   # GESTION DES UTILISATEUR N AYANT PAS DE COMPTE SUR LA PLATEFORME
   class DemoUsers
 
+    # CHECK IS USERS PHONE ARE DIFFEREBT
+    # @params [Interger] phone
+    def self.is_customer_different?(customer_phone, merchant_phone)
+      @customer_phone = customer_phone
+      @merchant_phone = merchant_phone
+
+      if @customer_phone == @merchant_phone
+        return false
+      else
+        return true
+      end
+
+    end
+
     # DEBIT LE COMPTE DU PAYEUR ET MET À JOUR SON SOLDE
     # @params [Integer] customer_id
     def self.debit_customer_account(customer_id, amount)
@@ -92,47 +106,146 @@ module External
       puts "recherche de l'existance du payeur ..."
       if Customer.exists?(authentication_token: @customer_token)
         # customer has been found on API plateform, we can get his data
+        # check is customer and merchant are differents
         puts "Authenticate customer in progress .."
         customer = Customer.find_by_authentication_token(@customer_token)
         if customer && customer.valid_password?(@customer_password)
           # customer has been authenticate, searchin new phone
           # on verifie qu'il s'agit bien d'un numéro du Cameroun
-          puts "Vérification si le nnuméro de téléphone est camerounais ..."
-          if Parametre::PersonalData::numeroCameroun(@merchant_phone)
+          if is_customer_different?(customer.phone, @merchant_phone)
+            # searching if customer phone and merchant phone are different
+            return false, "Vous ne pouvez pas vous payer à vous même!"
+          else
+            puts "Vérification si le nnuméro de téléphone est camerounais ..."
+            if Parametre::PersonalData::numeroCameroun(@merchant_phone)
 
-            puts "Numéro de téléphone camerounais trouvé"
+              puts "Numéro de téléphone camerounais trouvé"
 
-            if Customer.exists?(phone: @merchant_phone)
+              if Customer.exists?(phone: @merchant_phone)
 
-              puts "Ce marchand existe deja dans la base de données"
+                puts "Ce marchand existe deja dans la base de données"
 
-              # verification que le montant est suffisant dans le compte utilisateur
-              if have_amount?(customer.id, @amount)
+                # verification que le montant est suffisant dans le compte utilisateur
+                if have_amount?(customer.id, @amount)
 
-                if customer.account.update(amount: customer.account.amount.to_f - @amount.to_f)
+                  if customer.account.update(amount: customer.account.amount.to_f - @amount.to_f)
 
-                  # recherche le compte du client
-                  # m_account = Customer.find_by_phone(@merchant_phone).account
-                  m_customer = Customer.find_by_phone(@merchant_phone)
+                    # recherche le compte du client
+                    # m_account = Customer.find_by_phone(@merchant_phone).account
+                    m_customer = Customer.find_by_phone(@merchant_phone)
 
-                  # trigger result for merchant
-                  # if m_account.blank?
-                  if !Account.exists?(customer_id: m_customer.id)
-                    return false, "Compte inexistant"
+                    # trigger result for merchant
+                    # if m_account.blank?
+                    if !Account.exists?(customer_id: m_customer.id)
+                      return false, "Compte inexistant"
+                    else
+                      m_account = Customer.find_by_phone(@merchant_phone).account
+                      if m_account.update(amount: m_account.amount.to_f + @amount.to_f)
+                        marchant = History.new(
+                          customer_id: Customer.find_by_phone(@merchant_phone).id,
+                          amount: @amount,
+                          context: 'phone',
+                          flag: 'encaissement'.upcase,
+                          code: "EXT_PAY_#{@hash}",
+                          region: localisation
+                        )
+    
+                        if marchant.save
+    
+                          client = History.new(
+                            customer_id: customer.id,
+                            amount: Parametre::Parametre::agis_percentage(@amount),
+                            context: 'phone',
+                            flag: 'paiement'.upcase,
+                            code: "EXT_PAY_#{@hash}",
+                            region: localisation
+                          )
+    
+                          if client.save
+                            Sms.nexah(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d'etre effectué dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Vous avez maintenant #{m_account.amount} F CFA dans votre compte. Rapprochez-vous d'un partenaire Afriland First Bank ou creer un compte PAYMEQUICK.")
+                            return true, {
+                                amount: @amount,
+                                device: 'XAF',
+                                frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
+                                total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
+                                receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
+                                nexah: Customer.find_by_authentication_token(@customer_token).complete_name,
+                                date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
+                                status: "PAIEMENT EFFECTUÉ"
+                            }#,"Paiement d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué au  #{@merchant_phone}."
+                          else
+    
+                            # Notify admin for this errors
+                            return false, "Impossible de sauver l'historique : #{client.errors.full_messages}"
+                          end
+    
+                        else
+    
+                          Rails::logger::info "Failed to save history on the plateforme"
+                          return false, "Impossible de sauver l'historique : #{marchand.errors.full_messages}"
+    
+                        end
+    
+                      else
+    
+                        Rails::logger::info "Transaction failed during process"
+                        return false, "Une erreur est survenue durant la transaction de paiement : #{m_account.errors.full_messages}"
+    
+                      end
+                    end
+
                   else
-                    m_account = Customer.find_by_phone(@merchant_phone).account
-                    if m_account.update(amount: m_account.amount.to_f + @amount.to_f)
-                      marchant = History.new(
-                        customer_id: Customer.find_by_phone(@merchant_phone).id,
-                        amount: @amount,
-                        context: 'phone',
-                        flag: 'encaissement'.upcase,
-                        code: "EXT_PAY_#{@hash}",
-                        region: localisation
+
+                    Rails::logger::info "Impossible de mettre a jour les informations du client"
+                    return false, "Impossible de mettre à jour les informations du client"
+
+                  end
+
+                else
+
+                  return false, "Montant insuffisant dans le compte pour effectuer la transaction"
+
+
+                end
+                
+    
+              else
+                puts "Nouveau numéro decouvert"
+
+                # verification du solde dans le compte du payeur
+                puts "Vérification du solde payeur"
+
+                if have_amount?(customer.id, @amount)
+
+                  # enregistrement du nouveau numero dans la plateforme
+                  new_merchant = Customer.new(
+                    email: Faker::Internet.email,
+                    password: 123456, #Faker::Internet.password,
+                    name: Faker::Name.first_name,
+                    second_name: Faker::Name.last_name,
+                    phone: @merchant_phone,
+                    cni: Faker::Code.imei,
+                    type_id: 11,
+                    sexe: Faker::Gender.binary_type
+                  )
+
+                  #trying to save new demo customer
+                  if new_merchant.save
+                    #update payer account amount
+                    @current_amount = debit_customer_account(customer.id, @amount)
+
+                    if @current_amount[0]
+                      puts "Save new merchant informations with informations : #{new_merchant.as_json}"
+                      #trying to create new_merchant account and store data amount
+                      new_merchant_account = Account.new(
+                        customer_id: new_merchant.id,
+                        amount: @amount
                       )
-  
-                      if marchant.save
-  
+
+                      # creating account
+                      if new_merchant_account.save
+                        puts "Creation du compte financier du nouveau marchand effectué avec pour données : #{new_merchant_account}"
+
                         client = History.new(
                           customer_id: customer.id,
                           amount: Parametre::Parametre::agis_percentage(@amount),
@@ -141,166 +254,72 @@ module External
                           code: "EXT_PAY_#{@hash}",
                           region: localisation
                         )
-  
+
+                        # Historique du client
                         if client.save
-                          Sms.nexah(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d'etre effectué dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Vous avez maintenant #{m_account.amount} F CFA dans votre compte. Rapprochez-vous d'un partenaire Afriland First Bank ou creer un compte PAYMEQUICK.")
-                          return true, {
-                              amount: @amount,
-                              device: 'XAF',
-                              frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
-                              total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
-                              receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
-                              nexah: Customer.find_by_authentication_token(@customer_token).complete_name,
-                              date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
-                              status: "PAIEMENT EFFECTUÉ"
-                          }#,"Paiement d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué au  #{@merchant_phone}."
+                          puts "Creation de l'historique du payeur : #{client}"
+                          
+                          # Historique du marchand virtuel pour le moment
+                          marchand = History.new(
+                            customer_id: new_merchant.id,
+                            amount: @amount,
+                            context: 'phone',
+                            flag: 'paiement'.upcase,
+                            code: "EXT_PAY_#{@hash}",
+                            region: localisation
+                          )
+
+                          if marchand.save
+                            puts "Journalisation des informations du nouveau marchand avec pour données : #{marchand.as_json}"
+
+                            puts "Save new merchant account information"
+                            Sms.nexah(@merchant_phone, "Bonjour, ca y est votre compte est crée, #{new_merchant.code} est votre code. Paiement reçu de #{@amount} F CFA dans votre numéro de telephone #{@merchant_phone}. ID EXT_PAY_#{@hash}. Details : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}.")
+
+                            #Envoi d'une push notification au marchand
+                            OneSignal::OneSignalSend.genericOneSignal(@playerID, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} Vous venez d'effectuer une paiement de #{@amount} FC, votre compte a été débité de #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} FC incluant les frais de #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC. Votre solde est de #{customer.account.amount} FC")
+
+                            return true, {
+                                amount: Parametre::Parametre::agis_percentage(@amount).to_f.round(2), #@amount,
+                                device: 'CFA',
+                                frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
+                                total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
+                                receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
+                                payeur: Customer.find_by_authentication_token(@customer_token).complete_name,
+                                date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
+                                status: "PAIEMENT EFFECTUÉ"
+                            } #"Paiement effectué d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} à #{@merchant_phone}"
+
+                          else
+
+                            return false, "Impossible de mettre à jour l'historique du marchand virtuel : #{marchand.errors.full_messages}"
+
+                          end
                         else
-  
-                          # Notify admin for this errors
-                          return false, "Impossible de sauver l'historique : #{client.errors.full_messages}"
+
+                          return false, "Impossible de mettre a jour l'historique du payeur/Client : #{client.errors.full_messages}"
+
                         end
-  
-                      else
-  
-                        Rails::logger::info "Failed to save history on the plateforme"
-                        return false, "Impossible de sauver l'historique : #{marchand.errors.full_messages}"
-  
                       end
-  
                     else
-  
-                      Rails::logger::info "Transaction failed during process"
-                      return false, "Une erreur est survenue durant la transaction de paiement : #{m_account.errors.full_messages}"
-  
-                    end
-                  end
-
-                else
-
-                  Rails::logger::info "Impossible de mettre a jour les informations du client"
-                  return false, "Impossible de mettre à jour les informations du client"
-
-                end
-
-              else
-
-                return false, "Montant insuffisant dans le compte pour effectuer la transaction"
-
-
-              end
-              
-  
-            else
-              puts "Nouveau numéro decouvert"
-
-              # verification du solde dans le compte du payeur
-              puts "Vérification du solde payeur"
-
-              if have_amount?(customer.id, @amount)
-
-                # enregistrement du nouveau numero dans la plateforme
-                new_merchant = Customer.new(
-                  email: Faker::Internet.email,
-                  password: 123456, #Faker::Internet.password,
-                  name: Faker::Name.first_name,
-                  second_name: Faker::Name.last_name,
-                  phone: @merchant_phone,
-                  cni: Faker::Code.imei,
-                  type_id: 11,
-                  sexe: Faker::Gender.binary_type
-                )
-
-                #trying to save new demo customer
-                if new_merchant.save
-                  #update payer account amount
-                  @current_amount = debit_customer_account(customer.id, @amount)
-
-                  if @current_amount[0]
-                    puts "Save new merchant informations with informations : #{new_merchant.as_json}"
-                    #trying to create new_merchant account and store data amount
-                    new_merchant_account = Account.new(
-                      customer_id: new_merchant.id,
-                      amount: @amount
-                    )
-
-                    # creating account
-                    if new_merchant_account.save
-                      puts "Creation du compte financier du nouveau marchand effectué avec pour données : #{new_merchant_account}"
-
-                      client = History.new(
-                        customer_id: customer.id,
-                        amount: Parametre::Parametre::agis_percentage(@amount),
-                        context: 'phone',
-                        flag: 'paiement'.upcase,
-                        code: "EXT_PAY_#{@hash}",
-                        region: localisation
-                      )
-
-                      # Historique du client
-                      if client.save
-                        puts "Creation de l'historique du payeur : #{client}"
-                        
-                        # Historique du marchand virtuel pour le moment
-                        marchand = History.new(
-                          customer_id: new_merchant.id,
-                          amount: @amount,
-                          context: 'phone',
-                          flag: 'paiement'.upcase,
-                          code: "EXT_PAY_#{@hash}",
-                          region: localisation
-                        )
-
-                        if marchand.save
-                          puts "Journalisation des informations du nouveau marchand avec pour données : #{marchand.as_json}"
-
-                          puts "Save new merchant account information"
-                          Sms.nexah(@merchant_phone, "Bonjour, ca y est votre compte est crée, #{new_merchant.code} est votre code. Paiement reçu de #{@amount} F CFA dans votre numéro de telephone #{@merchant_phone}. ID EXT_PAY_#{@hash}. Details : https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}.")
-
-                          #Envoi d'une push notification au marchand
-                          OneSignal::OneSignalSend.genericOneSignal(@playerID, "#{Client.prettyCallSexe(customer.sexe)} #{customer.complete_name} Vous venez d'effectuer une paiement de #{@amount} FC, votre compte a été débité de #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} FC incluant les frais de #{Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f} FC. Votre solde est de #{customer.account.amount} FC")
-
-                          return true, {
-                              amount: Parametre::Parametre::agis_percentage(@amount).to_f.round(2), #@amount,
-                              device: 'CFA',
-                              frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
-                              total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
-                              receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
-                              payeur: Customer.find_by_authentication_token(@customer_token).complete_name,
-                              date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
-                              status: "PAIEMENT EFFECTUÉ"
-                          } #"Paiement effectué d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} à #{@merchant_phone}"
-
-                        else
-
-                          return false, "Impossible de mettre à jour l'historique du marchand virtuel : #{marchand.errors.full_messages}"
-
-                        end
-                      else
-
-                        return false, "Impossible de mettre a jour l'historique du payeur/Client : #{client.errors.full_messages}"
-
-                      end
+                      return @current_amount[1]
                     end
                   else
-                    return @current_amount[1]
+                    puts new_merchant.errors.full_messages
                   end
+
                 else
-                  puts new_merchant.errors.full_messages
+
+                  return false, "Montant insuffisant dans le compte pour effectuer la transaction"
+
                 end
-
-              else
-
-                return false, "Montant insuffisant dans le compte pour effectuer la transaction"
-
               end
+
+            else
+
+              return false, "Ce numéro #{@merchant_phone} est invalide, il n'est pas au format du Cameroun. Merci de de le corriger et de réessayer!"
+
             end
-
-          else
-
-            return false, "Ce numéro #{@merchant_phone} est invalide, il n'est pas au format du Cameroun. Merci de de le corriger et de réessayer!"
-
           end
-
         else
           # customerhas not be authenticate
           puts "Impossible d'authentifier cet utilisateur pour cette transaction"
