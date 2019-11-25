@@ -43,26 +43,27 @@ class Api::V1::SessionController < ApplicationController
     def fingerprint
       #get all params
       action = params[:action]
-      password = params[:password]
+      password = Base64.strinct_decode64(params[:password])
       token = request.headers['HTTP_X_API_POP_KEY']
 
       if action == "fingerprint"
         if token.present?
+          customer = Customer.find_by_authentication_token(token)
+          if customer && customer.valid_password?(password)
+          status: true,
+          message: "Authentifié"
         else
           render json: {
-            
+            status: false,
+            message: "Informations incompletes, token not present"
           }
         end
       else
         render json: {
           status: false,
-          message: "Impossible de traiter cette action"
+          message: "Impossible de traiter cette action, unknow action #{action}"
         }
       end
-      render json: {
-        status: :nothing,
-        message: :nothing
-      }
     end
 
 
