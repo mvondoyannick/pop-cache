@@ -50,8 +50,18 @@ class Api::V1::SessionController < ApplicationController
         if token.present?
           customer = Customer.find_by_authentication_token(token)
           if customer && customer.valid_password?(password)
-          status: true,
-          message: "Authentifié"
+            render json: {
+              status: true,
+              message: "Authentifié",
+              validity: 1.year.from_now,
+              user: customer.complete_name
+            }
+          else
+            render json: {
+              status: false,
+              message: "Utilisateur ou mot de passe invalide"
+            }
+          end
         else
           render json: {
             status: false,
