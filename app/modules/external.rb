@@ -23,8 +23,10 @@ module External
       @merchant_phone = merchant_phone
 
       if @customer_phone == @merchant_phone
+        # the numbers are same
         return false
       else
+        # two numbers are different
         return true
       end
 
@@ -112,7 +114,7 @@ module External
         if customer && customer.valid_password?(@customer_password)
           # customer has been authenticate, searchin new phone
           # on verifie qu'il s'agit bien d'un numéro du Cameroun
-          if is_customer_different?(customer.phone, @merchant_phone)
+          if !is_customer_different?(customer.phone, @merchant_phone)
             # searching if customer phone and merchant phone are different
             return false, "Vous ne pouvez pas vous payer à vous même!"
           else
