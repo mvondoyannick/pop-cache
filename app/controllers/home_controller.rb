@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  before_action :authenticate_agent!, only: [:retrait, :index]
+  # before_action :authenticate_agent!, only: [:retrait, :index]
   #layout 'render/yield'
 
   #multiple layout

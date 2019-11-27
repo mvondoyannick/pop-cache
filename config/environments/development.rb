@@ -84,4 +84,8 @@ Rails.application.configure do
   #     :address => "localhost",
   #     :port => 1025
   # }
+
+  # adding action cable url
+  config.action_cable.url = "ws://localhost:3000/cable"
+  config.action_cable.disable_request_forgery_protection = true
 end

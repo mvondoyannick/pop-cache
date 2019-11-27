@@ -119,5 +119,5 @@ development:
   # host: 	  sql2.freemysqlhosting.net #167.114.17.32
   # port: 3306
   # database: sql2311257 #restoafr_payquick-develop
-  url: <%= ENV['MYSQL_URI'] %> #<%= ENV['CLEARDB_DATABASE_URL'] %>
+  url: "mysql2://bdf6ec1be2c7cd:e49e3b41@us-cdbr-iron-east-05.cleardb.net/heroku_f8fd9b625d3b7d7?reconnect=true" #<%= ENV['CLEARDB_DATABASE_URL'] %>
 
