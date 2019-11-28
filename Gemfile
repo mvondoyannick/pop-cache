@@ -77,6 +77,10 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 # Sidekiq for background job
 gem 'sidekiq'
+# chartjs rails
+gem 'chart-js-rails'
+# leafflet rails
+# gem 'leaflet-rails'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'

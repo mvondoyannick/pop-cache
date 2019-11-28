@@ -16,6 +16,14 @@
   <link rel="stylesheet" href="https://adminlte.io/themes/dev/AdminLTE/dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <style>
+    div#map {
+      height: 350px;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -95,7 +103,7 @@ to get the desired effect
 
             <div class="card">
               <div class="card-header border-0">
-                <h3 class="card-title">Products</h3>
+                <h3 class="card-title">PAYMEQUICK Customers</h3>
                 <div class="card-tools">
                   <a href="#" class="btn btn-tool btn-sm">
                     <i class="fa fa-download"></i>
@@ -109,90 +117,36 @@ to get the desired effect
                 <table class="table table-striped table-valign-middle">
                   <thead>
                   <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Sales</th>
-                    <th>More</th>
+                    <th>Client</th>
+                    <th>Last transaction</th>
+                    <th>Type</th>
+                    <th>Plus</th>
                   </tr>
                   </thead>
                   <tbody>
-                  <tr>
-                    <td>
-                      <img src="dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
-                      Some Product
-                    </td>
-                    <td>$13 USD</td>
-                    <td>
-                      <small class="text-success mr-1">
-                        <i class="fa fa-arrow-up"></i>
-                        12%
-                      </small>
-                      12,000 Sold
-                    </td>
-                    <td>
-                      <a href="#" class="text-muted">
-                        <i class="fa fa-search"></i>
-                      </a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img src="dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
-                      Another Product
-                    </td>
-                    <td>$29 USD</td>
-                    <td>
-                      <small class="text-warning mr-1">
-                        <i class="fa fa-arrow-down"></i>
-                        0.5%
-                      </small>
-                      123,234 Sold
-                    </td>
-                    <td>
-                      <a href="#" class="text-muted">
-                        <i class="fa fa-search"></i>
-                      </a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img src="dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
-                      Amazing Product
-                    </td>
-                    <td>$1,230 USD</td>
-                    <td>
-                      <small class="text-danger mr-1">
-                        <i class="fa fa-arrow-down"></i>
-                        3%
-                      </small>
-                      198 Sold
-                    </td>
-                    <td>
-                      <a href="#" class="text-muted">
-                        <i class="fa fa-search"></i>
-                      </a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img src="dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
-                      Perfect Item
-                      <span class="badge bg-danger">NEW</span>
-                    </td>
-                    <td>$199 USD</td>
-                    <td>
-                      <small class="text-success mr-1">
-                        <i class="fa fa-arrow-up"></i>
-                        63%
-                      </small>
-                      87 Sold
-                    </td>
-                    <td>
-                      <a href="#" class="text-muted">
-                        <i class="fa fa-search"></i>
-                      </a>
-                    </td>
-                  </tr>
+                  <% Customer.all.order(created_at: :asc).each do |customer| %>
+                    <tr>
+                      <td>
+                      <%= image_tag("img/default-150x150.png", class: "img-circle img-size-32 mr-2") %>
+                        <%= customer.complete_name %>
+                      </td>
+                      <td>
+                        <%= History.where(customer_id: customer.id).last.amount %> FCFA
+                      </td>
+                      <td>
+                        <small class="mr-1" style="color: <%= History.where(customer_id: customer.id).last.color %>">
+                          <i class="fa fa-arrow-up"></i>
+                          12%
+                        </small>
+                        <%= History.where(customer_id: customer.id).last.flag %>
+                      </td>
+                      <td>
+                        <a href="#" class="text-muted">
+                          <i class="fa fa-search"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  <% end %>
                   </tbody>
                 </table>
               </div>
@@ -286,6 +240,10 @@ to get the desired effect
                       <i class="ion ion-android-arrow-down text-danger"></i> 1%
                     </span>
                     <span class="text-muted">REGISTRATION RATE</span>
+                    <%= map(:center => {
+                  :latlng => [51.52238797921441, -0.08366235665359283],
+                  :zoom => 18
+                }) %>
                   </p>
                 </div>
                 <!-- /.d-flex -->
