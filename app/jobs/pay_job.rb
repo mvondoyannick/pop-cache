@@ -23,7 +23,7 @@ class PayJob < ApplicationJob
     #sending SMS like à job after 2 seconds
     case type
     when "merchant"
-      Sms.nexah(@phone, "Paiement d'un montant de #{@amount} FCFA recu de Mr/Mme #{@complete_name} à #{Time.now}. Votre Solde est actuellement de :  #{@solde} F CFA. ID Transaction : #{@hash}. Plus sur d'informations sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{@id}")
+      Sms.nexah(@phone, "Paiement d'un montant de #{@amount} FCFA recu de Mr/Mme #{@complete_name}. Votre Solde est actuellement de :  #{@solde} F CFA. ID Transaction : #{@hash}. Plus sur d'informations sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{@id}")
     when "payer"
       Sms.nexah(@phone, "Paiement de #{@amount} F CFA dont les frais s'élève à #{@frais} FCFA. Le montant total prélevé de votre compte est de #{total_preleve} FCFA. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{@id}")
     else
