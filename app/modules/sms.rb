@@ -170,7 +170,7 @@ class Sms
         :body => { 
           user: "info@agis-as.com",
           password: "agis.as19",
-          senderid: "PAYMEQUICK", #PAYMEQUICK
+          senderid: "PAYMEQUICK",
           sms: @msg,
           mobiles: @phone
         }.to_json,

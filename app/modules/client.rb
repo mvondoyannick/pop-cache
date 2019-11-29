@@ -1466,7 +1466,8 @@ class Client
 
               if marchand_account.save
                 #envoi d'une notification OneSignal
-                Sms.nexah(marchand.phone, "Paiement d'un montant de #{@amount} F CFA, de \t #{prettyCallSexe(client.sexe)} #{client.complete_name}. Solde :  #{marchand_account.amount} F CFA. ID : #{@hash}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
+                # Sms.nexah(marchand.phone, "Paiement d'un montant de #{@amount} F CFA, de \t #{prettyCallSexe(client.sexe)} #{client.complete_name}. Solde :  #{marchand_account.amount} F CFA. ID : #{@hash}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
+                PayJob.set(wait: 2.seconds).perform_later(@amount, marchand.phone, client.complete_name, marchand_account.amount, @hash, marchand.id)
 
                 puts "Paiement effectué de #{@amount} FC entre #{customer} et #{@to}."
 
@@ -1515,7 +1516,8 @@ class Client
 
                     # One signal notifications
                     # OneSignal::OneSignalSend.genericOneSignal(@oneSignalID, "Paiement effectué depuis votre compte d'un montant de #{@amount} F CFA, Transaction de paiement Effectuée", "Payment done from your account. Amount of #{@amount} F CFA. Payment Transaction done")
-                    Sms.nexah(client.phone, "Paiement effectue depuis votre compte d'un montant de #{@amount} F CFA, Transaction de paiement Effectuee. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{client.id}")
+                    # Sms.nexah(client.phone, "Paiement effectue depuis votre compte d'un montant de #{@amount} F CFA, Transaction de paiement Effectuee. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{client.id}")
+                    PayJob.set(wait: 2.seconds).perform_later(@amount, client.phone, @hash, client.id)
 
                     #return true, "Votre Paiement de #{@amount} FC vient de s'effectuer avec succes. \t Frais de commission : #{(Parametre::Parametre::agis_percentage(@amount).to_f - @amount).round(2)} F FC. \t Total prelevé de votre compte : #{Parametre::Parametre::agis_percentage(@amount).to_f.round(2)} F FC. \t Nouveau solde : #{client_account.amount.round(2)} #{$devise}."
                     return true, {
