@@ -9,7 +9,7 @@ class PayJob < ApplicationJob
   # @params [Float] solde
   # @params [String] hash
   # @params [Integer] id
-  def perform(amount, phone, type, complete_name=nil, solde=nil, hash, id, frais=nil, total_preleve=nil)
+  def perform(amount, phone, type, complete_name=nil, solde=nil, hash, id, frais=nil, total=nil)
     @phone = phone
     @amount = amount
     @type = type
@@ -18,7 +18,7 @@ class PayJob < ApplicationJob
     @hash = hash
     @id = id
     @frais = frais
-    @total_preleve = total_preleve
+    @total_preleve = total
 
     #sending SMS like à job after 2 seconds
     case type
