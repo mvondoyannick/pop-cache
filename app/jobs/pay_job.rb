@@ -9,7 +9,7 @@ class PayJob < ApplicationJob
   # @params [Float] solde
   # @params [String] hash
   # @params [Integer] id
-  def perform(amount, phone, type, complete_name=nil, solde=nil, hash, id, frais=nil, total=nil)
+  def perform(amount, phone, type, complete_name=nil, solde=nil, hash, frais=nil, total=nil, id)
     @phone = phone
     @amount = amount
     @type = type
