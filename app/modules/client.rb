@@ -1467,7 +1467,7 @@ class Client
               if marchand_account.save
                 #envoi d'une notification OneSignal
                 # Sms.nexah(marchand.phone, "Paiement d'un montant de #{@amount} F CFA, de \t #{prettyCallSexe(client.sexe)} #{client.complete_name}. Solde :  #{marchand_account.amount} F CFA. ID : #{@hash}. Plus sur https://payquick-develop.herokuapp.com/webview/#{@hash}/#{marchand.id}")
-                PayJob.set(wait: 2.seconds).perform_later(@amount, marchand.phone, client.complete_name, marchand_account.amount, @hash, marchand.id)
+                PayJob.set(wait: 2.seconds).perform_later(@amount, marchand.phone, "payer", client.complete_name, marchand_account.amount, @hash, marchand.id, (Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f).round(2), Parametre::Parametre::agis_percentage(@amount).to_f)
 
                 puts "Paiement effectué de #{@amount} FC entre #{customer} et #{@to}."
 
