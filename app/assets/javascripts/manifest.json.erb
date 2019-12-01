@@ -1,0 +1,19 @@
+<% icon_sizes = Rails.configuration.serviceworker.icon_sizes %>
+{
+  "name": "PAYMEQUICK",
+  "short_name": "paymequick",
+  "start_url": "/",
+  "icons": [
+  <% icon_sizes.map { |s| "#{s}x#{s}" }.each.with_index do |dim, i| %>
+    {
+      "src": "<%= image_path "pmq.png" %>",
+      "sizes": "<%= dim %>",
+      "type": "image/png"
+    }<%= i == (icon_sizes.length - 1) ? '' : ',' %>
+  <% end %>
+  ],
+  "theme_color": "#317EFB",
+  "background_color": "#FFFFFF",
+  "display": "fullscreen",
+  "orientation": "portrait"
+}

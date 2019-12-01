@@ -15,7 +15,7 @@ gem 'puma', '~> 3.11'
 gem 'sass-rails', '~> 5.0'
 #simple_form rails
 gem 'simple_form'
-#chartjs adding
+#chartjs adding https://github.com/airblade/chartjs-ror
 gem 'chartjs-ror'
 # for short url
 gem 'googl'
@@ -72,18 +72,20 @@ gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
-gem 'turbolinks', '~> 5'
+gem 'turbolinks', '~> 5.2.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 # Sidekiq for background job
 gem 'sidekiq'
 # chartjs rails
 gem 'chart-js-rails'
-# leafflet rails
-# gem 'leaflet-rails'
+# serviceworker-rails for PWA
+gem 'serviceworker-rails'
+#adding pusher for realtime
+gem 'pusher'
 
 # Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 4.0'
+gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

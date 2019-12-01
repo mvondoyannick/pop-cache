@@ -13,6 +13,7 @@
 //= require popper
 //= require bootstrap
 //= require leaflet
+//= require Chart.min
 //= require rails-ujs
 //= require activestorage
 //= require turbolinks
@@ -39,3 +40,4 @@ Rails.ajax({
 require jquery/dist/jquery.min.js
 require bootstrap/dist/js/bootstrap.bundle.min.js
 */
+//= require serviceworker-companion

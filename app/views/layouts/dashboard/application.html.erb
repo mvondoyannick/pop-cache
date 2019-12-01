@@ -5,17 +5,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="Description" content="PAYMEQUICK WebApp">
 
   <title>PAYMEQUICK | Dashboard</title>
 
+  <!-- Ajout du manifest -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="<%= image_path("pmq.png") %>">
+  <meta name="apple-mobile-web-app-title" content="PAYMEQUICK">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="yellow">
+  <!-- turbolinks -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js" integrity="sha256-iM4Yzi/zLj/IshPWMC1IluRxTtRjMqjPGd97TZ9yYpU=" crossorigin="anonymous"></script>
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" integrity="sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=" crossorigin="anonymous" />
-  <!-- IonIcons -->
-  <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <%= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css', integrity: "sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=", crossorigin: "anonymous",  media: 'all', 'data-turbolinks-track': 'reload' %>
   <!-- Theme style -->
   <link rel="stylesheet" href="https://adminlte.io/themes/dev/AdminLTE/dist/css/adminlte.min.css">
+  <%= stylesheet_link_tag 'https://adminlte.io/themes/dev/AdminLTE/dist/css/adminlte.min.css', media: 'all', 'data-turbolinks-track': 'reload' %>
   <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <%= stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700', media: 'all', 'data-turbolinks-track': 'reload' %>
+  
   <style>
     div#map {
       height: 350px;
@@ -127,7 +136,7 @@ to get the desired effect
                   <% Customer.all.order(created_at: :asc).each do |customer| %>
                     <tr>
                       <td>
-                      <%= image_tag("img/default-150x150.png", class: "img-circle img-size-32 mr-2") %>
+                      <%= image_tag("img/default-150x150.png", class: "img-circle img-size-32 mr-2", alt: "Image") %>
                         <%= customer.complete_name %>
                       </td>
                       <td>
@@ -241,9 +250,9 @@ to get the desired effect
                     </span>
                     <span class="text-muted">REGISTRATION RATE</span>
                     <%= map(:center => {
-                  :latlng => [51.52238797921441, -0.08366235665359283],
-                  :zoom => 18
-                }) %>
+                      :latlng => [51.52238797921441, -0.08366235665359283],
+                      :zoom => 18
+                    }) %>
                   </p>
                 </div>
                 <!-- /.d-flex -->

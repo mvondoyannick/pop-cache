@@ -26,15 +26,22 @@ class WelcomeController < ApplicationController
     hash = params[:hash]
     token = params[:token]
 
-    #on recherche l'information a partir de ce hash
-    data = History.find_by(code: hash, customer_id: token)
-    if data.blank?
-      render json: {
-        message: "Cette transaction est inconnu"
-      }
+    if hash.present? && token.present?
+      #on recherche l'information a partir de ce hash
+      data = History.find_by(code: hash, customer_id: token)
+      if data.blank?
+        render json: {
+          message: "Cette transaction est inconnu"
+        }
+      else
+        @data = data
+        # render layout: "layouts/webview"
+      end
     else
-      @data = data
-      render layout: "layouts/webview"
+      render json: {
+        status: false,
+        message: "Impossible de continuer, informations incomplete."
+      }
     end
   end
 

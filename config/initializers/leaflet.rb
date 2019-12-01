@@ -1,3 +1,3 @@
 Leaflet.tile_layer = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-Leaflet.attribution = "POPCASH MAPS 2019"
+Leaflet.attribution = "PAYMEQUICK MAPS #{Date.today.year}"
 Leaflet.max_zoom = 18
