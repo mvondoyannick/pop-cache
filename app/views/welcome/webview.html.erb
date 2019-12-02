@@ -1,5 +1,5 @@
 
-  <h1 class="title">Transactions web details</h1>
+  <h4 class="title"><i class="fa fa-credit-card-alt" aria-hidden="true"></i> Transactions web details</h4>
   <br>
   <table class="table">
     <thead>
@@ -48,4 +48,36 @@
        :popup => "Lieu Transaction"
      }
   ]) %>
-  <br>
+  <blockquote class="blockquote mt-5">
+    <p class="mb-0">
+      <footer class="blockquote-footer">Creer un compte/se connecter</footer>
+      <div class="row mt-2">
+        <div class=" col-6">
+          <a href="#" class="btn btn-primary btn-lg btn-block">Se connecter</a>
+        </div>
+        <div class=" col-6">
+          <a href="#" class="btn btn-primary btn-lg btn-block">Creer</a>
+        </div>
+      </div>
+      <hr>
+      <footer class="blockquote-footer">Ou se connecter avec</footer>
+      <div class="row mt-2">
+        <div class=" col-4">
+          <%= link_to "#" do %>
+            <%= image_tag("fb.png", size: 100, class: "rounded mx-auto d-block") %>
+          <% end %>
+        </div>
+        <div class=" col-4">
+          <%= link_to "#" do %>
+            <%= image_tag("google.png", size: 100, class: "rounded mx-auto d-block") %>
+          <% end %>
+        </div>
+        <div class=" col-4">
+          <%= link_to "#" do %>
+            <%= image_tag("twitter.png", size: 100, class: "rounded mx-auto d-block") %>
+          <% end %>
+        </div>
+      </div>
+    </p>
+    <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
+  </blockquote>
