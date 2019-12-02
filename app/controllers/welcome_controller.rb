@@ -35,7 +35,7 @@ class WelcomeController < ApplicationController
         }
       else
         @data = data
-        # render layout: "layouts/webview"
+        render layout: "layouts/dashboard/application"
       end
     else
       render json: {
