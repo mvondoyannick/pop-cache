@@ -1458,7 +1458,9 @@ class Client
                 code: @hash,
                 flag: "encaissement".upcase,
                 context: "Mobile".upcase,
-                ip: @ip
+                ip: @ip,
+                lat: @lat,
+                long: @lon
               )
 
               #on enregistre
@@ -1478,7 +1480,9 @@ class Client
                   context: "Mobile".upcase,
                   ip: @ip,
                   flag: 'paiement'.upcase,
-                  code: @hash
+                  code: @hash,
+                  lat: @lat,
+                  long: @lon
                 )
 
                 if client_log.save

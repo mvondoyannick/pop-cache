@@ -39,7 +39,13 @@
   </table>
   <br>
   <%= map(:center => {
-    :latlng => [51.52238797921441, -0.08366235665359283],
+    :latlng => [@data.lat, data.long],
     :zoom => 18
-  }) %>
+  },
+  :markers => [
+     {
+       :latlng => [@data.lat, @data.long],
+       :popup => "Lieu Transaction"
+     }
+  ]) %>
   <br>
