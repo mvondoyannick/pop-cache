@@ -8,9 +8,9 @@
   "short_name": "paymequick",
   "start_url": "/",
   "icons": [
-  <% icon_sizes.map { |s| "#{s}x#{s}" }.each.with_index do |dim, i| %>
+    <% icon_sizes.map { |s| "#{s}x#{s}" }.each.with_index do |dim, i| %>
     {
-      "src": "<%= image_path "pmq.png" %>",
+      "src": "<%= image_path "pwa/pmq.png" %>",
       "sizes": "<%= dim %>",
       "type": "image/png"
     }<%= i == (icon_sizes.length - 1) ? '' : ',' %>

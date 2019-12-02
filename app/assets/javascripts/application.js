@@ -17,12 +17,11 @@
 //= require rails-ujs
 //= require activestorage
 //= require turbolinks
+//= require serviceworker-companion
 //= require_tree .
 
 /* directive de chargement du wiget*/
 $.widget.bridge('uibutton', $.ui.button)
-
-alert("bonjour Mr");
 
 Rails.ajax({
 	url: "/services.json",
@@ -40,4 +39,3 @@ Rails.ajax({
 require jquery/dist/jquery.min.js
 require bootstrap/dist/js/bootstrap.bundle.min.js
 */
-//= require serviceworker-companion
