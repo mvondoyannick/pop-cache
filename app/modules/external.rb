@@ -172,14 +172,16 @@ module External
                           if client.save
                             puts "Enregistrement de l'historique du client ..."
 
+                            @name = Customer.find_by(phone: @merchant_phone, two_fa: "authenticate")
+
                             Sms.nexah(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d'etre effectué dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Vous avez maintenant #{m_account.amount} F CFA dans votre compte. Rapprochez-vous d'un partenaire Afriland First Bank ou creer un compte PAYMEQUICK.")
 
                             return true, {
                                 amount: @amount,
-                                device: 'XAF',
+                                device: 'F CFA',
                                 frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
                                 total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
-                                receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
+                                receiver: @name.nil? ? @merchant_phone : @name.complete_name, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
                                 nexah: Customer.find_by_authentication_token(@customer_token).complete_name,
                                 date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
                                 status: "PAIEMENT EFFECTUÉ"
@@ -292,7 +294,7 @@ module External
 
                             return true, {
                                 amount: Parametre::Parametre::agis_percentage(@amount).to_f.round(2), #@amount,
-                                device: 'CFA',
+                                device: 'F CFA',
                                 frais: (Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f).round(2),
                                 total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
                                 receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
@@ -445,7 +447,7 @@ module External
 
                         return true, {
                             amount: @amount,
-                            device: 'FC',
+                            device: 'F CFA',
                             frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
                             total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
                             receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
@@ -508,7 +510,7 @@ module External
                               device: 'F CFA',
                               frais: Parametre::Parametre::agis_percentage(@amount).to_f - @amount.to_f,
                               total: Parametre::Parametre::agis_percentage(@amount).to_f.round(2),
-                              receiver: @name.nil? ? @merchant_phone : @name.complete_name, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
+                              receiver: @merchant_phone, # retourne ne numero de l'utilisateur inconnu Customer.find_by_phone(@merchant_phone).complete_name,
                               nexah: Customer.find_by_authentication_token(@customer_token).complete_name,
                               date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
                               status: "PAIEMENT EFFECTUÉ"
