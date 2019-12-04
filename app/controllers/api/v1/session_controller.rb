@@ -50,12 +50,21 @@ class Api::V1::SessionController < ApplicationController
         if token.present?
           customer = Customer.find_by_authentication_token(token)
           if customer && customer.valid_password?(password)
+
+            # JWT expiratable key
+            hmac_secret = '$paymequick$'
+            exp = Time.now.to_i + 4 * 3600
+            exp_payload = { password: customer.password, exp: exp }
+
+            the_token = JWT.encode exp_payload, hmac_secret, 'HS256'
+
             render json: {
               status: true,
               message: "Authentifié",
               validity: 1.year.from_now,
               user: customer.complete_name,
-              action: action_name
+              action: action_name,
+              token: the_token
             }
           else
             render json: {

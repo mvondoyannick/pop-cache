@@ -197,7 +197,7 @@ class Client
   #CREATION DU COMPTE VIRTUEL FINANCIER UTILISATEUR
   # @name     Client::create_user_account(id:integer, phone:integer)
   # @detail   Permet de creer un compte utilisateur sur la plateforme
-  # @params   [object] phone
+  # @params   [Object] phone
   # @return   boolean
   # @author @mvondoyannick
   # @version 1.0.1
@@ -733,10 +733,10 @@ class Client
   #VERIFICATION DU STATUT D'UN COMPTE Bloquer|voler|desactiver|autre
   # @name
   # @detail   permet de verifier si un compte est actuellement bloquer ou non
-  # params    token:string
-  # @param [Object] token
+  # @params   [String] token
+  # @param [String] token
   # @author @mvondoyannick
-  # @version 1.0.1
+  # @version 1.0.2
   def self.isLock?(token)
     @token = token
     customer = Customer.find_by_authentication_token(@token)
@@ -909,190 +909,199 @@ class Client
     @pwd = pwd
     @hash = "PR-#{SecureRandom.hex(13).upcase}" #ID de la transaction
 
-    customer = Customer.find_by_authentication_token(@token)
-    # refactoring
+    # find if customer have an account
+    if Customer.exists(authentication_token: @token)
 
-    if customer.blank?
-      puts "Utilisateur inconnu"
-      return false, "Utilisateur inconnu"
-    else
-      if customer.valid_password?(@pwd)
+      customer = Customer.find_by_authentication_token(@token)
+      # refactoring
 
-        # Recherche si le customer a une intention de retrait
-        awaits = customer.await
-        if awaits.blank?
-          # Can't continu, not intend await found
+      if customer.blank?
+        puts "Utilisateur inconnu"
+        return false, "Utilisateur inconnu"
+      else
+        if customer.valid_password?(@pwd)
 
-          puts "Aucun retrait trouvé pour #{customer.complete_name}"
-          return false, "Aucun retrait trouvé pour votre compte #{customer.phone}"
+          # Recherche si le customer a une intention de retrait
+          awaits = customer.await
+          if awaits.blank?
+            # Can't continu, not intend await found
 
-        else
-          # an await exist, continuation into process
-          customer_abonnement = Abonnements::Abonnements.search(customer.id)
+            puts "Aucun retrait trouvé pour #{customer.complete_name}"
+            return false, "Aucun retrait trouvé pour votre compte #{customer.phone}"
 
-          # On recherche le palier d'abonnement du client et voir le max qu'il peut retirer
-          if customer_abonnement[0]
-            puts "#{customer.complete_name} a un palier lui permettant de faire un retrait maximum de #{customer_abonnement[1].to_i} FC"
+          else
+            # an await exist, continuation into process
+            customer_abonnement = Abonnements::Abonnements.search(customer.id)
 
-            # Est ce que le montant a retirer est superieur a ce que le palier autorise?
-            if customer.await.amount.to_f > customer_abonnement[1].to_f
-              # Cancel retrait and restare fond
-              puts "Plafond de retrait maximum atteint pour cette abonnement"
+            # On recherche le palier d'abonnement du client et voir le max qu'il peut retirer
+            if customer_abonnement[0]
+              puts "#{customer.complete_name} a un palier lui permettant de faire un retrait maximum de #{customer_abonnement[1].to_i} FC"
 
-              # Starting restauration, and await suppression amount
-              restauration = customer.await.amount
+              # Est ce que le montant a retirer est superieur a ce que le palier autorise?
+              if customer.await.amount.to_f > customer_abonnement[1].to_f
+                # Cancel retrait and restare fond
+                puts "Plafond de retrait maximum atteint pour cette abonnement"
 
-              if customer.account.update(amount: customer.account.amount + restauration.to_f)
-                # before delete await, set it's amount to nil
-                if awaits.update(amount: nil )
-                  # delete customer await intend
-                  if awaits.destroy
-                    puts "Suppression de l'intention de retrait du customer ...DONE!"
+                # Starting restauration, and await suppression amount
+                restauration = customer.await.amount
 
-                    # send notification
-                    return false, "Ce retrait est au dessus de la limite maximum de votre plafond retrait, impossible effectuer le retrait. merci de revoir le montant à la baisse et de réessayer."
+                if customer.account.update(amount: customer.account.amount + restauration.to_f)
+                  # before delete await, set it's amount to nil
+                  if awaits.update(amount: nil )
+                    # delete customer await intend
+                    if awaits.destroy
+                      puts "Suppression de l'intention de retrait du customer ...DONE!"
+
+                      # send notification
+                      return false, "Ce retrait est au dessus de la limite maximum de votre plafond retrait, impossible effectuer le retrait. merci de revoir le montant à la baisse et de réessayer."
+                    else
+                      # si on ne peut pas detruire cela, on notify les administrateurs et on mets le compte a jour avec une valeur nil
+                      Sms.sms_to_many({yannick: 691451189, nana: 698500871, boss: 697970210}, "Impossible de supprimer l'intention de retrait du client N° #{customer.complete_name} ayant l'ID #{await.id}")
+                    end
                   else
-                    # si on ne peut pas detruire cela, on notify les administrateurs et on mets le compte a jour avec une valeur nil
+                    # force updating
+                    awaits.update!(amount: nil )
+
+                    #notify somes administrator
                     Sms.sms_to_many({yannick: 691451189, nana: 698500871, boss: 697970210}, "Impossible de supprimer l'intention de retrait du client N° #{customer.complete_name} ayant l'ID #{await.id}")
                   end
+
                 else
-                  # force updating
-                  awaits.update!(amount: nil )
+                  # Failed to update customer restauration
+                  # raise ActiveRecord::Rollback "Restauration en cours ..."
+                  Rails::logger.info "Une erreur est survenue durant la restauration du compte #{customer.complete_name}, impossible de restaures son compte"
 
-                  #notify somes administrator
-                  Sms.sms_to_many({yannick: 691451189, nana: 698500871, boss: 697970210}, "Impossible de supprimer l'intention de retrait du client N° #{customer.complete_name} ayant l'ID #{await.id}")
-                end
+                  # Notify admins
+                  Sms.sms_to_many({yannick: 691451189, nana: 698500871, boss: 697970210}, "Impossible de restaurer le compte du client N° #{customer.complete_name} ayant l'ID #{customer.id}, merci de rapidement intervenir!")
 
-              else
-                # Failed to update customer restauration
-                # raise ActiveRecord::Rollback "Restauration en cours ..."
-                Rails::logger.info "Une erreur est survenue durant la restauration du compte #{customer.complete_name}, impossible de restaures son compte"
-
-                # Notify admins
-                Sms.sms_to_many({yannick: 691451189, nana: 698500871, boss: 697970210}, "Impossible de restaurer le compte du client N° #{customer.complete_name} ayant l'ID #{customer.id}, merci de rapidement intervenir!")
-
-                raise ActiveRecord::Rollback "Reinitialisation des comptes aux status initials"
-              end
-            else
-
-              #il existe effectivement un intent de retrait pour ce customer
-              #on verifie si ce retrait est encore valide ou perimé
-              if Time.now > awaits.end.to_time
-                Rails::logger::info "Intention de retrait périmé, retrait annulé!"
-
-                # On effectue le rembourssement du retrait au client
-                account = customer.account #Account.find_by_customer_id(customer.id)
-                if account.blank?
-                  Rails::logger::info "Impossible de trouver le compte de l'utilisateur #{customer.id}"
-                  return false, "Compte inexistant"
-                else
-                  #processus de retrocession
-                  # retro = account.amount += awaits.amount.to_f
-                  # if account.update(amount: retro)
-                  #   Rails::logger::info "Montant remboursé avec succes"
-                  #
-                  #   #on supprime ensuite l'intent de retrait dans Await
-                  #   Rails::logger::info "Suppression de l'intent de retrait"
-                  #   awaits.destroy
-                  #
-                  #   #on remet a jour le flag await sur le customer
-                  #   Rails::logger::info "Mise a jour de user"
-                  #   customer.update(await: nil)
-
-                  Rails::logger::info "Suppression de l'intent de retrait ..."
-                  awaits.destroy
-
-                  return true, "Retrait perimé, impossible de continuer"
-                  # else
-                  #   Rails::logger::info "Impossible de mettre à jour le remboursement"
-                  #   return false, "Votre rembourssement a echoué, merci de vous rapprocher d'une agence Express Union"
-                  # end
+                  raise ActiveRecord::Rollback "Reinitialisation des comptes aux status initials"
                 end
               else
-                #tout va bien, on procede a la validation du retrait
 
-                account = customer.account #Account.find_by_customer_id(customer.id)
-                if account.blank?
-                  Rails::logger::info "Compte inconnu"
-                  return false
+                #il existe effectivement un intent de retrait pour ce customer
+                #on verifie si ce retrait est encore valide ou perimé
+                if Time.now > awaits.end.to_time
+                  Rails::logger::info "Intention de retrait périmé, retrait annulé!"
+
+                  # On effectue le rembourssement du retrait au client
+                  account = customer.account #Account.find_by_customer_id(customer.id)
+                  if account.blank?
+                    Rails::logger::info "Impossible de trouver le compte de l'utilisateur #{customer.id}"
+                    return false, "Compte inexistant"
+                  else
+                    #processus de retrocession
+                    # retro = account.amount += awaits.amount.to_f
+                    # if account.update(amount: retro)
+                    #   Rails::logger::info "Montant remboursé avec succes"
+                    #
+                    #   #on supprime ensuite l'intent de retrait dans Await
+                    #   Rails::logger::info "Suppression de l'intent de retrait"
+                    #   awaits.destroy
+                    #
+                    #   #on remet a jour le flag await sur le customer
+                    #   Rails::logger::info "Mise a jour de user"
+                    #   customer.update(await: nil)
+
+                    Rails::logger::info "Suppression de l'intent de retrait ..."
+                    awaits.destroy
+
+                    return true, "Retrait perimé, impossible de continuer"
+                    # else
+                    #   Rails::logger::info "Impossible de mettre à jour le remboursement"
+                    #   return false, "Votre rembourssement a echoué, merci de vous rapprocher d'une agence Express Union"
+                    # end
+                  end
                 else
-                  # on debit effectivement le compte client
-                  Rails::logger::info "Suppression de l'intent de retrait ..."
+                  #tout va bien, on procede a la validation du retrait
 
-                  # introduction de l'agent dans le processus, credit du compte de l'agent
-                  agent = customer.await.agent # Retourne le token de l'agent
+                  account = customer.account #Account.find_by_customer_id(customer.id)
+                  if account.blank?
+                    Rails::logger::info "Compte inconnu"
+                    return false
+                  else
+                    # on debit effectivement le compte client
+                    Rails::logger::info "Suppression de l'intent de retrait ..."
 
-                  # Credit du compte de l'agent
-                  if Customer.find_by_phone("691451189").account.update(amount: customer.await.amount)
-                    # save history
-                    #enregistrement de l'historique du retrait
-                    transaction = History.new(
-                        customer_id: customer.id,
-                        code: @hash,
-                        flag: "retrait".upcase,
-                        context: "none",
-                        amount: awaits.amount.to_s
-                    )
+                    # introduction de l'agent dans le processus, credit du compte de l'agent
+                    agent = customer.await.agent # Retourne le token de l'agent
 
-                    #on enregistre l'historique
-                    if transaction.save
+                    # Credit du compte de l'agent
+                    if Customer.find_by_phone("691451189").account.update(amount: customer.await.amount)
+                      # save history
+                      #enregistrement de l'historique du retrait
+                      transaction = History.new(
+                          customer_id: customer.id,
+                          code: @hash,
+                          flag: "retrait".upcase,
+                          context: "none",
+                          amount: awaits.amount.to_s
+                      )
 
-                      # on met a jour le compte de l'agent et on le notifie
-                      customer_agent = Customer.find_by_phone("691451189")
-                      if customer_agent.account.update(amount: customer_agent.account.amount.to_f + awaits.amount.to_f)
-                        puts "Mise a jour du compte de l'agent qui a initialiser le process de retrait ... FAIT!"
+                      #on enregistre l'historique
+                      if transaction.save
 
-                        # Notification de l'agent
-                        #Sms.sender("691451189", "Retrait effectue du compte #{customer.phone} d'un montant de #{awaits.amount.to_f.round(2)} FC. Votre solde total est de #{agent.account.amount.round(2)} FC. Vous pouvez payer !")
+                        # on met a jour le compte de l'agent et on le notifie
+                        customer_agent = Customer.find_by_phone("691451189")
+                        if customer_agent.account.update(amount: customer_agent.account.amount.to_f + awaits.amount.to_f)
+                          puts "Mise a jour du compte de l'agent qui a initialiser le process de retrait ... FAIT!"
 
-                        # on supprime l'intent de retrait
-                        if awaits.destroy
+                          # Notification de l'agent
+                          #Sms.sender("691451189", "Retrait effectue du compte #{customer.phone} d'un montant de #{awaits.amount.to_f.round(2)} FC. Votre solde total est de #{agent.account.amount.round(2)} FC. Vous pouvez payer !")
 
-                          amount_update = account.update(amount: account.amount - awaits.amount.to_f)
-                          if amount_update
+                          # on supprime l'intent de retrait
+                          if awaits.destroy
 
-                            Sms.nexah(customer.phone, "Retrait effectue d'un montant de  d'un montant de #{awaits.amount.to_f.round(2)} FC. Votre solde total est de #{customer.account.amount.round(2)} FC.")
-                            return true, "#{awaits.amount} FC ont été retiré de votre compte. \t Votre solde est de #{account.amount} FC. Merci"
+                            amount_update = account.update(amount: account.amount - awaits.amount.to_f)
+                            if amount_update
+
+                              Sms.nexah(customer.phone, "Retrait effectue d'un montant de  d'un montant de #{awaits.amount.to_f.round(2)} FC. Votre solde total est de #{customer.account.amount.round(2)} FC.")
+                              return true, "#{customer.complete_name}Un montant de #{awaits.amount} F CFA a été retiré de votre compte. \t Votre solde est de #{account.amount} FC. Merci"
+
+                            else
+
+                              return false, "Une erreur est survenue, transaction de retrait annulée."
+
+                            end
 
                           else
 
-                            return false, "Une erreur est survenue, transaction de retrait annulée."
+                            puts "Une erreur est survenue, engagement d'ActiveRecord::RollBack"
+                            raise ActiveRecord::Rollback "Annulation de la transaction car Une erreur est survenu durant la transaction"
+                            #return false, "Une erreur est survenu durant la transaction"
 
                           end
-
                         else
 
-                          puts "Une erreur est survenue, engagement d'ActiveRecord::RollBack"
-                          raise ActiveRecord::Rollback "Annulation de la transaction car Une erreur est survenu durant la transaction"
-                          #return false, "Une erreur est survenu durant la transaction"
+                          Rails::logger.info "Impossible de mettre a jour le compte de l'agent"
 
                         end
+
                       else
-
-                        Rails::logger.info "Impossible de mettre a jour le compte de l'agent"
-
+                        raise ActiveRecord::Rollback "Une erreur est survenue durant la mise à jour des informations. merci de vous rapprocher d'un point Express Union."
+                        #return false, "Une erreur est survenue durant la mise à jour des informations. merci de vous rapprocher d'un point Express Union."
                       end
-
                     else
-                      raise ActiveRecord::Rollback "Une erreur est survenue durant la mise à jour des informations. merci de vous rapprocher d'un point Express Union."
-                      #return false, "Une erreur est survenue durant la mise à jour des informations. merci de vous rapprocher d'un point Express Union."
+                      raise ActiveRecord::Rollback "Impossible de continuer"
+                      # RollBack
                     end
-                  else
-                    raise ActiveRecord::Rollback "Impossible de continuer"
-                    # RollBack
                   end
                 end
               end
+            else
+              Rails::logger.info "Impossible de determiner le palier d'appartenance du customer"
+              return false, "Impossible de determiner votre Palier, merci de vous abonner à un palier et de revenir effectuer un retrait "
             end
-          else
-            Rails::logger.info "Impossible de determiner le palier d'appartenance du customer"
-            return false, "Impossible de determiner votre Palier, merci de vous abonner à un palier et de revenir effectuer un retrait "
           end
+        else
+          Rails::logger::error "Mot de passe invalide pour ce compte. transaction annulée"
+          return false, "Mot de passe invalide"
         end
-      else
-        Rails::logger::error "Mot de passe invalide pour ce compte. transaction annulée"
-        return false, "Mot de passe invalide"
       end
+
+    else
+
+      return false, "Nous ne parvenons pas à reconnaitre cet utilisateur!"
+
     end
 
     # fin du refactoring
@@ -1108,33 +1117,44 @@ class Client
   def self.is_await_valid?(phone)
     @phone = phone
     Rails::logger::info "Starting await verification ..."
-    customer = Customer.find_by_phone(@phone)
-    if customer.blank?
-      Rails::logger::error "Utilisateur #{@phone} est inconnu du systeme"
-      return false, "Utilisateur inconnu"
-    else
-      await = customer.await #Await.where(customer_id: customer.id).last
-      if await.blank?
-        Rails::logger::error "Aucun retrait en attente pour l'Utilisateur #{@phone}"
-        return false, "Aucun retrait en attente pour l'Utilisateur #{@phone}"
+
+    # check if customer have an account
+    if Customer.exists(phone: @phone)
+
+      customer = Customer.find_by_phone(@phone)
+      if customer.blank?
+        Rails::logger::error "Utilisateur #{@phone} est inconnu du systeme"
+        return false, "Utilisateur inconnu"
       else
-        #on comparate les dates
-        if await.end >= Time.now && await.used == fals
-          Rails::logger::info "Transacttion #{await.hashawait} est en cours et valide."
-          return true, "Transaction #{await.hashawait} valide"
+        await = customer.await #Await.where(customer_id: customer.id).last
+        if await.blank?
+          Rails::logger::error "Aucun retrait en attente pour l'Utilisateur #{@phone}"
+          return false, "Aucun retrait en attente pour l'Utilisateur #{@phone}"
         else
-          Rails::logger::error "Transaction #{await.hashawait} n'est plus valide. supression..."
-          if await.destroy
-            Rails::logger::info "Transaction #{await.hashawait} qualifiée de perimée a été supprimée."
-            return true, "Transaction #{await.hashawait} qualifiée de perimée a été supprimée."
+          #on comparate les dates
+          if await.end >= Time.now && await.used == fals
+            Rails::logger::info "Transacttion #{await.hashawait} est en cours et valide."
+            return true, "Transaction #{await.hashawait} valide"
           else
-            Rails::logger::fatal "Transaction #{await.hashawait} qualifiée de perimée n'a pas pu etre supprimer. Impossible de supprimer la transaction. Contact du service de maintenance."
-            contact = ContactForm.new(name: "MVONDO", email: "yaf.mvondo@agis-as.com", message: "FATAL : Transaction #{await.hashawait} qualifiée de perimée n'a pas pu etre supprimer. Intervention urgente.")
-            contact.deliver
-            return false, "Transaction #{await.hashawait} ne peut etre supprimer, demarrage de l'envoi du courriel au service de maintenance ..."
+            Rails::logger::error "Transaction #{await.hashawait} n'est plus valide. supression..."
+            if await.destroy
+              Rails::logger::info "Transaction #{await.hashawait} qualifiée de perimée a été supprimée."
+              return true, "Transaction #{await.hashawait} qualifiée de perimée a été supprimée."
+            else
+              Rails::logger::fatal "Transaction #{await.hashawait} qualifiée de perimée n'a pas pu etre supprimer. Impossible de supprimer la transaction. Contact du service de maintenance."
+              contact = ContactForm.new(name: "MVONDO", email: "yaf.mvondo@agis-as.com", message: "FATAL : Transaction #{await.hashawait} qualifiée de perimée n'a pas pu etre supprimer. Intervention urgente.")
+              contact.deliver
+              return false, "Transaction #{await.hashawait} ne peut etre supprimer, demarrage de l'envoi du courriel au service de maintenance ..."
+            end
           end
         end
       end
+
+    else
+
+      # customer not found on plateforme
+      return false, "Nous ne parvenons pas à reconnaitre cet utilisateur!"
+
     end
   end
 
@@ -1151,57 +1171,76 @@ class Client
     message = message
     locale = locale
 
-    #searching customer
-    customer = Customer.find_by_authentication_token(token)
-    if customer.blank?
-      return false, I18n.t("customerNotFound", locale: locale)
-    else
-      # check existance of await
-      Rails::logger.info "Searching intents for customer #{token}"
-      intent = customer.await
-      if intent.blank?
-        return false , "Aucune intention de retrait disponible pour ce compte"
+    # check if customer exist before any query
+    if Customer.exists(authentication_token: token)
+
+      #searching customer
+      customer = Customer.find_by_authentication_token(token)
+      if customer.blank?
+        return false, I18n.t("customerNotFound", locale: locale)
       else
-        # we found an intent, we can destroy it
-        # See restauration on Await model
-        if intent.destroy
-          # cancel and restore customer credit account
-          return true, "Retrait annulé avec succes du montant de #{intent.amount.round(2)}"
+        # check existance of await
+        Rails::logger.info "Searching intents for customer #{token}"
+        intent = customer.await
+        if intent.blank?
+          return false , "Mr/Mme #{customer.complete_name} aucune demande de retrait disponible pour votre compte"
         else
-          return false, "Une erreur est survenue durant le processus d'annulation du retrait de #{intent.amount.round(2)} FC"
+          # we found an intent, we can destroy it
+          # See restauration on Await model
+          if intent.destroy
+            # cancel and restore customer credit account
+            return true, "Retrait annulé avec succes du montant de #{intent.amount.round(2)}"
+          else
+            return false, "Une erreur est survenue durant le processus d'annulation du retrait de #{intent.amount.round(2)} FC"
+          end
         end
       end
+
+    else
+      # no customer exists
+      return false, "Nous ne parvenons pas à reconnaitre cet utilisateur!"
     end
   end
 
   #VERIFICATION DE L EXISTENCE D'UNE INTENTION DE RETRAIT EN COURS
   # @method   Check retrait | verifier le retrait
   # @name     Client::check_retrait
-  # @params   phone
+  # @params   [Integer] phone
   # @output   boolean [true/false]
   # @author @mvondoyannick
   # @version 1.0.1
   def self.check_retrait(phone)
     @phone = phone
-    customer = Customer.find_by_phone(@phone) #where(phone: phone).first
-    if customer.blank?
-      Rails::logger::info "Utilisateur inconnu"
-      return false, "Utilisateur inconnu"
-    else
-      await = Await.find_by(customer_id: customer.id, id: customer.await)
-      if await.blank?
-        Rails::logger::info "Aucun retrait trouvé pour ce compte"
-        return false, "Aucun retrait sur votre compte  pour le moment"
-      else
-        Rails::logger::info "Existance d'un retrait pour ce compte"
 
-        #notification email
-        #ApiMailer.notifyAdmin.deliver_now
-        #ApiMailer.signupFail("MESSAGE", 691451189, Time.now, "ERRORS").deliver_now
-        ApiMailer.notify("MESSAGE", 691451189, Time.now, "ERRORS").deliver_now
-        # fin notification
-        return true, await.as_json(only: :amount)
+    # check if customer phone exists
+    if Customer.exists(phone: phone)
+
+      customer = Customer.find_by_phone(@phone) #where(phone: phone).first
+      if customer.blank?
+        Rails::logger::info "Utilisateur inconnu"
+        return false, "Utilisateur inconnu"
+      else
+        await = Await.find_by(customer_id: customer.id, id: customer.await)
+        if await.blank?
+          Rails::logger::info "Aucun retrait trouvé pour ce compte"
+          return false, "Aucun retrait sur votre compte  pour le moment"
+        else
+          Rails::logger::info "Existance d'un retrait pour ce compte"
+
+          #notification email
+          #ApiMailer.notifyAdmin.deliver_now
+          #ApiMailer.signupFail("MESSAGE", 691451189, Time.now, "ERRORS").deliver_now
+          ApiMailer.notify("MESSAGE", 691451189, Time.now, "ERRORS").deliver_now
+          # fin notification
+          return true, await.as_json(only: :amount)
+        end
       end
+
+    else
+
+      # no customer found
+      return false, "Nous ne parvenons pas à reconnaitre cet utilisateur!"
+
     end
   end
 

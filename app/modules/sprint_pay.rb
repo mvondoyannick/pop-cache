@@ -147,7 +147,7 @@ module SprintPay
         if @montant.to_f > 500000.to_f
           return false, {
             title: "Erreur montant",
-            message: "Impossible de crediter un montant superieur à 500 000 FC"
+            message: "Impossible de crediter un montant superieur à 500 000 F CFA"
           }
         else
           #sleep for 5 seconds
@@ -178,10 +178,10 @@ module SprintPay
 
               if history.save
                 #new entry created
-                Sms.nexah(@phone, "Recharge de votre compte via #{@network_name.upcase} d'un montant de #{@montant} FC. Votre solde est maintenant de #{customer.account.amount} FC.")
+                Sms.nexah(@phone, "Recharge de votre compte via #{@network_name.upcase} d'un montant de #{@montant} F CFA. Votre solde est maintenant de #{customer.account.amount} F CFA.")
                 return true, {
                   title: "Recharge effectuée",
-                  message: "Votre compte #{@phone} correspondant à #{@network_name.upcase} a été debité d'un montant de #{@montant} FC. Le sole de votre compte PMQ est de #{customer.account.amount} FC"
+                  message: "Votre compte #{@phone} correspondant à #{@network_name.upcase} a été debité d'un montant de #{@montant} F CFA. Le sole de votre compte PMQ est de #{customer.account.amount} F CFA"
                 }
               else
                 puts "Impossible de rsauvegarder les informations"

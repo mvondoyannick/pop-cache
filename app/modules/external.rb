@@ -19,8 +19,12 @@ module External
     # CHECK IS USERS PHONE ARE DIFFEREBT
     # @params [Interger] phone
     def self.is_customer_different?(customer_phone, merchant_phone)
-      @customer_phone = customer_phone
-      @merchant_phone = merchant_phone
+      @customer_phone = customer_phone.to_i
+      @merchant_phone = merchant_phone.to_i
+
+      puts "Customer phone : #{@customer_phone}"
+      puts "Merchant phone : #{@merchant_phone}"
+
 
       if @customer_phone == @merchant_phone
         # the numbers are same
@@ -169,6 +173,7 @@ module External
                             puts "Enregistrement de l'historique du client ..."
 
                             Sms.nexah(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d'etre effectué dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Vous avez maintenant #{m_account.amount} F CFA dans votre compte. Rapprochez-vous d'un partenaire Afriland First Bank ou creer un compte PAYMEQUICK.")
+
                             return true, {
                                 amount: @amount,
                                 device: 'XAF',
@@ -178,7 +183,8 @@ module External
                                 nexah: Customer.find_by_authentication_token(@customer_token).complete_name,
                                 date: Time.now.strftime("%d-%m-%Y, %Hh:%M"),
                                 status: "PAIEMENT EFFECTUÉ"
-                            }#,"Paiement d'un montant de #{Parametre::Parametre::agis_percentage(@amount)} F CFA effectué au  #{@merchant_phone}."
+                            }
+                            
                           else
     
                             # Notify admin for this errors

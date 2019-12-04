@@ -45,6 +45,25 @@ class WelcomeController < ApplicationController
     end
   end
 
+  def webview_login
+  end
+
+
+  def webview_signup
+  end
+
+
+  def webview_history
+  end
+
+
+  def webview_pay
+  end
+
+  
+  def webview_home
+  end
+
   def mppp
     if params[:commit] == "Envoyer"
       # commited has been received

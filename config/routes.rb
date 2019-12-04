@@ -97,6 +97,20 @@ Rails.application.routes.draw do
   root 'welcome#home'
   # Webview for mobile devise
   get 'webview/:hash/:token', to: 'welcome#webview'
+  namespace :webview do
+    namespace :payment do
+      get 'pay', to: 'webview#pay'
+      get 'scan', to: 'webview#scan'
+      get 'code', to: 'webview#code'
+      get 'phone', to: 'webview#phone'
+      get 'sms', to: 'webview#sms'
+      get 'email', to: 'webview#email'
+    end
+    namespace :auth do
+      get 'login', to: 'webview#login'
+      get 'signup', to: 'webview#signup'
+    end
+  end
 
   # webview for MPPP
   get 'webview/mppp', to: 'welcome#mppp'
