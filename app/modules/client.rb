@@ -910,7 +910,7 @@ class Client
     @hash = "PR-#{SecureRandom.hex(13).upcase}" #ID de la transaction
 
     # find if customer have an account
-    if Customer.exists(authentication_token: @token)
+    if Customer.exists?(authentication_token: @token)
 
       customer = Customer.find_by_authentication_token(@token)
       # refactoring
@@ -1119,7 +1119,7 @@ class Client
     Rails::logger::info "Starting await verification ..."
 
     # check if customer have an account
-    if Customer.exists(phone: @phone)
+    if Customer.exists?(phone: @phone)
 
       customer = Customer.find_by_phone(@phone)
       if customer.blank?
@@ -1172,7 +1172,7 @@ class Client
     locale = locale
 
     # check if customer exist before any query
-    if Customer.exists(authentication_token: token)
+    if Customer.exists?(authentication_token: token)
 
       #searching customer
       customer = Customer.find_by_authentication_token(token)
@@ -1213,7 +1213,7 @@ class Client
     @phone = phone
 
     # check if customer phone exists
-    if Customer.exists(phone: phone)
+    if Customer.exists?(phone: phone)
 
       customer = Customer.find_by_phone(@phone) #where(phone: phone).first
       if customer.blank?
