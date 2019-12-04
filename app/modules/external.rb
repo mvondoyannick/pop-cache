@@ -502,7 +502,6 @@ module External
                         )
   
                         if client.save
-                          @name = Customer.find(phone: @merchant_phone, two_fa: "authenticate")
 
                           Sms.nexah(@merchant_phone, "Bonjour, un Paiement d'un montant de #{@amount} F CFA vient d etre effectue dans votre compte #{@merchant_phone}. ID transaction EXT_PAY_#{@hash}. Le solde de votre compte est maintenant de #{m_account.amount} F CFA. Rapprochez-vous d'une agence UBA ou creer un compte PayMeQuick.")
                           return true, {
