@@ -1055,7 +1055,7 @@ class Client
                             if amount_update
 
                               Sms.nexah(customer.phone, "Retrait effectue d'un montant de  d'un montant de #{awaits.amount.to_f.round(2)} FC. Votre solde total est de #{customer.account.amount.round(2)} FC.")
-                              return true, "#{customer.complete_name}Un montant de #{awaits.amount} F CFA a été retiré de votre compte. \t Votre solde est de #{account.amount} FC. Merci"
+                              return true, "#{customer.complete_name} Un montant de #{awaits.amount} F CFA a été retiré de votre compte. \t Votre solde est de #{account.amount} F CFA. Merci"
 
                             else
 
