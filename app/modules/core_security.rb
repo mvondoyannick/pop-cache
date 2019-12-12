@@ -1,4 +1,4 @@
-module Guardian
+module CoreSecurity
 
     $version = "1.0.0" 
     $rsa_private = "-----BEGIN RSA PRIVATE KEY-----
@@ -29,6 +29,15 @@ module Guardian
     jsMtGAniWOeZY/BqriQK8EZQWGLT2P8tey0fY4f6bSrXYm0XxMNmvw==
     -----END RSA PRIVATE KEY-----"
 
+    # Gestion de la sécurité
+    class Guardian
+
+    end
+
+    # managing fraud
+    class Faud
+
+    end
 
     class Client
 

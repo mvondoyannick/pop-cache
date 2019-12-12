@@ -1,0 +1,12 @@
+{
+  "dir": "ltr",
+  "lang": "en-us",
+  "scope": "/",
+  "name": "PAYMEQUICK",
+  "short_name": "paymequick",
+  "start_url": "/",
+  "theme_color": "#317EFB",
+  "background_color": "#FFFFFF",
+  "display": "fullscreen",
+  "orientation": "portrait"
+}

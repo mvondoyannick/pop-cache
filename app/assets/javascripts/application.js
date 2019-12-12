@@ -18,6 +18,8 @@
 //= require activestorage
 //= require turbolinks
 //= require serviceworker-companion
+//= require instascan
+//= require sweetalert2/dist/sweetalert2.all.min.js
 //= require_tree .
 
 /* directive de chargement du wiget*/

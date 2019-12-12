@@ -52,32 +52,11 @@
     <p class="mb-0">
       <footer class="blockquote-footer">Creer un compte/se connecter</footer>
       <div class="row mt-2">
-        <div class=" col-6">
-          <a href="#" class="btn btn-primary btn-lg btn-block">Login</a>
-        </div>
-        <div class=" col-6">
-          <a href="#" class="btn btn-primary btn-lg btn-block">Creer</a>
-        </div>
-      </div>
-      <hr>
-      <footer class="blockquote-footer">Ou se connecter avec</footer>
-      <div class="row mt-2">
-        <div class=" col-4">
-          <%= link_to "#" do %>
-            <%= image_tag("fb.png", size: 50, class: "rounded mx-auto d-block") %>
-          <% end %>
-        </div>
-        <div class=" col-4">
-          <%= link_to "#" do %>
-            <%= image_tag("google.png", size: 50, class: "rounded mx-auto d-block") %>
-          <% end %>
-        </div>
-        <div class=" col-4">
-          <%= link_to "#" do %>
-            <%= image_tag("twitter.png", size: 50, class: "rounded mx-auto d-block") %>
-          <% end %>
+        <div class=" col-12">
+          <%= link_to "Se connecter", "/transactions/accounts/#{params[:token]}/login", class: "btn btn-outline-primary btn-lg btn-block" %>
+          <br>
+          <a href="#" class="btn btn-outline-primary btn-lg btn-block">Creer un compte</a>
         </div>
       </div>
     </p>
-    <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
   </blockquote>

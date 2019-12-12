@@ -22,7 +22,6 @@
   <%= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css', integrity: "sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=", crossorigin: "anonymous",  media: 'all', 'data-turbolinks-track': 'reload' %>
   <!-- Theme style -->
   <%= stylesheet_link_tag 'https://adminlte.io/themes/dev/AdminLTE/dist/css/adminlte.min.css', media: 'all', 'data-turbolinks-track': 'reload' %>
-  <%= stylesheet_link_tag 'https://adminlte.io/themes/dev/AdminLTE/dist/css/adminlte.min.css', media: 'all', 'data-turbolinks-track': 'reload' %>
   <!-- Google Font: Source Sans Pro -->
   <%= stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700', media: 'all', 'data-turbolinks-track': 'reload' %>
   
@@ -87,10 +86,10 @@ to get the desired effect
 
   <!-- Main Footer -->
   <footer class="main-footer">
-    <strong>Copyright &copy; 2014-2019 <a href="http://paiemequick.com">PAYMEQUICK</a>.</strong>
+    <strong>Copyright &copy; <%= Date.today.last_year %>-<%= Date.today.year %> <a href="https://paiemequick.com" target="_blank">PAYMEQUICK</a>.</strong>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
-      <b>Version</b> 1.0.0
+      <b>Version</b> 91f25642453
     </div>
   </footer>
 </div>

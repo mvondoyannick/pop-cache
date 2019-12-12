@@ -3,12 +3,42 @@ class WelcomeController < ApplicationController
   # before_action :check_auth, only: [:home]
 
   def home
+    @new_registration = Customer.where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).count
+    @day_paiements = History.where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).limit(5).reverse
+    @day_commission = Commission.where(created_at: Date.today.beginning_of_day..Date.today.end_of_day).sum(:commission)
     render layout: "layouts/dashboard/application"
   end
 
-  " login pmq customer"
-  def login
+  # user profile
+  def profile
+    render layout: "layouts/dashboard/application"
+  end
 
+  #show all users
+  def users 
+    @users = Customer.all.order(name: :asc).where(two_fa: "authenticate")
+    @not_auth = Customer.all.order(name: :asc).where(two_fa: nil)
+    render layout: "layouts/dashboard/application"
+  end
+
+  # show singular user
+  def user 
+    token = params[:token]
+    if Customer.exists?(authentication_token: token)
+      @user = Customer.find_by(authentication_token: token)
+      @history = History.all.where(customer_id: @user.id)
+      @status = true
+    else
+      @status = false
+    end
+    render layout: "layouts/dashboard/application"
+  end
+
+  # login pmq customer
+  def login
+    id = params[:token]
+    @token = Customer.find(id).authentication_token
+    render layout: "layouts/dashboard/application"
   end
 
   def accounts
@@ -62,6 +92,45 @@ class WelcomeController < ApplicationController
 
   
   def webview_home
+  end
+
+  # recharge utilisateur par l'admin
+  def recharge
+    render layout: "layouts/dashboard/application"
+  end
+
+  # retrai t utilisateur par l'admin ou le partenaire
+  def retrait
+    @notice = nil
+    if params[:phone].present? && params[:montant].present?
+      phone = params[:phone].to_i
+      montant = params[:montant]
+
+      # searching customer with phone
+      if Customer.exists?(phone: phone)
+        # begin transaction
+
+        a = Client.debit_user_account(phone, montant)
+
+        puts a
+
+        @notice = true
+
+      else
+
+        #flash[:notice] = "Numero inexistant sur la plateforme"
+        @notice = "Numéro inconnu"
+        redirect_to "/admin/users/retrait"
+        return
+
+      end
+    end
+    render layout: "layouts/dashboard/application"
+  end
+
+  # confirm retrait
+  def confirm_retrait
+
   end
 
   def mppp

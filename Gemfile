@@ -83,6 +83,10 @@ gem 'chart-js-rails'
 gem 'serviceworker-rails'
 #adding pusher for realtime
 gem 'pusher'
+# adding money rails https://github.com/RubyMoney/money-rails
+gem 'money-rails', '~>1.12'
+# adding breadcrumb on rails https://github.com/weppos/breadcrumbs_on_rails
+#gem "breadcrumbs_on_rails"
 
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'

@@ -103,6 +103,8 @@ module External
       @amount = argv[:amount]
       @hash = rand(11**11)
       @ip = argv[:ip]
+      @lat = argv[:lat]
+      @long = argv[:long]
       @playerID = argv[:oneSignalID]
 
       # recherche de la localisation de la transaction
@@ -224,6 +226,13 @@ module External
                 
     
               else
+                
+                ##########################################################
+                ##                                                      ##
+                ##                 FOUND NEW NUMBER                     ##
+                ##                                                      ##
+                ##########################################################
+
                 puts "Nouveau numéro decouvert"
 
                 # verification du solde dans le compte du payeur

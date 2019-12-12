@@ -78,6 +78,8 @@ class Api::V1::ApiController < ApplicationController
     @phone = params[:phone]
     @amount = params[:amount]
     @password = params[:password]
+    @lat = params[:latitude]
+    @long = params[:longitude]
     @ip = request.remote_ip
 
     begin
@@ -94,7 +96,7 @@ class Api::V1::ApiController < ApplicationController
         else
           #tout va bien, l'utilisateur payeur est connu, check the phone number
           #find if this number is not registrated to the plateforme
-          payment = External::DemoUsers.Pay(token: @token, password: @password, phone: @phone, amount: @amount, ip: @ip, oneSignalID: @playerID)
+          payment = External::DemoUsers.Pay(token: @token, password: @password, phone: @phone, amount: @amount, ip: @ip, lat: @lat, long: @long, oneSignalID: @playerID)
           puts "From Payment : #{payment}"
           render json: {
             status: payment[0],

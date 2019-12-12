@@ -8,23 +8,62 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4cc3d4a-e089-4f72-92e8-dfed898b45b0" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/assets/config/manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/assets/javascripts/custom.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/assets/stylesheets/custom.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/modules/core_banking.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/modules/core_customer.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/modules/core_enterprise.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/modules/core_external.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/modules/core_history.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/modules/core_notification.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/modules/core_parameter.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/modules/core_payment.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/modules/core_transaction.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/views/layouts/mobile/application.html.erb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/views/welcome/profile.html.erb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/views/welcome/recharge.html.erb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/views/welcome/retrait.html.erb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/views/welcome/user.html.erb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/views/welcome/users.html.erb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lorem.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.generators" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.generators" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/bae50ba6-0593-47c9-aa12-c37ccbe3760f.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/bae50ba6-0593-47c9-aa12-c37ccbe3760f.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/pop-cash.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pop-cash.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Gemfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/assets/javascripts/application.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/javascripts/application.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/assets/javascripts/home.coffee" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/javascripts/home.coffee" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/assets/javascripts/manifest.json.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/javascripts/manifest.json.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/assets/javascripts/serviceworker.js.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/javascripts/serviceworker.js.erb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/assets/stylesheets/application.scss" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/stylesheets/application.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/customer/sessions_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/customer/sessions_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/home_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/home_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/welcome_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/welcome_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modules/sms.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/sms.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/customers/sessions/new.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/customers/sessions/new.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/auth.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/blocage.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/contact_form.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/docs.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/eu.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/external.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/external.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/guardian.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules/core_security.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/lorem.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules/pay_lib.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/layouts/dashboard/_brand_logo.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/layouts/dashboard/_brand_logo.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/layouts/dashboard/_navbar.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/layouts/dashboard/_navbar.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/layouts/dashboard/_sidebar.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/layouts/dashboard/_sidebar.html.erb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/views/layouts/dashboard/application.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/layouts/dashboard/application.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/welcome/home.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/welcome/home.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/welcome/login.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/welcome/login.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/welcome/webview.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/welcome/webview.html.erb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/database.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/database.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/environments/development.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/environments/development.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/initializers/devise.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/devise.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/assets.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/assets.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -84,14 +123,13 @@
     <option name="FILTER_DEBUG" value="true" />
     <option name="CUSTOM_FILTER" />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="199" />
-    <option name="y" value="234" />
-    <option name="width" value="1200" />
-    <option name="height" value="654" />
-  </component>
   <component name="ProjectId" id="1OmhJsnHR6KeeG1WlXB6uLJm85S" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="Ruby.ViewRefParam.DefaultExtension" value="html.erb" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -114,7 +152,92 @@
   <component name="RubyModuleManagerSettings">
     <option name="blackListedRootsPaths">
       <list>
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/rake-12.3.2" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/loofah-2.2.3" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/bcrypt-3.1.13" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/selenium-webdriver-3.141.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/bindex-0.7.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/loofah-2.2.3" />
         <option value="$PROJECT_DIR$" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/mini_portile2-2.4.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/tilt-2.0.9" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/addressable-2.6.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/concurrent-ruby-1.1.5" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/mini_mime-1.0.1" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/chromedriver-helper-2.1.1" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/bindex-0.5.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/orm_adapter-0.5.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/selenium-webdriver-3.142.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/warden-1.2.8" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/crass-1.0.4" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/brakeman-4.5.0/bundle/ruby/2.5.0/gems/tilt-2.0.9" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/childprocess-0.9.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/brakeman-4.5.0/bundle/ruby/2.5.0/gems/slim-4.0.1" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/brakeman-4.5.0/bundle/ruby/2.5.0/gems/highline-1.7.10" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/brakeman-4.5.0/bundle/ruby/2.5.0/gems/safe_yaml-1.0.5" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/childprocess-1.0.1" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/thread_safe-0.3.6" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/nio4r-2.3.1" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/brakeman-4.5.0/bundle/ruby/2.5.0/gems/terminal-table-1.8.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/httparty-0.17.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/brakeman-4.5.0/bundle/ruby/2.5.0/gems/temple-0.8.1" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/tilt-2.0.9" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/mini_mime-1.0.1" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/bcrypt-3.1.12" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/rb-fsevent-0.10.3" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/binding_of_caller-0.8.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/debug_inspector-0.0.3" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/regexp_parser-1.4.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/method_source-0.9.2" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/better_errors-2.5.1" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/table_print-1.5.6" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/jwt-2.1.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/rake-12.3.2" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/crass-1.0.4" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/nio4r-2.3.1" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/spring-watcher-listen-2.0.1" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/mini_portile2-2.4.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/public_suffix-3.0.3" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/multipart-post-2.0.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/rqrcode_png-0.1.5" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/uglifier-4.1.20" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/qrcodeable-1.0.3" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/binding_of_caller-0.8.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/mimemagic-0.3.2" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/ffi-1.10.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/rb-inotify-0.9.10" />
+        <option value="$PROJECT_DIR$/../biometrics" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/mimemagic-0.3.3" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/bootsnap-1.4.4" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/httparty-0.17.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/sqlite3-1.3.13" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/jbuilder-2.8.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/better_errors-2.5.1" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/debug_inspector-0.0.3" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/thread_safe-0.3.6" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/rack-cors-1.0.3" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/warden-1.2.8" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/countries-3.0.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/jbuilder-2.9.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/chunky_png-1.3.11" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/marcel-0.3.2" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/dragonfly-1.2.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/country_select-4.0.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/orm_adapter-0.5.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/regexp_parser-1.2.0" />
+        <option value="$PROJECT_DIR$/../payequick" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/rb-inotify-0.10.0" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/whenever-0.11.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/concurrent-ruby-1.1.5" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/public_suffix-3.0.3" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/addressable-2.5.2" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/aes-0.5.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/sqlite3-1.4.1" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/uglifier-4.1.20" />
+        <option value="$PROJECT_DIR$/../payequick/vendor/bundle/ruby/2.5.0/gems/leaflet-rails-1.4.0" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/method_source-0.9.2" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/rb-fsevent-0.10.3" />
+        <option value="$PROJECT_DIR$/../biometrics/vendor/bundle/ruby/2.5.0/gems/chromedriver-helper-2.1.0" />
       </list>
     </option>
   </component>
@@ -123,18 +246,6 @@
       <command value="rake --tasks" />
       <command value="rake" />
       <command value="rake time:zones[cm]" />
-    </option>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
     </option>
   </component>
   <component name="RunManager" selected="Rails.Development: pop-cash">
@@ -206,7 +317,7 @@
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_VERBOSE" VALUE="null" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TESTOPTS" VALUE="" />
       <method v="2" />
     </configuration>
     <configuration name="test: pop-cash" type="RakeRunConfigurationType" factoryName="Rake">
@@ -232,7 +343,7 @@
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_VERBOSE" VALUE="null" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TESTOPTS" VALUE="" />
       <method v="2" />
     </configuration>
     <configuration name="sprint_pay" type="RubyRunConfigurationType" factoryName="Ruby" temporary="true">
@@ -258,6 +369,18 @@
         <item itemvalue="Ruby.sprint_pay" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
   </component>
   <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="true" RAKE_SPRING_PRE_LOADER_OPTION="false" RAILS_SPRING_PRE_LOADER_OPTION="false" />
   <component name="SvnConfiguration">
@@ -398,6 +521,12 @@
       <workItem from="1573567706439" duration="388000" />
       <workItem from="1573573904552" duration="241000" />
       <workItem from="1574768994479" duration="494000" />
+      <workItem from="1575286993880" duration="676000" />
+      <workItem from="1575287914418" duration="1603000" />
+      <workItem from="1576052281138" duration="5271000" />
+      <workItem from="1576153789957" duration="5699000" />
+      <workItem from="1576167939109" duration="276000" />
+      <workItem from="1576170245170" duration="845000" />
     </task>
     <servers />
   </component>
@@ -432,7 +561,49 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
   </component>
+  <component name="WindowStateProjectService">
+    <state x="395" y="125" width="800" height="684" key="#Live_Templates" timestamp="1576056729889">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="395" y="125" width="800" height="684" key="#Live_Templates/0.27.1600.873@0.27.1600.873" timestamp="1576056729889" />
+    <state width="776" height="215" key="GridCell.Tab.0.bottom" timestamp="1576159491117">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="776" height="215" key="GridCell.Tab.0.bottom/0.27.1600.873@0.27.1600.873" timestamp="1576159491117" />
+    <state width="776" height="215" key="GridCell.Tab.0.center" timestamp="1576159491116">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="776" height="215" key="GridCell.Tab.0.center/0.27.1600.873@0.27.1600.873" timestamp="1576159491116" />
+    <state width="776" height="215" key="GridCell.Tab.0.left" timestamp="1576159491116">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="776" height="215" key="GridCell.Tab.0.left/0.27.1600.873@0.27.1600.873" timestamp="1576159491116" />
+    <state width="776" height="215" key="GridCell.Tab.0.right" timestamp="1576159491117">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="776" height="215" key="GridCell.Tab.0.right/0.27.1600.873@0.27.1600.873" timestamp="1576159491117" />
+    <state width="776" height="215" key="GridCell.Tab.1.bottom" timestamp="1576159491118">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="776" height="215" key="GridCell.Tab.1.bottom/0.27.1600.873@0.27.1600.873" timestamp="1576159491118" />
+    <state width="776" height="215" key="GridCell.Tab.1.center" timestamp="1576159491117">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="776" height="215" key="GridCell.Tab.1.center/0.27.1600.873@0.27.1600.873" timestamp="1576159491117" />
+    <state width="776" height="215" key="GridCell.Tab.1.left" timestamp="1576159491117">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="776" height="215" key="GridCell.Tab.1.left/0.27.1600.873@0.27.1600.873" timestamp="1576159491117" />
+    <state width="776" height="215" key="GridCell.Tab.1.right" timestamp="1576159491117">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state width="776" height="215" key="GridCell.Tab.1.right/0.27.1600.873@0.27.1600.873" timestamp="1576159491117" />
+    <state x="463" y="214" width="672" height="678" key="search.everywhere.popup" timestamp="1576158972803">
+      <screen x="0" y="27" width="1600" height="873" />
+    </state>
+    <state x="463" y="214" width="672" height="678" key="search.everywhere.popup/0.27.1600.873@0.27.1600.873" timestamp="1576158972803" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/pop_cache@Development__pop_cash.rcov" NAME="Development: pop-cash Coverage Results" MODIFIED="1573567739092" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="pop-cash" />
+    <SUITE FILE_PATH="coverage/pop_cache@Development__pop_cash.rcov" NAME="Development: pop-cash Coverage Results" MODIFIED="1576154614089" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="pop-cash" />
   </component>
 </project>

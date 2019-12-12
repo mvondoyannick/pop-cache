@@ -93,9 +93,35 @@ Rails.application.routes.draw do
   get 'home/apikey'
   post 'home/apikey_request'
   get 'home/signup'
-  #main route
+
+  #######################################
+  ##                                   ##
+  ##            ROOT ROUTE             ##
+  ##                                   ##
+  #######################################
   root 'welcome#home'
+
+  #######################################
+  ##                                   ##
+  ##          WEBVIEW SCOPE            ##
+  ##                                   ##
+  #######################################
   # Webview for mobile devise
+  scope '/transactions/' do
+    get 'transaction/:hash/:token', to: "welcome#webview"
+     
+    # navigating account on webview PMQ lite
+    get 'accounts/:token/login', to: "welcome#login"
+
+    # creating new account
+    get 'transactions/accounts', to: "welcome#webview"
+
+    # make a payment
+    get 'payments/pay', to: "welcome#webview"
+
+    # scan qrcode for payment
+    get 'payments/pay/scan', to: "welcome#webview"
+  end
   get 'webview/:hash/:token', to: 'welcome#webview'
   namespace :webview do
     namespace :payment do
@@ -109,6 +135,22 @@ Rails.application.routes.draw do
     namespace :auth do
       get 'login', to: 'webview#login'
       get 'signup', to: 'webview#signup'
+    end
+  end
+
+  #######################################
+  ##                                   ##
+  ##        ADMIN | PARTNER SCOPE      ##
+  ##                                   ##
+  #######################################
+  scope :admin do
+    scope :users do
+      get 'show', to: "welcome#users"
+      get 'user/:token', to: "welcome#user"
+      get 'recharge', to: "welcome#recharge"
+      post 'recharge', to: "welcome#recharge"
+      get 'retrait', to: "welcome#retrait"
+      post 'retrait', to: "welcome#retrait"
     end
   end
 

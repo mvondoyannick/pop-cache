@@ -1,0 +1,116 @@
+
+<div class="card">
+    <div class="card-header border-0">
+    <h3 class="card-title">COMPTES UTILISATEURS AUTHENTIFIÉS (<%= @users.count < 10 ? "0#{@users.count}" : @users.count %>)</h3>
+    <div class="card-tools">
+        <a href="#" class="btn btn-tool btn-sm">
+        <i class="fas fa-download"></i>
+        </a>
+        <a href="#" class="btn btn-tool btn-sm">
+        <i class="fas fa-bars"></i>
+        </a>
+    </div>
+    </div>
+    <div class="card-body p-0">
+    <table class="table table-striped table-valign-middle">
+        <thead>
+        <tr>
+        <th>#</th>
+        <th>Created</th>
+        <th>update</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Pays</th>
+        <th>Histo.</th>
+        </tr>
+        </thead>
+        <tbody>
+            <% @users.each do |users| %>
+                <tr>
+                    <td width="5%">
+                        <i class="fa fa-users"></i>
+                    </td>
+                    <td><%= users.created_at.strftime("%d-%m-%Y, %Hh:%M") %></td>
+                    <td><%= users.updated_at.strftime("%d-%m-%Y, %Hh:%M") %></td>
+                    <td>
+                        <%= users.complete_name %>
+                        <% if users.created_at.today? %> 
+                            <span class='badge badge-info rightusers_show_path'>New</span>
+                        <% end %>
+                    </td>
+                    <td>
+                        <%= users.phone %>
+                    </td>
+                    <td>
+                        <%= users.pays.nil? ? "Inconnu" : users.pays %>
+                    </td>
+                    <td>
+                        <%= link_to "/admin/users/user/#{users.authentication_token}", class: "text-mutted" do %>
+                            <i class="fas fa-search"></i>
+                        <% end %>
+                    </td>
+
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+    </div>
+</div>
+<hr>
+<div class="card">
+    <div class="card-header border-0">
+    <h3 class="card-title">COMPTES UTILISATEURS NON AUTHENTIFIÉS (<%= @not_auth.count < 10 ? "0#{@not_auth.count}" : @not_auth.count %>)</h3>
+    <div class="card-tools">
+        <a href="#" class="btn btn-tool btn-sm">
+        <i class="fas fa-download"></i>
+        </a>
+        <a href="#" class="btn btn-tool btn-sm">
+        <i class="fas fa-bars"></i>
+        </a>
+    </div>
+    </div>
+    <div class="card-body p-0">
+    <table class="table table-striped table-valign-middle">
+        <thead>
+        <tr>
+        <th>#</th>
+        <th>Created</th>
+        <th>update</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Pays</th>
+        <th>Histo.</th>
+        </tr>
+        </thead>
+        <tbody>
+            <% @not_auth.each do |users| %>
+                <tr>
+                    <td width="5%">
+                        <i class="fa fa-users"></i>
+                    </td>
+                    <td><%= users.created_at.strftime("%d-%m-%Y, %Hh:%M") %></td>
+                    <td><%= users.updated_at.strftime("%d-%m-%Y, %Hh:%M") %></td>
+                    <td>
+                        <%= users.complete_name %>
+                        <% if users.created_at.today? %> 
+                            <span class='badge badge-danger right'>New</span>
+                        <% end %>
+                    </td>
+                    <td>
+                        <%= users.phone %>
+                    </td>
+                    <td>
+                        <%= users.pays.nil? ? "Inconnu" : users.pays %>
+                    </td>
+                    <td>
+                        <%= link_to "/admin/users/user/#{users.authentication_token}", class: "text-mutted" do %>
+                            <i class="fas fa-search"></i>
+                        <% end %>
+                    </td>
+
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+<div class="row">
+        <!-- left column -->
+        <div class="col-md-6">
+        <!-- general form elements -->
+        <div class="card card-primary">
+            <div class="card-header">
+            <h3 class="card-title">Effectuer un retrait</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <%= form_tag ({controller: :welcome, action: :retrait}) do %>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Numero de téléphone</label>
+                        <%= telephone_field_tag 'phone', nil, class: 'form-control', placeholder: "Numéro de téléphone" %>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Confirmer numéro de téléphone</label>
+                        <%= telephone_field_tag 'phone_confirm', nil, class: 'form-control', placeholder: "Confirmer numéro de téléphone" %>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Montant transaction</label>
+                        <%= number_field_tag 'montant', nil, class: 'form-control', placeholder: "Montant du retrait" %>
+                    </div>
+                    <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">&nbsp;Confirmer le retrait</label>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <%= submit_tag "Envoyer la demande", class: "btn btn-primary" %>
+                </div>
+            <% end %>
+        </div>
+        <!-- /.card -->
+
+        </div>
+        <!--/.col (left) -->
+        <!-- right column -->
+        <div class="col-md-6">
+                    <!-- Form Element sizes -->
+        <div class="card card-success">
+            <div class="card-header">
+            <h3 class="card-title">Details & instructions</h3>
+            </div>
+            <div class="card-body">
+            <div class="form-group">
+                <label for="exampleInputPassword1">Code retrait</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Code recu par SMS" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAAAXNSR0IArs4c6QAAAPhJREFUOBHlU70KgzAQPlMhEvoQTg6OPoOjT+JWOnRqkUKHgqWP4OQbOPokTk6OTkVULNSLVc62oJmbIdzd95NcuGjX2/3YVI/Ts+t0WLE2ut5xsQ0O+90F6UxFjAI8qNcEGONia08e6MNONYwCS7EQAizLmtGUDEzTBNd1fxsYhjEBnHPQNG3KKTYV34F8ec/zwHEciOMYyrIE3/ehKAqIoggo9inGXKmFXwbyBkmSQJqmUNe15IRhCG3byphitm1/eUzDM4qR0TTNjEixGdAnSi3keS5vSk2UDKqqgizLqB4YzvassiKhGtZ/jDMtLOnHz7TE+yf8BaDZXA509yeBAAAAAElFTkSuQmCC&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;" autocomplete="off">
+                </div>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+
+        </div>
+        <!--/.col (right) -->
+    </div>
+
+    <script>
+        console.log("loaded");
+        if (<%= @notice.nil? %>) {
+            console.log("not value recived");
+        }else if (<%= @notice == true %>){
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+                footer: '<a href>Why do I have this issue?</a>'             
+            });
+        }
+        else {
+            Swal.fire({
+                icon: 'success',
+                title: 'Effectué...',
+                text: 'Retrait effectué avec succès!',
+                footer: '<a href>Pas de SMS recu? renvoyer?</a>'             
+            });
+        }
+
+        
+    </script>
