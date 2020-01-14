@@ -1,0 +1,17 @@
+
+
+<form class="form-signin" action="/home" method="post">
+  <%= image_tag("pmq.png", class: "mb-5 center-block img-responsive", size: "200x120", alt: "", style: "margin: 0 auto;") %>
+  <h2 class="h4 mb-3 font-weight-normal">Connectez-vous</h2>
+  <label for="inputEmail" class="sr-only">Numéro de téléphone</label>
+  <input type="tel" name="phone" id="inputEmail" class="form-control" placeholder="Numéro de téléphone" required autofocus>
+  <label for="inputPassword" class="sr-only">Mot de passe</label>
+  <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>
+  <div class="checkbox mb-3">
+    <label>
+      <input type="checkbox" name="souvenir" value="remember-me"> se souvenir de moi
+    </label>
+  </div>
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Se connecter</button>
+  <p class="mt-5 mb-3 text-muted">&copy; <%= Date.today.year - 1 %>-<%= Date.today.year %> | <%= link_to request.host, request.base_url %></p>
+</form>

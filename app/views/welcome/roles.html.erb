@@ -1,0 +1,35 @@
+<% if @roles.empty? %>
+    <div class="row">
+        <div class="col-12">
+            <p class="text-center">
+                Aucun roles trouvés
+                <br> <br> <br>
+                <a class="btn btn-outline-secondary" href="/p/parameters/accounts">
+                    <i class="fa fa-plus"></i>
+                    Souhaitez-vous creer un rôle maintenant?
+                </a>        
+            </p>
+        </div>
+    </div>
+<% else %>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Handle</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @roles.each do |roles |%>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+<% end %>

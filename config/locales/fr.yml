@@ -1,0 +1,30 @@
+fr:
+  hello: "Bonjour le monde"
+  customerNotFound: "Utilisateur inconnu"
+  SmsNotSend: "Hum!!! c'est vraiment génant, nous sommes dans l'incapacité de vous transmettre le SMS de confirmarion"
+  DataNotComplete: "Certaines informations sont manquantes"
+  passwordInvalid: "Mot de passe invalide"
+  PasswordNotSecure: "Le mot de passe utilisé n'est pas sûr, merci de le modifier et de réessayer"
+
+  # Historique provenant de Logstory
+  noHistoryDay: "Aucune historique pour ce jour"
+  noHistoryWeek: "Aucune transaction pour cette semaine"
+  noHistoryMonth: "Aucune transaction enregistrée pour ce mois"
+  noHistoryBeginning: "Aucune transaction enregistrée depuis la creation de votre compte"
+  noHistoryYear: "Aucune transaction pour cette année"
+  sameDate: "Les dates selectionnées sont identiques"
+
+  # Payment internationnalisation
+  merchantNotValid: "Marchand invalide"
+  done: "Paiement fait"
+
+  # Limite de transaction dépassée
+  transactionLimitTitle: "Limite de paiment"
+  transactionLimitContent: "Vous avez atteint la limite maximum de paiement, merci de revoir le montant à la baisse et de réessayer."
+
+  enterSms: "Merci de saisir le code SMS recu par message"
+  errMerchantTitle: "Erreur marchand"
+  errMerchantContent: "Vous ne pouvez pas vous payer à vous même. Modifier le marchant et réessayer"
+
+  # retrait - intention de retrait
+  noIntent: "Aucune intention de retrait pour ce compte"

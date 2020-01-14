@@ -1,0 +1,24 @@
+<p class="h1">Comptes clients particulier</p>
+<br>
+<table class="table table-bordered">
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Prenom</th>
+    <th scope="col">Phone</th>
+    <th scope="col">CNI</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @particulier.each do |result| %>
+  <tr>
+    <th scope="row">1</th>
+    <td><%= result.name %></td>
+    <td><%= result.second_name %></td>
+    <td><%= result.phone %></td>
+    <td><%= result.cni %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>

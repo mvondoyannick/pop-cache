@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  customer: one
+  phone: MyString
+  sim_phone: MyString
+  network_operator: MyString
+  uuid: MyString
+  imei: MyString
+
+two:
+  customer: two
+  phone: MyString
+  sim_phone: MyString
+  network_operator: MyString
+  uuid: MyString
+  imei: MyString

@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  montant: 1.5
+  delais: MyString
+  code: MyString
+  use: false
+  receiver: 1
+  payment_date: MyString
+  pret: false
+  customer: one
+
+two:
+  montant: 1.5
+  delais: MyString
+  code: MyString
+  use: false
+  receiver: 1
+  payment_date: MyString
+  pret: false
+  customer: two

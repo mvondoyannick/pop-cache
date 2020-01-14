@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  amount: 1.5
+  coupon_code: 1
+  receiver_phone: MyString
+  receiver_name: MyString
+  auth_coupon_code: 1
+  fc_account: one
+  coupon_paid: false
+  coupon_date_paid: 2020-01-10 13:26:14
+  agence_id: MyString
+  lat: MyString
+  lon: MyString
+  coupon_confirmation_code: MyString
+
+two:
+  amount: 1.5
+  coupon_code: 1
+  receiver_phone: MyString
+  receiver_name: MyString
+  auth_coupon_code: 1
+  fc_account: two
+  coupon_paid: false
+  coupon_date_paid: 2020-01-10 13:26:14
+  agence_id: MyString
+  lat: MyString
+  lon: MyString
+  coupon_confirmation_code: MyString

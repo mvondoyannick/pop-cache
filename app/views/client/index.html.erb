@@ -1,0 +1,4 @@
+<h1>Historique</h1>
+<% Transaction.all.each do |content| %>
+  <%= content.created_at %>
+<% end %>

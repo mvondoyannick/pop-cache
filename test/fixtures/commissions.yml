@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  code: MyString
+  amount_brut: MyString
+  amount_commission: MyString
+  commission: MyString
+
+two:
+  code: MyString
+  amount_brut: MyString
+  amount_commission: MyString
+  commission: MyString

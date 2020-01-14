@@ -1,0 +1,59 @@
+<div class="h1">Procedure de retrait</div>
+<br>
+<div class="row">
+  <div class="col-6">
+    <%= form_tag(home_retrait_path, method: :post) do %>
+      <div class="form-group">
+        <label for="exampleFormControlInput1">Numéro de téléphone</label>
+        <%= telephone_field_tag :phone, nil, class: 'form-control', placeholder: '6xx-xxx-xxx', require: true %>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlSelect1">Montant du retrait</label>
+        <%= number_field_tag :amount, nil, class: 'form-control', placeholder: '2500', require: true %>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlSelect1">Date de retrait</label>
+        <%= text_field_tag :date, nil, class: 'form-control', placeholder: '2500', readonly: true, value: Time.now %>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlSelect1">Note ou remarque supplementaire</label>
+        <%= text_area_tag :message, nil, class: 'form-control', size: '26x4' %>
+      </div>
+      <div class="form-group text-right">
+        <%= submit_tag "Envoyer", class: 'btn btn-sm btn-outline-primary' %>
+      </div>
+    <% end %>
+  </div>
+  <div class="col-6">
+    <form>
+      <div class="form-group">
+        <label for="exampleFormControlInput1">Status</label>
+        <%= text_field_tag :date, nil, class: 'form-control', readonly: true, value:  @response %>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlSelect1">Example select</label>
+        <select class="form-control" id="exampleFormControlSelect1">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlSelect2">Example multiple select</label>
+        <select multiple class="form-control" id="exampleFormControlSelect2">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlTextarea1">Example textarea</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+      </div>
+    </form>
+  </div>
+</div>

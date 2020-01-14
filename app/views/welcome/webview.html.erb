@@ -1,0 +1,62 @@
+
+  <h4 class="title"><i class="fa fa-credit-card-alt" aria-hidden="true"></i> Transactions web details</h4>
+  <br>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Titre</th>
+        <th scope="col">Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row" class="text-left">Action</th>
+        <td><%= @data.flag%></td>
+      </tr>
+      <tr>
+        <th scope="row">Client (vous)</th>
+        <td><%= Customer.find(@data.customer_id).complete_name %></td>
+      </tr>
+      <tr>
+        <th scope="row">Montant</th>
+        <td><%= @data.amount.round(2)%></td>
+      </tr>
+      <tr>
+        <th scope="row">Code</th>
+        <td><%= @data.code%></td>
+      </tr>
+      <tr>
+        <th scope="row">Date</th>
+        <td><%= @data.created_at %></td>
+      </tr>
+      <tr>
+          <th>Région</th>
+          <td>
+              <%= @data.region %>
+          </td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  <%= map(:center => {
+    :latlng => [@data.lat, @data.long],
+    :zoom => 10
+  },
+  :markers => [
+     {
+       :latlng => [@data.lat, @data.long],
+       :popup => "Lieu Transaction"
+     }
+  ]) %>
+  <blockquote class="blockquote mt-5">
+    <p class="mb-0">
+      <footer class="blockquote-footer">Creer un compte/se connecter</footer>
+      <div class="row mt-2">
+        <div class=" col-12">
+          <%= link_to "Se connecter", "/transactions/accounts/#{params[:token]}/login", class: "btn btn-outline-primary btn-lg btn-block" %>
+          <br>
+          <a href="#" class="btn btn-outline-primary btn-lg btn-block">Creer un compte</a>
+        </div>
+      </div>
+    </p>
+  </blockquote>

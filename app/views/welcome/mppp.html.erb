@@ -1,0 +1,16 @@
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">Envoi des SMS</h1>
+    <p class="lead">Saisissez les messages que vous souhaitez envoyer au membre du MPPP.</p>
+  </div>
+</div>
+<div class="row">
+    <div class="col">
+        <form>
+          <%= text_area(:application, :notes, cols: 40, rows: 15,placeholder: "Saisir votre text ici", maxlength: "160", class: 'form-control form-control-lg', style: "width: 100%;") %>
+          <p>
+              <%= submit_tag("Envoyer", class: "btn btn-outline-primary btn-lg btn-block ", style: "margin-top: 10px;") %>
+          </p>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+<% @customer = params[:token] %>
+<% @user = Customer.find_by_authentication_token(@customer) %>
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    Compte N° <%= @customer %>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <div id="dataTable_wrappers" class="dataTables_wrapper dt-bootstrap4"></div><div class="row"><div class="col-sm-12"><table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+        <thead>
+        <tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 263px;">Nom</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" style="width: 200px;">Prénom</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Office: activate to sort column ascending" style="width: 194px;">Téléphone</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 98px;">Sexe</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Start date: activate to sort column ascending" style="width: 102px;">Statut</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Start date: activate to sort column ascending" style="width: 182px;">Date Création</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending" style="width: 166px;">Action</th></tr>
+        </thead>
+        <tfoot>
+        </tfoot>
+        <tbody>
+        <tr role="row" class="odd">
+          <td class="sorting_1"><%= @user.name %></td>
+          <td><%= @user.second_name %></td>
+          <td><%= @user.phone %></td>
+          <td><%= @user.sexe %></td>
+          <td><%= @user.two_fa %></td>
+          <td><%= @user.created_at %></td>
+          <td><%= link_to "Activer", agentcrtl_activate_customer_path(token: params[:token]), class: "btn btn-outline-primary btn-sm text-right" %> &nbsp; <%= link_to "Signaler", nil, class: "btn btn-sm btn-outline-danger" %></td>
+        </tr>
+        </tbody>
+      </table></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Journal des transactions du N° <%= Customer.find_by_authentication_token(@customer).phone %></h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4"><div class="row"><div class="col-sm-12 col-md-6"><div class="dataTables_length" id="dataTable_length"><label>Show <select name="dataTable_length" aria-controls="dataTable" class="custom-select custom-select-sm form-control form-control-sm"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> entries</label></div></div><div class="col-sm-12 col-md-6"><div id="dataTable_filter" class="dataTables_filter"><label>Rechercher:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="dataTable"></label></div></div></div><div class="row"><div class="col-sm-12"><table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+        <thead>
+        <tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 263px;">Name</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" style="width: 391px;">Position</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Office: activate to sort column ascending" style="width: 194px;">Office</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 98px;">Age</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Start date: activate to sort column ascending" style="width: 182px;">Start date</th><th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending" style="width: 166px;">Salary</th></tr>
+        </thead>
+        <tfoot>
+        <tr><th rowspan="1" colspan="1">Date</th><th rowspan="1" colspan="1">Action</th><th rowspan="1" colspan="1">Code Transaction</th><th rowspan="1" colspan="1">@ IP</th><th rowspan="1" colspan="1">Context</th><th rowspan="1" colspan="1">Montant</th></tr>
+        </tfoot>
+        <tbody>
+        <% Transaction.where(customer: @user.id).each do |transaction| %>
+        <tr role="row" class="odd">
+          <td class="sorting_1"><%= transaction.date %></td>
+          <td><%= transaction.flag %></td>
+          <td><%= transaction.code %></td>
+          <td><%= transaction.ip %></td>
+          <td><%= transaction.context %></td>
+          <td><%= transaction.amount %> F CFA XAF</td>
+        </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

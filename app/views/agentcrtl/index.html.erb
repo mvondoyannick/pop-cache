@@ -1,0 +1,26 @@
+<h1 style="margin-bottom: 25px;">Liste des agents Express Union Cameroun</h1>
+
+<br>
+<br>
+
+
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>prenom</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @agent.each do |type| %>
+    <tr>
+      <td><%= type.name %></td>
+      <td><%= type.prenom %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<br>
+<br>
+<br>

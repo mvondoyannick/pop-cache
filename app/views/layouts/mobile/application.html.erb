@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="Description" content="PAYMEQUICK WebApp">
+
+    <title>PAYMEQUICK | Dashboard</title>
+
+    <!-- Ajout du manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="<%= image_path("pmq.png") %>">
+    <meta name="apple-mobile-web-app-title" content="PAYMEQUICK">
+    <meta name="apple-mobile-web-app-status-bar-style" content="yellow">
+    <meta name="theme-color" content="#317EFB">
+    <%= javascript_include_tag 'custom', 'data-turbolinks-track': 'reload' %>
+    
+    <!-- Font Awesome Icons -->
+    <%= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css', integrity: "sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=", crossorigin: "anonymous",  media: 'all', 'data-turbolinks-track': 'reload' %>
+    <!-- Theme style -->
+    <%= stylesheet_link_tag 'custom', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <!-- Google Font: Source Sans Pro -->
+    <%= stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700', media: 'all', 'data-turbolinks-track': 'reload' %>
+    
+    <style>
+        div#map {
+        height: 250px;
+        width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <%= yield %>
+    </body>
+</html>

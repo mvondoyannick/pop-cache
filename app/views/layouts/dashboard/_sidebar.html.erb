@@ -1,0 +1,770 @@
+  <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+              with font-awesome or any other icon font library -->
+          <li class="nav-item has-treeview menu-open">
+          <a href="#" class="nav-link active">
+              <i class="nav-icon fa fa-tachometer-alt"></i>
+              <p>
+              Accueil
+              <i class="right fa fa-angle-left"></i>
+              </p>
+          </a>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-copy"></i>
+              <p>
+              Comptes
+              <i class="fa fa-angle-left right"></i>
+              <span class="badge badge-info right">6</span>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <%= link_to "/admin/users/show", class: "nav-link" do %>
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Tous les comptes</p>
+                <% end %>
+              </li>
+              <li class="nav-item">
+                <%= link_to validate_path, class: "nav-link" do %>
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Compte validées</p>
+                <% end %>
+              </li>
+              <li class="nav-item">
+                <%= link_to invalid_account_path, class: "nav-link" do %>
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Compte non validées</p>
+                <% end %>
+              </li>
+              <li class="nav-item">
+                <%= link_to accounts_journal_path, class: "nav-link" do %>
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Journal des comptes</p>
+                <% end %>
+              </li>
+          </ul>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-chart-pie"></i>
+              <p>
+              Statistiques
+              <i class="right fa fa-angle-left"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="pages/charts/chartjs.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>ChartJS</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/charts/flot.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Flot</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/charts/inline.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Inline</p>
+              </a>
+              </li>
+          </ul>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-tree"></i>
+              <p>
+              Partenaires
+              <i class="fa fa-angle-left right"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="pages/UI/general.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>General</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/UI/icons.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Icons</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/UI/buttons.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Buttons</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/UI/sliders.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Sliders</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/UI/modals.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Modals & Alerts</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/UI/navbar.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Navbar & Tabs</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/UI/timeline.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Timeline</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/UI/ribbons.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Ribbons</p>
+              </a>
+              </li>
+          </ul>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-edit"></i>
+              <p>
+              Entreprises
+              <i class="fa fa-angle-left right"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="pages/forms/general.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>General Elements</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/forms/advanced.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Advanced Elements</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/forms/editors.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Editors</p>
+              </a>
+              </li>
+          </ul>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-table"></i>
+              <p>
+              Banques
+              <i class="fa fa-angle-left right"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="pages/tables/simple.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Simple Tables</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/tables/data.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>DataTables</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/tables/jsgrid.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>jsGrid</p>
+              </a>
+              </li>
+          </ul>
+          </li>
+          <li class="nav-header">COMPTES & UTILISATEURS</li>
+          <li class="nav-item">
+            <%= link_to "/admin/users/recharge", class: "nav-link" do %>
+              <i class="nav-icon fa fa-calendar-alt"></i>
+              <p>
+                Créditer/Recharger
+              </p>
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "/admin/users/retrait", class: "nav-link" do %>
+              <i class="nav-icon fa fa-calendar-alt"></i>
+              <p>
+                Retrait
+              </p>
+            <% end %>
+          </li>
+          <li class="nav-item">
+          <a href="pages/gallery.html" class="nav-link">
+              <i class="nav-icon far fa-image"></i>
+              <p>
+              Creer
+              </p>
+          </a>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon far fa-envelope"></i>
+              <p>
+              Rechercher
+              <i class="fa fa-angle-left right"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="pages/mailbox/mailbox.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Inbox</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/mailbox/compose.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Compose</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/mailbox/read-mail.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Read</p>
+              </a>
+              </li>
+          </ul>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-book"></i>
+              <p>
+              Pages
+              <i class="fa fa-angle-left right"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="pages/examples/invoice.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Invoice</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/profile.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Profile</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/e_commerce.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>E-commerce</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/projects.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Projects</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/project_add.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Project Add</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/project_edit.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Project Edit</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/project_detail.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Project Detail</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/contacts.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Contacts</p>
+              </a>
+              </li>
+          </ul>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon far fa-plus-square"></i>
+              <p>
+              Extras
+              <i class="fa fa-angle-left right"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="pages/examples/login.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Login</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/register.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Register</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/forgot-password.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Forgot Password</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/recover-password.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Recover Password</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/lockscreen.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Lockscreen</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/legacy-user-menu.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Legacy User Menu</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/language-menu.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Language Menu</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/404.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Error 404</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/500.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Error 500</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/pace.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Pace</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/blank.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Blank Page</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="starter.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Starter Page</p>
+              </a>
+              </li>
+          </ul>
+          </li>
+
+          <li class="nav-header">TÄCHES DE FOND ET SERVICES</li>
+          <li class="nav-item">
+          <a href="pages/calendar.html" class="nav-link">
+              <i class="nav-icon fa fa-calendar-alt"></i>
+              <p>
+              En attentes
+              <span class="badge badge-info right">2</span>
+              </p>
+          </a>
+          </li>
+          <li class="nav-item">
+          <a href="pages/gallery.html" class="nav-link">
+              <i class="nav-icon far fa-image"></i>
+              <p>
+              Terminé
+              </p>
+          </a>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon far fa-envelope"></i>
+              <p>
+              En cours
+              <i class="fa fa-angle-left right"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="pages/mailbox/mailbox.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Suspendues</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/mailbox/compose.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Echecs</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/mailbox/read-mail.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Read</p>
+              </a>
+              </li>
+          </ul>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-book"></i>
+              <p>
+              Pages
+              <i class="fa fa-angle-left right"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="pages/examples/invoice.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Invoice</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/profile.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Profile</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/e_commerce.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>E-commerce</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/projects.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Projects</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/project_add.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Project Add</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/project_edit.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Project Edit</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/project_detail.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Project Detail</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/contacts.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Contacts</p>
+              </a>
+              </li>
+          </ul>
+          </li>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon far fa-plus-square"></i>
+              <p>
+              Extras
+              <i class="fa fa-angle-left right"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="pages/examples/login.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Login</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/register.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Register</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/forgot-password.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Forgot Password</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/recover-password.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Recover Password</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/lockscreen.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Lockscreen</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/legacy-user-menu.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Legacy User Menu</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/language-menu.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Language Menu</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/404.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Error 404</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/500.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Error 500</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/pace.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Pace</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="pages/examples/blank.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Blank Page</p>
+              </a>
+              </li>
+              <li class="nav-item">
+              <a href="starter.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Starter Page</p>
+              </a>
+              </li>
+          </ul>
+          </li>
+
+
+          <li class="nav-header">MISCELLANEOUS</li>
+          <li class="nav-item">
+          <a href="https://adminlte.io/docs/3.0" class="nav-link">
+              <i class="nav-icon fa fa-file"></i>
+              <p>Documentation</p>
+          </a>
+          </li>
+          <li class="nav-header">MULTI LEVEL EXAMPLE</li>
+          <li class="nav-item has-treeview">
+            <%= link_to nil, class: "nav-link" do %>
+                <i class="fas fa-dice-d6 nav-icon"></i>
+                <p>
+                    Rôles
+                    <i class="right fa fa-angle-left"></i>
+                </p>
+            <% end %>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <%= link_to "/admin/roles/show", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Tous les roles</p>
+                    <% end %>
+                    <%= link_to "/admin/roles/add", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Ajouter un rôle</p>
+                    <% end %>
+                </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview">
+            <%= link_to nil, class: "nav-link" do %>
+                <i class="fa fa-question-circle nav-icon text-danger"></i>
+                <p>
+                    Questions
+                    <i class="right fa fa-angle-left"></i>
+                </p>
+            <% end %>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <%= link_to "/admin/roles/show", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Tous les roles</p>
+                    <% end %>
+                    <%= link_to "/admin/roles/add", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Ajouter un rôle</p>
+                    <% end %>
+                </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview">
+            <%= link_to nil, class: "nav-link" do %>
+                <i class="fa fa-shield-alt nav-icon"></i>
+                <p>
+                    Abonnement
+                    <i class="right fa fa-angle-left"></i>
+                </p>
+            <% end %>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <%= link_to "/admin/roles/show", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Tous les roles</p>
+                    <% end %>
+                    <%= link_to "/admin/roles/add", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Ajouter un rôle</p>
+                    <% end %>
+                </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview">
+            <%= link_to nil, class: "nav-link" do %>
+                <i class="fa fa-shield-alt nav-icon"></i>
+                <p>
+                    Clés & Autorisations
+                    <i class="right fa fa-angle-left"></i>
+                </p>
+            <% end %>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <%= link_to "/admin/roles/show", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Tous les roles</p>
+                    <% end %>
+                    <%= link_to "/admin/roles/add", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Ajouter un rôle</p>
+                    <% end %>
+                </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview">
+            <%= link_to nil, class: "nav-link" do %>
+                <i class="fa fa-shield-alt nav-icon"></i>
+                <p>
+                    Administration
+                    <i class="right fa fa-angle-left"></i>
+                </p>
+            <% end %>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <%= link_to "/admin/roles/show", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Tous les roles</p>
+                    <% end %>
+                    <%= link_to "/admin/roles/add", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Ajouter un rôle</p>
+                    <% end %>
+                </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview">
+            <%= link_to nil, class: "nav-link" do %>
+                <i class="fa fa-shield-alt nav-icon"></i>
+                <p>
+                    Sauvegarde & BD
+                    <i class="right fa fa-angle-left"></i>
+                </p>
+            <% end %>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <%= link_to "/admin/roles/show", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Tous les roles</p>
+                    <% end %>
+                    <%= link_to "/admin/roles/add", class: "nav-link" do %>
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Ajouter un rôle</p>
+                    <% end %>
+                </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <%= link_to "/admin/roles/show", class: "nav-link" do %>
+              <i class="fa fa-shield-alt nav-icon"></i>
+              <p>Rôles</p>
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to nil, class: "nav-link" do %>
+              <i class="fa fa-shield-alt nav-icon"></i>
+              <p>Rôles</p>
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to roles_path, class: "nav-link" do %>
+              <i class="fa fa-question-circle nav-icon"></i>
+              <p>Questions</p>
+            <% end %>
+          </li>
+          <li class="nav-header">OPERATIONS</li>
+          <li class="nav-item has-treeview">
+            <%= link_to compensation_path, class: "nav-link" do %>
+                <i class="nav-icon far fa-circle text-danger"></i>
+                <p>
+                    Compensations bank
+                </p>
+            <% end %>
+          </li>
+          <li class="nav-item">
+          <a href="#" class="nav-link">
+              <i class="nav-icon far fa-circle text-danger"></i>
+              <p class="text">Important</p>
+          </a>
+          </li>
+          <li class="nav-item">
+          <a href="#" class="nav-link">
+              <i class="nav-icon far fa-circle text-warning"></i>
+              <p>Warning</p>
+          </a>
+          </li>
+          <li class="nav-item">
+          <a href="#" class="nav-link">
+              <i class="nav-icon far fa-circle text-info"></i>
+              <p>Informational</p>
+          </a>
+          </li>
+      </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+  </div>
