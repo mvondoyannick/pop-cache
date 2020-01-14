@@ -1,5 +1,5 @@
 class WelcomeController < ApplicationController
-  #before_action :authenticate_customer!
+  before_action :authenticate_customer!
 
   def home
     @new_registration = Customer.where(created_at: Date.today.beginning_of_week..Date.today.end_of_week).count
