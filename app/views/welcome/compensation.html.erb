@@ -45,7 +45,7 @@
           <td><%= "Paymequick #{history.flag.downcase}" unless history.flag.nil? %></td>
           <td><%= link_to Customer.find(history.customer_id).code, nil %></td>
           <td>
-            <%= history.flag.capitalize %>
+            <%= history.flag.capitalize unless history.flag.nil? %>
           </td>
           <td>
             <%= history.created_at.strftime("%d-%m-%Y") %>
