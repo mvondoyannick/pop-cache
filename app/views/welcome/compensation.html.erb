@@ -42,7 +42,7 @@
           <td width="5%">
             <input type="checkbox" name="vehicle" value="Bike">
           </td>
-          <td><%= " Paymequick #{history.flag.downcase}"  %></td>
+          <td><%= "Paymequick #{history.flag.downcase}" unless history.flag.nil? %></td>
           <td><%= link_to Customer.find(history.customer_id).code, nil %></td>
           <td>
             <%= history.flag.capitalize %>
