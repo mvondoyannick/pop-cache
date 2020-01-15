@@ -1951,29 +1951,26 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="rack (vbundled(2.0.7)) [path][gem]" type="rubylib">
+      <library name="rack (vbundled(2.1.1)) [path][gem]" type="rubylib">
         <properties>
           <option name="version" value="4" />
         </properties>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/bin" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/lib" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/test" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/contrib" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/example" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/bin" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/lib" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/contrib" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/example" />
         </CLASSES>
         <SOURCES>
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/bin" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/lib" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/test" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/contrib" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/example" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/bin" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/lib" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/contrib" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/example" />
         </SOURCES>
         <excluded>
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/bin" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/test" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/contrib" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.0.7/example" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/bin" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/contrib" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/rack-2.1.1/example" />
         </excluded>
       </library>
     </orderEntry>

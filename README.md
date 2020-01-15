@@ -71,4 +71,4 @@ Things you may want to cover:
 
 ## License
 
-Paymequick is released under the [MIT License](https://opensource.org/licenses/MIT) by [MVONDO Yannick](mvondoyannick@gmail.com).
+Paymequick is released under the [MIT License](https://opensource.org/licenses/MIT) by [MVONDO Yannick](https://github.com/mvondoyannick).
