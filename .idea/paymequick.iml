@@ -1867,29 +1867,29 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="puma (vbundled(3.12.1)) [path][gem]" type="rubylib">
+      <library name="puma (vbundled(3.12.2)) [path][gem]" type="rubylib">
         <properties>
           <option name="version" value="4" />
         </properties>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/bin" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/ext" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/lib" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/docs" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/tools" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/bin" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/ext" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/lib" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/docs" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/tools" />
         </CLASSES>
         <SOURCES>
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/bin" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/ext" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/lib" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/docs" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/tools" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/bin" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/ext" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/lib" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/docs" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/tools" />
         </SOURCES>
         <excluded>
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/bin" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/ext" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/docs" />
-          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.1/tools" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/bin" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/ext" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/docs" />
+          <root url="file://$MODULE_DIR$/vendor/bundle/ruby/2.6.0/gems/puma-3.12.2/tools" />
         </excluded>
       </library>
     </orderEntry>

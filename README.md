@@ -67,7 +67,7 @@ Things you may want to cover:
 [![Build Status](https://badge.buildkite.com/ab1152b6a1f6a61d3ea4ec5b3eece8d4c2b830998459c75352.svg?branch=master)](https://buildkite.com/rails/rails)
 
 ## Hosting powered by
-[![Code Triage Badge](https://www.codetriage.com/assets/heroku-fc1eb8f4cd8788effc2d22a8c60ba17bdf1c34aef22a130aceeba835ec02459d.svg)](https://www.paiemequick.com)
+[![Code Triage Badge](heroku-logotype-horizontal-purple.svg)](https://www.paiemequick.com)
 
 ## License
 
