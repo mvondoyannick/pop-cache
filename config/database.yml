@@ -83,9 +83,7 @@ production:
   adapter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  # username: sql2311257 #restoafr_mvondoyannick
   # password: <%= ENV['MYSQL_PASSWORD_ENV'] %> #Bl@ckberry18
-  # host: 	  sql2.freemysqlhosting.net #167.114.17.32
   # port: 3306
   # database: sql2311257 #restoafr_payquick-develop
   url: <%= ENV['CLEARDB_DATABASE_URL'] %>
@@ -97,5 +95,5 @@ development:
   # encoding: utf8
   # pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   database: pmq_development
-  # url: "mysql2://bdf6ec1be2c7cd:e49e3b41@us-cdbr-iron-east-05.cleardb.net/heroku_f8fd9b625d3b7d7?reconnect=true"
+
 
