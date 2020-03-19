@@ -22,8 +22,6 @@ Paymequick is a payment platform API build entirely with Ruby/Ruby On Rails
 2. At the command prompt, login with heroku cli to acces to application core:
 
         $ heroku login
-        $ heroku git:clone -a paymequick
-
 
 3. Change directory to `myapp` and start the web server:
 
