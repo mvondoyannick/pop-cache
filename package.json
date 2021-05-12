@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "admin-lte": "^3.0.0-alpha.2",
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.4",
     "foundation-sites": "6.5.3",
     "instascan": "^1.0.0",
     "jquery": "^3.4.0",
