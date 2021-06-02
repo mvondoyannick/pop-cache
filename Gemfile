@@ -50,7 +50,7 @@ gem 'rqrcode'
 #gestion du QRcode au format png
 gem 'rqrcode_png'
 #using dragonfly
-gem 'dragonfly', '~> 1.2.0'
+gem 'dragonfly', '~> 1.4.0'
 #AES for encrypt decrypt https://github.com/chicks/aes
 gem 'aes'
 # Adding bootstrap
